@@ -1,0 +1,282 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+    <option name="RIGHT_MARGIN" value="160" />
+    <DB2CodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </DB2CodeStyleSettings>
+    <DerbyCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </DerbyCodeStyleSettings>
+    <H2CodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </H2CodeStyleSettings>
+    <HSQLCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </HSQLCodeStyleSettings>
+    <JSCodeStyleSettings version="1">
+      <option name="FORCE_SEMICOLON_STYLE" value="true" />
+      <option name="USE_DOUBLE_QUOTES" value="false" />
+      <option name="FORCE_QUOTE_STYlE" value="true" />
+    </JSCodeStyleSettings>
+    <JSON>
+      <option name="ARRAY_WRAPPING" value="5" />
+    </JSON>
+    <MySQLCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </MySQLCodeStyleSettings>
+    <OracleCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </OracleCodeStyleSettings>
+    <PostgresCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </PostgresCodeStyleSettings>
+    <SQLiteCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </SQLiteCodeStyleSettings>
+    <SqlCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </SqlCodeStyleSettings>
+    <TransactSQLCodeStyleSettings version="2">
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </TransactSQLCodeStyleSettings>
+    <TypeScriptCodeStyleSettings version="1">
+      <option name="FORCE_SEMICOLON_STYLE" value="true" />
+      <option name="USE_DOUBLE_QUOTES" value="false" />
+      <option name="FORCE_QUOTE_STYlE" value="true" />
+      <option name="IMPORTS_WRAP" value="0" />
+      <option name="SPACES_WITHIN_UNION_TYPES" value="false" />
+    </TypeScriptCodeStyleSettings>
+    <codeStyleSettings language="DB2">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="Derby">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="H2">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="HSQLDB">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="JavaScript">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="MySQL">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="Oracle">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="PostgreSQL">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="SQL">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="SQLite">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="TSQL">
+      <option name="KEEP_LINE_BREAKS" value="false" />
+    </codeStyleSettings>
+    <codeStyleSettings language="TypeScript">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+  </code_scheme>
+</component>

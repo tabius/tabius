@@ -1,7 +1,11 @@
 # This file is auto-generated every build
 app/environments/build.ts
+
 # Intellij IDEA project files
-.idea/
+.idea
+!.idea/codeStyles
+!.idea/tabius.iml
+!.idea/vcs.xml
 
 # Build artifacts
 /node_modules
