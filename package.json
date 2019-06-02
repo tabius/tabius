@@ -27,6 +27,8 @@
     "@angular/pwa": "0.13.9",
     "@angular/router": "7.2.15",
     "@angular/service-worker": "7.2.15",
+    "@google-cloud/firestore": "2.1.1",
+    "@google-cloud/storage": "2.5.0",
     "@nestjs/common": "6.2.4",
     "@nestjs/core": "6.2.4",
     "@nestjs/ng-universal": "1.1.1",
