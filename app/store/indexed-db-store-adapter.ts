@@ -126,7 +126,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   }
 
   async init(schemaVersion: number): Promise<void> {
-    // //todo: support upgrade
+    //todo: support upgrade logic
     const myVersion: number|undefined = await this.get('version');
     if (myVersion != schemaVersion) {
       await this.clear();
@@ -146,7 +146,7 @@ function execute(dbOp: (db: IDBDatabase) => void): void {
   request.onupgradeneeded = (e: IDBVersionChangeEvent) => {
     const result = (e.currentTarget as any).result;
     const objectStoreParams = {keyPath: 'key'};
-    //todo: remove hardcoded store names.
+    //FIXME: GH-1 remove hardcoded store names.
     result.createObjectStore(USER_STORE_NAME, objectStoreParams);
     result.createObjectStore(ARTISTS_STORE_NAME, objectStoreParams);
   };

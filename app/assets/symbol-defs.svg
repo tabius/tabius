@@ -1,5 +1,5 @@
 <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg">
-<!--    TODO: cleanup this file! -->
+    <!-- FIXME: GH-2 remove unused resources -->
     <defs>
 
         <symbol id="news" viewBox="0 0 490 490">

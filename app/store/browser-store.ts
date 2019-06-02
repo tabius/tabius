@@ -145,7 +145,6 @@ class BrowserStoreImpl implements BrowserStore {
 }
 
 function mapToObject(map: Map<string, any>): { [key: string]: any } {
-  //todo: do not override version fields?
   const res: any = {};
   for (const [key, value] of map.entries()) {
     res[key] = value;

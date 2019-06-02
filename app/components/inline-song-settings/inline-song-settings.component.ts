@@ -40,7 +40,7 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
           this.cd.detectChanges();
         });
 
-    //todo: resubscribe on changes.
+    //FIXME: GH-3 resubscribe on changes.
     this.uds.getUserSongSettings(this.songId)
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {

@@ -30,7 +30,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   playlist!: Playlist;
   songItems: PlaylistSongModel[] = [];
 
-  constructor(readonly cd: ChangeDetectorRef,
+  constructor(private readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
               private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,

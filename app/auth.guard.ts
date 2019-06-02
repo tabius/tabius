@@ -3,7 +3,7 @@ import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '
 import {AuthService} from '@app/services/auth.service';
 import {UserSessionState} from '@app/store/user-session-state';
 
-/** TODO: not used at all. Remove? */
+/** FIXME: GH-4 not used at all. Remove? */
 @Injectable({
   providedIn: 'root',
 })
