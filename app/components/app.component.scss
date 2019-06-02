@@ -1,0 +1,42 @@
+@import "~app/styles/dimensions";
+@import "~app/styles/colors";
+
+:host {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: block;
+}
+
+.mobile {
+  &.push {
+    margin-top: $mobile-nav-height;
+  }
+}
+
+.desktop {
+  &.push {
+    height: $desktop-nav-height;
+  }
+}
+
+main {
+  padding: 20px 20px $footer-height;
+  margin-bottom: 40px;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: $header-z-index;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: $footer-height;
+  background-color: $color-dark-bg;
+}
+

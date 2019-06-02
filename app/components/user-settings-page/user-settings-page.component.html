@@ -1,0 +1,39 @@
+<div>
+    <h1>Персональные настройки</h1>
+    <div *ngIf="deviceSettings" class="song-settings-block">
+        <h2>Настройки отображения песен</h2>
+        <div class="song-settings-controls-block">
+            <table>
+                <tr>
+                    <td>
+                        Размер шрифта:
+                        <span class="font-size"
+                              (click)="resetFontSize()"
+                              [class.default-font-size]="defaultFontSize === deviceSettings.songFontSize">{{deviceSettings.songFontSize}}
+                        </span>
+                    </td>
+                    <td>
+                        <button (click)="decFontSize()" class="btn dec mono">-</button>
+                        <button (click)="incFontSize()" class="btn inc mono">+</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Отображать Си как</td>
+                    <td>
+                        <button (click)="useB4Si(false)" class="btn mono" [class.btn-info]='!b4Si'>H</button>
+                        <button (click)="useB4Si(true)" class="btn mono" [class.btn-info]='b4Si'>B</button>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="song-preview-title">Пример:</div>
+            <div class="song-preview-block">
+                <gt-song-view [song]="settingsDemoSong"></gt-song-view>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <gt-signin-signout-button></gt-signin-signout-button>
+    </div>
+</div>

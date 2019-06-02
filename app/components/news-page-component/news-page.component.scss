@@ -1,0 +1,25 @@
+h1 {
+  text-align: center;
+}
+
+.news-list {
+  max-width: 800px;
+  margin: 20px auto 0;
+
+  .news-item {
+    margin-top: 20px;
+
+    .date {
+      font-weight: bold;
+    }
+
+    p {
+      margin-top: 3px;
+    }
+
+    ul {
+      margin-left: 20px;
+      color: #777;
+    }
+  }
+}

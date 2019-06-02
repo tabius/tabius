@@ -1,0 +1,41 @@
+:host {
+  padding: 10px;
+  border: 1px solid #ccc;
+  display: block;
+
+  .settings-title {
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .settings-block {
+    display: flex;
+    justify-content: center;
+
+    table {
+      width: 312px;
+
+      td {
+        white-space: nowrap;
+      }
+
+      .value {
+        min-width: 3em;
+        color: #146a78;
+        padding-right: 5px;
+        padding-left: 5px;
+        text-align: center;
+      }
+
+      .default-value {
+        color: #555;
+      }
+
+      button {
+        min-width: 2.2em;
+        margin-left: 5px;
+      }
+    }
+  }
+}

@@ -1,0 +1,2 @@
+pm2 start --name tabius  ts-node -- --type-check -r tsconfig-paths/register server/main.ts
+

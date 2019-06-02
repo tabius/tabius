@@ -1,0 +1,18 @@
+<ul *ngFor="let playlist of playlists$ | async">
+    <li>
+        <a routerLink="{{playlistLink + playlist.mount}}">
+            {{playlist.name}} [{{playlist.songIds.length}}]
+        </a>
+    </li>
+</ul>
+
+<form #createPlaylistForm="ngForm" (ngSubmit)="createPlaylist()">
+    <label>Создать новый плейлист:</label>
+    <input type="text" [(ngModel)]="newPlaylistName" name="name" required/>
+    <button type="submit"
+            class="btn btn-success"
+            [disabled]="!createPlaylistForm.form.valid">
+        Создать
+    </button>
+
+</form>

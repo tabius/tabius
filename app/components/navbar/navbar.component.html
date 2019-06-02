@@ -1,0 +1,98 @@
+<!-- desktop layout -->
+<div class="desktop">
+    <nav>
+        <div class="item" style="justify-content: center;">
+            <a routerLink="/">
+                <div class="logo">tabius</div>
+                <div class="logo2">табы для гитары</div>
+            </a>
+        </div>
+        <div class="item news" [class.active]="getActiveSection() === NavSection.News">
+            <a routerLink="{{newsLink}}">
+                <div class="indicator-block"></div>
+                <gt-svg-icon icon="news"></gt-svg-icon>
+                <div class="title">НОВИНКИ</div>
+            </a>
+        </div>
+        <div class="item artists" [class.active]="getActiveSection() === NavSection.Artists">
+            <a routerLink="{{artistsLink}}">
+                <div class="indicator-block"></div>
+                <gt-svg-icon icon="artist"></gt-svg-icon>
+                <div class="title">АРТИСТЫ</div>
+            </a>
+        </div>
+        <div class="item playlist" [class.active]="getActiveSection()=== NavSection.Playlists">
+            <a routerLink="{{playlistsLink}}">
+                <div class="indicator-block"></div>
+                <gt-svg-icon icon="playlist"></gt-svg-icon>
+                <div class="title">ПЛЕЙЛИСТЫ</div>
+            </a>
+        </div>
+        <div class="item tuner" [class.active]="getActiveSection() === NavSection.Tuner">
+            <a routerLink="{{tunerLink}}">
+                <div class="indicator-block"></div>
+                <gt-svg-icon icon="triangle"></gt-svg-icon>
+                <div class="title">ТЮНЕР</div>
+            </a>
+        </div>
+        <div class="item profile" [class.active]="getActiveSection() === NavSection.Profile">
+            <a routerLink="{{settingsLink}}">
+                <div class="indicator-block"></div>
+                <gt-svg-icon icon="gears"></gt-svg-icon>
+                <div class="title">ПРОФИЛЬ</div>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!--mobile layout-->
+<div class="mobile">
+    <nav>
+        <div class="item logo">
+            <a routerLink="/">
+                <div class="logo">tabius</div>
+            </a>
+        </div>
+        <div class="spacer"></div>
+        <div *ngIf="!opened" (click)="open()" class="item">
+            <gt-svg-icon icon="burger"></gt-svg-icon>
+        </div>
+        <div *ngIf="opened" (click)="close()" class="item close">
+            <div class="close-content">
+                <gt-svg-icon icon="close" style="fill: white;"></gt-svg-icon>
+            </div>
+        </div>
+    </nav>
+    <div *ngIf="opened" class="drawer">
+        <div class="item news">
+            <a routerLink="{{newsLink}}" (click)="close()">
+                <gt-svg-icon icon="{{newsLink}}"></gt-svg-icon>
+                <div class="title">НОВИНКИ</div>
+            </a>
+        </div>
+        <div class="item artists">
+            <a routerLink="{{artistsLink}}" (click)="close()">
+                <gt-svg-icon icon="artist"></gt-svg-icon>
+                <div class="title">АРТИСТЫ</div>
+            </a>
+        </div>
+        <div class="item playlist">
+            <a routerLink="{{playlistsLink}}" (click)="close()">
+                <gt-svg-icon icon="playlist"></gt-svg-icon>
+                <div class="title">ПЛЕЙЛИСТЫ</div>
+            </a>
+        </div>
+        <div class="item tuner">
+            <a routerLink="{{tunerLink}}" (click)="close()">
+                <gt-svg-icon icon="triangle"></gt-svg-icon>
+                <div class="title">ТЮНЕР</div>
+            </a>
+        </div>
+        <div class="item profile">
+            <a routerLink="{{settingsLink}}" (click)="close()">
+                <gt-svg-icon icon="gears"></gt-svg-icon>
+                <div class="title">ПРОФИЛЬ</div>
+            </a>
+        </div>
+    </div>
+</div>

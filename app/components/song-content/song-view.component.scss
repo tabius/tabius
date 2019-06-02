@@ -1,0 +1,17 @@
+@import "~app/styles/colors";
+@import "~app/styles/fonts";
+@import "~app/styles/dimensions";
+
+.song-body {
+  font-family: $font-family-mono;
+  max-width: 90vw;
+  white-space: pre-wrap;
+  margin-top: 15px;
+}
+
+
+@media only screen and (min-width: $hires-desktop-width) {
+  .song-body {
+    font-size: 20px;
+  }
+}

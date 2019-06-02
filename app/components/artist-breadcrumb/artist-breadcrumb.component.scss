@@ -1,0 +1,13 @@
+@import "~app/styles/dimensions";
+
+.sep {
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #999;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  :host {
+    font-size: 20px;
+  }
+}

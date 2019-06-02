@@ -1,0 +1,28 @@
+<div class="settings-title">НАСТРОЙКИ</div>
+
+<div class="settings-block" *ngIf="songSettings && deviceSettings">
+
+    <table>
+        <tr>
+            <td>размер шрифта:</td>
+            <td class="value" [class.default-value]="defaultFontSize === deviceSettings.songFontSize">
+                <div (click)="resetFontSize()">{{deviceSettings.songFontSize}}</div>
+            </td>
+            <td>
+                <button (click)="decFontSize()" class="btn dec mono">-</button>
+                <button (click)="incFontSize()" class="btn inc mono">+</button>
+            </td>
+        </tr>
+        <tr>
+            <td>транспонирование:</td>
+            <td class="value" [class.default-value]="songSettings.transpose === 0">
+                <div (click)="resetSongTranspose()"> {{(songSettings.transpose > 0 ? '+' : '') + songSettings.transpose}}</div>
+            </td>
+            <td>
+                <button (click)="transposeDown()" class="btn dec mono">-</button>
+                <button (click)="transposeUp()" class="btn inc mono">+</button>
+            </td>
+        </tr>
+    </table>
+</div>
+

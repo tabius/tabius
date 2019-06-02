@@ -1,0 +1,81 @@
+import {FirebaseUser, User} from '@common/user-model';
+import * as admin from 'firebase-admin';
+import {Versioned} from '@common/common-model';
+import DecodedIdToken = admin.auth.DecodedIdToken;
+
+export function firebaseUser2User(firebaseUser: FirebaseUser): User {
+  return {
+    id: firebaseUser.uid,
+    name: firebaseUser.displayName || '???',
+    email: firebaseUser.email || '???',
+    picture: firebaseUser.photoURL || ''
+  };
+}
+
+export function decodedIdToken2User(token: DecodedIdToken): User {
+  return {
+    id: token.uid,
+    name: token.name,
+    email: token.email,
+    picture: token.picture
+  };
+}
+
+export function toArrayOfInts(text: string, sep: string): number[] {
+  if (!text || text.length == 0) {
+    return [];
+  }
+  return text.split(sep).map(v => +v);
+}
+
+/** Returns true if update is needed. */
+export function needUpdateByVersionChange(oldValue?: Versioned, newValue?: Versioned): boolean {
+  if (oldValue === newValue) {
+    return false;
+  }
+  if (oldValue === undefined || newValue === undefined) {
+    return true;
+  }
+  return newValue.version > oldValue.version;
+}
+
+export function needUpdateByShallowArrayCompare(oldValue?: any[], newValue?: any[]): boolean {
+  return !shallowArraysEquals(oldValue, newValue);
+}
+
+export function needUpdateByStringify(oldValue?: any, newValue?: any): boolean {
+  if (oldValue === newValue) {
+    return false;
+  }
+  if (oldValue === undefined || newValue === undefined) {
+    return true;
+  }
+  return JSON.stringify(oldValue) !== JSON.stringify(newValue);
+}
+
+/** Returns true if arrays are equal. */
+export function shallowArraysEquals(a1?: any[], a2?: any[]): boolean {
+  if (a1 === a2) {
+    return true;
+  }
+  if (a1 === undefined || a2 === undefined) {
+    return false;
+  }
+  if (a1.length !== a2.length) {
+    return false;
+  }
+  for (let i = 0, n = a1.length; i < n; i++) {
+    if (a1[i] !== a2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function isValidId(id?: number): id is number {
+  return id !== undefined && id > 0;
+}
+
+export function isInvalidId(id?: number): id is undefined {
+  return !isValidId(id);
+}

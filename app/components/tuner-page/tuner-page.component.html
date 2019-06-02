@@ -1,0 +1,54 @@
+<div class="tuner-panel">
+
+    <h2>Тюнер для гитары</h2>
+
+    <div>
+        <div class="settings-row">
+            Тон
+            <select [(ngModel)]="soundType" style="margin-left: 5px;">
+                <option value="c">Классика</option>
+                <option value="e">Электро</option>
+            </select>
+
+            <label class="checkbox" style="margin-left: 25px;">
+                <input type="checkbox" [checked]="repeat" (change)="repeat = !repeat"><span>повтор</span>
+            </label>
+
+        </div>
+        <!-- TODO: visualize focus state-->
+        <div class="string-buttons-row">
+            <a class="string-button" (click)="play('e')" [class.active]="isPlaying('e')" tabindex="0"><span>1</span></a>
+            <a class="string-button" (click)="play('H')" [class.active]="isPlaying('H')" tabindex="0"><span>2</span></a>
+            <a class="string-button" (click)="play('G')" [class.active]="isPlaying('G')" tabindex="0"><span>3</span></a>
+            <a class="string-button" (click)="play('D')" [class.active]="isPlaying('D')" tabindex="0"><span>4</span></a>
+            <a class="string-button" (click)="play('A')" [class.active]="isPlaying('A')" tabindex="0"><span>5</span></a>
+            <a class="string-button" (click)="play('E')" [class.active]="isPlaying('E')" tabindex="0"><span>6</span></a>
+        </div>
+    </div>
+
+    <div class="key-help-row">
+        <h3>Горячие клавиши</h3>
+        <table>
+            <tr>
+                <td><b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b></td>
+                <td>соотвествующая струна</td>
+            </tr>
+            <tr>
+                <td><b>Space</b></td>
+                <td>пауза/старт</td>
+            </tr>
+            <tr>
+                <td><b>⇦</b> и <b>⇨</b></td>
+                <td>выбор струны: пред./след.</td>
+            </tr>
+            <tr>
+                <td><b>⇧</b> и <b>⇩</b></td>
+                <td>выбор тона: Классика/Электро</td>
+            </tr>
+            <tr>
+                <td><b>0</b></td>
+                <td>режим повтора: вкл./выкл.</td>
+            </tr>
+        </table>
+    </div>
+</div>

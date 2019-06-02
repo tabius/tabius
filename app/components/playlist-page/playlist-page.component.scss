@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  justify-content: center;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+
+    .playlist-root {
+      display: flex;
+      justify-content: center;
+
+      .songs-list {
+        line-height: 1.7em;
+        margin-top: 15px;
+      }
+    }
+  }
+}

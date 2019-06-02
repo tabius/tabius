@@ -1,0 +1,11 @@
+<div class="content">
+    <h1>{{playlist.name}}</h1>
+
+    <div class="playlist-root">
+        <div class="songs-list">
+            <div *ngFor="let item of songItems">
+                <a routerLink="/song/{{item.artist.mount}}/{{item.song.mount}}">{{item.song.title}}</a>
+            </div>
+        </div>
+    </div>
+</div>

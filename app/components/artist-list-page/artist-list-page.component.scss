@@ -1,0 +1,153 @@
+@import "~app/styles/dimensions";
+
+h1 {
+  text-align: center;
+}
+
+.letters-navigator-root {
+  display: flex;
+  justify-content: center;
+}
+
+.letters-navigator {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 12px;
+
+  .letter-link-block {
+    text-align: center;
+    border: solid #ccc 1px;
+    display: inline-block;
+    padding: 3px 1px;
+    margin: 3px 3px;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    &.selected {
+      background-color: #f0f0f0;
+    }
+
+    .letter-link {
+      color: #036272;
+      text-decoration: none;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+  }
+}
+
+.search_input_block {
+  display: none; // disabled
+  text-align: center;
+  margin-top: 15px;
+
+  input {
+    width: 100%;
+    max-width: 800px;
+    height: 28px;
+    border: 1px solid #ccc;
+    margin: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    &::-webkit-input-placeholder {
+      text-align: center;
+    }
+
+    &::-moz-placeholder {
+      text-align: center;
+    }
+
+    &::-ms-input-placeholder {
+      text-align: center;
+    }
+  }
+}
+
+.artist-list {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+
+  .letter-block {
+    padding-top: 1em;
+    line-height: 1.7em;
+
+    .letter {
+      color: #333;
+      font-size: 20px;
+      padding: 5px 2px 2px;
+      display: inline-block;
+    }
+
+    .letter:after {
+      content: "";
+      height: 2px;
+      display: block;
+      //background: #fcd14f;
+      background: #efca8a;
+      margin-left: -2px;
+      margin-right: -2px;
+    }
+  }
+}
+
+.filtered-artists-block {
+  padding-top: 20px;
+  line-height: 1.7em;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .letters-navigator {
+    font-size: 18px;
+
+    .letter-link-block {
+      min-width: 30px;
+    }
+
+    .artist-list {
+      .letter-block {
+        .letter {
+          font-size: 20px;
+        }
+
+        .letter:after {
+          height: 3px;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: $hires-desktop-width) {
+  .letters-navigator {
+    font-size: 22px;
+
+    .letter-link-block {
+      min-width: 52px;
+    }
+  }
+
+  .artist-list {
+    .letter-block {
+      .letter {
+        font-size: 26px;
+      }
+      .letter:after {
+        height: 3px;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: $max-mobile-width) {
+  .letters-navigator {
+    font-size: 16px;
+
+    .letter-link-block {
+      min-width: 44px;
+    }
+  }
+}
+

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "importHelpers": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
+    "downlevelIteration": true,
+    "target": "es5",
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": ["./app/*"],
+      "@common/*": ["./common/*"],
+      "@server/*": ["./server/*"]
+    },
+    "lib": ["es2017", "dom", "es2018.promise"]
+  }
+}

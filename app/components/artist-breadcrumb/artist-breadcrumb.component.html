@@ -1,0 +1,5 @@
+<a routerLink="/{{artistsLink}}">Все артисты</a>
+<ng-container *ngIf="artist && showArtistLink">
+    <span class="sep">»</span>
+    <a routerLink="/artist/{{artist.mount}}">{{artist.name}} </a>
+</ng-container>

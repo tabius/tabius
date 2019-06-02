@@ -1,0 +1,19 @@
+# This file is auto-generated every build
+app/environments/build.ts
+# Intellij IDEA project files
+.idea/
+
+# Build artifacts
+/node_modules
+/dist
+/local
+*.log
+/npm-debug.log.*
+webpack.records.json
+
+# Angular
+*.ngfactory.ts
+*.css.shim.ts
+*.ngsummary.json
+*.metadata.json
+*.shim.ngstyle.ts

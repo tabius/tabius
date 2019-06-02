@@ -1,0 +1,38 @@
+<div class="content">
+    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+        <div class="message">Загружаем список песен…</div>
+        <gt-loading-indicator></gt-loading-indicator>
+    </div>
+
+    <div *ngIf="loaded">
+        <gt-artist-breadcrumb [artist]="artistViewModel ? artistViewModel.artist : null" [showArtistLink]="false"></gt-artist-breadcrumb>
+
+        <div class="artist-root">
+            <div>
+                <h1>{{artistViewModel.displayName}}</h1>
+                <img src="{{artistViewModel.imgSrc}}" alt="{{artistViewModel.artist.name}}" title="{{artistViewModel.displayName}}">
+                <div *ngIf="artistViewModel.artist.bandIds.length > 0" class="bands-info">
+                    Группы:
+                    <div *ngFor="let band of artistViewModel.bands">
+                        <a routerLink="/artist/{{band.mount}}">{{band.name}}</a>
+                    </div>
+
+                </div>
+                <div class="songs-list">
+                    <div *ngFor="let song of artistViewModel.songs; trackBy: trackBySongId">
+                        <a routerLink="/song/{{artistViewModel.artist.mount}}/{{song.mount}}">{{song.title}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pg-search-block">
+            <a href="https://priceguard.ru/search?g=digital&q={{artistViewModel.displayName}}"
+               title="Поддержать исполнителя и купить его официальный диск."
+               target="_blank"
+               rel="noopener">
+                Поддержать артиста »
+            </a>
+        </div>
+    </div>
+</div>

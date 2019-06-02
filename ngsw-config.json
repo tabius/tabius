@@ -1,0 +1,17 @@
+{
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "globals",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/assets/**",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    }
+  ]
+}

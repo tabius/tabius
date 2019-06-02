@@ -1,0 +1,71 @@
+$size: 96px;
+$circle_size: 16px;
+$circle_1_pos: 0px;
+$circle_2_pos: 40px;
+$circle_3_pos: 80px;
+$distance_between_circles: 40px;
+$step_timing: 0.6s;
+
+:host {
+  display: inline-block;
+  position: relative;
+  width: $size;
+  height: $circle_size;
+
+  div {
+    position: absolute;
+    top: 0;
+    width: $circle_size;
+    height: $circle_size;
+    border-radius: 50%;
+    background: #c8c2cb;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  }
+
+  div:nth-child(1) {
+    left: $circle_1_pos;
+    animation: step1 $step_timing infinite;
+  }
+
+  div:nth-child(2) {
+    left: $circle_1_pos;
+    animation: step3 $step_timing infinite;
+  }
+
+  div:nth-child(3) {
+    left: $circle_2_pos;
+    animation: step3 $step_timing infinite;
+  }
+
+  div:nth-child(4) {
+    left: $circle_3_pos;
+    animation: step2 $step_timing infinite;
+  }
+}
+
+@keyframes step1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes step2 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes step3 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate($distance_between_circles, 0);
+  }
+}

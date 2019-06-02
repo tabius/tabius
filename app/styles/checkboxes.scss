@@ -1,0 +1,60 @@
+$checkbox-size: 18px;
+$checkbox-line-height: 22px;
+$checkbox-border: 1px; //todo: make border = 2px and tune colors?
+
+label.checkbox {
+  cursor: pointer;
+  line-height: $checkbox-line-height;
+
+  input[type=checkbox] {
+    opacity: 0;
+    width: 0;
+  }
+
+  span {
+    position: relative;
+    display: inline-block;
+    padding-left: $checkbox-size + 10px;
+  }
+
+  span::before, span::after {
+    position: absolute;
+    content: "";
+    display: inline-block; /* Needed for the line-height to take effect. */
+  }
+
+  /*Outer box of the fake checkbox*/
+  span::before {
+    height: $checkbox-size;
+    width: $checkbox-size;
+    border: $checkbox-border solid;
+    left: 0;
+    top: ($checkbox-line-height - $checkbox-size) / 2 - $checkbox-border;
+  }
+
+  /*Check-mark of the fake checkbox. */
+  span::after {
+    height: 7px;
+    width: 10px;
+    border-left: 2px solid;
+    border-bottom: 2px solid;
+    transform: rotate(-45deg);
+    left: 4px;
+    top: 5px;
+  }
+
+  /* Hide the check-mark by default. */
+  input[type="checkbox"] + span::after {
+    content: none;
+  }
+
+  /* Show on the checked state. */
+  input[type="checkbox"]:checked + span::after {
+    content: "";
+  }
+
+  /* Adding focus styles on the outer-box of the fake checkbox. */
+  input[type="checkbox"]:focus + span::before {
+    outline: rgb(59, 153, 252) auto 5px;
+  }
+}

@@ -1,0 +1,49 @@
+<h1>Артисты</h1>
+
+<div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+    <div class="message">Загружаем список артистов…</div>
+    <gt-loading-indicator></gt-loading-indicator>
+</div>
+
+<div *ngIf="loaded">
+    <div class="letters-navigator-root">
+        <div class="letters-navigator">
+            <div *ngFor="let letterBlock of letterBlocks; trackBy: trackByLetter"
+                 class="letter-link-block"
+                 [class.selected]="isLetterSelected(letterBlock.letter)">
+                <a (click)="activateLetter(letterBlock.letter)" class="letter-link">{{letterBlock.letter}}</a>
+            </div>
+            <div class="letter-link-block">
+                <a (click)="activateLetter(null)" class="letter-link" title="Показать всех артистов">ВСЕ</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="search_input_block">
+        <input type="text"
+               [value]="artistFilter"
+               [formControl]="artistFilterControl"
+               accesskey="/"
+               placeholder="фильтр по имени артиста"
+               (keyup.esc)="updateArtistFilter('')">
+        <button (click)="activateLetter(null)" title="Очистить фильтр">Очистить</button>
+    </div>
+
+    <div class="artist-list">
+        <div *ngIf="artistFilter.length === 0">
+            <div *ngFor="let letterBlock of getVisibleLetterBlocks(); trackBy: trackByLetter" class="letter-block">
+                <div class="letter">{{letterBlock.letter}}</div>
+                <div>
+                    <div *ngFor="let artist of letterBlock.artists; trackBy: trackByArtistId" class="artist-link-block">
+                        <a routerLink="/artist/{{artist.mount}}">{{artist.name}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="artistFilter.length > 0" class="filtered-artists-block">
+            <div *ngFor="let artist of getFilteredArtists(); trackBy: trackByArtistId" class="artist-link-block">
+                <a routerLink="/artist/{{artist.mount}}">{{artist.name}}</a>
+            </div>
+        </div>
+    </div>
+</div>

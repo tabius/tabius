@@ -1,0 +1,2 @@
+<button (click)="signIn()" *ngIf="!userName" class="btn">Вход</button>
+<button (click)="signOut()" *ngIf="userName" class="btn">Выход / {{userName}}</button>

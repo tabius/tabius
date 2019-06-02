@@ -1,0 +1,20 @@
+<h3>Плейлисты:</h3>
+
+<div class="list">
+    <div *ngFor="let p of playlists; trackBy: trackById" class="list-item">
+        <label class="checkbox" title="Добавить песню с плейлист «{{p.name}}»">
+            <input type="checkbox" [checked]="p.songIds.includes(songId)" (change)="togglePlaylist(p.id)">
+            <span>{{p.name}} <a routerLink="{{playlistLinkPrefix + p.mount}}" class='goto-playlist-link' title="Перейти к плейлисту">»</a></span>
+        </label>
+    </div>
+
+    <div *ngIf="playlists.length === 0" class="list-item">
+
+        <label class="checkbox" title="Добавить песню с плейлист «{{favPlaylistName}}»">
+            <!--suppress JSUnusedGlobalSymbols -->
+            <input type="checkbox" onchange="this.checked = false;" (change)="toggleNewFavPlaylist()">
+            <span>{{favPlaylistName}}</span>
+        </label>
+
+    </div>
+</div>

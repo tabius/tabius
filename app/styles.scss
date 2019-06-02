@@ -1,0 +1,69 @@
+@import "~app/styles/dimensions";
+@import "~app/styles/fonts";
+@import "~app/styles/colors";
+@import "~app/styles/buttons";
+@import "~app/styles/checkboxes";
+
+html {
+  overflow: -moz-scrollbars-vertical;
+  overflow-y: scroll;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-family-default;
+  height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+}
+
+.indicator {
+  display: block;
+  margin: 50px auto;
+  text-align: center;
+
+  .message {
+    color: #615766;
+    margin-bottom: 40px;
+  }
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .mobile {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: $max-mobile-width) {
+  .desktop {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: $hires-desktop-width) {
+  body {
+    font-size: 18px;
+  }
+}
+
+a {
+  color: $link-color;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+//noinspection CssInvalidHtmlTagReference
+c {
+  display: inline;
+  font-weight: 400;
+  color: #1c889b;
+}

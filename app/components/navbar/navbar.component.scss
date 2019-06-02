@@ -1,0 +1,270 @@
+@import "~app/styles/colors";
+@import "~app/styles/dimensions";
+
+:host {
+  color: #cecece;
+}
+
+nav {
+  display: flex;
+  background-color: $color-dark-bg;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  -webkit-text-stroke: inherit;
+}
+
+.logo {
+  color: #49011a;
+  font-weight: 700;
+}
+
+.desktop {
+  nav {
+    justify-content: flex-start;
+    height: $desktop-nav-height;
+
+    .item {
+      height: $desktop-nav-height - (2 * $desktop-nav-item-padding);
+
+      width: 100%;
+      padding: $desktop-nav-item-padding;
+      border-left: 1px solid #201c29;
+      border-right: 1px solid #201c29;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+
+      text-align: center;
+
+      a {
+        display: flex;
+        flex-direction: column;
+
+        .title {
+          margin-top: 15px;
+          font-weight: 400;
+          font-size: 19px;
+        }
+
+        gt-svg-icon {
+          margin: 0 auto;
+          height: 96px;
+          width: 100%;
+        }
+
+        .logo {
+          font-size: 48px;
+          letter-spacing: 4px;
+          -webkit-text-stroke: 1.25px #b0b0b0;
+        }
+
+        .logo2 {
+          color: #b0b0b0;
+          margin-top: 1px;
+        }
+
+        .indicator-block {
+          height: 17px;
+          margin-top: -10px;
+          margin-left: -10px;
+          margin-right: -10px;
+        }
+      }
+
+      &:hover {
+        background-color: #1D1B29;
+      }
+
+      &.news {
+        &.active {
+          .indicator-block:before {
+            background: $color-nav-news;
+          }
+        }
+
+        gt-svg-icon {
+          fill: $color-nav-news;
+        }
+      }
+
+      &.artists {
+        &.active {
+          .indicator-block:before {
+            background: $color-nav-artists;
+          }
+        }
+
+        gt-svg-icon {
+          fill: $color-nav-artists;
+        }
+      }
+
+      &.playlist {
+        &.active {
+          .indicator-block:before {
+            background: $color-nav-playlist;
+          }
+        }
+
+        gt-svg-icon {
+          fill: $color-nav-playlist;
+        }
+      }
+
+      &.tuner {
+        &.active {
+          .indicator-block:before {
+            background: $color-nav-tuner;
+          }
+        }
+
+        gt-svg-icon {
+          fill: $color-nav-tuner;
+        }
+      }
+
+      &.profile {
+        &.active {
+          .indicator-block:before {
+            background: $color-nav-profile;
+          }
+        }
+
+        gt-svg-icon {
+          fill: $color-nav-profile;
+          margin-top: 2px;
+          margin-bottom: -2px;
+        }
+      }
+
+      &.active {
+        .indicator-block:before {
+          content: '';
+          display: block;
+          opacity: 0.95;
+          height: 5px;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+        }
+      }
+    }
+  }
+}
+
+.mobile {
+  nav {
+    .spacer {
+      flex-grow: 2;
+    }
+
+    .item {
+      padding: $mobile-nav-item-padding;
+      height: $mobile-nav-height - 2 * ($mobile-nav-item-padding);
+
+      &.logo {
+        padding: 0 $mobile-nav-item-padding;
+        height: $mobile-nav-height;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      &.close {
+        padding: 0;
+        height: $mobile-nav-height;
+
+        .close-content {
+          height: $mobile-nav-height;
+          width: $mobile-nav-height;
+          //todo:
+          background: linear-gradient(to right, #25b4cc, #40c5a3);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+      }
+
+      .logo {
+        font-size: 36px;
+        -webkit-text-stroke: 1.4px #b0b0b0;
+      }
+
+      gt-svg-icon {
+        margin: 0 auto;
+        fill: #ccc;
+        height: 32px;
+        width: 32px;
+      }
+    }
+  }
+
+  //todo: add separator line from nav to the top
+  .drawer {
+    position: fixed;
+    top: $mobile-nav-height;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: $color-dark-bg;
+    height: calc(100% - 52px);
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 30px 10px;
+    overflow: scroll;
+
+    .item {
+      width: 140px;
+      height: 100%;
+      max-height: 120px;
+      margin-bottom: 20px;
+
+      a {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+
+        gt-svg-icon {
+          margin: 0 auto;
+          height: 80px;
+          width: 100%;
+        }
+      }
+
+      .title {
+        margin-top: 15px;
+        font-weight: 400;
+        font-size: 18px;
+      }
+
+      &.news gt-svg-icon {
+        fill: $color-nav-news;
+      }
+
+      &.artists gt-svg-icon {
+        fill: $color-nav-artists;
+      }
+
+      &.playlist gt-svg-icon {
+        fill: $color-nav-playlist;
+      }
+
+      &.tuner gt-svg-icon {
+        fill: $color-nav-tuner;
+      }
+
+      &.profile gt-svg-icon {
+        fill: $color-nav-profile;
+      }
+    }
+  }
+}
+
+

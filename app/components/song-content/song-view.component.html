@@ -1,0 +1,6 @@
+<!--Note: recheck SSR on any update. Or rework songHtml to be observable -->
+<div class="song-body"
+     [ngStyle]="userSongStyle$ | async">
+    <div *ngIf="isBrowser" [innerHTML]="songHtml | safeHtml"></div>
+    <div *ngIf="!isBrowser">{{song.content}}</div>
+</div>

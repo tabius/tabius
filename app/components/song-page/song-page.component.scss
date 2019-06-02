@@ -1,0 +1,79 @@
+@import "~app/styles/dimensions";
+@import "~app/styles/fonts";
+@import "~app/styles/colors";
+
+:host {
+  display: flex;
+  justify-content: center;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+
+    gt-artist-breadcrumb {
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .song-root {
+      display: flex;
+      justify-content: center;
+
+      h1 {
+        display: inline;
+      }
+
+      .inline-settings-toggle {
+        display: inline-block;
+        margin-left: 10px;
+
+        gt-svg-icon {
+          height: 20px;
+          width: 20px;
+          cursor: pointer;
+          fill: $link-color;
+        }
+      }
+
+      gt-inline-song-settings {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
+      .song-body {
+        font-family: $font-family-mono;
+        max-width: 90vw;
+        white-space: pre-wrap;
+        margin-top: 15px;
+      }
+    }
+
+    .user-controls {
+      margin-top: 40px;
+    }
+  }
+}
+
+
+.youtube-video {
+
+  iframe {
+    width: 300px;
+    height: 169px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .youtube-video iframe {
+    width: 480px;
+    height: 270px;
+  }
+}
+
+@media only screen and (min-width: $hires-desktop-width) {
+  .song-body {
+    font-size: 20px;
+  }
+}

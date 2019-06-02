@@ -1,0 +1,37 @@
+:host {
+  display: flex;
+  justify-content: center;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+
+    gt-artist-breadcrumb {
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .artist-root {
+      display: flex;
+      justify-content: center;
+
+      .bands-info {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .songs-list {
+        line-height: 1.7em;
+        margin-top: 15px;
+      }
+    }
+  }
+}
+
+.pg-search-block {
+  margin-top: 20px;
+
+  a {
+    color: #704a00;
+  }
+}

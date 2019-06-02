@@ -1,0 +1,32 @@
+
+h1 {
+  text-align: center;
+}
+
+.playlist-list {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.playlist-item {
+  line-height: 28px;
+}
+
+.song-count {
+  color: #999;
+
+  span {
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+}
+
+.no-playlists-block {
+  line-height: 1.5em;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: solid 1px #ccc;
+  background-color: #f6fffd;
+}

@@ -1,0 +1,5 @@
+# Hello Robots!
+User-agent: *
+
+Host: https://tabius.ru
+Sitemap: https://tabius.ru/sitemap.xml
