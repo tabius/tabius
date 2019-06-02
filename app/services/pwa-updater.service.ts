@@ -30,10 +30,13 @@ export class PwaUpdaterService {
 
       // ensure we have no reload loop for whatever reason it may happen
       const lastForcedUpdateTime = await appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY).toPromise();
-      if (lastForcedUpdateTime === undefined || lastForcedUpdateTime < Date.now() - 60_000) {
+      const now = Date.now();
+      if (lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000) {
         console.info('Enforcing app updated!');
-        await appStore.set(LAST_FORCED_UPDATE_TIME_KEY, Date.now());
+        await appStore.set(LAST_FORCED_UPDATE_TIME_KEY, now);
         document.location.reload();
+      } else {
+        console.info(`Ignoring update, time since last forced update: ${now - lastForcedUpdateTime}ms`);
       }
     });
   }
