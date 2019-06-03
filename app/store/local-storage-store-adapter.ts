@@ -13,11 +13,13 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
   }
 
   getAll<T>(keys: string[]): Promise<(T|undefined)[]> {
-    const result: (T|undefined)[] = [];
-    for (const key of keys) {
-      result.push(this.getAndParse(key));
-    }
-    return Promise.resolve(result);
+    return new Promise<(T|undefined)[]>(resolve => {
+      const result: (T|undefined)[] = [];
+      for (const key of keys) {
+        result.push(this.getAndParse(key));
+      }
+      resolve(result);
+    });
   }
 
   private getAndParse<T>(userKey: string): T|undefined {
@@ -57,8 +59,8 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
   }
 
   list<T>(keyPrefix: string): Promise<T[]> {
-    const storeKeyPrefix = this.getStoreKey(keyPrefix);
-    return new Promise<T[]>(function (resolve) {
+    return new Promise<T[]>(resolve => {
+      const storeKeyPrefix = this.getStoreKey(keyPrefix);
       const result: T[] = [];
       for (let i = 0; i < window.localStorage.length; i++) {
         const key = window.localStorage.key(i);
@@ -74,12 +76,11 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
   }
 
   async clear(): Promise<void> {
-    const keyPrefix = this.keyPrefix;
-    return new Promise<void>(function (resolve) {
+    return new Promise<void>(resolve => {
       const keysToRemove: string[] = [];
       for (let i = 0; i < window.localStorage.length; i++) {
         const key = window.localStorage.key(i);
-        if (key && key.startsWith(keyPrefix)) {
+        if (key && key.startsWith(this.keyPrefix)) {
           keysToRemove.push(key);
         }
       }

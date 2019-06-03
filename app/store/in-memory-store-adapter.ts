@@ -9,36 +9,52 @@ export class InMemoryStoreAdapter implements StoreAdapter {
   }
 
   getAll<T>(keys: string[]): Promise<(T|undefined)[]> {
-    //todo:
-    return Promise.resolve([]);
+    return new Promise<(T|undefined)[]>(resolve => {
+      const result: (T|undefined)[] = [];
+      for (const key of keys) {
+        result.push(this.map.get(key));
+      }
+      return resolve(result);
+    });
   }
 
   set<T>(key: string, value: T|undefined): Promise<void> {
-    if (value === undefined) {
-      this.map.delete(key);
-    } else {
-      this.map.set(key, value);
-    }
-    return Promise.resolve();
+    return new Promise<void>(resolve => {
+      if (value === undefined) {
+        this.map.delete(key);
+      } else {
+        this.map.set(key, value);
+      }
+      resolve();
+    });
   }
 
-  setAll(map: { [p: string]: any }): Promise<void> {
-    throw new Error('Not implemented');
+  setAll(map: { [key: string]: any }): Promise<void> {
+    return new Promise<void>(resolve => {
+      for (const [key, value] of Object.entries(map)) {
+        this.map.set(key, value);
+      }
+      resolve();
+    });
   }
 
   list<T>(keyPrefix: string): Promise<T[]> {
-    const result: T[] = [];
-    for (const key of this.map.keys()) {
-      if (key.startsWith(keyPrefix)) {
-        result.push(this.map.get(key));
+    return new Promise<T[]>(resolve => {
+      const result: T[] = [];
+      for (const key of this.map.keys()) {
+        if (key.startsWith(keyPrefix)) {
+          result.push(this.map.get(key));
+        }
       }
-    }
-    return Promise.resolve(result);
+      resolve(result);
+    });
   }
 
   clear(): Promise<void> {
-    this.map.clear();
-    return Promise.resolve();
+    return new Promise<void>(resolve => {
+      this.map.clear();
+      resolve();
+    });
   }
 
   async init(schemaVersion: number): Promise<void> {

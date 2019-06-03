@@ -72,6 +72,14 @@ describe('Store adapter [Memory]', () => {
   it('should clear all entries when clear() is called', async () => {
     await testClear(new InMemoryStoreAdapter());
   });
+
+  it('should support getAll method', async () => {
+    await testGetAll(new InMemoryStoreAdapter());
+  });
+
+  it('should support setAll method', async () => {
+    await testSetAll(new InMemoryStoreAdapter());
+  });
 });
 
 async function testGetAndSet(adapter: StoreAdapter) {
