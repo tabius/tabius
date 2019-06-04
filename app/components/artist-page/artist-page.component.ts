@@ -1,25 +1,21 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {Artist, ArtistType, Song} from '@common/artist-model';
+import {Artist, Song} from '@common/artist-model';
 import {ActivatedRoute} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
+import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc_utils';
 
 class ArtistViewModel {
   readonly displayName: string;
   readonly imgSrc: string;
 
   constructor(readonly artist: Artist, readonly bands: Artist[], readonly songs: Song[]) {
-    if (artist.type === ArtistType.Person) {
-      const sepIdx = artist.name.indexOf(' ');
-      this.displayName = sepIdx > 0 ? artist.name.substring(sepIdx + 1) + ' ' + artist.name.substring(0, sepIdx) : artist.name;
-    } else {
-      this.displayName = artist.name;
-    }
-    this.imgSrc = `https://tabius.ru/images/artists/profile/${artist.mount}.jpg`;
+    this.displayName = getNameFirstFormArtistName(artist);
+    this.imgSrc = getArtistImageUrl(artist.mount);
   }
 }
 

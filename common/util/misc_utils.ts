@@ -1,6 +1,7 @@
 import {FirebaseUser, User} from '@common/user-model';
 import * as admin from 'firebase-admin';
 import {Versioned} from '@common/common-model';
+import {ArtistType} from '@common/artist-model';
 import DecodedIdToken = admin.auth.DecodedIdToken;
 
 export function firebaseUser2User(firebaseUser: FirebaseUser): User {
@@ -79,3 +80,16 @@ export function isValidId(id?: number): id is number {
 export function isInvalidId(id?: number): id is undefined {
   return !isValidId(id);
 }
+
+export function getNameFirstFormArtistName(artist: { type: ArtistType, name: string }): string {
+  if (artist.type !== ArtistType.Person) {
+    return artist.name;
+  }
+  const sepIdx = artist.name.indexOf(' ');
+  return sepIdx > 0 ? artist.name.substring(sepIdx + 1) + ' ' + artist.name.substring(0, sepIdx) : artist.name;
+}
+
+export function getArtistImageUrl(mount: string): string {
+  return `https://tabius.ru/images/artists/profile/${mount}.jpg`;
+}
+
