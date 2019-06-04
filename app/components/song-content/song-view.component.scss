@@ -2,6 +2,8 @@
 @import "~app/styles/fonts";
 @import "~app/styles/dimensions";
 
+$column-separator-style: 1px solid #e8e8e8;
+
 .song-body {
   font-family: $font-family-mono;
   max-width: 90vw;
@@ -9,6 +11,17 @@
   margin-top: 15px;
 }
 
+.two-column-mode {
+  column-count: 2;
+  column-gap: 50px;
+  column-rule: $column-separator-style;
+}
+
+.three-column-mode {
+  column-count: 3;
+  column-gap: 50px;
+  column-rule: $column-separator-style;
+}
 
 @media only screen and (min-width: $hires-desktop-width) {
   .song-body {
