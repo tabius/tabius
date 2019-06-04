@@ -127,15 +127,15 @@ a {
         }
       }
 
-      &.profile {
+      &.settings {
         &.active {
           .indicator-block:before {
-            background: $color-nav-profile;
+            background: $color-nav-settings;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-profile;
+          fill: $color-nav-settings;
           margin-top: 2px;
           margin-bottom: -2px;
         }
@@ -260,8 +260,8 @@ a {
         fill: $color-nav-tuner;
       }
 
-      &.profile gt-svg-icon {
-        fill: $color-nav-profile;
+      &.settings gt-svg-icon {
+        fill: $color-nav-settings;
       }
     }
   }

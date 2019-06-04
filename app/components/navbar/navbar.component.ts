@@ -12,7 +12,7 @@ enum NavSection {
   Artists = 3,
   Playlists = 4,
   Tuner = 5,
-  Profile = 6
+  Settings = 6
 }
 
 @Component({
@@ -59,7 +59,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     } else if (url.startsWith('/my/playlist') || url.startsWith('/my/song')) {
       return NavSection.Playlists;
     } else if (url.startsWith('/my')) {
-      return NavSection.Profile;
+      return NavSection.Settings;
     }
     return NavSection.Home;
   }

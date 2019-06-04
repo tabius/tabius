@@ -35,11 +35,11 @@
                 <div class="title">ТЮНЕР</div>
             </a>
         </div>
-        <div class="item profile" [class.active]="getActiveSection() === NavSection.Profile">
+        <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
             <a routerLink="{{settingsLink}}">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="gears"></gt-svg-icon>
-                <div class="title">ПРОФИЛЬ</div>
+                <div class="title">НАСТРОЙКИ</div>
             </a>
         </div>
     </nav>
@@ -88,10 +88,10 @@
                 <div class="title">ТЮНЕР</div>
             </a>
         </div>
-        <div class="item profile">
+        <div class="item settings">
             <a routerLink="{{settingsLink}}" (click)="close()">
                 <gt-svg-icon icon="gears"></gt-svg-icon>
-                <div class="title">ПРОФИЛЬ</div>
+                <div class="title">НАСТРОЙКИ</div>
             </a>
         </div>
     </div>
