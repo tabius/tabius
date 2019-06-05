@@ -22,7 +22,7 @@ export class PwaUpdaterService {
     const appIsStable$ = appRef.isStable.pipe(first(isStable => isStable));
     appIsStable$.subscribe(() => {
       console.debug('Checking for updates…');
-      updates.checkForUpdate();
+      updates.checkForUpdate().catch(err => console.error(err));
     });
 
     updates.available.subscribe(event => {
