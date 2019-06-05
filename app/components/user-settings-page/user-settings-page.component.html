@@ -13,15 +13,15 @@
                         </span>
                     </td>
                     <td>
-                        <button (click)="decFontSize()" class="btn dec mono">-</button>
-                        <button (click)="incFontSize()" class="btn inc mono">+</button>
+                        <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
+                        <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
                     </td>
                 </tr>
                 <tr>
                     <td>Отображать Си как</td>
                     <td>
-                        <button (click)="useB4Si(false)" class="btn mono" [class.btn-info]='!b4Si'>H</button>
-                        <button (click)="useB4Si(true)" class="btn mono" [class.btn-info]='b4Si'>B</button>
+                        <button (click)="useB4Si(false)" class="btn mono f16px" [class.btn-info]='!b4Si'>H</button>
+                        <button (click)="useB4Si(true)" class="btn mono f16px" [class.btn-info]='b4Si'>B</button>
                     </td>
                 </tr>
             </table>

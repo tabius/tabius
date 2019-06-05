@@ -9,8 +9,8 @@
                 <div (click)="resetFontSize()">{{deviceSettings.songFontSize}}</div>
             </td>
             <td>
-                <button (click)="decFontSize()" class="btn dec mono">-</button>
-                <button (click)="incFontSize()" class="btn inc mono">+</button>
+                <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
+                <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
             </td>
         </tr>
         <tr>
@@ -19,8 +19,8 @@
                 <div (click)="resetSongTranspose()"> {{(songSettings.transpose > 0 ? '+' : '') + songSettings.transpose}}</div>
             </td>
             <td>
-                <button (click)="transposeDown()" class="btn dec mono">-</button>
-                <button (click)="transposeUp()" class="btn inc mono">+</button>
+                <button (click)="transposeDown()" class="btn dec mono f16px">-</button>
+                <button (click)="transposeUp()" class="btn inc mono f16px">+</button>
             </td>
         </tr>
     </table>
