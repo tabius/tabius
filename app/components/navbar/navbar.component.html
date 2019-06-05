@@ -65,8 +65,8 @@
     </nav>
     <div *ngIf="opened" class="drawer">
         <div class="item news">
-            <a href="{{forumLink}}" target="_blank">
-                <gt-svg-icon icon="{{forumLink}}"></gt-svg-icon>
+            <a href="{{forumLink}}" (click)="close()" target="_blank">
+                <gt-svg-icon icon="news"></gt-svg-icon>
                 <div class="title">ТУСОВКА</div>
             </a>
         </div>
