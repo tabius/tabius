@@ -3,7 +3,7 @@ CREATE USER 'tabius'@'%' IDENTIFIED BY '12345';
 GRANT ALL PRIVILEGES ON tabius.* TO 'tabius'@'%';
 
 CREATE TABLE artist (
-    id      INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id      INT PRIMARY KEY AUTO_INCREMENT,
     name    VARCHAR(64),
     # 1 - person, 2 - band.
     type    INT NOT NULL,
@@ -17,9 +17,9 @@ CREATE TABLE artist (
   COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE song (
-    id                   INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id                   INT PRIMARY KEY AUTO_INCREMENT,
     # Main artist. Usually a band.
-    artist_id            VARCHAR(32)  NOT NULL REFERENCES artist (id),
+    artist_id            INT  NOT NULL REFERENCES artist (id),
     mount                VARCHAR(64)  NOT NULL,
     title                VARCHAR(200) NOT NULL,
     # SongDetails content format. 0 -> pre-formatted text
@@ -41,7 +41,7 @@ CREATE INDEX song_artist_id_index on song(artist_id);
 CREATE TABLE user (
     id         VARCHAR(40) PRIMARY KEY,
     # if null - user is not an ArtistDetails.
-    artist_id  VARCHAR(32)           DEFAULT NULL REFERENCES artist (id),
+    artist_id  INT DEFAULT NULL REFERENCES artist (id),
     name       VARCHAR(100) NOT NULL DEFAULT '',
     picture    VARCHAR(500) NOT NULL DEFAULT '',
     email      VARCHAR(100) NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE user (
   COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE playlist (
-    id       INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id       INT PRIMARY KEY AUTO_INCREMENT,
     name     VARCHAR(200)  NOT NULL,
     user_id  VARCHAR(40)   NOT NULL REFERENCES user (id),
     mount    VARCHAR(16)   NOT NULL UNIQUE ,
