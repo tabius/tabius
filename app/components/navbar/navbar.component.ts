@@ -4,7 +4,7 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {UserSessionState} from '@app/store/user-session-state';
-import {MOUNT_ARTISTS, MOUNT_NEWS, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
+import {FORUM_LINK, MOUNT_ARTISTS, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
 
 enum NavSection {
   Home = 1,
@@ -26,7 +26,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user?: User;
   opened = false;
 
-  readonly newsLink = MOUNT_NEWS;
+  readonly forumLink = FORUM_LINK;
   readonly artistsLink = MOUNT_ARTISTS;
   readonly playlistsLink = MOUNT_USER_PLAYLISTS;
   readonly tunerLink = MOUNT_TUNER;

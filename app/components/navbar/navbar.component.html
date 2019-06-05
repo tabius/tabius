@@ -8,10 +8,10 @@
             </a>
         </div>
         <div class="item news" [class.active]="getActiveSection() === NavSection.News">
-            <a routerLink="{{newsLink}}">
+            <a href="{{forumLink}}" target="_blank">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="news"></gt-svg-icon>
-                <div class="title">НОВИНКИ</div>
+                <div class="title">ТУСОВКА</div>
             </a>
         </div>
         <div class="item artists" [class.active]="getActiveSection() === NavSection.Artists">
@@ -65,9 +65,9 @@
     </nav>
     <div *ngIf="opened" class="drawer">
         <div class="item news">
-            <a routerLink="{{newsLink}}" (click)="close()">
-                <gt-svg-icon icon="{{newsLink}}"></gt-svg-icon>
-                <div class="title">НОВИНКИ</div>
+            <a href="{{forumLink}}" target="_blank">
+                <gt-svg-icon icon="{{forumLink}}"></gt-svg-icon>
+                <div class="title">ТУСОВКА</div>
             </a>
         </div>
         <div class="item artists">

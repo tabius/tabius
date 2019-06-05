@@ -1,4 +1,4 @@
-export const MOUNT_NEWS = 'news';
+export const FORUM_LINK = 'https://forum.tabius.ru';
 export const MOUNT_TUNER = 'tuner';
 export const MOUNT_ARTISTS = 'artists';
 export const MOUNT_USER_HOME = 'my';

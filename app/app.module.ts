@@ -29,7 +29,6 @@ import {TunerPageComponent} from './components/tuner-page/tuner-page.component';
 import {LoadingIndicatorComponent} from './components/loading-indicator/loading-indicator.component';
 import {ArtistBreadcrumbComponent} from './components/artist-breadcrumb/artist-breadcrumb.component';
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
-import {NewsPageComponent} from './components/news-page-component/news-page.component';
 import {InlineSongSettingsComponent} from './components/inline-song-settings/inline-song-settings.component';
 import {UserSettingsPageComponent} from './components/user-settings-page/user-settings-page.component';
 import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/browser-store';
@@ -61,7 +60,6 @@ import {PwaUpdaterService} from '@app/services/pwa-updater.service';
     ArtistBreadcrumbComponent,
     SafeResourceUrlPipe,
     SafeHtmlPipe,
-    NewsPageComponent,
     InlineSongSettingsComponent,
     UserSettingsPageComponent,
     AddSongToPlaylistComponent,

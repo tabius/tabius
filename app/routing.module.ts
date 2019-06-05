@@ -6,9 +6,8 @@ import {TunerPageComponent} from '@app/components/tuner-page/tuner-page.componen
 import {ArtistListPageComponent} from '@app/components/artist-list-page/artist-list-page.component';
 import {ArtistPageComponent} from '@app/components/artist-page/artist-page.component';
 import {SongPageComponent} from '@app/components/song-page/song-page.component';
-import {NewsPageComponent} from '@app/components/news-page-component/news-page.component';
 import {UserSettingsPageComponent} from '@app/components/user-settings-page/user-settings-page.component';
-import {MOUNT_ARTISTS, MOUNT_NEWS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_TUNER, MOUNT_USER_HOME, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
+import {MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_TUNER, MOUNT_USER_HOME, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
 import {PlaylistListPageComponent} from '@app/components/playlist-list-page/playlist-list-page.component';
 import {PlaylistPageComponent, PlaylistPageResolver} from '@app/components/playlist-page/playlist-page.component';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
@@ -29,7 +28,6 @@ export class BrowserStoreStateResolver implements Resolve<any> {
 
 const routes: Routes = [
   {path: '', component: SiteHomePageComponent, pathMatch: 'full'},
-  {path: MOUNT_NEWS, component: NewsPageComponent},
   {path: MOUNT_TUNER, component: TunerPageComponent},
   {path: MOUNT_ARTISTS, component: ArtistListPageComponent, resolve: {storeFlag: BrowserStoreStateResolver}},
   //todo:
