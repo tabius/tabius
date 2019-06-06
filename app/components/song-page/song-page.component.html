@@ -24,8 +24,13 @@
                 <gt-song-view [song]="songDetails"></gt-song-view>
             </div>
         </div>
+
         <div class="user-controls">
             <gt-add-song-to-playlist [songId]="song.id"></gt-add-song-to-playlist>
+        </div>
+
+        <div *ngIf="hasValidForumTopic()" class="forum-link-block">
+            <a href="{{getSongForumTopicLink()}}" target="_blank">Обсудить подбор на форуме »</a>
         </div>
     </div>
 </div>

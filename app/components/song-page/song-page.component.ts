@@ -8,6 +8,8 @@ import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
+import {isValidId} from '@common/util/misc_utils';
+import {FORUM_LINK} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-page',
@@ -87,5 +89,16 @@ export class SongPageComponent implements OnInit, OnDestroy {
   toggleSettings() {
     this.settingsVisible = !this.settingsVisible;
     this.cd.markForCheck();
+  }
+
+  hasValidForumTopic(): boolean {
+    return this.song !== undefined && isValidId(this.song.tid);
+  }
+
+  getSongForumTopicLink(): string {
+    if (!this.hasValidForumTopic()) {
+      return '#';
+    }
+    return FORUM_LINK + '/topic/' + this.song!.tid;
   }
 }
