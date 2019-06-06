@@ -8,7 +8,7 @@ import {FORUM_LINK, MOUNT_ARTISTS, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER
 
 enum NavSection {
   Home = 1,
-  News = 2,
+  Forum = 2,
   Artists = 3,
   Playlists = 4,
   Tuner = 5,
@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (url.startsWith('/tuner')) {
       return NavSection.Tuner;
     } else if (url.startsWith('/news')) {
-      return NavSection.News;
+      return NavSection.Forum;
     } else if (url.startsWith('/artist') || url.startsWith('/song')) {
       return NavSection.Artists;
     } else if (url.startsWith('/my/playlist') || url.startsWith('/my/song')) {

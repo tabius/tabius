@@ -79,15 +79,15 @@ a {
         background-color: #1D1B29;
       }
 
-      &.news {
+      &.forum {
         &.active {
           .indicator-block:before {
-            background: $color-nav-news;
+            background: $color-nav-forum;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-news;
+          fill: $color-nav-forum;
         }
       }
 
@@ -244,8 +244,8 @@ a {
         font-size: 18px;
       }
 
-      &.news gt-svg-icon {
-        fill: $color-nav-news;
+      &.forum gt-svg-icon {
+        fill: $color-nav-forum;
       }
 
       &.artists gt-svg-icon {

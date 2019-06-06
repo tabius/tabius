@@ -7,10 +7,10 @@
                 <div class="logo2">табы для гитары</div>
             </a>
         </div>
-        <div class="item news" [class.active]="getActiveSection() === NavSection.News">
+        <div class="item forum" [class.active]="getActiveSection() === NavSection.Forum">
             <a href="{{forumLink}}" target="_blank">
                 <div class="indicator-block"></div>
-                <gt-svg-icon icon="news"></gt-svg-icon>
+                <gt-svg-icon icon="forum"></gt-svg-icon>
                 <div class="title">ТУСОВКА</div>
             </a>
         </div>
@@ -31,14 +31,14 @@
         <div class="item tuner" [class.active]="getActiveSection() === NavSection.Tuner">
             <a routerLink="{{tunerLink}}">
                 <div class="indicator-block"></div>
-                <gt-svg-icon icon="triangle"></gt-svg-icon>
+                <gt-svg-icon icon="tuner"></gt-svg-icon>
                 <div class="title">ТЮНЕР</div>
             </a>
         </div>
         <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
             <a routerLink="{{settingsLink}}">
                 <div class="indicator-block"></div>
-                <gt-svg-icon icon="gears"></gt-svg-icon>
+                <gt-svg-icon icon="settings"></gt-svg-icon>
                 <div class="title">НАСТРОЙКИ</div>
             </a>
         </div>
@@ -55,7 +55,7 @@
         </div>
         <div class="spacer"></div>
         <div *ngIf="!opened" (click)="open()" class="item">
-            <gt-svg-icon icon="burger"></gt-svg-icon>
+            <gt-svg-icon icon="menu"></gt-svg-icon>
         </div>
         <div *ngIf="opened" (click)="close()" class="item close">
             <div class="close-content">
@@ -64,9 +64,9 @@
         </div>
     </nav>
     <div *ngIf="opened" class="drawer">
-        <div class="item news">
+        <div class="item forum">
             <a href="{{forumLink}}" (click)="close()" target="_blank">
-                <gt-svg-icon icon="news"></gt-svg-icon>
+                <gt-svg-icon icon="forum"></gt-svg-icon>
                 <div class="title">ТУСОВКА</div>
             </a>
         </div>
@@ -84,13 +84,13 @@
         </div>
         <div class="item tuner">
             <a routerLink="{{tunerLink}}" (click)="close()">
-                <gt-svg-icon icon="triangle"></gt-svg-icon>
+                <gt-svg-icon icon="tuner"></gt-svg-icon>
                 <div class="title">ТЮНЕР</div>
             </a>
         </div>
         <div class="item settings">
             <a routerLink="{{settingsLink}}" (click)="close()">
-                <gt-svg-icon icon="gears"></gt-svg-icon>
+                <gt-svg-icon icon="settings"></gt-svg-icon>
                 <div class="title">НАСТРОЙКИ</div>
             </a>
         </div>
