@@ -8,7 +8,7 @@
             </a>
         </div>
         <div class="item forum" [class.active]="getActiveSection() === NavSection.Forum">
-            <a href="{{forumLink}}" target="_blank">
+            <a href="{{forumLink}}">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="forum"></gt-svg-icon>
                 <div class="title">ТУСОВКА</div>
@@ -65,7 +65,7 @@
     </nav>
     <div *ngIf="opened" class="drawer">
         <div class="item forum">
-            <a href="{{forumLink}}" (click)="close()" target="_blank">
+            <a href="{{forumLink}}" (click)="close()">
                 <gt-svg-icon icon="forum"></gt-svg-icon>
                 <div class="title">ТУСОВКА</div>
             </a>
