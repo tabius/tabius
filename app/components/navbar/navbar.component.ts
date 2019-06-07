@@ -52,8 +52,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const url = this.router.url.toLocaleLowerCase();
     if (url.startsWith('/tuner')) {
       return NavSection.Tuner;
-    } else if (url.startsWith('/news')) {
-      return NavSection.Forum;
     } else if (url.startsWith('/artist') || url.startsWith('/song')) {
       return NavSection.Artists;
     } else if (url.startsWith('/my/playlist') || url.startsWith('/my/song')) {
