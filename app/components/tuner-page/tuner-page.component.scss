@@ -11,6 +11,15 @@ h2 {
 
 .settings-row {
   margin-top: 20px;
+
+  select {
+    border: 1px solid #555;
+    height: 36px;
+    background-color: white;
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: inherit;
+  }
 }
 
 .string-buttons-row {
