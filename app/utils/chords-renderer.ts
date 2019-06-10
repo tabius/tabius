@@ -104,13 +104,39 @@ export function renderChords(text: string, options: ChordRenderingOptions): stri
   if (!options.tag && !options.transpose) {
     return text;
   }
+  const chordLocations = parseChords(text);
+  if (chordLocations.length === 0) {
+    return text;
+  }
   let result = '';
+  let prevChordEndIdx = 0;
+  for (let chordLocation of chordLocations) {
+    if (prevChordEndIdx > 0) {
+      result += text.substring(prevChordEndIdx, chordLocation.startIdx);
+    }
+    result += renderChord(chordLocation.chord, options);
+    prevChordEndIdx = chordLocation.endIdx;
+  }
+  result += text.substring(prevChordEndIdx, text.length);
+  return result;
+}
+
+export interface ChordLocation {
+  chord: Chord;
+  startIdx: number;
+  endIdx: number; // exclusive
+}
+
+export function parseChords(text: string): ChordLocation[] {
+  const result: ChordLocation[] = [];
   let cb: ChordBuf|undefined = undefined;
+  let startIdx = 0;
   for (let i = 0; i < text.length;) {
     if (!cb) {
       const d = startsWithAny(text, i, CHORD_NAME);
       if (d == 1) {
         cb = new ChordBuf(text.substring(i, i + d));
+        startIdx = i;
         i += d;
         continue;
       }
@@ -145,17 +171,18 @@ export function renderChords(text: string, options: ChordRenderingOptions): stri
       }
     }
     if (cb) {
-      result += renderChord(cb.toChord(), options);
+      result.push({chord: cb.toChord(), startIdx, endIdx: i});
       cb = undefined;
+      startIdx = 0;
     }
-    result += text.charAt(i);
     i++;
   }
   if (cb != null) {
-    result += renderChord(cb.toChord(), options);
+    result.push({chord: cb.toChord(), startIdx, endIdx: text.length});
   }
   return result;
 }
+
 
 const CHORD_NAME = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const CHORD_SHARP_FLAT = ['#', 'b'];

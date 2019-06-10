@@ -18,19 +18,18 @@ const MIN_SONG_LEN_FOR_3_COLUMN_MODE = 1200;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
-
-  readonly destroyed$ = new Subject<unknown>();
+  private readonly destroyed$ = new Subject<unknown>();
 
   @Input() song!: SongDetails;
   @Input() multiColumnMode = true;
   songHtml: string = '';
 
   userSongStyle$!: Observable<{ [key: string]: string; }>;
-  transpose = 0;
-
-  b4Si?: boolean;
 
   readonly isBrowser: boolean;
+
+  private transpose = 0;
+  private b4Si?: boolean;
   private availableWidth = 0;
 
   constructor(private readonly cd: ChangeDetectorRef,
@@ -45,7 +44,7 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
             map(settings => {
               const style = {};
               if (settings.songFontSize) {
-                style['fontSize'] = settings.songFontSize + 'px';
+                style['fontSize'] = `${settings.songFontSize}px`;
               }
               return style;
             }));

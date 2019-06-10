@@ -57,15 +57,17 @@ export class AuthService {
         this.session.setUser(undefined);
         return;
       }
-      // notify backend about user login event.
-      await this.httpClient.get('/api/user/login').toPromise().then(object => {
-        const {settings, playlists} = object as LoginResponse;
-        this.userDataService.updateUserSettingsOnFetch(settings);
-        this.userDataService.cachePlaylistsInBrowserStoreOnFetch(playlists);
-      });
+
+      // notify backend about user login event and wait for a response with settings.
+      await this.httpClient.get('/api/user/login').toPromise()
+          .then(object => {
+            const {settings, playlists} = object as LoginResponse;
+            this.userDataService.updateUserSettingsOnFetch(settings);
+            this.userDataService.cachePlaylistsInBrowserStoreOnFetch(playlists);
+          })
+          .catch(e => console.error(e));
 
       this.session.setUser(userAndToken.user);
-
       const {returnUrl} = this.session;
       if (returnUrl.length > 0) {
         this.router.navigate([returnUrl]).catch(err => console.error(err));
@@ -91,7 +93,7 @@ export class AuthService {
     const firebaseUser = this.isBrowser ? this.firebaseApp.auth().currentUser : undefined;
     if (!firebaseUser) {
       this.updateAuthTokensInCookies(undefined);
-      return Promise.resolve(undefined);
+      return undefined;
     }
     const token = await firebaseUser.getIdToken();
     this.updateAuthTokensInCookies(token);

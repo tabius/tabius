@@ -38,6 +38,8 @@ import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-
 import {PlaylistListPageComponent} from './components/playlist-list-page/playlist-list-page.component';
 import {SigninSignoutButtonComponent} from './components/signin-signout-button/signin-signout-button.component';
 import {PwaUpdaterService} from '@app/services/pwa-updater.service';
+import { ChordImageComponent } from './components/chord-image/chord-image.component';
+import { SongChordsComponent } from './components/song-chords/song-chords.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +67,8 @@ import {PwaUpdaterService} from '@app/services/pwa-updater.service';
     AddSongToPlaylistComponent,
     PlaylistListPageComponent,
     SigninSignoutButtonComponent,
+    ChordImageComponent,
+    SongChordsComponent,
   ],
   imports: [
     HttpClientModule,

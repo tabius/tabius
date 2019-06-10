@@ -1,0 +1,7 @@
+<div *ngIf="chords.length > 0">
+    <h3>Аккорды:</h3>
+    <gt-chord-image *ngFor="let chord of chords"
+                    [chord]="chord"
+                    class="chord-image">
+    </gt-chord-image>
+</div>
