@@ -39,6 +39,7 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.updateAvailableWidth();
     this.userSongStyle$ = this.uds.getUserDeviceSettings()
         .pipe(
             map(settings => {
@@ -65,8 +66,6 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
           this.updateSongView();
           this.cd.detectChanges();
         });
-
-    this.updateAvailableWidth();
   }
 
   ngOnDestroy(): void {
