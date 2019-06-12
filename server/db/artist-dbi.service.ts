@@ -27,9 +27,8 @@ export class ArtistDbi {
   }
 
   getArtistsByIds(artistIds: number[]): Promise<(Artist)[]> {
-    //todo: sql-injection?
     return this.db.pool.promise()
-        .query(`${SELECT_ARTIST_SQL} WHERE id IN (${artistIds.join(',')})`) // todo: bind value using API
+        .query(`${SELECT_ARTIST_SQL} WHERE id IN (${artistIds.join(',')})`)
         .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtistListItem(row)));
   }
 }

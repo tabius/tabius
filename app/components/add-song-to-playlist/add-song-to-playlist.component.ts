@@ -83,12 +83,8 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     }
     //todo: notify about network issues?
     this.uds.createUserPlaylist({
-      id: -1,
-      userId: '',
       name: this.favPlaylistName,
-      mount: '',
       songIds: [this.songId],
-      version: 0
     });
   }
 }

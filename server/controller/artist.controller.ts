@@ -3,6 +3,7 @@ import {Artist} from '@common/artist-model';
 import {ArtistDbi} from '@server/db/artist-dbi.service';
 import {SongDbi} from '@server/db/song-dbi.service';
 import {ArtistDetailsResponse} from '@common/ajax-model';
+import {stringToArrayOfNumericIds} from '@server/util/validators';
 
 @Controller('/api/artist')
 export class ArtistController {
@@ -20,16 +21,19 @@ export class ArtistController {
   @Get('/by-ids/:ids')
   getArtistsByIds(@Param('ids') idsParam: string): Promise<(Artist)[]> {
     this.logger.log(`by-ids: ${idsParam}`);
-    const ids = idsParam.split(',').map(id => +id);
-    return this.artistDbi.getArtistsByIds(ids);
+    const artistIds = stringToArrayOfNumericIds(idsParam);
+    return this.artistDbi.getArtistsByIds(artistIds);
   }
 
   @Get('/details-by-id/:id')
   getArtistDetailsById(@Param('id') id: string): Promise<ArtistDetailsResponse|undefined> {
     this.logger.log(`details-by-id: ${id}`);
-    const ids = [+id];
-    const artists$$ = this.artistDbi.getArtistsByIds(ids);
-    const songs$$ = this.songsDbi.getSongsByArtistIds(ids);
+    const artistIds = stringToArrayOfNumericIds(id);
+    if (artistIds.length != 1) {
+      throw new Error('Expecting only 1 artist id as input: ' + id);
+    }
+    const artists$$ = this.artistDbi.getArtistsByIds(artistIds);
+    const songs$$ = this.songsDbi.getSongsByArtistIds(artistIds);
     return Promise.all([artists$$, songs$$])
         .then(([artists, songs]) => {
           const artist = artists[0];

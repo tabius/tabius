@@ -3,6 +3,7 @@ import {DbService} from './db.service';
 import {toArrayOfInts} from '@common/util/misc_utils';
 import Hashids from 'hashids';
 import {Playlist} from '@common/user-model';
+import {CreatePlaylistRequest} from '@common/ajax-model';
 
 interface PlaylistRow {
   id: number;
@@ -28,9 +29,7 @@ export class PlaylistDbi {
         .then(([rows]: [PlaylistRow[]]) => rows.map(row => row2Playlist(row)));
   }
 
-  create(userId: string, playlist: Playlist): Promise<void> {
-    //todo: validate params
-    //todo: check that mount is unique.
+  create(userId: string, playlist: CreatePlaylistRequest): Promise<void> {
     const mount = generateRandomPlaylistMount();
     return this.db.pool.promise()
         .query('INSERT INTO playlist(user_id, name, mount, song_ids) VALUES (?, ?, ?, ?)',
@@ -38,8 +37,6 @@ export class PlaylistDbi {
   }
 
   update(userId: string, playlist: Playlist): Promise<void> {
-    //todo: validate params
-    //todo: check that mount is unique.
     return this.db.pool.promise() // Note: it is important to pass user-id too to avoid non-authorized updates.
         .query('UPDATE playlist SET name = ?, song_ids = ?, version = version + 1 WHERE id = ? AND user_id = ?',
             [playlist.name, playlist.songIds.join(','), playlist.id, userId]);

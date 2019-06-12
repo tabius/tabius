@@ -7,6 +7,7 @@ import {catchError, flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {UserSessionState} from '@app/store/user-session-state';
 import {isInvalidId, isValidId, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc_utils';
+import {CreatePlaylistRequest} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_KEY = 'song-settings-key';
@@ -154,11 +155,11 @@ export class UserDataService {
     }
   }
 
-  async createUserPlaylist(playlist: Playlist): Promise<void> {
+  async createUserPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
     // Note: playlists can be managed only when online.
     const signedIn = await this.session.isSignedIn();
     if (signedIn) {
-      this.httpClient.post(`/api/playlist/create`, playlist, {observe: 'response'})
+      this.httpClient.post(`/api/playlist/create`, createPlaylistRequest, {observe: 'response'})
           .pipe(catchError(response => of({...response, body: undefined})))
           .subscribe(response => {
                 if (response.ok) {

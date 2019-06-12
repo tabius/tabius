@@ -25,8 +25,9 @@ export class SongDbi {
   }
 
   getSongs(songIds: number[]): Promise<Song[]> {
+    const idList = songIds.join(',');
     return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL} WHERE s.id IN ( ${songIds.join(',')} )`) //todo: bind value using API
+        .query(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
         .then(([rows]: [SongRow[]]) => rows.map(row => (row2Song(row))));
   }
 
@@ -38,11 +39,12 @@ export class SongDbi {
   }
 
   getSongsByArtistIds(artistIds: number[]): Promise<Song[]> {
+    const idList = artistIds.join(',');
     return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL}, artist a WHERE s.artist_id = a.id AND a.id IN (${artistIds.join(',')})`) //todo: bind value using API
+        .query(`${SELECT_SONG_SQL}, artist a WHERE s.artist_id = a.id AND a.id IN ( ${idList} )`)
         .then(([rows]: [SongRow[]]) =>
             rows.map(row => row2Song(row))
-                .sort((s1, s2) => s1.title.localeCompare(s2.title)) //todo: move sorting to frontend
+                .sort((s1, s2) => s1.title.localeCompare(s2.title)) //todo: move results sorting to the frontend
         );
   }
 }

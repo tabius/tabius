@@ -2,6 +2,9 @@ import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Session, UseGua
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {Playlist, User} from '@common/user-model';
+import {conformsTo, validate} from 'typed-validation';
+import {CreatePlaylistRequestValidator, PlaylistValidator} from '@server/util/validators';
+import {CreatePlaylistRequest} from '@common/ajax-model';
 
 @Controller('/api/playlist')
 export class PlaylistController {
@@ -22,10 +25,14 @@ export class PlaylistController {
   /** Creates new empty playlist and returns list of all user playlists. */
   @UseGuards(ServerAuthGuard)
   @Post('/create')
-  async create(@Session() session, @Body() playlist: Playlist): Promise<Playlist[]> {
+  async create(@Session() session, @Body() createPlaylistRequest: CreatePlaylistRequest): Promise<Playlist[]> {
+    const vr = validate(createPlaylistRequest, conformsTo(CreatePlaylistRequestValidator));
+    if (!vr.success) {
+      throw Error(vr.toString());
+    }
     const user: User = ServerAuthGuard.getUserOrFail(session);
-    this.logger.log(`create: ${playlist.name}, user: ${user.email}`);
-    await this.playlistDbi.create(user.id, playlist);
+    this.logger.log(`create: ${createPlaylistRequest.name}, user: ${user.email}`);
+    await this.playlistDbi.create(user.id, createPlaylistRequest);
     return this.playlistDbi.getPlaylists(user.id);
   }
 
@@ -33,6 +40,10 @@ export class PlaylistController {
   @Put('/update')
   @UseGuards(ServerAuthGuard)
   async update(@Session() session, @Body() playlist: Playlist): Promise<Playlist[]> {
+    const vr = validate(playlist, conformsTo(PlaylistValidator));
+    if (!vr.success) {
+      throw Error(vr.toString());
+    }
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`update: ${playlist.name}, user: ${user.email}`);
     await this.playlistDbi.update(user.id, playlist);
@@ -42,10 +53,10 @@ export class PlaylistController {
   /** Removes user playlist and returns list of all user playlists. */
   @Delete('/delete')
   @UseGuards(ServerAuthGuard)
-  async delete(@Session() session, @Body() playlistId: number): Promise<Playlist[]> {
+  async delete(@Session() session, @Body() playlistId: number|string): Promise<Playlist[]> {
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`delete: ${playlistId}, user: ${user.email}`);
-    await this.playlistDbi.delete(user.id, playlistId);
+    await this.playlistDbi.delete(user.id, +playlistId);
     return this.playlistDbi.getPlaylists(user.id);
   }
 
@@ -56,12 +67,11 @@ export class PlaylistController {
     return this.playlistDbi.getPlaylistByMount(mountParam, user ? user.id : undefined);
   }
 
-  //todo: validate
   @Get('/by-id/:id')
   byId(@Session() session, @Param('id') idParam: string): Promise<Playlist|undefined> {
     this.logger.log('by-id');
     const user = ServerAuthGuard.getUserOrUndefined(session);
-    return this.playlistDbi.getPlaylistById(+idParam, user ? user.id : undefined);
+    const playlistId = +idParam;
+    return this.playlistDbi.getPlaylistById(playlistId, user ? user.id : undefined);
   }
-
 }

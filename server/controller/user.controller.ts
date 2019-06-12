@@ -4,8 +4,9 @@ import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {newDefaultUserSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
 import {LoginResponse} from '@common/ajax-model';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
+import {conformsTo, validate} from 'typed-validation';
+import {UserSongSettingsValidator, UserValidator} from '@server/util/validators';
 
-//TODO: validate params for all methods!
 @UseGuards(ServerAuthGuard)
 @Controller('/api/user')
 export class UserController {
@@ -20,6 +21,10 @@ export class UserController {
   async login(@Session() session): Promise<LoginResponse> {
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`User is logged in: ${user.email}`);
+    const vr = validate(user, conformsTo(UserValidator));
+    if (!vr.success) {
+      throw Error(vr.toString());
+    }
     await this.userDbi.updateOnLogin(user);
     const [settings, playlists] = await Promise.all([this._getUserSettings(user), this.playlistDbi.getPlaylists(user.id)]);
     return {
@@ -37,6 +42,10 @@ export class UserController {
 
   @Put('/settings/song')
   async setSettings(@Session() session, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
+    const vr = validate(songSettings, conformsTo(UserSongSettingsValidator));
+    if (!vr.success) {
+      throw Error(vr.toString());
+    }
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`set settings: ${user.email} for song: ${songSettings.songId}`);
     const settings = await this._getUserSettings(user);

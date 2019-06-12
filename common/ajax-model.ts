@@ -10,3 +10,8 @@ export interface ArtistDetailsResponse {
   artist: Artist,
   songs: Song[]
 }
+
+export interface CreatePlaylistRequest {
+  name: string;
+  songIds: number[];
+}

@@ -24,12 +24,8 @@ export class PlaylistEditorComponent {
 
   createPlaylist() {
     this.uds.createUserPlaylist({
-      id: -1,
-      userId: '',
       name: this.newPlaylistName,
-      mount: '',
       songIds: [],
-      version: 0,
     });
   }
 }
