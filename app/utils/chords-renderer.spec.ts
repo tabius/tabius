@@ -17,7 +17,7 @@ describe('Chords Renderer ', () => {
   });
 
   it('should be no-op when tag is empty', () => {
-    expect(renderChords('Am Em', {})).toEqual('Am Em');
+    expect(renderChords('Am Em')).toEqual('Am Em');
   });
 
   it('should transpose chords correctly to +1', () => {
@@ -72,8 +72,8 @@ describe('Chords Renderer ', () => {
   it('should render H but not B if asked', () => {
     expect(renderChord({name: 'B'}, {useH: true})).toEqual('H');
     expect(renderChord({name: 'H'}, {useH: true})).toEqual('H');
-    expect(renderChord({name: 'H'}, {})).toEqual('B');
-    expect(renderChord({name: 'B'}, {})).toEqual('B');
+    expect(renderChord({name: 'H'})).toEqual('B');
+    expect(renderChord({name: 'B'})).toEqual('B');
   });
 
   it('should respect flat|sharp flags in getToneNameByNumber', () => {
@@ -83,10 +83,19 @@ describe('Chords Renderer ', () => {
 
   it('should parse long chord names (minor/major) correctly', () => {
     expect(renderChords('Cmajor', {tag: 'i'})).toEqual('<i>C</i>');
-    expect(renderChords('C#majo', {tag: 'i'})).toEqual('<i>C#</i>o');
+    expect(renderChords('C#maj', {tag: 'i'})).toEqual('<i>C#</i>');
     expect(renderChords('Cminor', {tag: 'i'})).toEqual('<i>Cm</i>');
-    expect(renderChords('C#minr', {tag: 'i'})).toEqual('<i>C#m</i>r');
+    expect(renderChords('C#min', {tag: 'i'})).toEqual('<i>C#m</i>');
     expect(renderChords('CM', {tag: 'i'})).toEqual('<i>C</i>');
+  });
+
+  it('should not render usual text as a chord', () => {
+    expect(renderChords('A little snake')).toEqual('A little snake');
+  });
+
+  it('should ignore lines with a non-chord text', () => {
+    expect(renderChords('Am Em and some text')).toEqual('Am Em and some text');
+    expect(renderChords('Am Em DmC#')).toEqual('Am Em DmC#');
   });
 
 });

@@ -10,6 +10,7 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
 import {isValidId} from '@common/util/misc_utils';
 import {FORUM_LINK} from '@common/mounts';
+import {parseChordsLine} from '@app/utils/chords-parser';
 
 @Component({
   selector: 'gt-song-page',
@@ -46,7 +47,6 @@ export class SongPageComponent implements OnInit, OnDestroy {
     const artistMount = params['artistMount'];
     const songMount = params['songMount'];
 
-
     const artist$ = this.ads.getArtistByMount(artistMount);
     const song$ = this.ads.getSongByMount(artistMount, songMount); //todo: create getSongByMount (artistId,songMount) ?
     const songDetails$ = song$.pipe(flatMap(song => song === undefined ? of(undefined) : this.ads.getSongDetailsById(song.id)));
@@ -76,13 +76,13 @@ export class SongPageComponent implements OnInit, OnDestroy {
   }
 
   updateMeta() {
-    if (!this.song || !this.artist) {
+    if (!this.song || !this.artist || !this.songDetails) {
       return;
     }
     updatePageMetadata(this.title, this.meta, {
-      title: `${this.song.title}. ${this.artist.name}. Табы для гитары`,
-      description: `Подбор песни: ${this.song.title}. Исполнитель: ${this.artist.name}. Аккорды для гитары.`,
-      keywords: ['подбор песни', this.song.title, this.artist.name, 'табы', 'аккорды', 'гитара'],
+      title: `${this.song.title}. ${this.artist.name}. Аккорды`,
+      description: getSongTextWithNoChords(this.songDetails.content, 4),
+      keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
   }
 
@@ -101,4 +101,36 @@ export class SongPageComponent implements OnInit, OnDestroy {
     }
     return FORUM_LINK + '/topic/' + this.song!.tid;
   }
+}
+
+function isServiceLineChar(c: string): boolean {
+  return c === '{' || c === '}' || c === '(' || c === ')' || c === '[' || c === ']';
+}
+
+/** Returns first 'lineCount' lines of the song. */
+function getSongTextWithNoChords(text: string, linesCount: number): string {
+  let result = '';
+  let linesFound = 0;
+  let position = 0;
+  while (linesFound < linesCount) {
+    const newPosition = text.indexOf('\n', position + 1);
+    if (newPosition === -1) {
+      break;
+    }
+    const chords = parseChordsLine(text, position + 1, newPosition);
+    if (chords.length == 0) {
+      // do more validation for the line.
+      let serviceLine = false;
+      for (let idx = position; idx < newPosition && !serviceLine; idx++) {
+        const c = text.charAt(idx);
+        serviceLine = isServiceLineChar(c) || text.startsWith('--', idx);
+      }
+      if (!serviceLine) {
+        linesFound++;
+        result += (linesFound > 1 ? ' ' : '') + text.substring(position, newPosition);
+      }
+    }
+    position = newPosition + 1;
+  }
+  return result;
 }

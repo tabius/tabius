@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
-import {ChordRenderingOptions, parseChords, renderChord} from '@app/utils/chords-renderer';
+import {ChordRenderingOptions, renderChord} from '@app/utils/chords-renderer';
 import {UserDataService} from '@app/services/user-data.service';
 import {takeUntil} from 'rxjs/operators';
 import {SongDetails} from '@common/artist-model';
 import {Subject} from 'rxjs';
+import {parseChords} from '@app/utils/chords-parser';
 
 @Component({
   selector: 'gt-song-chords',
