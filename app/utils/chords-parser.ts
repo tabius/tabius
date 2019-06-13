@@ -46,18 +46,6 @@ function isAlpha(text: string): boolean {
   return ALPHA_EN.test(text) || ALPHA_RU.test(text);
 }
 
-const INTRO_TEXTS = ['Intro', 'intro', 'Вступление'];
-
-function skipIntroText(text: string, startIdx?: number): number {
-  const idx = startIdx === undefined ? 0 : startIdx;
-  for (const intro of INTRO_TEXTS) {
-    if (text.startsWith(intro, idx)) {
-      return idx + intro.length;
-    }
-  }
-  return idx;
-}
-
 export function parseChords(text: string): ChordLocation[] {
   const allChords: ChordLocation[] = [];
   for (let idx = 0; idx < text.length;) {
@@ -75,7 +63,7 @@ export function parseChords(text: string): ChordLocation[] {
 }
 
 export function parseChordsLine(text: string, startIdx?: number, endIdx?: number): ChordLocation[] {
-  let idx = skipIntroText(text, startIdx);
+  let idx = startIdx === undefined ? 0 : startIdx;
   let chordLocations: ChordLocation[] = [];
   let maxIdx = endIdx;
   if (maxIdx === undefined) {
