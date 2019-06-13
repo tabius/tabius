@@ -72,16 +72,12 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
   } else {
     maxIdx = Math.min(maxIdx, text.length);
   }
-  let firstAlphaChar: string|undefined = undefined;
   while (idx < maxIdx) {
     const c = text.charAt(idx);
     const alpha = isAlpha(c);
     if (!alpha) {
       idx++;
       continue;
-    }
-    if (firstAlphaChar === undefined) { // save first char in the line.
-      firstAlphaChar = c;
     }
     const chordLocation = parseLeadingChord(text, idx, maxIdx);
     if (chordLocation === undefined) {
