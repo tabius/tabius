@@ -13,7 +13,7 @@ export interface ChordLocation {
 const CHORD_NAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const CHORD_SHARP_FLAT = ['#', 'b'];
 const CHORD_MINOR_MAJOR = ['major', 'maj', 'minor', 'min', 'M', 'm'];
-const CHORD_SUFFIXES = ['4', '5', '+5', '-5', '6', '6-5', '6/9', '6-9', '7', '+7'
+const CHORD_SUFFIXES = ['+', '4', '5', '+5', '-5', '6', '6-5', '6/9', '6-9', '7', '+7'
   , '7-5', '7+5', '/9', '9', '/-9', '-9', '/+9', '/11', '11', 'sus2', 'sus4', '7sus2', '7sus4', 'dim', 'add9', 'add11'];
 
 const VALID_CHORD_CHARS = new Set<string>();
