@@ -29,10 +29,18 @@ describe('Chords Parser, parseChordsLine', () => {
 
   it('should recognize multi-chords lines', () => {
     expect(parseChordsLine(' Cmajor D')).toEqual([{chord: {name: 'C'}, startIdx: 1, endIdx: 7}, {chord: {name: 'D'}, startIdx: 8, endIdx: 9}]);
+    expect(parseChordsLine('Hsus2 Gsus4 Esus F#sus2 G+ E7').length).toBe(6);
   });
 
   it('should correctly process lines with non-chords text', () => {
     expect(parseChordsLine('A little snail')).toEqual([]);
+  });
+
+  it('should correctly parse chords with non-chords text in the line', () => {
+    expect(parseChordsLine(' A E - 2x')).toEqual([
+      {chord: {name: 'A'}, startIdx: 1, endIdx: 2},
+      {chord: {name: 'E'}, startIdx: 3, endIdx: 4},
+    ]);
   });
 
 });
@@ -55,7 +63,17 @@ describe('Chords Parser, parseChords', () => {
       {chord: {name: 'A'}, startIdx: 0, endIdx: 1},
       {chord: {name: 'B'}, startIdx: 3, endIdx: 4}
     ]);
+  });
 
+  it('should recognize special whitespace chars', () => {
+    expect(parseChords('A\r\nB')).toEqual([
+      {chord: {name: 'A'}, startIdx: 0, endIdx: 1},
+      {chord: {name: 'B'}, startIdx: 3, endIdx: 4}
+    ]);
+    expect(parseChords('A\tB')).toEqual([
+      {chord: {name: 'A'}, startIdx: 0, endIdx: 1},
+      {chord: {name: 'B'}, startIdx: 2, endIdx: 3}
+    ]);
   });
 
 });

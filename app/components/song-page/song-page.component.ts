@@ -117,7 +117,7 @@ function getSongTextWithNoChords(text: string, linesCount: number): string {
     if (newPosition === -1) {
       break;
     }
-    const chords = parseChordsLine(text, position + 1, newPosition);
+    const chords = parseChordsLine(text, position, newPosition);
     if (chords.length == 0) {
       // do more validation for the line.
       let serviceLine = false;
