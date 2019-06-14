@@ -15,12 +15,14 @@ const CHORD_SHARP_FLAT = ['#', 'b'];
 const CHORD_MINOR_MAJOR = ['major', 'maj', 'minor', 'min', 'M', 'm'];
 const CHORD_SUFFIXES = [
   '4',
-  '5', '+5', '-5',
+  '+5', '-5', '5',
   '6-5', '6/9', '6-9', '6',
   '+7', '7-5', '7+5', '7',
   '/9', '/-9', '-9', '/+9', '9',
   '/11', '11', '+'
-  , 'sus2', 'sus4', 'sus', '7sus2', '7sus4', '7sus', 'dim', 'add9', 'add11'
+  , 'sus2', 'sus4', 'sus', '7sus2', '7sus4', '7sus',
+  'dim',
+  'add9', 'add11'
 ];
 
 const VALID_CHORD_CHARS = new Set<string>();
