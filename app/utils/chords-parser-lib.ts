@@ -17,6 +17,7 @@ export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'2'|'5'|'6_9'|'7_6'|'7B5b9
     |'min11'|'min13'|'min6'|'min7'|'min7dim5'|'min9'|'minmaj11'|'minmaj13'|'minmaj7'|'minmaj9'|'mM7B5'|'mM7B9'|'Mx11'|'o7B9'|'sus2'|'sus24'|'sus2B5'
     |'sus4';
 
+// noinspection SpellCheckingInspection
 /**
  * List of all known by the app chords.
  * Key => system chord name.
