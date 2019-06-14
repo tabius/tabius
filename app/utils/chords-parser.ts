@@ -27,9 +27,6 @@ const VALID_CHORD_CHARS = new Set<string>();
   }
 });
 
-const CHORD_SEPARATORS = new Set<string>();
-[' ', ',', '{', '}', '(', ')', '[', ']', '-', '|', '\r', '\t'].forEach(c => CHORD_SEPARATORS.add(c));
-
 function startsWithAny(text: string, idx: number, tokens: string[]): number {
   for (const token of tokens) {
     if (text.startsWith(token, idx)) {
@@ -63,7 +60,8 @@ export function parseChords(text: string): ChordLocation[] {
 }
 
 export function parseChordsLine(text: string, startIdx?: number, endIdx?: number): ChordLocation[] {
-  let idx = startIdx === undefined ? 0 : startIdx;
+  const minIdx = startIdx === undefined ? 0 : startIdx;
+  let idx = minIdx;
   let chordLocations: ChordLocation[] = [];
   let maxIdx = endIdx;
   if (maxIdx === undefined) {
@@ -82,8 +80,8 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     const chordLocation = parseLeadingChord(text, idx, maxIdx);
     if (chordLocation === undefined) {
       if (chordLocations.length == 1) {
-        const {chord} = chordLocations[0];
-        if (chord.name == 'A' && !chord.minor && !chord.suffix) { // special heuristics for text lines that starts with 'A'
+        const firstChordLocation = chordLocations[0];
+        if (isSingleLetterChord(firstChordLocation) && firstChordLocation.chord.name === 'A') { // special heuristics for text lines that starts with 'A'
           return [];
         }
       }
@@ -93,7 +91,35 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     chordLocations.push(chordLocation);
     idx += chordLocation.endIdx - chordLocation.startIdx;
   }
+  // strings-like lines heuristics: A|--1-2-3--x-
+  if (chordLocations.length === 1 && isSingleLetterChord(chordLocations[0])) {
+    const textWithoutChord = text.substring(minIdx, maxIdx).replace(chordLocations[0].chord.name, '');
+    if (isStringTabLikeLine(textWithoutChord)) {
+      return [];
+    }
+  }
   return chordLocations;
+}
+
+function isSingleLetterChord(c: ChordLocation): boolean {
+  return c.endIdx - c.startIdx === 1;
+}
+
+function isStringTabLikeLine(text: string): boolean {
+  let dashCount = 0;
+  let alpha: string|undefined = undefined; // allow only 1 extra alpha per string
+  for (let idx = 0; idx < text.length; idx++) {
+    const c = text.charAt(idx);
+    if (c === '-') {
+      dashCount++;
+    } else if (isAlpha(c)) {
+      if (alpha !== undefined && alpha !== c) {
+        return false;
+      }
+      alpha = c;
+    }
+  }
+  return dashCount >= 2;
 }
 
 class ChordBuf {
@@ -124,11 +150,8 @@ export function parseLeadingChord(text: string, startIdx?: number, endIdx?: numb
   let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
   while (idx < maxIdx) {
     const c = text.charAt(idx);
-    if (CHORD_SEPARATORS.has(c)) {
-      break;
-    }
     if (!VALID_CHORD_CHARS.has(c)) {
-      return undefined;
+      break;
     }
     if (!cb.suffix) {
       if (!cb.sharpOrFlat) {
@@ -157,8 +180,7 @@ export function parseLeadingChord(text: string, startIdx?: number, endIdx?: numb
         continue;
       }
     }
-    // we do not know this chord...
-    return undefined;
+    break;
   }
   return {chord: cb.toChord(), startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx};
 }

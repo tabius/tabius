@@ -12,10 +12,16 @@ describe('Chords Parser, parseLeadingChord', () => {
     expect(parseLeadingChord('Esus2', 0, 10)).toEqual({chord: {name: 'E', suffix: 'sus2'}, startIdx: 0, endIdx: 5});
   });
 
-  it('should support about long minor/major variants', () => {
+  it('should support long minor/major variants', () => {
     expect(parseLeadingChord('Dmajor')).toEqual({chord: {name: 'D'}, startIdx: 0, endIdx: 6});
     expect(parseLeadingChord('Cmin')).toEqual({chord: {name: 'C', minor: true}, startIdx: 0, endIdx: 4});
     expect(parseLeadingChord('G#minor')).toEqual({chord: {name: 'G#', minor: true}, startIdx: 0, endIdx: 7});
+  });
+
+  it('should recognize chords by a valid prefix', () => {
+    expect(parseLeadingChord('D*')).toEqual({chord: {name: 'D'}, startIdx: 0, endIdx: 1});
+    expect(parseLeadingChord('C7/')).toEqual({chord: {name: 'C', suffix: '7'}, startIdx: 0, endIdx: 2});
+    expect(parseLeadingChord('Em$')).toEqual({chord: {name: 'E', minor: true}, startIdx: 0, endIdx: 2});
   });
 
 });
@@ -41,6 +47,11 @@ describe('Chords Parser, parseChordsLine', () => {
       {chord: {name: 'A'}, startIdx: 1, endIdx: 2},
       {chord: {name: 'E'}, startIdx: 3, endIdx: 4},
     ]);
+  });
+
+  it('should correctly filter string tabs', () => {
+    expect(parseChordsLine('E--2-3--4-4\nC--3-3-2')).toEqual([]);
+    expect(parseChordsLine('A|--2-3--4-4\nC|--3-3-2')).toEqual([]);
   });
 
 });
