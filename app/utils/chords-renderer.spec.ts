@@ -1,4 +1,7 @@
 import {getToneNameByNumber, renderChord, renderChords} from '@app/utils/chords-renderer';
+import {Chord, ChordType} from '@app/utils/chords-parser-lib';
+
+const c = (tone: string, type: ChordType): Chord => ({tone, type});
 
 describe('Chords Renderer ', () => {
 
@@ -70,10 +73,10 @@ describe('Chords Renderer ', () => {
   });
 
   it('should render H but not B if asked', () => {
-    expect(renderChord({name: 'B'}, {useH: true})).toEqual('H');
-    expect(renderChord({name: 'H'}, {useH: true})).toEqual('H');
-    expect(renderChord({name: 'H'})).toEqual('B');
-    expect(renderChord({name: 'B'})).toEqual('B');
+    expect(renderChord(c('B', 'maj'), {useH: true})).toEqual('H');
+    expect(renderChord(c('H', 'maj'), {useH: true})).toEqual('H');
+    expect(renderChord(c('H', 'maj'))).toEqual('B');
+    expect(renderChord(c('B', 'maj'))).toEqual('B');
   });
 
   it('should respect flat|sharp flags in getToneNameByNumber', () => {

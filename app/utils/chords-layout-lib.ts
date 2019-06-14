@@ -93,19 +93,6 @@ const CHORDS_LAYOUTS = {
   'Gsus4': '330033',
   'G#sus4': '446644',
 
-  // With no number 'sus' is 'sus4'
-  'Asus': 'x00230',
-  'A#sus': 'x11341',
-  'Bsus': 'x22452',
-  'Csus': 'x33011',
-  'C#sus': 'x44122',
-  'Dsus': 'xx0233',
-  'D#sus': 'xx1344',
-  'Esus': '002200',
-  'Fsus': '113311',
-  'F#sus': '224422',
-  'Gsus': '330033',
-  'G#sus': '446644',
 
   ///////////// Seventh Chords /////////////
 

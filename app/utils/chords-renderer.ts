@@ -1,4 +1,5 @@
-import {Chord, parseChords} from '@app/utils/chords-parser';
+import {Chord, VISUAL_TYPE_BY_CHORD_TYPE_KEY} from '@app/utils/chords-parser-lib';
+import {parseChords} from '@app/utils/chords-parser';
 
 export interface ChordRenderingOptions {
   tag?: string;
@@ -77,22 +78,23 @@ export function getToneNameByNumber(toneNumber: number, flat?: boolean): string 
 
 export function renderChord(chord: Chord, optionsParam?: ChordRenderingOptions): string {
   const options = optionsParam === undefined ? {} : optionsParam;
-  let name = chord.name;
+  let tone = chord.tone;
   if (options.transpose) {
-    const oldToneNumber = getToneNumberByName(name);
+    const oldToneNumber = getToneNumberByName(tone);
     const newToneNumber = (oldToneNumber + (options.transpose % TONES_COUNT) + TONES_COUNT) % TONES_COUNT;
-    name = getToneNameByNumber(newToneNumber);
+    tone = getToneNameByNumber(newToneNumber);
   }
 
   // Handle 'B' & 'H'
-  const fullTone = name.charAt(0);
+  const fullTone = tone.charAt(0);
   if (fullTone === 'H' && !options.useH) {
-    name = 'B' + name.substring(1);
+    tone = 'B' + tone.substring(1);
   } else if (fullTone === 'B' && options.useH) {
-    name = 'H' + name.substring(1);
+    tone = 'H' + tone.substring(1);
   }
 
-  const chordString = `${name + (chord.minor ? 'm' : '') + (chord.suffix || '')}`;
+  const visualType = chord.type ? VISUAL_TYPE_BY_CHORD_TYPE_KEY.get(chord.type) || '' : '';
+  const chordString = `${tone + visualType}`;
   const {tag} = options;
   return tag ? `<${tag}>${chordString}</${tag}>` : chordString;
 }

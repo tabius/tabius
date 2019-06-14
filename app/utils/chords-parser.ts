@@ -1,38 +1,4 @@
-export interface Chord {
-  name: string;
-  minor?: boolean;
-  suffix?: string;
-}
-
-export interface ChordLocation {
-  chord: Chord;
-  startIdx: number;
-  endIdx: number; // exclusive
-}
-
-const CHORD_NAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-const CHORD_SHARP_FLAT = ['#', 'b'];
-const CHORD_MINOR_MAJOR = ['major', 'maj', 'minor', 'min', 'M', 'm'];
-const CHORD_SUFFIXES = [
-  '4',
-  '+5', '-5', '5',
-  '6-5', '6/9', '6-9', '6',
-  '+7', '7-5', '7+5', '7',
-  '/9', '/-9', '-9', '/+9', '9',
-  '/11', '11', '+'
-  , 'sus2', 'sus4', 'sus', '7sus2', '7sus4', '7sus',
-  'dim',
-  'add9', 'add11'
-];
-
-function startsWithAny(text: string, idx: number, tokens: string[]): number {
-  for (const token of tokens) {
-    if (text.startsWith(token, idx)) {
-      return token.length;
-    }
-  }
-  return -1;
-}
+import {Chord, CHORD_LETTERS, CHORD_TYPE_BY_RAW_TYPE, ChordLocation, ChordType, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
 
 const ALPHA_EN = /^[A-Z]+$/i;
 const ALPHA_RU = /^[А-ЯЁ]+$/i;
@@ -78,8 +44,8 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     const chordLocation = parseChord(text, idx, maxIdx);
     if (chordLocation === undefined) {
       if (chordLocations.length == 1) {
-        const firstChordLocation = chordLocations[0];
-        if (isSingleLetterChord(firstChordLocation) && firstChordLocation.chord.name === 'A') { // special heuristics for text lines that starts with 'A'
+        const first = chordLocations[0];
+        if (first.endIdx - first.startIdx === 1 && first.chord.tone === 'A') { // special heuristics for text lines that starts with 'A'
           return [];
         }
       }
@@ -90,8 +56,8 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     idx += chordLocation.endIdx - chordLocation.startIdx;
   }
   // strings-like lines heuristics: A|--1-2-3--x-
-  if (chordLocations.length === 1 && isSingleLetterChord(chordLocations[0])) {
-    const textWithoutChord = text.substring(minIdx, maxIdx).replace(chordLocations[0].chord.name, '');
+  if (chordLocations.length === 1 && chordLocations[0].endIdx - chordLocations[0].startIdx <= 2) { // <=2: A or A- (minor)
+    const textWithoutChord = text.substring(minIdx, maxIdx).replace(chordLocations[0].chord.tone, '');
     if (isStringTabLikeLine(textWithoutChord)) {
       return [];
     }
@@ -99,8 +65,51 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
   return chordLocations;
 }
 
-function isSingleLetterChord(c: ChordLocation): boolean {
-  return c.endIdx - c.startIdx === 1;
+/** Parses 1 chord starting from the startIdx. */
+export function parseChord(text: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
+  let idx = startIdx === undefined ? 0 : startIdx;
+  const tone = findPrefixToken(text, idx, CHORD_LETTERS);
+  if (tone == undefined) {
+    return undefined;
+  }
+  const chord: Chord = {tone, type: 'maj'};
+  let parsedType: ChordType|undefined = undefined;
+  idx += tone.length;
+  let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
+  while (idx < maxIdx) {
+    const c = text.charAt(idx);
+    if (chord.tone.length === 1 && c === '#' || c === 'b') {
+      chord.tone += c;
+      idx++;
+      continue;
+    }
+    if (parsedType === undefined) {
+      const typesByFirstChar = RAW_CHORD_TYPES_BY_FIRST_CHAR.get(c);
+      if (typesByFirstChar !== undefined) {
+        const rawType = findPrefixToken(text, idx, typesByFirstChar);
+        if (rawType !== undefined) {
+          idx += rawType.length;
+          chord.type = CHORD_TYPE_BY_RAW_TYPE.get(rawType)!;
+          parsedType = chord.type;
+          continue;
+        }
+      }
+    }
+    if (isAlpha(c)) { // the word continues with some letters -> most probably this is not a chord but an ordinary word.
+      return undefined;
+    }
+    break;
+  }
+  return {chord, startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx};
+}
+
+function findPrefixToken(text: string, idx: number, tokens: string[]): string|undefined {
+  for (const token of tokens) {
+    if (text.startsWith(token, idx)) {
+      return token;
+    }
+  }
+  return undefined;
 }
 
 function isStringTabLikeLine(text: string): boolean {
@@ -118,68 +127,4 @@ function isStringTabLikeLine(text: string): boolean {
     }
   }
   return dashCount >= 2;
-}
-
-class ChordBuf {
-  sharpOrFlat?: string;
-  minorOrMajor?: string;
-  suffix?: string;
-  suffixTokensCount = 0;
-
-  constructor(readonly name: string) {
-  }
-
-  toChord(): Chord {
-    const name = this.name + (this.sharpOrFlat === '#' ? '#' : this.sharpOrFlat === 'b' ? 'b' : '');
-    const minor = this.minorOrMajor === 'm' || this.minorOrMajor === 'min' || this.minorOrMajor === 'minor' || undefined;
-    // avoid keys with 'undefined' values to simplify testing.
-    return minor === undefined && this.suffix === undefined ? {name} : minor === undefined ? {name, suffix: this.suffix} : {name, minor};
-  }
-}
-
-/** Parses 1 chord starting from the startIdx. */
-export function parseChord(text: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
-  let idx = startIdx === undefined ? 0 : startIdx;
-  const d = startsWithAny(text, idx, CHORD_NAMES);
-  if (d != 1) {
-    return undefined;
-  }
-  const cb = new ChordBuf(text.substring(idx, idx + d));
-  idx += d;
-  let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
-  while (idx < maxIdx) {
-    const c = text.charAt(idx);
-    if (!cb.suffix) {
-      if (!cb.sharpOrFlat) {
-        const d = startsWithAny(text, idx, CHORD_SHARP_FLAT);
-        if (d == 1) {
-          cb.sharpOrFlat = text.substring(idx, idx + d);
-          idx += d;
-          continue;
-        }
-      }
-      if (!cb.minorOrMajor) {
-        const d = startsWithAny(text, idx, CHORD_MINOR_MAJOR);
-        if (d > 0) {
-          cb.minorOrMajor = text.substring(idx, idx + d);
-          idx += d;
-          continue;
-        }
-      }
-    }
-    if (cb.suffixTokensCount < 2) {
-      const d = startsWithAny(text, idx, CHORD_SUFFIXES);
-      if (d > 0) {
-        cb.suffix = (cb.suffix || '') + text.substring(idx, idx + d);
-        cb.suffixTokensCount++;
-        idx += d;
-        continue;
-      }
-    }
-    if (isAlpha(c)) { // the word continues with some letters -> most probably this is not a chord but an ordinary word.
-      return undefined;
-    }
-    break;
-  }
-  return {chord: cb.toChord(), startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx};
 }
