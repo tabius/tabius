@@ -25,15 +25,6 @@ const CHORD_SUFFIXES = [
   'add9', 'add11'
 ];
 
-const VALID_CHORD_CHARS = new Set<string>();
-[CHORD_NAMES, CHORD_SHARP_FLAT, CHORD_MINOR_MAJOR, CHORD_SUFFIXES].forEach(arr => {
-  for (const line of arr) {
-    for (let i = 0; i < line.length; i++) {
-      VALID_CHORD_CHARS.add(line.charAt(i));
-    }
-  }
-});
-
 function startsWithAny(text: string, idx: number, tokens: string[]): number {
   for (const token of tokens) {
     if (text.startsWith(token, idx)) {
@@ -84,7 +75,7 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
       idx++;
       continue;
     }
-    const chordLocation = parseLeadingChord(text, idx, maxIdx);
+    const chordLocation = parseChord(text, idx, maxIdx);
     if (chordLocation === undefined) {
       if (chordLocations.length == 1) {
         const firstChordLocation = chordLocations[0];
@@ -146,7 +137,8 @@ class ChordBuf {
   }
 }
 
-export function parseLeadingChord(text: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
+/** Parses 1 chord starting from the startIdx. */
+export function parseChord(text: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
   let idx = startIdx === undefined ? 0 : startIdx;
   const d = startsWithAny(text, idx, CHORD_NAMES);
   if (d != 1) {
@@ -157,9 +149,6 @@ export function parseLeadingChord(text: string, startIdx?: number, endIdx?: numb
   let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
   while (idx < maxIdx) {
     const c = text.charAt(idx);
-    if (!VALID_CHORD_CHARS.has(c)) {
-      break;
-    }
     if (!cb.suffix) {
       if (!cb.sharpOrFlat) {
         const d = startsWithAny(text, idx, CHORD_SHARP_FLAT);
@@ -186,6 +175,9 @@ export function parseLeadingChord(text: string, startIdx?: number, endIdx?: numb
         idx += d;
         continue;
       }
+    }
+    if (isAlpha(c)) { // the word continues with some letters -> most probably this is not a chord but an ordinary word.
+      return undefined;
     }
     break;
   }
