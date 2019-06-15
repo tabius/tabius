@@ -106,22 +106,21 @@ export const VISUAL_TYPE_BY_CHORD_TYPE_KEY = new Map<string, string>();
 Object.entries(CHORDS_LIB).forEach(([key, value]) => {
   const rawTypes = value.split(',').map(v => v.trim().substring(1));
   for (const rawType of rawTypes) {
-    if (rawType === '') {
-      continue;
-    }
     if (CHORD_TYPE_BY_RAW_TYPE.has(rawType)) {
       throw new Error(`Duplicate chord mapping: ${rawType} => ${key}`);
     }
     CHORD_TYPE_BY_RAW_TYPE.set(rawType, key as ChordType);
     const visualType = rawTypes[0];
     VISUAL_TYPE_BY_CHORD_TYPE_KEY.set(rawType, visualType);
-    const firstChar = rawType.charAt(0);
-    let byFirstChar = RAW_CHORD_TYPES_BY_FIRST_CHAR.get(firstChar);
-    if (!byFirstChar) {
-      byFirstChar = [];
-      RAW_CHORD_TYPES_BY_FIRST_CHAR.set(firstChar, byFirstChar);
+    if (rawType.length > 0) {
+      const firstChar = rawType.charAt(0);
+      let byFirstChar = RAW_CHORD_TYPES_BY_FIRST_CHAR.get(firstChar);
+      if (!byFirstChar) {
+        byFirstChar = [];
+        RAW_CHORD_TYPES_BY_FIRST_CHAR.set(firstChar, byFirstChar);
+      }
+      byFirstChar.push(rawType);
     }
-    byFirstChar.push(rawType);
   }
   for (const byFirstChar of RAW_CHORD_TYPES_BY_FIRST_CHAR.values()) {
     byFirstChar.sort().reverse(); // longest first.
