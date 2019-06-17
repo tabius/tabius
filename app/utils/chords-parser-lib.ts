@@ -27,7 +27,7 @@ export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'2'|'5'|'6_9'|'7_6'|'7B5b9
  */
 export const CHORDS_LIB: { [key in ChordType]: string } = {
   '+7B9': 'A+7b9, A7♯5b9, A7+5b9',
-  '+7x9': 'A+7♯9, A7♯5♯9, A7+5+9',
+  '+7x9': 'A7+9, A+7♯9, A7♯5♯9, A7+5+9',
   '+M7B9': 'A+M7b9, A+Δb9, AM7♯5b9, AM7+5b9, AΔ♯5b9, AΔ+5b9',
   '+M7x9': 'A+M7♯9, A+Δ♯9, AM7♯5♯9, AM7+5+9, AΔ♯5♯9, AΔ+5+9',
   '2': 'Aadd9, Aadd2, A2',
@@ -35,7 +35,7 @@ export const CHORDS_LIB: { [key in ChordType]: string } = {
   '6_9': 'A6/9, AM6/9',
   '7_6': 'A7/6, A7_6',
   '7B5b9': 'A7b5b9',
-  '7B9': 'A7b9',
+  '7B9': 'A7-9, A7b9',
   '7sus2': 'A7sus2',
   '7sus24': 'A7sus24',
   '7sus4': 'A7sus4, A7sus',
