@@ -19,7 +19,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
   private readonly isBrowser: boolean;
   private painter!: ChordImagePainter;
 
-  @ViewChild('canvas') canvas!: ElementRef;
+  @ViewChild('canvas', {static: true}) canvas!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) platformId: string) {
     this.isBrowser = isPlatformBrowser(platformId);
