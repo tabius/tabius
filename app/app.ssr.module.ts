@@ -11,9 +11,7 @@ import {AppComponent} from './components/app.component';
     ServerTransferStateModule,
   ],
   bootstrap: [AppComponent],
-  providers: [
-    //{provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptorService, multi: true}
-  ]
+  providers: []
 })
 export class AppServerModule {
 }

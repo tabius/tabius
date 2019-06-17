@@ -1,24 +1,21 @@
-import {HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {switchMap} from 'rxjs/operators';
 import {AuthService} from '@app/services/auth.service';
+import {Observable} from 'rxjs';
 
-// TODO: re-check how it works on server side!
+/** Injects credentials (cookies) into the request. Client side interceptor. */
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
 
   constructor(private readonly authService: AuthService) {
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authTokenPromise = this.authService.updateUserInfoInCookiesIfNeeded();
     return fromPromise(authTokenPromise).pipe(
-        switchMap(() =>
-            next.handle(req.clone({
-              withCredentials: true
-            }))
-        )
+        switchMap(() => next.handle(req.clone({withCredentials: true})))
     );
   }
 }
