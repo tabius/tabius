@@ -113,7 +113,11 @@ export class ArtistDataService {
           if (response.ok) {
             const {artist, songs} = response.body as ArtistDetailsResponse;
             this.registerArtistOnFetch(artist);
-            const details: ArtistDetails = {id: artist.id, songIds: songs.map(s => s.id), version: artist.version};
+            const details: ArtistDetails = {
+              id: artist.id,
+              songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
+              version: artist.version,
+            };
             this.store.set(artistDetailsKey, details, needUpdateByVersionChange);
             songs.forEach(s => this.store.set(getSongKey(s.id), s, needUpdateByVersionChange));
             if (this.browser) { // todo: find a better place for all-songs pre-fetch?

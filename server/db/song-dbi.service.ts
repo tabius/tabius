@@ -42,10 +42,7 @@ export class SongDbi {
     const idList = artistIds.join(',');
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL}, artist a WHERE s.artist_id = a.id AND a.id IN ( ${idList} )`)
-        .then(([rows]: [SongRow[]]) =>
-            rows.map(row => row2Song(row))
-                .sort((s1, s2) => s1.title.localeCompare(s2.title)) //todo: move results sorting to the frontend
-        );
+        .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
   }
 }
 
