@@ -24,6 +24,9 @@
             <a class="string-button" (click)="play('A')" [class.active]="isPlaying('A')" tabindex="0"><span>5</span></a>
             <a class="string-button" (click)="play('E')" [class.active]="isPlaying('E')" tabindex="0"><span>6</span></a>
         </div>
+        <div class="stop-button-row">
+            <a class="string-button stop-button" (click)="stop()" tabindex="0"><span>СТОП</span></a>
+        </div>
     </div>
 
     <div class="key-help-row">

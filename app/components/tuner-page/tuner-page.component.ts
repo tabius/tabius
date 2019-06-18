@@ -17,7 +17,7 @@ export class TunerPageComponent implements OnInit {
   playingAudio?: HTMLAudioElement;
   forceStop = false;
 
-  constructor(private cd: ChangeDetectorRef,
+  constructor(private readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,) {
   }
@@ -31,11 +31,11 @@ export class TunerPageComponent implements OnInit {
   }
 
   @HostListener('window:keyup', ['$event'])
-  keyEvent(event: KeyboardEvent) {
+  keyEvent(event: KeyboardEvent): void {
     switch (event.code) {
       case 'Space':
         if (this.playingAudio) {
-          this._stop();
+          this.stop();
           this.forceStop = true;
         } else {
           this._play();
@@ -71,14 +71,14 @@ export class TunerPageComponent implements OnInit {
     }
   }
 
-  play(guitarString: string) {
+  play(guitarString: string): void {
     this.currentString = guitarString;
     this._play();
   }
 
-  private _play() {
+  private _play(): void {
     if (this.playingAudio) {
-      this._stop();
+      this.stop();
     }
     this.forceStop = false;
     this.playingAudio = new Audio(getSoundFileUrl(this.currentString, this.soundType));
@@ -97,7 +97,7 @@ export class TunerPageComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  private _stop() {
+  stop(): void {
     if (this.playingAudio) {
       this.playingAudio.pause();
       this.playingAudio = undefined;
