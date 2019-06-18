@@ -33,6 +33,13 @@
         </div>
     </div>
 
+    <div class="playlist-editor-block" *ngIf="user$|async">
+        <h2>Плейлисты</h2>
+        <div class="playlist-editor-content-block">
+            <gt-playlist-editor></gt-playlist-editor>
+        </div>
+    </div>
+
     <div style="margin-top: 40px;">
         <gt-signin-signout-button></gt-signin-signout-button>
     </div>

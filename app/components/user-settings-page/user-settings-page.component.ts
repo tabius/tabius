@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {UserDataService} from '@app/services/user-data.service';
-import {getDefaultUserSongFontSize, UserDeviceSettings} from '@common/user-model';
+import {getDefaultUserSongFontSize, User, UserDeviceSettings} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SongDetails} from '@common/artist-model';
+import {UserSessionState} from '@app/store/user-session-state';
 
 @Component({
   selector: 'gt-user-settings-page',
@@ -20,9 +21,12 @@ export class UserSettingsPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject<unknown>();
   readonly defaultFontSize = getDefaultUserSongFontSize();
   readonly settingsDemoSong = SETTINGS_DEMO_SONG;
+  readonly user$: Observable<User|undefined>;
 
   constructor(private readonly cd: ChangeDetectorRef,
-              private readonly uds: UserDataService) {
+              private readonly uds: UserDataService,
+              private readonly session: UserSessionState) {
+    this.user$ = session.user$;
   }
 
   ngOnInit() {

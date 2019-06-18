@@ -1,16 +1,15 @@
-<ul *ngFor="let playlist of playlists$ | async">
+<ul *ngFor="let playlist of playlists$ | async" class="existing-playlists">
     <li>
-        <a routerLink="{{playlistLink + playlist.mount}}">
-            {{playlist.name}} [{{playlist.songIds.length}}]
-        </a>
+        <a routerLink="{{playlistLink + playlist.mount}}">{{playlist.name}} [{{playlist.songIds.length}}] </a>
+        <a (click)="deletePlaylist(playlist.id)" class="btn delete-button" title="Удалить плейлист">❌</a>
     </li>
 </ul>
 
-<form #createPlaylistForm="ngForm" (ngSubmit)="createPlaylist()">
-    <label>Создать новый плейлист:</label>
-    <input type="text" [(ngModel)]="newPlaylistName" name="name" required/>
+<form #createPlaylistForm="ngForm" (ngSubmit)="createPlaylist()" class="new-playlist-form">
+    <input type="text" [(ngModel)]="newPlaylistName" name="name" required class="new-playlist-name-input" placeholder="Имя нового плейлиста"/>
     <button type="submit"
-            class="btn btn-success"
+            class="btn create-button"
+            title="Создать новый плейлист"
             [disabled]="!createPlaylistForm.form.valid">
         Создать
     </button>

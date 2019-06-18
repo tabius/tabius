@@ -22,10 +22,14 @@ export class PlaylistEditorComponent {
     this.playlists$ = this.uds.getUserPlaylists();
   }
 
-  createPlaylist() {
+  createPlaylist(): void {
     this.uds.createUserPlaylist({
       name: this.newPlaylistName,
       songIds: [],
     });
+  }
+
+  deletePlaylist(id: number): void {
+    this.uds.deleteUserPlaylist(id);
   }
 }

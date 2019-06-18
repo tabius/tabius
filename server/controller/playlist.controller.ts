@@ -51,9 +51,9 @@ export class PlaylistController {
   }
 
   /** Removes user playlist and returns list of all user playlists. */
-  @Delete('/delete')
+  @Delete('/delete/:id')
   @UseGuards(ServerAuthGuard)
-  async delete(@Session() session, @Body() playlistId: number|string): Promise<Playlist[]> {
+  async delete(@Session() session, @Param('id') playlistId: string): Promise<Playlist[]> {
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`delete: ${playlistId}, user: ${user.email}`);
     await this.playlistDbi.delete(user.id, +playlistId);

@@ -174,7 +174,7 @@ export class UserDataService {
     // Note: playlists can be managed only when online.
     const signedIn = await this.session.isSignedIn();
     if (signedIn) {
-      this.httpClient.post(`/api/playlist/delete`, playlistId, {observe: 'response'})
+      this.httpClient.delete(`/api/playlist/delete/${playlistId}`, {observe: 'response'})
           .pipe(catchError(response => of({...response, body: undefined})))
           .subscribe(response => {
                 if (response.ok) {

@@ -1,0 +1,33 @@
+.existing-playlists {
+  line-height: 28px;
+}
+
+.delete-button {
+  margin-left: 5px;
+  padding: 2px 7px;
+  border-radius: 0;
+  font-size: 14px;
+  color: #777;
+
+  &:hover {
+    color: #333;
+  }
+}
+
+.new-playlist-form {
+  margin-top: 10px;
+
+  .new-playlist-name-input {
+    line-height: 24px;
+    font-size: 16px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 167px
+  }
+
+  .create-button {
+    margin-left: 5px;
+  }
+
+}
+
