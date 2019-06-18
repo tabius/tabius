@@ -44,6 +44,11 @@ h2 {
   margin-right: 7px;
   -webkit-tap-highlight-color: transparent;
   outline: none;
+
+  &:focus {
+    background: #effaff;
+  }
+
 }
 
 .string-button.active {

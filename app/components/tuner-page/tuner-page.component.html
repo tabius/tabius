@@ -15,17 +15,16 @@
             </label>
 
         </div>
-        <!-- TODO: visualize focus state-->
         <div class="string-buttons-row">
-            <a class="string-button" (click)="play('e')" [class.active]="isPlaying('e')" tabindex="0"><span>1</span></a>
-            <a class="string-button" (click)="play('H')" [class.active]="isPlaying('H')" tabindex="0"><span>2</span></a>
-            <a class="string-button" (click)="play('G')" [class.active]="isPlaying('G')" tabindex="0"><span>3</span></a>
-            <a class="string-button" (click)="play('D')" [class.active]="isPlaying('D')" tabindex="0"><span>4</span></a>
-            <a class="string-button" (click)="play('A')" [class.active]="isPlaying('A')" tabindex="0"><span>5</span></a>
-            <a class="string-button" (click)="play('E')" [class.active]="isPlaying('E')" tabindex="0"><span>6</span></a>
+            <a class="string-button" (click)="play('e')" (focus)="trackFocus('e')" [class.active]="isPlaying('e')" tabindex="0"><span>1</span></a>
+            <a class="string-button" (click)="play('H')" (focus)="trackFocus('H')" [class.active]="isPlaying('H')" tabindex="0"><span>2</span></a>
+            <a class="string-button" (click)="play('G')" (focus)="trackFocus('G')" [class.active]="isPlaying('G')" tabindex="0"><span>3</span></a>
+            <a class="string-button" (click)="play('D')" (focus)="trackFocus('D')" [class.active]="isPlaying('D')" tabindex="0"><span>4</span></a>
+            <a class="string-button" (click)="play('A')" (focus)="trackFocus('A')" [class.active]="isPlaying('A')" tabindex="0"><span>5</span></a>
+            <a class="string-button" (click)="play('E')" (focus)="trackFocus('E')" [class.active]="isPlaying('E')" tabindex="0"><span>6</span></a>
         </div>
         <div class="stop-button-row">
-            <a class="string-button stop-button" (click)="stop()" tabindex="0"><span>СТОП</span></a>
+            <a class="string-button stop-button" (click)="stop()" (focus)="trackFocus('')" tabindex="0"><span>СТОП</span></a>
         </div>
     </div>
 

@@ -16,6 +16,7 @@ export class TunerPageComponent implements OnInit {
   repeat = false;
   playingAudio?: HTMLAudioElement;
   forceStop = false;
+  focusedString = '';
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly title: Title,
@@ -30,14 +31,17 @@ export class TunerPageComponent implements OnInit {
     });
   }
 
-  @HostListener('window:keyup', ['$event'])
+  @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent): void {
     switch (event.code) {
       case 'Space':
-        if (this.playingAudio) {
+        if (this.playingAudio || this.focusedString === '') {
           this.stop();
           this.forceStop = true;
         } else {
+          if (this.focusedString !== '') {
+            this.currentString = this.focusedString;
+          }
           this._play();
         }
         break;
@@ -68,12 +72,20 @@ export class TunerPageComponent implements OnInit {
         this.soundType = this.soundType === 'c' ? 'e' : 'c';
         this._play();
         break;
+      default:
+        return;
     }
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   play(guitarString: string): void {
     this.currentString = guitarString;
     this._play();
+  }
+
+  trackFocus(focusedString: string): void {
+    this.focusedString = focusedString;
   }
 
   private _play(): void {
@@ -119,4 +131,3 @@ function getGuitarStringIndex(guitarString: string): number {
   const n = GUITAR_STRINGS.indexOf(guitarString);
   return n >= 0 ? n : 0;
 }
-
