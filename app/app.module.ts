@@ -38,8 +38,10 @@ import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-
 import {PlaylistListPageComponent} from './components/playlist-list-page/playlist-list-page.component';
 import {SigninSignoutButtonComponent} from './components/signin-signout-button/signin-signout-button.component';
 import {PwaUpdaterService} from '@app/services/pwa-updater.service';
-import { ChordImageComponent } from './components/chord-image/chord-image.component';
-import { SongChordsComponent } from './components/song-chords/song-chords.component';
+import {ChordImageComponent} from './components/chord-image/chord-image.component';
+import {SongChordsComponent} from './components/song-chords/song-chords.component';
+import {ToastModule} from '@app/toast';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -71,6 +73,7 @@ import { SongChordsComponent } from './components/song-chords/song-chords.compon
     SongChordsComponent,
   ],
   imports: [
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
@@ -79,9 +82,8 @@ import { SongChordsComponent } from './components/song-chords/song-chords.compon
     BrowserModule.withServerTransition({appId: 'tabius'}),
     BrowserTransferStateModule,
     RoutingModule,
-    //todo: why prod only?
-    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
-    // ServiceWorkerModule.register('ngsw-worker.js')
+    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
+    ToastModule,
   ],
   providers: [
     {provide: FirestoreSettingsToken, useValue: {}}, //  this line fixes Firebase warning about default persistence = true.

@@ -8,6 +8,7 @@ import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {UserSessionState} from '@app/store/user-session-state';
 import {isInvalidId, isValidId, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc_utils';
 import {CreatePlaylistRequest} from '@common/ajax-model';
+import {ToastService} from '@app/toast/toast.service';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_KEY = 'song-settings-key';
@@ -26,6 +27,7 @@ export class UserDataService {
 
   constructor(private readonly httpClient: HttpClient,
               private readonly session: UserSessionState,
+              private readonly toastService: ToastService,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore) {
   }
 
@@ -164,6 +166,8 @@ export class UserDataService {
           .subscribe(response => {
                 if (response.ok) {
                   this.cachePlaylistsInBrowserStoreOnFetch(response.body); //todo: concurrent callbacks?
+                } else {
+                  this.toastService.warning('Ошибка при обращении к серверу');
                 }
               }
           );
@@ -179,6 +183,8 @@ export class UserDataService {
           .subscribe(response => {
                 if (response.ok) {
                   this.cachePlaylistsInBrowserStoreOnFetch(response.body); //todo: concurrent callbacks?
+                } else {
+                  this.toastService.warning('Ошибка при обращении к серверу');
                 }
               }
           );
