@@ -1,11 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {UserSessionState} from '@app/store/user-session-state';
 import {Subject} from 'rxjs';
 import {UserDataService} from '@app/services/user-data.service';
 import {AuthService} from '@app/services/auth.service';
 import {takeUntil} from 'rxjs/operators';
-import {Playlist, User} from '@common/user-model';
+import {Playlist} from '@common/user-model';
 import {MOUNT_PLAYLIST_PREFIX} from '@common/mounts';
+import {ToastService} from '@app/toast/toast.service';
+import {MGS_PLAYLIST_NOT_FOUND, MSG_NETWORK_ERROR} from '@common/messages';
 
 @Component({
   selector: 'gt-add-song-to-playlist',
@@ -25,12 +26,10 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
 
-  private user?: User;
-
-  constructor(private readonly session: UserSessionState,
-              private readonly uds: UserDataService,
+  constructor(private readonly uds: UserDataService,
               private readonly authService: AuthService,
               private readonly cd: ChangeDetectorRef,
+              private readonly toastService: ToastService,
   ) {
   }
 
@@ -39,12 +38,6 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe(playlists => {
           this.playlists = playlists;
-          this.cd.detectChanges();
-        });
-    this.session.user$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(user => {
-          this.user = user;
           this.cd.detectChanges();
         });
   }
@@ -58,33 +51,39 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
   }
 
   async togglePlaylist(playlistId: number) {
-    if (!this.user) {
-      this.authService.signIn();
-      return;
+    try {
+      await this.authService.askUserToSignInOrFail();
+      const playlist = this.playlists.find(p => p.id === playlistId);
+      if (!playlist) {
+        this.toastService.warning(MGS_PLAYLIST_NOT_FOUND);
+        return;
+      }
+      if (playlist.songIds.includes(this.songId)) {
+        playlist.songIds = playlist.songIds.filter(id => id != this.songId);
+      } else {
+        playlist.songIds.push(this.songId);
+      }
+      await this.uds.updateUserPlaylist(playlist);
+    } catch (err) {
+      this.toastService.warning(err, MSG_NETWORK_ERROR);
     }
-    const playlist = this.playlists.find(p => p.id === playlistId);
-    if (!playlist) {
-      console.error(`Playlist not found: ${playlistId}`);
-      return;
-    }
-    if (playlist.songIds.includes(this.songId)) {
-      playlist.songIds = playlist.songIds.filter(id => id != this.songId);
-    } else {
-      playlist.songIds.push(this.songId);
-    }
-    //todo: notify about network issues?
-    this.uds.updateUserPlaylist(playlist);
   }
 
-  toggleNewFavPlaylist() {
-    if (!this.user) {
-      this.authService.signIn();
-      return;
+  async toggleNewFavPlaylist(): Promise<void> {
+    try {
+      await this.authService.askUserToSignInOrFail();
+      // check for FAV list again if user has signed just now.
+      const playlist = this.playlists.find(p => p.name === this.favPlaylistName);
+      if (playlist != null) {
+        if (!playlist.songIds.includes(this.songId)) {
+          await this.togglePlaylist(playlist.id);
+        }
+        return;
+      }
+      const createPlaylistRequest = {name: this.favPlaylistName, songIds: [this.songId],};
+      await this.uds.createUserPlaylist(createPlaylistRequest);
+    } catch (err) {
+      this.toastService.warning(err, MSG_NETWORK_ERROR);
     }
-    //todo: notify about network issues?
-    this.uds.createUserPlaylist({
-      name: this.favPlaylistName,
-      songIds: [this.songId],
-    });
   }
 }

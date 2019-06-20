@@ -15,3 +15,7 @@ export interface CreatePlaylistRequest {
   name: string;
   songIds: number[];
 }
+
+export type CreatePlaylistResponse = Playlist[];
+export type UpdatePlaylistResponse = Playlist[];
+export type DeletePlaylistResponse = Playlist[];

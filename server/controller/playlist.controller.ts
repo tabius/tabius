@@ -4,7 +4,7 @@ import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {Playlist, User} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {CreatePlaylistRequestValidator, PlaylistValidator} from '@server/util/validators';
-import {CreatePlaylistRequest} from '@common/ajax-model';
+import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 @Controller('/api/playlist')
 export class PlaylistController {
@@ -25,7 +25,7 @@ export class PlaylistController {
   /** Creates new empty playlist and returns list of all user playlists. */
   @UseGuards(ServerAuthGuard)
   @Post('/create')
-  async create(@Session() session, @Body() createPlaylistRequest: CreatePlaylistRequest): Promise<Playlist[]> {
+  async create(@Session() session, @Body() createPlaylistRequest: CreatePlaylistRequest): Promise<CreatePlaylistResponse> {
     const vr = validate(createPlaylistRequest, conformsTo(CreatePlaylistRequestValidator));
     if (!vr.success) {
       throw Error(vr.toString());
@@ -39,7 +39,7 @@ export class PlaylistController {
   /** Updates user playlist and returns list of all user playlists. */
   @Put('/update')
   @UseGuards(ServerAuthGuard)
-  async update(@Session() session, @Body() playlist: Playlist): Promise<Playlist[]> {
+  async update(@Session() session, @Body() playlist: Playlist): Promise<UpdatePlaylistResponse> {
     const vr = validate(playlist, conformsTo(PlaylistValidator));
     if (!vr.success) {
       throw Error(vr.toString());
@@ -53,7 +53,7 @@ export class PlaylistController {
   /** Removes user playlist and returns list of all user playlists. */
   @Delete('/delete/:id')
   @UseGuards(ServerAuthGuard)
-  async delete(@Session() session, @Param('id') playlistId: string): Promise<Playlist[]> {
+  async delete(@Session() session, @Param('id') playlistId: string): Promise<DeletePlaylistResponse> {
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`delete: ${playlistId}, user: ${user.email}`);
     await this.playlistDbi.delete(user.id, +playlistId);

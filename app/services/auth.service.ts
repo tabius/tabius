@@ -11,6 +11,7 @@ import {UserSessionState} from '@app/store/user-session-state';
 import {UserDataService} from '@app/services/user-data.service';
 import {FirebaseApp} from '@angular/fire';
 import {isPlatformBrowser} from '@angular/common';
+import {MGS_ERROR_DURING_SIGN_IN} from '@common/messages';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ import {isPlatformBrowser} from '@angular/common';
 export class AuthService {
 
   private readonly isBrowser: boolean;
+  private user?: User;
 
   constructor(public readonly fireAuth: AngularFireAuth,
               private readonly httpClient: HttpClient,
@@ -28,15 +30,31 @@ export class AuthService {
               @Inject(PLATFORM_ID) readonly platformId: Object,
               @Inject(FirebaseApp) private readonly firebaseApp: FirebaseApp) {
     this.isBrowser = isPlatformBrowser(platformId);
+    this.session.user$.subscribe(user => this.user = user);
   }
 
   async signIn(): Promise<void> {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({prompt: 'select_account'});
     try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({prompt: 'select_account'});
       await this.fireAuth.auth.signInWithPopup(provider);
-    } catch (error) {
-      console.debug('SignIn failed!', error);
+
+      // Dirty hack but what is the better solution?
+      // Problem: need to wait for all observables to push new user info before returning from this method.
+      await new Promise(resolve => setTimeout(resolve, 200));
+    } catch (err) {
+      console.debug('Error during sign in', err);
+      throw MGS_ERROR_DURING_SIGN_IN;
+    }
+  }
+
+  /**
+   * Opens Sign-In dialog if user is not signed in. Throws error if sign in is failed.
+   * Does nothing if user is already signed in.
+   */
+  async askUserToSignInOrFail(): Promise<void> {
+    if (!this.user) {
+      await this.signIn();
     }
   }
 

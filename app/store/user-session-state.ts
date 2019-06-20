@@ -3,6 +3,7 @@ import {ReplaySubject} from 'rxjs';
 import {User} from '@common/user-model';
 import {isPlatformBrowser} from '@angular/common';
 import {take} from 'rxjs/operators';
+import {MGS_SIGN_IN_REQUIRED} from '@common/messages';
 
 /** In browser session state. */
 @Injectable({
@@ -44,5 +45,13 @@ export class UserSessionState {
     this.firstUserUpdate = false;
     this.userSnapshot = user;
     this.user$.next(user);
+  }
+
+  /** Throws error if user is not signed in. Does nothing if user is signed in. */
+  async requireSignIn(): Promise<void> {
+    const signedIn = await this.isSignedIn();
+    if (!signedIn) {
+      throw MGS_SIGN_IN_REQUIRED;
+    }
   }
 }

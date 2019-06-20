@@ -7,8 +7,7 @@ import {catchError, flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {UserSessionState} from '@app/store/user-session-state';
 import {isInvalidId, isValidId, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc_utils';
-import {CreatePlaylistRequest} from '@common/ajax-model';
-import {ToastService} from '@app/toast/toast.service';
+import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_KEY = 'song-settings-key';
@@ -27,8 +26,8 @@ export class UserDataService {
 
   constructor(private readonly httpClient: HttpClient,
               private readonly session: UserSessionState,
-              private readonly toastService: ToastService,
-              @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore) {
+              @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
+  ) {
   }
 
   getUserDeviceSettings(): Observable<UserDeviceSettings> {
@@ -142,53 +141,22 @@ export class UserDataService {
         }));
   }
 
-  async updateUserPlaylist(playlist: Playlist): Promise<void> {
-    // Note: playlists can be managed only when online.
-    const signedIn = await this.session.isSignedIn();
-    if (signedIn) {
-      this.httpClient.put(`/api/playlist/update`, playlist, {observe: 'response'})
-          .pipe(catchError(response => of({...response, body: undefined})))
-          .subscribe(response => {
-                if (response.ok) {
-                  this.cachePlaylistsInBrowserStoreOnFetch(response.body); //todo: concurrent callbacks?
-                }
-              }
-          );
-    }
+  async createUserPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
+    await this.session.requireSignIn();
+    const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).toPromise();
+    this.cachePlaylistsInBrowserStoreOnFetch(response);
   }
 
-  async createUserPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
-    // Note: playlists can be managed only when online.
-    const signedIn = await this.session.isSignedIn();
-    if (signedIn) {
-      this.httpClient.post(`/api/playlist/create`, createPlaylistRequest, {observe: 'response'})
-          .pipe(catchError(response => of({...response, body: undefined})))
-          .subscribe(response => {
-                if (response.ok) {
-                  this.cachePlaylistsInBrowserStoreOnFetch(response.body); //todo: concurrent callbacks?
-                } else {
-                  this.toastService.warning('Ошибка при обращении к серверу');
-                }
-              }
-          );
-    }
+  async updateUserPlaylist(playlist: Playlist): Promise<void> {
+    await this.session.requireSignIn();
+    const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).toPromise();
+    this.cachePlaylistsInBrowserStoreOnFetch(response);
   }
 
   async deleteUserPlaylist(playlistId: number): Promise<void> {
-    // Note: playlists can be managed only when online.
-    const signedIn = await this.session.isSignedIn();
-    if (signedIn) {
-      this.httpClient.delete(`/api/playlist/delete/${playlistId}`, {observe: 'response'})
-          .pipe(catchError(response => of({...response, body: undefined})))
-          .subscribe(response => {
-                if (response.ok) {
-                  this.cachePlaylistsInBrowserStoreOnFetch(response.body); //todo: concurrent callbacks?
-                } else {
-                  this.toastService.warning('Ошибка при обращении к серверу');
-                }
-              }
-          );
-    }
+    await this.session.requireSignIn();
+    const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).toPromise();
+    this.cachePlaylistsInBrowserStoreOnFetch(response);
   }
 
   cachePlaylistsInBrowserStoreOnFetch(playlists: Playlist[]): void {
