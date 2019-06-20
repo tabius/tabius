@@ -4,6 +4,7 @@ import {ComponentPortal, PortalInjector} from '@angular/cdk/portal';
 
 import {ToastComponent} from './toast.component';
 import {Toast, ToastRef, ToastType} from '@app/toast/toast-model';
+import {MSG_UNEXPECTED_ERROR} from '@common/messages';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,9 @@ export class ToastService {
               private parentInjector: Injector) {
   }
 
-  warning(text: string): ToastRef {
-    return this.show(text, 'warning');
+  warning(err: unknown, fallback = MSG_UNEXPECTED_ERROR): ToastRef {
+    const message = typeof err === 'string' ? err : fallback;
+    return this.show(message, 'warning');
   }
 
   show(text: string, type: ToastType): ToastRef {
