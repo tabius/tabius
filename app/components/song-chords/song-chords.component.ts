@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {ChordRenderingOptions, renderChord} from '@app/utils/chords-renderer';
 import {UserDataService} from '@app/services/user-data.service';
@@ -13,8 +13,8 @@ import {parseChords} from '@app/utils/chords-parser';
   styleUrls: ['./song-chords.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongChordsComponent implements OnInit {
-  private readonly destroyed$ = new Subject<unknown>();
+export class SongChordsComponent implements OnInit, OnDestroy {
+  private readonly destroyed$ = new Subject<void>();
 
   //TODO: handle song change.
   @Input() song!: SongDetails;
@@ -44,6 +44,10 @@ export class SongChordsComponent implements OnInit {
           this.updateChordsList();
           this.cd.detectChanges();
         });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 
   private updateChordsList() {
