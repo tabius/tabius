@@ -1,7 +1,6 @@
-<div class="toast"
+<div class="toast toast-{{toast.type}}"
      [@fadeAnimation]="{value: animationState, params:{ fadeIn: 700, fadeOut: 700 }}"
      (@fadeAnimation.done)="onFadeFinished($event)">
-    <!--    <div>{{ iconType }}</div>-->
     <div>{{ toast.text }}</div>
     <div class="close-button-row">
         <a (click)="close()" class="btn close-button">OK</a>

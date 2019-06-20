@@ -23,14 +23,11 @@ const toastAnimations: { readonly fadeToast: AnimationTriggerMetadata } = {
 })
 export class ToastComponent implements OnInit, OnDestroy {
   animationState: ToastAnimationState = 'default';
-  iconType: string;
-
   private intervalId!: number;
 
   constructor(readonly toast: Toast,
               private readonly ref: ToastRef,
               private readonly cd: ChangeDetectorRef) {
-    this.iconType = toast.type === 'success' ? 'done' : toast.type;
   }
 
   ngOnInit(): void {
