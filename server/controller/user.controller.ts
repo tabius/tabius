@@ -23,7 +23,7 @@ export class UserController {
     this.logger.log(`User is logged in: ${user.email}`);
     const vr = validate(user, conformsTo(UserValidator));
     if (!vr.success) {
-      throw Error(vr.toString());
+      throw vr.toString();
     }
     await this.userDbi.updateOnLogin(user);
     const [settings, playlists] = await Promise.all([this._getUserSettings(user), this.playlistDbi.getPlaylists(user.id)]);
@@ -44,7 +44,7 @@ export class UserController {
   async setSettings(@Session() session, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
     const vr = validate(songSettings, conformsTo(UserSongSettingsValidator));
     if (!vr.success) {
-      throw Error(vr.toString());
+      throw vr.toString();
     }
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`set settings: ${user.email} for song: ${songSettings.songId}`);
@@ -59,8 +59,8 @@ export class UserController {
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`set b4Si: ${user.email}: ${b4SiFlag}`);
     const settings = await this._getUserSettings(user);
-    settings.b4Si = !!b4SiFlag;
-    await this.userDbi.updateUserSettings(user.id, settings);
+    const updatedSettings = {...settings, b4Si: !!b4SiFlag};
+    await this.userDbi.updateUserSettings(user.id, updatedSettings);
     return settings;
   }
 
@@ -68,7 +68,7 @@ export class UserController {
   private async _getUserSettings(user: User): Promise<UserSettings> {
     const settings = await this.userDbi.getSettings(user.id);
     if (settings === undefined) {
-      throw new Error(`Settings not found! User: ${user.email}, id: ${user.id}`);
+      throw `Settings not found! User: ${user.email}, id: ${user.id}`;
     }
     return settings == null ? newDefaultUserSettings() : settings;
   }

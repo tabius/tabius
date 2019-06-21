@@ -44,11 +44,11 @@ export class UserDbi {
   }
 
   updateUserSettings(userId: string, userSettings: UserSettings): Promise<void> {
-    const mount = userSettings.mount;
-    delete userSettings.mount;
-    const settingsJson = JSON.stringify(userSettings);
+    const settingsWithoutMount = {...userSettings};
+    delete settingsWithoutMount.mount;
+    const settingsJson = JSON.stringify(settingsWithoutMount);
     return this.db.pool.promise()
-        .query('UPDATE user SET settings = ?, mount = ? WHERE id = ?', [settingsJson, mount, userId]);
+        .query('UPDATE user SET settings = ?, mount = ? WHERE id = ?', [settingsJson, userSettings.mount, userId]);
   }
 
   getSettings(userId: string): Promise<UserSettings|undefined> {
