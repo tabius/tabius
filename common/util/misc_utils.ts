@@ -40,7 +40,7 @@ export function needUpdateByVersionChange(oldValue?: Versioned, newValue?: Versi
   return newValue.version > oldValue.version;
 }
 
-export function needUpdateByShallowArrayCompare(oldValue?: any[], newValue?: any[]): boolean {
+export function needUpdateByShallowArrayCompare(oldValue?: readonly any[], newValue?: readonly any[]): boolean {
   return !shallowArraysEquals(oldValue, newValue);
 }
 
@@ -55,7 +55,7 @@ export function needUpdateByStringify(oldValue?: any, newValue?: any): boolean {
 }
 
 /** Returns true if arrays are equal. */
-export function shallowArraysEquals(a1?: any[], a2?: any[]): boolean {
+export function shallowArraysEquals(a1?: readonly any[], a2?: readonly any[]): boolean {
   if (a1 === a2) {
     return true;
   }

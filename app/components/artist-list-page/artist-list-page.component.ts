@@ -119,7 +119,7 @@ export class ArtistListPageComponent implements OnInit {
   }
 }
 
-function toLetterBlocks(artists: Artist[]): LetterBlock[] {
+function toLetterBlocks(artists: readonly Artist[]): LetterBlock[] {
   const blocksByLetter = new Map<string, LetterBlock>();
   for (const artist of artists) {
     let letter = artist.name.charAt(0);

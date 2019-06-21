@@ -51,7 +51,7 @@ class BrowserStoreImpl implements BrowserStore {
               serverState: TransferState,
               schemaVersion: number,
               forceLocalStorageInBrowser = false,
-              private readonly freezeFn = deepFreeze) {
+              private readonly freezeFn = noFreeze) {
     this.serverStateKey = makeStateKey(`db-${storeName}`);
     this.storeAdapter$$ = new Promise<StoreAdapter>(resolve => {
       const adapter = browser
@@ -178,7 +178,12 @@ export class AppBrowserStore extends BrowserStoreImpl {
   }
 }
 
-function deepFreeze<T>(obj: T|undefined): T|undefined {
+function noFreeze<T>(obj: T|undefined): T|undefined {
+  return obj;
+}
+
+// noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
+export function deepFreeze<T>(obj: T|undefined): T|undefined {
   if (obj === undefined) {
     return undefined;
   }

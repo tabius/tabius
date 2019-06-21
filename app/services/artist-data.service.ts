@@ -82,7 +82,7 @@ export class ArtistDataService {
     return this.store.get<ArtistDetails>(artistKey);
   }
 
-  private async fetchArtists(artistIds: number[]): Promise<void> {
+  private async fetchArtists(artistIds: readonly number[]): Promise<void> {
     if (artistIds.length === 0) {
       return;
     }
@@ -146,7 +146,7 @@ export class ArtistDataService {
     return this.getArtistsByIds([artistId!]).pipe(map(list => list[0]));
   }
 
-  getArtistsByIds(artistIds: number[]): Observable<(Artist|undefined)[]> {
+  getArtistsByIds(artistIds: readonly number[]): Observable<(Artist|undefined)[]> {
     return fromPromise(this.fetchAndCacheMissedArtists(artistIds))
         .pipe(
             take(1),
@@ -158,7 +158,7 @@ export class ArtistDataService {
   }
 
   /** Pre-fetches all song list items missed in cache. */
-  private async fetchAndCacheMissedArtists(artistIds: number[]): Promise<void> {
+  private async fetchAndCacheMissedArtists(artistIds: readonly number[]): Promise<void> {
     const missedArtistIds = await this.getMissedIds(ARTIST_KEY_PREFIX, artistIds);
     return this.fetchArtists(missedArtistIds);
   }
@@ -176,7 +176,7 @@ export class ArtistDataService {
     return this.getSongsByIds([songId]).pipe(map(list => list[0]));
   }
 
-  getSongsByIds(songIds: number[]): Observable<(Song|undefined)[]> {
+  getSongsByIds(songIds: readonly number[]): Observable<(Song|undefined)[]> {
     return fromPromise(this.fetchAndCacheMissedSongs(songIds))
         .pipe(
             take(1),
@@ -198,18 +198,18 @@ export class ArtistDataService {
   }
 
   /** Pre-fetches all song list items missed in cache. */
-  private async fetchAndCacheMissedSongs(songIds: number[]): Promise<void> {
+  private async fetchAndCacheMissedSongs(songIds: readonly number[]): Promise<void> {
     const missedSongIds = await this.getMissedIds(SONG_KEY_PREFIX, songIds);
     return this.fetchSongs(missedSongIds);
   }
 
   /** Pre-fetches all song list items missed in cache. */
-  private async fetchAndCacheMissedSongDetails(songIds: number[]): Promise<void> {
+  private async fetchAndCacheMissedSongDetails(songIds: readonly number[]): Promise<void> {
     const missedSongIds = await this.getMissedIds(SONG_DETAIL_KEY_PREFIX, songIds);
     return this.fetchSongsDetails(missedSongIds);
   }
 
-  private async fetchSongs(songIds: number[]): Promise<void> {
+  private async fetchSongs(songIds: readonly number[]): Promise<void> {
     if (songIds.length === 0) {
       return;
     }
@@ -230,7 +230,7 @@ export class ArtistDataService {
         .toPromise();
   }
 
-  private async fetchSongsDetails(songIds: number[]): Promise<void> {
+  private async fetchSongsDetails(songIds: readonly number[]): Promise<void> {
     if (songIds.length === 0) {
       return;
     }
@@ -261,7 +261,7 @@ export class ArtistDataService {
   }
 
 
-  private async getMissedIds(keyPrefix: string, ids: number[]): Promise<number[]> {
+  private async getMissedIds(keyPrefix: string, ids: readonly number[]): Promise<number[]> {
     if (ids.length === 0) {
       return [];
     }

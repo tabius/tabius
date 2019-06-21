@@ -26,7 +26,7 @@ export class ArtistDbi {
         .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtistListItem(row)));
   }
 
-  getArtistsByIds(artistIds: number[]): Promise<(Artist)[]> {
+  getArtistsByIds(artistIds: readonly number[]): Promise<(Artist)[]> {
     return this.db.pool.promise()
         .query(`${SELECT_ARTIST_SQL} WHERE id IN (${artistIds.join(',')})`)
         .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtistListItem(row)));

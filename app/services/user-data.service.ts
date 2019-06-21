@@ -159,7 +159,7 @@ export class UserDataService {
     this.cachePlaylistsInBrowserStoreOnFetch(response);
   }
 
-  cachePlaylistsInBrowserStoreOnFetch(playlists: Playlist[]): void {
+  cachePlaylistsInBrowserStoreOnFetch(playlists: readonly Playlist[]): void {
     this.store.set(USER_PLAYLISTS_KEY, playlists.map(p => p.id), needUpdateByShallowArrayCompare);
     for (const playlist of playlists) {
       this.state.playlistIdByMount.set(playlist.mount, playlist.id);

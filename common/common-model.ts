@@ -1,7 +1,7 @@
 export interface WithId {
-  id: number;
+  readonly id: number;
 }
 
 export interface Versioned {
-  version: number;
+  readonly version: number;
 }

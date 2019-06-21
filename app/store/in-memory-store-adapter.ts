@@ -8,7 +8,7 @@ export class InMemoryStoreAdapter implements StoreAdapter {
     return Promise.resolve(this.map.get(key));
   }
 
-  getAll<T>(keys: string[]): Promise<(T|undefined)[]> {
+  getAll<T>(keys: readonly string[]): Promise<(T|undefined)[]> {
     return new Promise<(T|undefined)[]>(resolve => {
       const result: (T|undefined)[] = [];
       for (const key of keys) {

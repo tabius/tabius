@@ -24,7 +24,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
     });
   }
 
-  getAll<T>(keys: string[]): Promise<(T|undefined)[]> {
+  getAll<T>(keys: readonly string[]): Promise<(T|undefined)[]> {
     if (keys.length === 0) {
       return Promise.resolve([]);
     }

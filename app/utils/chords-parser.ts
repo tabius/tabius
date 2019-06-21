@@ -103,7 +103,7 @@ export function parseChord(text: string, startIdx?: number, endIdx?: number): Ch
   return {chord, startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx};
 }
 
-function findPrefixToken(text: string, idx: number, tokens: string[]): string|undefined {
+function findPrefixToken(text: string, idx: number, tokens: readonly string[]): string|undefined {
   for (const token of tokens) {
     if (text.startsWith(token, idx)) {
       return token;

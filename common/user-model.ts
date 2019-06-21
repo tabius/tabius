@@ -7,10 +7,10 @@ export const USERS_STORE_SCHEMA_VERSION = 3;
 export type FirebaseUser = UserInfo;
 
 export interface User {
-  id: string;
-  name: string;
-  email: string;
-  picture: string;
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly picture: string;
 }
 
 /**
@@ -18,7 +18,7 @@ export interface User {
  * Usually these settings are different per device. Example: font sizes.
  */
 export interface UserDeviceSettings {
-  songFontSize: number;
+  readonly songFontSize: number;
 }
 
 export function newDefaultUserDeviceSettings(): UserDeviceSettings {
@@ -30,16 +30,16 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 /** User settings stored on the server. */
 export interface UserSettings {
   /** User mount tag. Can only be used for signed in users. */
-  mount: string,
-  songs: { [songId: number]: UserSongSettings },
+  readonly mount: string,
+  readonly songs: { [songId: number]: UserSongSettings },
   /** If true => B will be rendered instead of H for the tone Si. */
-  b4Si?: boolean,
+  readonly b4Si?: boolean,
 }
 
 /** Per song settings. */
 export interface UserSongSettings {
-  songId: number;
-  transpose: number;
+  readonly songId: number;
+  readonly transpose: number;
 }
 
 export function newDefaultUserSongSettings(songId: number): UserSongSettings {
@@ -73,9 +73,9 @@ export function getDefaultUserSongFontSize(): number {
 
 
 export interface Playlist extends WithId, Versioned {
-  userId: string,
-  name: string;
+  readonly userId: string,
+  readonly name: string;
   /** Unique for all user playlists.*/
-  mount: string;
-  songIds: number[];
+  readonly mount: string;
+  readonly songIds: readonly number[];
 }

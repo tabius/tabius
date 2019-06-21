@@ -24,21 +24,21 @@ export class SongDbi {
   constructor(private readonly db: DbService) {
   }
 
-  getSongs(songIds: number[]): Promise<Song[]> {
+  getSongs(songIds: readonly number[]): Promise<Song[]> {
     const idList = songIds.join(',');
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
         .then(([rows]: [SongRow[]]) => rows.map(row => (row2Song(row))));
   }
 
-  getSongsDetails(songIds: number[]): Promise<SongDetails[]> {
+  getSongsDetails(songIds: readonly number[]): Promise<SongDetails[]> {
     const idList = songIds.join(',');
     return this.db.pool.promise()
         .query(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
         .then(([rows]: [SongRow[]]) => rows.map(row => (row2SongDetails(row))));
   }
 
-  getSongsByArtistIds(artistIds: number[]): Promise<Song[]> {
+  getSongsByArtistIds(artistIds: readonly number[]): Promise<Song[]> {
     const idList = artistIds.join(',');
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL}, artist a WHERE s.artist_id = a.id AND a.id IN ( ${idList} )`)

@@ -12,7 +12,7 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
     return Promise.resolve(this.getAndParse(key));
   }
 
-  getAll<T>(keys: string[]): Promise<(T|undefined)[]> {
+  getAll<T>(keys: readonly string[]): Promise<(T|undefined)[]> {
     return new Promise<(T|undefined)[]>(resolve => {
       const result: (T|undefined)[] = [];
       for (const key of keys) {

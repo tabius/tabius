@@ -3,7 +3,7 @@ export interface StoreAdapter {
   get<T>(key: string): Promise<T|undefined>;
 
   /** Returns all entries for key */
-  getAll<T>(keys: string[]): Promise<(T|undefined)[]>;
+  getAll<T>(keys: readonly string[]): Promise<(T|undefined)[]>;
 
   /** Sets value by key */
   set<T>(key: string, value: T|undefined): Promise<void>;

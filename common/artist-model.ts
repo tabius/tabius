@@ -9,34 +9,34 @@ export enum ArtistType {
 
 export interface Artist extends WithId, Versioned {
   /** Name of the artist. For person it is <Last Name> <First Name>. */
-  name: string;
+  readonly name: string;
   /** Mount part of the artist page. Unique for all artists. */
-  mount: string;
+  readonly mount: string;
   /** Type of the artist: Band or Person. */
-  type: ArtistType;
+  readonly type: ArtistType;
   /** List of artist's band ids.*/
   //todo: make optional or move to details?
-  bandIds: number[];
+  readonly bandIds: readonly number[];
 }
 
 export interface ArtistDetails extends WithId, Versioned {
-  songIds: number[];
+  readonly songIds: readonly number[];
 }
 
 export interface Song extends WithId, Versioned {
   /** Mount part of the song page. Unique for all songs per artist. */
-  mount: string;
+  readonly mount: string;
   /** Title of the song. */
-  title: string;
+  readonly title: string;
   /** Performer. */
-  artistId: number;
+  readonly artistId: number;
   /** Forum topic id.*/
-  tid: number;
+  readonly tid: number;
 }
 
 export interface SongDetails extends WithId, Versioned {
   /** Text of the song with tabs & chords. */
-  content: string;
+  readonly content: string;
   /** List of media links: Youtube, etc...*/
-  mediaLinks: string[];
+  readonly mediaLinks: string[];
 }
