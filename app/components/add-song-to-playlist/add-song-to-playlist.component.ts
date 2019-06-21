@@ -75,6 +75,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
       }
       await this.uds.updateUserPlaylist({...playlist, songIds: newSongIds});
     } catch (err) {
+      console.error(err);
       this.toastService.warning(err, MSG_NETWORK_ERROR);
       checkboxElement.checked = this.isInPlaylist(playlistId); // enforce checkbox state.
     }
@@ -94,6 +95,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
       const createPlaylistRequest = {name: this.favPlaylistName, songIds: [this.songId],};
       await this.uds.createUserPlaylist(createPlaylistRequest);
     } catch (err) {
+      console.error(err);
       this.toastService.warning(err, MSG_NETWORK_ERROR);
       checkboxElement.checked = false;
     }
