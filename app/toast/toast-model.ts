@@ -11,6 +11,10 @@ export class ToastRef {
   constructor(private readonly overlay: OverlayRef) {
   }
 
+  isVisible(): boolean {
+    return this.overlay.overlayElement !== undefined;
+  }
+
   close(): void {
     this.overlay.dispose();
   }

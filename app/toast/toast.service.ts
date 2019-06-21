@@ -11,6 +11,8 @@ import {MSG_UNEXPECTED_ERROR} from '@common/messages';
 })
 export class ToastService {
 
+  private lastToast?: ToastRef;
+
   constructor(private overlay: Overlay,
               private parentInjector: Injector) {
   }
@@ -21,10 +23,17 @@ export class ToastService {
   }
 
   show(text: string, type: ToastType): ToastRef {
+    if (this.lastToast) {
+      if (this.lastToast.isVisible()) {
+        this.lastToast.close();
+      }
+      delete this.lastToast;
+    }
     const overlayRef = this.overlay.create({panelClass: 'toast-overlay'});
     const toastRef = new ToastRef(overlayRef);
     const injector = getInjector({text, type}, toastRef, this.parentInjector);
     overlayRef.attach(new ComponentPortal(ToastComponent, null, injector));
+    this.lastToast = toastRef;
     return toastRef;
   }
 }
