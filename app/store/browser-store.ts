@@ -46,7 +46,12 @@ class BrowserStoreImpl implements BrowserStore {
   private readonly serverStateKey: StateKey<any>;
   private readonly storeAdapter$$: Promise<StoreAdapter>;
 
-  constructor(storeName: string, browser: boolean, serverState: TransferState, schemaVersion: number, forceLocalStorageInBrowser = false) {
+  constructor(storeName: string,
+              browser: boolean,
+              serverState: TransferState,
+              schemaVersion: number,
+              forceLocalStorageInBrowser = false,
+              private readonly freezeFn = deepFreeze) {
     this.serverStateKey = makeStateKey(`db-${storeName}`);
     this.storeAdapter$$ = new Promise<StoreAdapter>(resolve => {
       const adapter = browser
@@ -79,7 +84,7 @@ class BrowserStoreImpl implements BrowserStore {
     let rs$ = this.dataMap.get(key);
     if (!rs$) {
       rs$ = this.newReplaySubject(key);
-      this.storeAdapter$$.then(store => store.get(key).then(value => rs$!.next(value)));
+      this.storeAdapter$$.then(store => store.get(key).then(value => rs$!.next(this.freezeFn(value))));
     }
     return rs$;
   }
@@ -88,7 +93,7 @@ class BrowserStoreImpl implements BrowserStore {
     const rs$ = new ReplaySubject<T|undefined>(1);
     this.dataMap.set(key, rs$);
     if (initValue !== undefined) {
-      rs$.next(initValue);
+      rs$.next(this.freezeFn(initValue));
     }
     return rs$;
   }
@@ -105,7 +110,7 @@ class BrowserStoreImpl implements BrowserStore {
     return store.set(key, value).then(() => {
       const rs$ = this.dataMap.get(key);
       if (rs$) {
-        rs$.next(value);
+        rs$.next(this.freezeFn(value));
       }
     });
   }
@@ -171,4 +176,18 @@ export class AppBrowserStore extends BrowserStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(APP_STORE_NAME, isPlatformBrowser(platformId), serverState, 1, true);
   }
+}
+
+function deepFreeze<T>(obj: T|undefined): T|undefined {
+  if (obj === undefined) {
+    return undefined;
+  }
+  Object.freeze(obj);
+  for (const prop of Object.getOwnPropertyNames(obj)) {
+    const value = obj[prop];
+    if ((typeof value === 'object' || typeof value === 'function') && !Object.isFrozen(value)) {
+      deepFreeze(value);
+    }
+  }
+  return obj;
 }
