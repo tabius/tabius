@@ -50,7 +50,16 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     return withId.id;
   }
 
-  async togglePlaylist(playlistId: number) {
+  /** Returns true if current song is in the playlist. */
+  isInPlaylist(p: Playlist|number): boolean {
+    if (typeof p !== 'number') {
+      return p.songIds.includes(this.songId);
+    }
+    const playlist = this.playlists.find(pl => pl.id === p);
+    return playlist !== undefined && playlist.songIds.includes(this.songId);
+  }
+
+  async togglePlaylist(playlistId: number, checkboxElement: any = {}) {
     try {
       await this.authService.askUserToSignInOrFail();
       const playlist = this.playlists.find(p => p.id === playlistId);
@@ -58,18 +67,20 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
         this.toastService.warning(MGS_PLAYLIST_NOT_FOUND);
         return;
       }
+      let newSongIds = [...playlist.songIds];
       if (playlist.songIds.includes(this.songId)) {
-        playlist.songIds = playlist.songIds.filter(id => id != this.songId);
+        newSongIds = playlist.songIds.filter(id => id != this.songId);
       } else {
-        playlist.songIds.push(this.songId);
+        newSongIds.push(this.songId);
       }
-      await this.uds.updateUserPlaylist(playlist);
+      await this.uds.updateUserPlaylist({...playlist, songIds: newSongIds});
     } catch (err) {
       this.toastService.warning(err, MSG_NETWORK_ERROR);
+      checkboxElement.checked = this.isInPlaylist(playlistId); // enforce checkbox state.
     }
   }
 
-  async toggleNewFavPlaylist(): Promise<void> {
+  async toggleNewFavPlaylist(checkboxElement: any = {}): Promise<void> {
     try {
       await this.authService.askUserToSignInOrFail();
       // check for FAV list again if user has signed just now.
@@ -84,6 +95,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
       await this.uds.createUserPlaylist(createPlaylistRequest);
     } catch (err) {
       this.toastService.warning(err, MSG_NETWORK_ERROR);
+      checkboxElement.checked = false;
     }
   }
 }
