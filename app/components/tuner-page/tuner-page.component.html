@@ -5,7 +5,7 @@
     <div>
         <div class="settings-row">
             Тон
-            <select [(ngModel)]="soundType" style="margin-left: 5px;">
+            <select [ngModel]="deviceSettings.tunerToneType" (ngModelChange)="setToneType($event)" style="margin-left: 5px;">
                 <option value="c">Классика</option>
                 <option value="e">Электро</option>
             </select>

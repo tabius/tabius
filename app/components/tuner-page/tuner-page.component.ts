@@ -18,7 +18,6 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   private readonly destroyed$ = new Subject();
 
   currentString = 'e';
-  soundType = 'c';
   deviceSettings = newDefaultUserDeviceSettings();
   playingAudio?: HTMLAudioElement;
   forceStop = false;
@@ -87,7 +86,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
       case 'ArrowDown':
       case 'KeyQ':
       case 'KeyA':
-        this.soundType = this.soundType === 'c' ? 'e' : 'c';
+        this.setToneType(this.deviceSettings.tunerToneType === 'c' ? 'e' : 'c');
         this._play();
         break;
       default:
@@ -111,7 +110,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
       this.stop();
     }
     this.forceStop = false;
-    this.playingAudio = new Audio(getSoundFileUrl(this.currentString, this.soundType));
+    this.playingAudio = new Audio(getSoundFileUrl(this.currentString, this.deviceSettings.tunerToneType));
     this.playingAudio.play().then(() => {
       if (!this.playingAudio) {
         return;
@@ -140,6 +139,10 @@ export class TunerPageComponent implements OnInit, OnDestroy {
 
   setRepeatMode(repeat: boolean): void {
     this.uds.setUserDeviceSettings({...this.deviceSettings, tunerRepeatMode: repeat});
+  }
+
+  setToneType(toneType: 'c'|'e'): void {
+    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerToneType: toneType});
   }
 }
 

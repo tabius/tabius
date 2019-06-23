@@ -22,12 +22,15 @@ export interface UserDeviceSettings {
   readonly songFontSize: number;
   /** If true -> repeat mode is checked by default in tuner. */
   readonly tunerRepeatMode: boolean;
+  /** 'c' for Classic, 'e' for Electro. */
+  readonly tunerToneType: 'c'|'e';
 }
 
 export function newDefaultUserDeviceSettings(): UserDeviceSettings {
   return {
     songFontSize: getDefaultUserSongFontSize(),
-    tunerRepeatMode: false
+    tunerRepeatMode: false,
+    tunerToneType: 'c',
   };
 }
 
