@@ -11,7 +11,7 @@
             </select>
 
             <label class="checkbox" style="margin-left: 25px;">
-                <input type="checkbox" [checked]="repeat" (change)="repeat = !repeat"><span>повтор</span>
+                <input type="checkbox" [checked]="deviceSettings.tunerRepeatMode" (change)="setRepeatMode($event.target.checked)"><span>повтор</span>
             </label>
 
         </div>

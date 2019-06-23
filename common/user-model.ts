@@ -18,12 +18,16 @@ export interface User {
  * Usually these settings are different per device. Example: font sizes.
  */
 export interface UserDeviceSettings {
+  /** Font size in pixels. */
   readonly songFontSize: number;
+  /** If true -> repeat mode is checked by default in tuner. */
+  readonly tunerRepeatMode: boolean;
 }
 
 export function newDefaultUserDeviceSettings(): UserDeviceSettings {
   return {
-    songFontSize: getDefaultUserSongFontSize()
+    songFontSize: getDefaultUserSongFontSize(),
+    tunerRepeatMode: false
   };
 }
 

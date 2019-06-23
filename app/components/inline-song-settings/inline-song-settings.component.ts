@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {UserDataService} from '@app/services/user-data.service';
-import {getDefaultUserSongFontSize, UserDeviceSettings, UserSongSettings} from '@common/user-model';
+import {getDefaultUserSongFontSize, newDefaultUserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
@@ -23,7 +23,7 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
 
   @Input() songId!: number;
 
-  deviceSettings!: UserDeviceSettings;
+  deviceSettings = newDefaultUserDeviceSettings();
   readonly defaultFontSize = getDefaultUserSongFontSize();
 
   songSettings!: UserSongSettings;

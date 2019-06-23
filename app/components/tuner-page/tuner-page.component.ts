@@ -1,6 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
+import {Subject} from 'rxjs';
+import {UserDataService} from '@app/services/user-data.service';
+import {takeUntil} from 'rxjs/operators';
+import {newDefaultUserDeviceSettings} from '@common/user-model';
 
 const GUITAR_STRINGS = ['e', 'H', 'G', 'D', 'A', 'E'];
 
@@ -10,17 +14,27 @@ const GUITAR_STRINGS = ['e', 'H', 'G', 'D', 'A', 'E'];
   styleUrls: ['./tuner-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TunerPageComponent implements OnInit {
+export class TunerPageComponent implements OnInit, OnDestroy {
+  private readonly destroyed$ = new Subject();
+
   currentString = 'e';
   soundType = 'c';
-  repeat = false;
+  deviceSettings = newDefaultUserDeviceSettings();
   playingAudio?: HTMLAudioElement;
   forceStop = false;
   focusedString = '';
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly title: Title,
-              private readonly meta: Meta,) {
+              private readonly meta: Meta,
+              private readonly uds: UserDataService,
+  ) {
+    this.uds.getUserDeviceSettings()
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(deviceSettings => {
+          this.deviceSettings = deviceSettings;
+          this.cd.detectChanges();
+        });
   }
 
   ngOnInit(): void {
@@ -29,6 +43,10 @@ export class TunerPageComponent implements OnInit {
       description: 'Простой и удобный тюнер для настройки гитары на слух.',
       keywords: ['тюнер для гитары', 'тюнер', 'гитара', 'настройка гитары', 'настройка на слух'],
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -46,7 +64,7 @@ export class TunerPageComponent implements OnInit {
         }
         break;
       case 'Digit0':
-        this.repeat = !this.repeat;
+        this.setRepeatMode(!this.deviceSettings.tunerRepeatMode);
         break;
       case 'Digit1':
       case 'Digit2':
@@ -101,7 +119,7 @@ export class TunerPageComponent implements OnInit {
       this.playingAudio.addEventListener('ended', () => {
         this.playingAudio = undefined;
         this.cd.detectChanges();
-        if (this.repeat && !this.forceStop) {
+        if (this.deviceSettings.tunerRepeatMode && !this.forceStop) {
           this._play();
         }
       });
@@ -118,6 +136,10 @@ export class TunerPageComponent implements OnInit {
 
   isPlaying(guitarString?: string): boolean {
     return !!this.playingAudio && (!guitarString || guitarString === this.currentString);
+  }
+
+  setRepeatMode(repeat: boolean): void {
+    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerRepeatMode: repeat});
   }
 }
 
