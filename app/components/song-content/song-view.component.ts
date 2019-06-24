@@ -18,7 +18,7 @@ const MIN_SONG_LEN_FOR_3_COLUMN_MODE = 1200;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
-  private readonly destroyed$ = new Subject<unknown>();
+  private readonly destroyed$ = new Subject();
 
   @Input() song!: SongDetails;
   @Input() multiColumnMode = true;
@@ -30,7 +30,11 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
 
   private transpose = 0;
   private b4Si?: boolean;
+  private songFontSize?: number;
   private availableWidth = 0;
+
+  /** Heuristic based maximum song line width in pixels. Computed lazily and if === 0 it is not computed. */
+  private maxLineWidth = 0;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService,
@@ -42,10 +46,13 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
     this.updateAvailableWidth();
     this.userSongStyle$ = this.uds.getUserDeviceSettings()
         .pipe(
+            takeUntil(this.destroyed$),
             map(settings => {
               const style = {};
               if (settings.songFontSize) {
                 style['fontSize'] = `${settings.songFontSize}px`;
+                this.songFontSize = settings.songFontSize;
+                this.maxLineWidth = 0;
               }
               return style;
             }));
@@ -55,6 +62,7 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {
           this.transpose = songSettings.transpose;
+          this.maxLineWidth = 0; // transposition may add extra characters that may lead to the line width update.
           this.updateSongView();
           this.cd.detectChanges();
         });
@@ -73,6 +81,7 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.maxLineWidth = 0;
     this.updateSongView();
   }
 
@@ -96,6 +105,25 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   is3ColumnMode(): boolean {
-    return this.song.content.length > MIN_SONG_LEN_FOR_3_COLUMN_MODE && this.availableWidth > 1920;
+    return this.song.content.length > MIN_SONG_LEN_FOR_3_COLUMN_MODE &&
+        (this.availableWidth > 1920 || (this.availableWidth / (1 + this.getMaxSongLineWidthHeuristic()) >= 3));
+  }
+
+  private getMaxSongLineWidthHeuristic(): number {
+    if (this.maxLineWidth === 0) {
+      let maxCharsPerLine = 0;
+      const {content} = this.song;
+      for (let i = 0; i < content.length;) {
+        const lineSepIdx = content.indexOf('\n', i);
+        if (lineSepIdx === -1) {
+          break;
+        }
+        maxCharsPerLine = Math.max(maxCharsPerLine, lineSepIdx - 1 - i);
+        i = lineSepIdx + 1;
+      }
+      // trivial heuristic for song width.
+      this.maxLineWidth = (maxCharsPerLine + 1) * (this.songFontSize ? this.songFontSize : 16) * 2 / 3;
+    }
+    return this.maxLineWidth;
   }
 }
