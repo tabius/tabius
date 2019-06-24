@@ -1,4 +1,4 @@
-import {isValidId} from '@common/util/misc_utils';
+import {isValidId} from '@common/util/misc-utils';
 import {Playlist, User, UserSongSettings} from '@common/user-model';
 import {eachItem, error, isArray, isNumber, min, minLength, success, ValidationResult, Validator} from 'typed-validation';
 import * as v from 'validator';

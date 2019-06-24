@@ -7,7 +7,7 @@ import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc_utils';
+import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
 
 class ArtistViewModel {
   readonly displayName: string;

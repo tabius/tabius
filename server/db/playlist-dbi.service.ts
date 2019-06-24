@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
-import {toArrayOfInts} from '@common/util/misc_utils';
+import {toArrayOfInts} from '@common/util/misc-utils';
 import Hashids from 'hashids';
 import {Playlist} from '@common/user-model';
 import {CreatePlaylistRequest} from '@common/ajax-model';

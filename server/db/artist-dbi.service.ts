@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
 import {Artist, ArtistType} from '@common/artist-model';
-import {toArrayOfInts} from '@common/util/misc_utils';
+import {toArrayOfInts} from '@common/util/misc-utils';
 
 interface ArtistRow {
   id: number;

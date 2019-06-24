@@ -8,7 +8,7 @@ import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
-import {isValidId} from '@common/util/misc_utils';
+import {isValidId} from '@common/util/misc-utils';
 import {FORUM_LINK} from '@common/mounts';
 import {parseChordsLine} from '@app/utils/chords-parser';
 

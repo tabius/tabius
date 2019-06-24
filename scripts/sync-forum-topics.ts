@@ -1,7 +1,7 @@
 import {promisify} from 'util';
 import {readDbConfig} from '@server/db/db-config';
 import {get, post} from 'request';
-import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc_utils';
+import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
 import {ArtistType} from '@common/artist-model';
 
 const forumUrl = process.env.TABIUS_FORUM_URL;

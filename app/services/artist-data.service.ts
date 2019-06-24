@@ -7,7 +7,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {ArtistDetailsResponse} from '@common/ajax-model';
-import {isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc_utils';
+import {isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
 import {WithId} from '@common/common-model';
 import {BrowserStore} from '@app/store/browser-store';
 

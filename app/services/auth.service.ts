@@ -3,7 +3,7 @@ import * as firebase from 'firebase/app'; // for GoogleProvider only
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AUTH_TOKEN_COOKIE_NAME, User} from '@common/user-model';
 import {HttpClient} from '@angular/common/http';
-import {firebaseUser2User} from 'common/util/misc_utils';
+import {firebaseUser2User} from 'common/util/misc-utils';
 import {CookieService} from '@app/services/cookie.service';
 import {Router} from '@angular/router';
 import {LoginResponse} from '@common/ajax-model';

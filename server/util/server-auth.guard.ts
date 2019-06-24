@@ -2,7 +2,7 @@ import {CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable} fr
 import {Observable} from 'rxjs';
 import * as admin from 'firebase-admin';
 import {AUTH_TOKEN_COOKIE_NAME, User} from '@common/user-model';
-import {decodedIdToken2User} from '@common/util/misc_utils';
+import {decodedIdToken2User} from '@common/util/misc-utils';
 
 const USER_SESSION_KEY = 'user';
 
