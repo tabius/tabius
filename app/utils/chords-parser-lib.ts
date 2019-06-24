@@ -51,8 +51,8 @@ export const CHORDS_LIB: { [key in ChordType]: string } = {
   'B5': 'Ab5, AMb5, AΔ-5',
   'dim': 'Adim, A°, Amb5, Amo5, ADiminished',
   'dim7': 'Adim7, Ao7, A°7, Am6/5-',
-  'dim9': 'A°9, Adim9',
-  'dimB9': 'A°b9, Adimb9',
+  'dim9': 'Adim9, A°9',
+  'dimB9': 'Adimb9, A°b9',
   'dom': 'A7, Adom, Adom7',
   'dom11': 'A11, Adom11',
   'dom13': 'A13, Adom13',
@@ -84,7 +84,7 @@ export const CHORDS_LIB: { [key in ChordType]: string } = {
   'min13': 'Am13, A-13, Amin13',
   'min6': 'Am6, Amin6',
   'min7': 'Am7, A-7, Amin7',
-  'min7dim5': 'AØ, AØ7, Aø, Aø7, Am7b5, Am7°5, A−7b5, A−7°5, Amin7dim5, Am7-5, Am7/5-, Am75-, Am75b',
+  'min7dim5': 'Am7b5, AØ, AØ7, Aø, Aø7, Am7°5, A−7b5, A−7°5, Amin7dim5, Am7-5, Am7/5-, Am75-, Am75b',
   'min9': 'Am9, A-9, Amin9',
   'minmaj11': 'AmM11, A-M11, Aminmaj11',
   'minmaj13': 'AmM13, A-M13, Aminmaj13',
@@ -103,11 +103,11 @@ export const CHORDS_LIB: { [key in ChordType]: string } = {
 export const RAW_CHORD_TYPES_BY_FIRST_CHAR = new Map<string, string[]>();
 export const CHORD_TYPE_BY_RAW_TYPE = new Map<string, ChordType>();
 export const VISUAL_TYPE_BY_CHORD_TYPE_KEY = new Map<string, string>();
-Object.entries(CHORDS_LIB).forEach(([key, value]) => {
+for (const [key, value] of Object.entries(CHORDS_LIB)) {
   const rawTypes = value.split(',').map(v => v.trim().substring(1));
   for (const rawType of rawTypes) {
     if (CHORD_TYPE_BY_RAW_TYPE.has(rawType)) {
-      throw new Error(`Duplicate chord mapping: ${rawType} => ${key}`);
+      throw `Duplicate chord mapping: ${rawType} => ${key}`;
     }
     CHORD_TYPE_BY_RAW_TYPE.set(rawType, key as ChordType);
     const visualType = rawTypes[0];
@@ -125,4 +125,4 @@ Object.entries(CHORDS_LIB).forEach(([key, value]) => {
   for (const byFirstChar of RAW_CHORD_TYPES_BY_FIRST_CHAR.values()) {
     byFirstChar.sort().reverse(); // longest first.
   }
-});
+}
