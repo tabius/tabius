@@ -101,12 +101,13 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   is2ColumnMode(): boolean {
-    return this.song.content.length > MIN_SONG_LEN_FOR_2_COLUMN_MODE && this.availableWidth > 1300 && !this.is3ColumnMode();
+    return this.song.content.length > MIN_SONG_LEN_FOR_2_COLUMN_MODE &&
+        !this.is3ColumnMode() && (this.availableWidth / (1 + this.getMaxSongLineWidthHeuristic()) >= 2);
   }
 
   is3ColumnMode(): boolean {
     return this.song.content.length > MIN_SONG_LEN_FOR_3_COLUMN_MODE &&
-        (this.availableWidth > 1920 || (this.availableWidth / (1 + this.getMaxSongLineWidthHeuristic()) >= 3));
+        (this.availableWidth / (1 + this.getMaxSongLineWidthHeuristic()) >= 3);
   }
 
   private getMaxSongLineWidthHeuristic(): number {
