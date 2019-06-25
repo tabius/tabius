@@ -7,8 +7,8 @@ import {isPlatformBrowser} from '@angular/common';
 import {renderChords} from '@app/utils/chords-renderer';
 
 /** Heuristic used to enable multicolumn mode. */
-const MIN_SONG_LEN_FOR_2_COLUMN_MODE = 800;
-const MIN_SONG_LEN_FOR_3_COLUMN_MODE = 1200;
+const MIN_SONG_LINES_FOR_2_COLUMN_MODE = 30;
+const MIN_SONG_LINES_FOR_3_COLUMN_MODE = 60;
 
 /** Отображает содежимое мести (текст) без заголовка и прочей мета-информации. */
 @Component({
@@ -22,6 +22,8 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() song!: SongDetails;
   @Input() multiColumnMode = true;
+
+  /** Pre-rendered raw HTML for song text with all chords wrapped with a <c></c> tag*/
   songHtml: string = '';
 
   userSongStyle$!: Observable<{ [key: string]: string; }>;
@@ -33,8 +35,7 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
   private songFontSize?: number;
   private availableWidth = 0;
 
-  /** Heuristic based maximum song line width in pixels. Computed lazily and if === 0 it is not computed. */
-  private maxLineWidth = 0;
+  private songStats?: SongStats;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService,
@@ -52,7 +53,7 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
               if (settings.songFontSize) {
                 style['fontSize'] = `${settings.songFontSize}px`;
                 this.songFontSize = settings.songFontSize;
-                this.maxLineWidth = 0;
+                this.resetCachedSongStats();
               }
               return style;
             }));
@@ -62,7 +63,7 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {
           this.transpose = songSettings.transpose;
-          this.maxLineWidth = 0; // transposition may add extra characters that may lead to the line width update.
+          this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
           this.updateSongView();
           this.cd.detectChanges();
         });
@@ -81,8 +82,12 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.maxLineWidth = 0;
+    this.resetCachedSongStats();
     this.updateSongView();
+  }
+
+  private resetCachedSongStats(): void {
+    delete this.songStats;
   }
 
   private updateSongView(): void {
@@ -101,17 +106,20 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   is2ColumnMode(): boolean {
-    return this.song.content.length > MIN_SONG_LEN_FOR_2_COLUMN_MODE &&
-        !this.is3ColumnMode() && (this.availableWidth / (1 + this.getMaxSongLineWidthHeuristic()) >= 2);
+    const {lineCount, maxLineWidth} = this.getSongStats();
+    return lineCount > MIN_SONG_LINES_FOR_2_COLUMN_MODE &&
+        !this.is3ColumnMode() && (this.availableWidth / (1 + maxLineWidth) >= 2);
   }
 
   is3ColumnMode(): boolean {
-    return this.song.content.length > MIN_SONG_LEN_FOR_3_COLUMN_MODE &&
-        (this.availableWidth / (1 + this.getMaxSongLineWidthHeuristic()) >= 3);
+    const {lineCount, maxLineWidth} = this.getSongStats();
+    return lineCount > MIN_SONG_LINES_FOR_3_COLUMN_MODE &&
+        (this.availableWidth / (1 + maxLineWidth) >= 3);
   }
 
-  private getMaxSongLineWidthHeuristic(): number {
-    if (this.maxLineWidth === 0) {
+  private getSongStats(): SongStats {
+    if (!this.songStats) {
+      this.songStats = {lineCount: 1, maxLineWidth: 0}; // line count starts with 1 because even empty string ('') is counted as 1 line.
       let maxCharsPerLine = 0;
       const {content} = this.song;
       for (let i = 0; i < content.length;) {
@@ -121,10 +129,18 @@ export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
         }
         maxCharsPerLine = Math.max(maxCharsPerLine, lineSepIdx - 1 - i);
         i = lineSepIdx + 1;
+        this.songStats.lineCount++;
       }
       // trivial heuristic for song width.
-      this.maxLineWidth = (maxCharsPerLine + 1) * (this.songFontSize ? this.songFontSize : 16) * 2 / 3;
+      this.songStats.maxLineWidth = (maxCharsPerLine + 1) * (this.songFontSize ? this.songFontSize : 16) * 2 / 3;
     }
-    return this.maxLineWidth;
+    return this.songStats;
   }
+}
+
+interface SongStats {
+  /** Number of lines (with chord lines) in the song .*/
+  lineCount: number;
+  /** Heuristic based maximum song line width in pixels. */
+  maxLineWidth: number;
 }
