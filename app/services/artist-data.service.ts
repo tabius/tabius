@@ -128,14 +128,14 @@ export class ArtistDataService {
     ).toPromise();
   }
 
-  getSongsByArtistId(artistId?: number): Observable<Song[]> {
+  getSongsByArtistId(artistId?: number): Observable<Song[]|undefined> {
     if (isInvalidId(artistId)) {
       return of([]);
     }
     return this.getArtistDetails(artistId).pipe(
-        flatMap(details => details === undefined ? of([]) : this.getSongsByIds(details.songIds)),
+        flatMap(details => details === undefined ? of(undefined) : this.getSongsByIds(details.songIds)),
         // tap(songs => console.log('Songs', songs)),
-        map(songs => songs.filter(s => s !== undefined) as Song[])
+        map(songs => songs === undefined ? undefined : songs.filter(s => s !== undefined) as Song[])
     );
   }
 
@@ -256,7 +256,7 @@ export class ArtistDataService {
   getSongByMount(artistMount: string, songMount: string): Observable<Song|undefined> {
     return this.getArtistByMount(artistMount).pipe(
         flatMap(artist => this.getSongsByArtistId(artist ? artist.id : undefined)),
-        map(songs => songs.find(s => s.mount === songMount)),
+        map(songs => songs === undefined ? undefined : songs.find(s => s.mount === songMount)),
     );
   }
 

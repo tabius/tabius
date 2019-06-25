@@ -29,8 +29,11 @@ export class ArtistPageComponent implements OnInit {
   readonly destroyed$ = new Subject<unknown>();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
-  loaded = false;
   artistViewModel?: ArtistViewModel;
+
+  get loaded() {
+    return this.artistViewModel !== undefined;
+  }
 
   constructor(private readonly ads: ArtistDataService,
               readonly cd: ChangeDetectorRef,
@@ -47,12 +50,12 @@ export class ArtistPageComponent implements OnInit {
     const artistMount = this.route.snapshot.params['artistMount'];
     const artist$: Observable<Artist|undefined> = this.ads.getArtistByMount(artistMount);
     const bands$ = artist$.pipe(
-        flatMap(artist => (!artist || artist.bandIds.length === 0) ? of([]) : this.ads.getArtistsByIds(artist.bandIds)),
-        map(bands => bands.filter(v => v !== undefined)),
+        flatMap(artist => artist ? this.ads.getArtistsByIds(artist.bandIds) : of(undefined)),
+        map(bands => bands ? bands.filter(v => v !== undefined) : undefined),
     ) as Observable<Artist[]>;
 
     const songs$ = artist$.pipe(
-        flatMap(artist => artist === undefined ? of([]) : this.ads.getSongsByArtistId(artist.id)),
+        flatMap(artist => this.ads.getSongsByArtistId(artist ? artist.id : undefined)),
     ) as Observable<Song[]>;
 
     combineLatest([artist$, bands$, songs$])
@@ -61,12 +64,10 @@ export class ArtistPageComponent implements OnInit {
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
         .subscribe(([artist, bands, songs]) => {
-          //todo: details may be undefined => show not found?
-          if (!artist) {
+          if (!artist || !bands || !songs) {
             return;
           }
           this.artistViewModel = new ArtistViewModel(artist, bands, songs);
-          this.loaded = true;
           this.updateMeta();
           this.cd.markForCheck();
         });
