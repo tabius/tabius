@@ -8,8 +8,7 @@ import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
-import {isValidId} from '@common/util/misc-utils';
-import {FORUM_LINK} from '@common/mounts';
+import {getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 
 @Component({
@@ -25,6 +24,9 @@ export class SongPageComponent implements OnInit, OnDestroy {
   song?: Song;
   songDetails?: SongDetails;
   artist?: Artist;
+
+  readonly hasValidForumTopic = hasValidForumTopic;
+  readonly getSongForumTopicLink = getSongForumTopicLink;
 
   get loaded(): boolean {
     return this.song !== undefined;
@@ -80,17 +82,6 @@ export class SongPageComponent implements OnInit, OnDestroy {
       description: getSongTextWithNoChords(this.songDetails.content, 4),
       keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
-  }
-
-  hasValidForumTopic(): boolean {
-    return this.song !== undefined && isValidId(this.song.tid);
-  }
-
-  getSongForumTopicLink(): string {
-    if (!this.hasValidForumTopic()) {
-      return '#';
-    }
-    return FORUM_LINK + '/topic/' + this.song!.tid;
   }
 }
 

@@ -54,7 +54,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return NavSection.Tuner;
     } else if (url.startsWith('/artist') || url.startsWith('/song')) {
       return NavSection.Artists;
-    } else if (url.startsWith('/my/playlist') || url.startsWith('/my/song')) {
+    } else if (url.startsWith('/my/playlist') || url.startsWith('/my/song') || url.startsWith('/playlist/')) {
       return NavSection.Playlists;
     } else if (url.startsWith('/my')) {
       return NavSection.Settings;

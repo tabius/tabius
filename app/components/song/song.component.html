@@ -5,14 +5,9 @@
 
 <div *ngIf="loaded">
 
-    <div class="song-root">
-        <div>
-            <gt-song-header [song]="song" [artist]="mode === SongPageMode ? undefined : artist"></gt-song-header>
-            <gt-song-video [songDetails]="songDetails"></gt-song-video>
-            <gt-song-text [song]="songDetails"></gt-song-text>
-        </div>
-    </div>
-
+    <gt-song-header [song]="song" [artist]="mode === SongPageMode ? undefined : artist"></gt-song-header>
+    <gt-song-video [songDetails]="songDetails"></gt-song-video>
+    <gt-song-text [song]="songDetails"></gt-song-text>
     <gt-song-chords [songDetails]="songDetails"></gt-song-chords>
 
 </div>

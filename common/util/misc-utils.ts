@@ -1,7 +1,8 @@
 import {FirebaseUser, User} from '@common/user-model';
 import * as admin from 'firebase-admin';
 import {Versioned} from '@common/common-model';
-import {ArtistType} from '@common/artist-model';
+import {ArtistType, Song} from '@common/artist-model';
+import {FORUM_LINK} from '@common/mounts';
 import DecodedIdToken = admin.auth.DecodedIdToken;
 
 export function firebaseUser2User(firebaseUser: FirebaseUser): User {
@@ -91,4 +92,15 @@ export function getNameFirstFormArtistName(artist: { type: ArtistType, name: str
 
 export function getArtistImageUrl(mount: string): string {
   return `https://tabius.ru/images/artists/profile/${mount}.jpg`;
+}
+
+export function hasValidForumTopic(song?: Song): song is Song {
+  return song !== undefined && isValidId(song.tid);
+}
+
+export function getSongForumTopicLink(song?: Song): string {
+  if (!hasValidForumTopic(song)) {
+    return '#';
+  }
+  return FORUM_LINK + '/topic/' + song.tid;
 }

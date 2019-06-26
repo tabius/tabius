@@ -8,6 +8,12 @@
 
     h1 {
       text-align: center;
+
+      .sub-header {
+        display: block;
+        color: #8a8689;
+        font-size: 18px;
+      }
     }
 
     .playlist-root {
@@ -27,8 +33,21 @@
             margin-top: 20px;
             margin-bottom: 40px;
           }
+
+          .links-block {
+            margin-top: 20px;
+
+            a:not(:first-of-type) {
+              margin-left: 50px;
+            }
+          }
+
         }
       }
+    }
+
+    .back-to-playlists-link {
+      margin-top: 40px;
     }
   }
 }

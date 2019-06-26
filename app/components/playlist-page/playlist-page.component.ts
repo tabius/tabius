@@ -11,13 +11,14 @@ import {isPlatformBrowser} from '@angular/common';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist} from '@common/user-model';
-import {getNameFirstFormArtistName} from '@common/util/misc-utils';
+import {getNameFirstFormArtistName, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 
 interface PlaylistSongModel {
   song: Song;
   artist: Artist;
   artistName: string;
+  last: boolean;
 }
 
 @Component({
@@ -31,6 +32,9 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   playlist!: Playlist;
   songItems: PlaylistSongModel[] = [];
   readonly mode = SongComponentMode.Playlist;
+
+  readonly hasValidForumTopic = hasValidForumTopic;
+  readonly getSongForumTopicLink = getSongForumTopicLink;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
@@ -69,7 +73,12 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
         const song = songs[i];
         const artist = artists[i];
         if (artist) {
-          this.songItems.push({song, artist, artistName: getNameFirstFormArtistName(artist)});
+          this.songItems.push({
+            song,
+            artist,
+            artistName: getNameFirstFormArtistName(artist),
+            last: i === songs.length - 1,
+          });
         }
       }
       this.updateMeta();
@@ -97,6 +106,7 @@ interface PlaylistPageInput {
 
 @Injectable({providedIn: 'root'})
 export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
+
   private readonly isBrowser: boolean;
 
   constructor(private readonly uds: UserDataService,
