@@ -12,12 +12,12 @@ const MIN_SONG_LINES_FOR_3_COLUMN_MODE = 60;
 
 /** Отображает содежимое мести (текст) без заголовка и прочей мета-информации. */
 @Component({
-  selector: 'gt-song-view',
-  templateUrl: './song-view.component.html',
-  styleUrls: ['./song-view.component.scss'],
+  selector: 'gt-song-text',
+  templateUrl: './song-text.component.html',
+  styleUrls: ['./song-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongViewComponent implements OnInit, OnChanges, OnDestroy {
+export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   private readonly destroyed$ = new Subject();
 
   @Input() song!: SongDetails;

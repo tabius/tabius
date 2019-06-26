@@ -92,4 +92,3 @@ export function getNameFirstFormArtistName(artist: { type: ArtistType, name: str
 export function getArtistImageUrl(mount: string): string {
   return `https://tabius.ru/images/artists/profile/${mount}.jpg`;
 }
-

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {Artist, Song, SongDetails} from '@common/artist-model';
-import {BehaviorSubject, combineLatest, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
@@ -19,16 +19,16 @@ import {parseChordsLine} from '@app/utils/chords-parser';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongPageComponent implements OnInit, OnDestroy {
-  readonly destroyed$ = new Subject<unknown>();
+  readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
-  loaded = false;
   song?: Song;
   songDetails?: SongDetails;
   artist?: Artist;
-  youtubeLink?: string;
-  onLine = true;
-  settingsVisible = false;
+
+  get loaded(): boolean {
+    return this.song !== undefined;
+  };
 
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
@@ -41,33 +41,29 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     throttleIndicator(this);
-    this.onLine = !navigator || navigator.onLine === undefined || navigator.onLine;
 
     const params = this.route.snapshot.params;
     const artistMount = params['artistMount'];
     const songMount = params['songMount'];
 
     const artist$ = this.ads.getArtistByMount(artistMount);
-    const song$ = this.ads.getSongByMount(artistMount, songMount); //todo: create getSongByMount (artistId,songMount) ?
-    const songDetails$ = song$.pipe(flatMap(song => song === undefined ? of(undefined) : this.ads.getSongDetailsById(song.id)));
+    const song$ = this.ads.getSongByMount(artistMount, songMount);
+    const songDetails$ = song$.pipe(flatMap(song => this.ads.getSongDetailsById(song ? song.id : undefined)));
 
     combineLatest([artist$, song$, songDetails$])
         .pipe(
             takeUntil(this.destroyed$),
-            throttleTime(100, undefined, {leading: true, trailing: true}), //TODO: too much throttling. see (bad params) in the console!
+            throttleTime(100, undefined, {leading: true, trailing: true}),
         )
         .subscribe(([artist, song, songDetails]) => {
           if (artist === undefined || song === undefined || songDetails == undefined) {
-            console.debug('Bad params for song page! A, S, SD: ', artist, song, songDetails);
             return; // reasons: not everything is loaded
           }
           this.song = song;
           this.songDetails = songDetails;
-          this.youtubeLink = songDetails.mediaLinks ? songDetails.mediaLinks.find(link => link.startsWith('https://www.youtube.com/embed/')) : undefined;
-          this.loaded = true;
           this.artist = artist;
           this.updateMeta();
-          this.cd.markForCheck();
+          this.cd.detectChanges();
         });
   }
 
@@ -84,11 +80,6 @@ export class SongPageComponent implements OnInit, OnDestroy {
       description: getSongTextWithNoChords(this.songDetails.content, 4),
       keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
-  }
-
-  toggleSettings() {
-    this.settingsVisible = !this.settingsVisible;
-    this.cd.markForCheck();
   }
 
   hasValidForumTopic(): boolean {

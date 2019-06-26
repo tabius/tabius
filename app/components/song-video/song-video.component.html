@@ -1,0 +1,3 @@
+<div *ngIf="youtubeLink && onLine" class="youtube-video">
+    <iframe [src]="youtubeLink | safeResourceUrl"></iframe>
+</div>

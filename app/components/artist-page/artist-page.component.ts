@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Artist, Song} from '@common/artist-model';
 import {ActivatedRoute} from '@angular/router';
@@ -9,7 +9,7 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
 
-class ArtistViewModel {
+export class ArtistViewModel {
   readonly displayName: string;
   readonly imgSrc: string;
 
@@ -25,13 +25,13 @@ class ArtistViewModel {
   styleUrls: ['./artist-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ArtistPageComponent implements OnInit {
-  readonly destroyed$ = new Subject<unknown>();
+export class ArtistPageComponent implements OnInit, OnDestroy {
+  readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
   artistViewModel?: ArtistViewModel;
 
-  get loaded() {
+  get loaded(): boolean {
     return this.artistViewModel !== undefined;
   }
 
@@ -71,6 +71,10 @@ export class ArtistPageComponent implements OnInit {
           this.updateMeta();
           this.cd.markForCheck();
         });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 
   updateMeta() {

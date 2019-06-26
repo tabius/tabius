@@ -4,7 +4,7 @@
 
 $column-separator-style: 1px solid #e8e8e8;
 
-.song-body {
+.song-text {
   font-family: $font-family-mono;
   max-width: 90vw;
   white-space: pre-wrap;
@@ -24,7 +24,7 @@ $column-separator-style: 1px solid #e8e8e8;
 }
 
 @media only screen and (min-width: $hires-desktop-width) {
-  .song-body {
+  .song-text {
     font-size: 20px;
   }
 }

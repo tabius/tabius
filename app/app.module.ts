@@ -10,7 +10,7 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
 import {Page404Component} from './components/page404/page404.component';
 import {environment} from './environments/environment';
 import {FirestoreSettingsToken} from '@angular/fire/firestore';
-import {SongViewComponent} from './components/song-content/song-view.component';
+import {SongTextComponent} from './components/song-text/song-text.component';
 import {ArtistPageComponent} from './components/artist-page/artist-page.component';
 import {SongPageComponent} from './components/song-page/song-page.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
@@ -42,16 +42,19 @@ import {ChordImageComponent} from './components/chord-image/chord-image.componen
 import {SongChordsComponent} from './components/song-chords/song-chords.component';
 import {ToastModule} from '@app/toast';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {SongComponent} from './components/song/song.component';
+import {SongHeaderComponent} from './components/song-header/song-header.component';
+import { SongVideoComponent } from './components/song-video/song-video.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SiteHomePageComponent,
     Page404Component,
-    SongViewComponent,
+    SongTextComponent,
     ArtistPageComponent,
     SongPageComponent,
-    SongViewComponent,
+    SongTextComponent,
     NavbarComponent,
     FooterComponent,
     NewSongsComponent,
@@ -71,6 +74,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     SigninSignoutButtonComponent,
     ChordImageComponent,
     SongChordsComponent,
+    SongComponent,
+    SongHeaderComponent,
+    SongVideoComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -101,6 +107,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 })
 export class AppModule {
 
+  // noinspection JSUnusedLocalSymbols
   constructor(private readonly pwa: PwaUpdaterService) { // TODO: initiate update explicitly.
   }
 }

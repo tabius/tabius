@@ -17,7 +17,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
   private readonly destroyed$ = new Subject<void>();
 
   //TODO: handle song change.
-  @Input() song!: SongDetails;
+  @Input() songDetails!: SongDetails;
 
   chords: ChordLayout[] = [];
 
@@ -29,7 +29,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.uds.getUserSongSettings(this.song.id)
+    this.uds.getUserSongSettings(this.songDetails.id)
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {
           this.transpose = songSettings.transpose;
@@ -51,7 +51,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
   }
 
   private updateChordsList() {
-    const chordLocations = parseChords(this.song.content);
+    const chordLocations = parseChords(this.songDetails.content);
     const options: ChordRenderingOptions = {useH: !this.b4Si, transpose: this.transpose};
     const orderedChordNames: string[] = [];
     const chordsSet = new Set<string>();

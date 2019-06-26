@@ -11,10 +11,13 @@ import {isPlatformBrowser} from '@angular/common';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist} from '@common/user-model';
+import {getNameFirstFormArtistName} from '@common/util/misc-utils';
+import {SongComponentMode} from '@app/components/song/song.component';
 
 interface PlaylistSongModel {
   song: Song;
   artist: Artist;
+  artistName: string;
 }
 
 @Component({
@@ -24,11 +27,10 @@ interface PlaylistSongModel {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlaylistPageComponent implements OnInit, OnDestroy {
-
-  readonly destroyed$ = new Subject<unknown>();
-
+  readonly destroyed$ = new Subject();
   playlist!: Playlist;
   songItems: PlaylistSongModel[] = [];
+  readonly mode = SongComponentMode.Playlist;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
@@ -67,7 +69,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
         const song = songs[i];
         const artist = artists[i];
         if (artist) {
-          this.songItems.push({song, artist});
+          this.songItems.push({song, artist, artistName: getNameFirstFormArtistName(artist)});
         }
       }
       this.updateMeta();
@@ -87,7 +89,6 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       keywords: ['плейлист', 'аккорды', 'гитара'],
     });
   }
-
 }
 
 interface PlaylistPageInput {

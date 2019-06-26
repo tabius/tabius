@@ -1,0 +1,18 @@
+<div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+    <div class="message">Загружаем текст песни…</div>
+    <gt-loading-indicator></gt-loading-indicator>
+</div>
+
+<div *ngIf="loaded">
+
+    <div class="song-root">
+        <div>
+            <gt-song-header [song]="song" [artist]="mode === SongPageMode ? undefined : artist"></gt-song-header>
+            <gt-song-video [songDetails]="songDetails"></gt-song-video>
+            <gt-song-text [song]="songDetails"></gt-song-text>
+        </div>
+    </div>
+
+    <gt-song-chords [songDetails]="songDetails"></gt-song-chords>
+
+</div>
