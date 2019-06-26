@@ -14,13 +14,13 @@
                 <div *ngIf="artistViewModel.artist.bandIds.length > 0" class="bands-info">
                     Группы:
                     <div *ngFor="let band of artistViewModel.bands">
-                        <a routerLink="/artist/{{band.mount}}">{{band.name}}</a>
+                        <a routerLink="{{getArtistPageLink(band.mount)}}">{{band.name}}</a>
                     </div>
 
                 </div>
                 <div class="songs-list">
                     <div *ngFor="let song of artistViewModel.songs; trackBy: trackBySongId">
-                        <a routerLink="/song/{{artistViewModel.artist.mount}}/{{song.mount}}">{{song.title}}</a>
+                        <a routerLink="{{getSongPageLink(artistViewModel.artist.mount, song.mount)}}">{{song.title}}</a>
                     </div>
                 </div>
             </div>

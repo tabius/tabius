@@ -5,13 +5,13 @@ import {Artist, Song} from '@common/artist-model';
 import {flatMap, map, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
-import {MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST_PREFIX} from '@common/mounts';
+import {MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST_PREFIX, MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {UserSessionState} from '@app/store/user-session-state';
 import {isPlatformBrowser} from '@angular/common';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist} from '@common/user-model';
-import {getNameFirstFormArtistName, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
+import {getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 
 interface PlaylistSongModel {
@@ -31,10 +31,13 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   playlist!: Playlist;
   songItems: PlaylistSongModel[] = [];
-  readonly mode = SongComponentMode.Playlist;
 
+  readonly mode = SongComponentMode.Playlist;
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
+  readonly playlistsLink = `/${MOUNT_USER_PLAYLISTS}`;
+  readonly getArtistPageLink = getArtistPageLink;
+  readonly getSongPageLink = getSongPageLink;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,

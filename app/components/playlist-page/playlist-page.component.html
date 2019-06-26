@@ -11,8 +11,8 @@
 
                 <div class="links-block">
                     <a href="{{getSongForumTopicLink(item.song)}}" *ngIf="hasValidForumTopic(item.song)" title="Обсудить подбор на форуме">Форум »</a>
-                    <a routerLink="/artist/{{item.artist.mount}}">Артист »</a>
-                    <a routerLink="/song/{{item.artist.mount}}/{{item.song.mount}}">Песня »</a>
+                    <a routerLink="{{getArtistPageLink(item.artist.mount)}}">Артист »</a>
+                    <a routerLink="{{getSongPageLink(item.artist.mount, item.song.mount)}}">Песня »</a>
                 </div>
 
                 <hr *ngIf="!item.last">
@@ -21,5 +21,5 @@
         </div>
     </div>
 
-    <a routerLink="/playlists" class="back-to-playlists-link">Назад к плейлистам »</a>
+    <a routerLink="{{playlistsLink}}" class="back-to-playlists-link">Назад к плейлистам »</a>
 </div>

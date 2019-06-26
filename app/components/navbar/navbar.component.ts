@@ -4,7 +4,7 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {UserSessionState} from '@app/store/user-session-state';
-import {FORUM_LINK, MOUNT_ARTISTS, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
+import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_ARTISTS, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
 
 enum NavSection {
   Home = 1,
@@ -50,13 +50,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   //todo: make an utility in routing module.
   getActiveSection(): NavSection {
     const url = this.router.url.toLocaleLowerCase();
-    if (url.startsWith('/tuner')) {
+    if (url.startsWith(`/${MOUNT_TUNER}`)) {
       return NavSection.Tuner;
-    } else if (url.startsWith('/artist') || url.startsWith('/song')) {
+    } else if (url.startsWith(`/${MOUNT_ARTISTS}`) || url.startsWith(`/${MOUNT_ARTIST_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
       return NavSection.Artists;
-    } else if (url.startsWith('/my/playlist') || url.startsWith('/my/song') || url.startsWith('/playlist/')) {
+    } else if (url.startsWith(`/${MOUNT_USER_PLAYLISTS}`) || url.startsWith(`/${MOUNT_PLAYLIST_PREFIX}`)) {
       return NavSection.Playlists;
-    } else if (url.startsWith('/my')) {
+    } else if (url.startsWith(`/${MOUNT_USER_SETTINGS}`)) {
       return NavSection.Settings;
     }
     return NavSection.Home;

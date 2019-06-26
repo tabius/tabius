@@ -7,6 +7,7 @@ import {BehaviorSubject, Subject, timer} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
+import {getArtistPageLink} from '@common/util/misc-utils';
 
 interface LetterBlock {
   letter: string,
@@ -32,6 +33,7 @@ let letterBlockFilters: string[] = [];
 export class ArtistListPageComponent implements OnInit {
   readonly destroyed$ = new Subject<unknown>();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+  readonly getArtistPageLink = getArtistPageLink;
 
   loaded = false;
   letterBlocks: LetterBlock[] = [];

@@ -7,7 +7,7 @@ import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
+import {getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
 
 export class ArtistViewModel {
   readonly displayName: string;
@@ -28,6 +28,8 @@ export class ArtistViewModel {
 export class ArtistPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+  readonly getArtistPageLink = getArtistPageLink;
+  readonly getSongPageLink = getSongPageLink;
 
   artistViewModel?: ArtistViewModel;
 

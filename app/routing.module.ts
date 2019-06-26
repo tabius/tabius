@@ -7,7 +7,7 @@ import {ArtistListPageComponent} from '@app/components/artist-list-page/artist-l
 import {ArtistPageComponent} from '@app/components/artist-page/artist-page.component';
 import {SongPageComponent} from '@app/components/song-page/song-page.component';
 import {UserSettingsPageComponent} from '@app/components/user-settings-page/user-settings-page.component';
-import {MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_TUNER, MOUNT_USER_HOME, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
+import {MOUNT_ARTIST, MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_TUNER, MOUNT_USER_HOME, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
 import {PlaylistListPageComponent} from '@app/components/playlist-list-page/playlist-list-page.component';
 import {PlaylistPageComponent, PlaylistPageResolver} from '@app/components/playlist-page/playlist-page.component';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
@@ -30,14 +30,12 @@ const routes: Routes = [
   {path: '', component: SiteHomePageComponent, pathMatch: 'full'},
   {path: MOUNT_TUNER, component: TunerPageComponent},
   {path: MOUNT_ARTISTS, component: ArtistListPageComponent, resolve: {storeFlag: BrowserStoreStateResolver}},
-  //todo:
-  {path: 'artist/:artistMount', component: ArtistPageComponent},
-  {path: 'song/:artistMount/:songMount', component: SongPageComponent},
+  {path: MOUNT_ARTIST, component: ArtistPageComponent},
+  {path: MOUNT_SONG, component: SongPageComponent},
   {path: MOUNT_USER_HOME, redirectTo: MOUNT_USER_SETTINGS},
   {path: MOUNT_USER_SETTINGS, component: UserSettingsPageComponent},
   {path: MOUNT_USER_PLAYLISTS, component: PlaylistListPageComponent,},
   {path: MOUNT_PLAYLIST, component: PlaylistPageComponent, resolve: {input: PlaylistPageResolver}},
-  // {path: 'my/song/:songId', component: SongPageComponent, canActivate: [AuthGuard]},
   {path: MOUNT_PAGE_NOT_FOUND, component: Page404Component},
   {path: '**', redirectTo: `/${MOUNT_PAGE_NOT_FOUND}`}
 ];

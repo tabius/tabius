@@ -2,7 +2,7 @@ import {FirebaseUser, User} from '@common/user-model';
 import * as admin from 'firebase-admin';
 import {Versioned} from '@common/common-model';
 import {ArtistType, Song} from '@common/artist-model';
-import {FORUM_LINK} from '@common/mounts';
+import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import DecodedIdToken = admin.auth.DecodedIdToken;
 
 export function firebaseUser2User(firebaseUser: FirebaseUser): User {
@@ -103,4 +103,12 @@ export function getSongForumTopicLink(song?: Song): string {
     return '#';
   }
   return FORUM_LINK + '/topic/' + song.tid;
+}
+
+export function getArtistPageLink(artistMount: string): string {
+  return `/${MOUNT_ARTIST_PREFIX}${artistMount}`;
+}
+
+export function getSongPageLink(artistMount: string, songMount: string): string {
+  return `/${MOUNT_SONG_PREFIX}${artistMount}/${songMount}`;
 }
