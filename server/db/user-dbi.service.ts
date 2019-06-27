@@ -17,7 +17,7 @@ export class UserDbi {
     // create new user
     const mount = await this.generateUniqueMount(user.email);
     return this.db.pool.promise()
-        .query('INSERT INTO user(id, name, picture, email, mount, login_date, settings) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE login_date = ?',
+        .query('INSERT INTO user(id, name, picture, email, id, login_date, settings) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE login_date = ?',
             [user.id, user.name, user.picture, user.email, mount, now, '{}', now]);
   }
 
@@ -29,7 +29,7 @@ export class UserDbi {
 
   hasUserWithMount(mount: string): Promise<boolean> {
     return this.db.pool.promise()
-        .query('SELECT COUNT(mount) AS n  FROM user WHERE mount = ?', [mount])
+        .query('SELECT COUNT(id) AS n  FROM user WHERE id = ?', [mount])
         .then(([rows]) => rows[0].n !== 0);
   }
 
@@ -48,12 +48,12 @@ export class UserDbi {
     delete settingsWithoutMount.mount;
     const settingsJson = JSON.stringify(settingsWithoutMount);
     return this.db.pool.promise()
-        .query('UPDATE user SET settings = ?, mount = ? WHERE id = ?', [settingsJson, userSettings.mount, userId]);
+        .query('UPDATE user SET settings = ?, id = ? WHERE id = ?', [settingsJson, userSettings.mount, userId]);
   }
 
   getSettings(userId: string): Promise<UserSettings|undefined> {
     return this.db.pool.promise()
-        .query('SELECT mount, settings FROM user WHERE id = ?', [userId])
+        .query('SELECT id, settings FROM user WHERE id = ?', [userId])
         .then(([rows]: [{ mount: string, settings: string }[]]) =>
             rows.length === 0 || rows[0].settings.length === 0
                 ? undefined

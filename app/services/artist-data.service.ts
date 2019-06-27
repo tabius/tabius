@@ -8,7 +8,7 @@ import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {ArtistDetailsResponse} from '@common/ajax-model';
 import {isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
-import {WithId} from '@common/common-model';
+import {WithNumericId} from '@common/common-model';
 import {BrowserStore} from '@app/store/browser-store';
 
 const ARTIST_LIST_KEY = 'artist-list';
@@ -267,7 +267,7 @@ export class ArtistDataService {
     }
     type EntityFlag = { id: number, found: boolean };
     const arrayOfFlags$: Observable<EntityFlag>[] = ids.map(
-        id => combineLatest([of(id), this.store.get<WithId>(keyPrefix + id)])
+        id => combineLatest([of(id), this.store.get<WithNumericId>(keyPrefix + id)])
             .pipe(map(([id, withId]) => ({id, found: withId !== undefined})))
     );
 

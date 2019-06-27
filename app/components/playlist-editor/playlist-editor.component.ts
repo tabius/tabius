@@ -2,9 +2,9 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {UserDataService} from '@app/services/user-data.service';
 import {Playlist} from '@common/user-model';
 import {Observable} from 'rxjs';
-import {MOUNT_PLAYLIST_PREFIX} from '@common/mounts';
 import {ToastService} from '@app/toast/toast.service';
 import {MSG_NETWORK_ERROR} from '@common/messages';
+import {getPlaylistPageLink} from '@common/util/misc-utils';
 
 
 @Component({
@@ -14,8 +14,8 @@ import {MSG_NETWORK_ERROR} from '@common/messages';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlaylistEditorComponent {
-  readonly playlistLink = `/${MOUNT_PLAYLIST_PREFIX}`;
 
+  readonly getPlaylistPageLink = getPlaylistPageLink;
   readonly playlists$: Observable<Playlist[]>;
 
   newPlaylistName = '';
@@ -32,8 +32,9 @@ export class PlaylistEditorComponent {
         .catch(err => this.toastService.warning(err, MSG_NETWORK_ERROR));
   }
 
-  deletePlaylist(id: number): void {
+  deletePlaylist(id: string): void {
     this.uds.deleteUserPlaylist(id)
         .catch(err => this.toastService.warning(err, MSG_NETWORK_ERROR));
   }
+
 }

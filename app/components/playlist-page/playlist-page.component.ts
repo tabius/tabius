@@ -52,7 +52,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
     const pageInput = this.route.data['value'].input as PlaylistPageInput;
     this.playlist = pageInput.playlist;
 
-    const playlist$ = this.uds.getPlaylistById(this.playlist.id);
+    const playlist$ = this.uds.getPlaylist(this.playlist.id);
 
     const songs$: Observable<Song[]> = playlist$.pipe(
         flatMap(playlist => playlist === undefined ? of([]) : this.ads.getSongsByIds(playlist.songIds)),
@@ -120,22 +120,18 @@ export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<PlaylistPageInput> {
+  async resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<PlaylistPageInput> {
     const mount = route.paramMap.get('playlistMount')!;
-    return this.uds.getPlaylistByMount(mount).pipe(
-        take(1),
-        map(playlist => {
-          if (!playlist) {
-            if (!this.isBrowser) { // try login in browser and redirect back to the playlist page rendering on successful login.
-              this.session.returnUrl = '/' + MOUNT_PLAYLIST_PREFIX + mount;
-              this.router.navigate(['/']).catch(err => console.error(err)); //todo: create 'login-in-progress' page.
-            } else {
-              this.router.navigate([MOUNT_PAGE_NOT_FOUND]).catch(err => console.error(err));
-            }
-            return {playlist: {} as Playlist}; //todo: find a better pattern
-          }
-          return {playlist};
-        })
-    );
+    const playlist = await this.uds.getPlaylist(mount).pipe(take(1)).toPromise();
+    if (playlist) {
+      return {playlist};
+    }
+    if (!this.isBrowser) { // try login in browser and redirect back to the playlist page rendering on successful login.
+      this.session.returnUrl = `/${MOUNT_PLAYLIST_PREFIX}${mount}`;
+      this.router.navigate(['/']).catch(err => console.error(err)); //todo: create 'login-in-progress' page.
+    } else {
+      this.router.navigate([MOUNT_PAGE_NOT_FOUND]).catch(err => console.error(err));
+    }
+    return {playlist: {} as Playlist}; //todo: find a better pattern
   }
 }

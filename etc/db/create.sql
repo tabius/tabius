@@ -54,14 +54,13 @@ CREATE TABLE user (
   COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE playlist (
-    id       INT PRIMARY KEY AUTO_INCREMENT,
-    name     VARCHAR(200)  NOT NULL,
+    id       VARCHAR(16)   PRIMARY KEY,
+    name     VARCHAR(100)  NOT NULL,
     user_id  VARCHAR(40)   NOT NULL REFERENCES user (id),
-    mount    VARCHAR(16)   NOT NULL UNIQUE ,
     shared   TINYINT       NOT NULL DEFAULT 0,
     # Ids of songs. Comma separated.
     song_ids VARCHAR(2048) NOT NULL DEFAULT '',
-    version INT NOT NULL DEFAULT 0
+    version  INT NOT NULL DEFAULT 0
 ) ENGINE InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE utf8mb4_unicode_ci;

@@ -1,6 +1,6 @@
 import {isValidId} from '@common/util/misc-utils';
-import {Playlist, User, UserSongSettings} from '@common/user-model';
-import {eachItem, error, isArray, isNumber, min, minLength, success, ValidationResult, Validator} from 'typed-validation';
+import {MAX_PLAYLIST_NAME_LENGTH, MIN_PLAYLIST_NAME_LENGTH, Playlist, User, UserSongSettings} from '@common/user-model';
+import {eachItem, error, isArray, isNumber, isString, maxLength, min, minLength, success, ValidationResult, Validator} from 'typed-validation';
 import * as v from 'validator';
 import {primitiveType} from 'typed-validation/utils';
 import {CreatePlaylistRequest} from '@common/ajax-model';
@@ -27,31 +27,7 @@ export function stringToArrayOfNumericIds(text: unknown): number[] {
 export const isVersion = () => min(0);
 export const isNumericId = () => min(1);
 
-export function isUserId(next?: (arg: any) => ValidationResult<any>): (arg: any) => ValidationResult<any> {
-  return (arg: any) => {
-    if (typeof arg !== 'string') {
-      return error('NOT_USER_ID', `Expected string, got ${primitiveType(arg)}`);
-    }
-    if (!v.isLength(arg, 10, 40)) {
-      return error('NOT_USER_ID', `Illegal user id length: ${arg.length}`);
-    }
-    return next ? next(arg) : success(arg);
-  };
-}
-
-export function isUserName(next?: (arg: any) => ValidationResult<any>): (arg: any) => ValidationResult<any> {
-  return (arg: any) => {
-    if (typeof arg !== 'string') {
-      return error('NOT_USER_NAME', `Expected string, got ${primitiveType(arg)}`);
-    }
-    if (!v.isLength(arg, 1, 100)) {
-      return error('NOT_USER_NAME', `Illegal user name length: ${arg.length}`);
-    }
-    return next ? next(arg) : success(arg);
-  };
-}
-
-export function isUserPictureUrl(next?: (arg: any) => ValidationResult<any>): (arg: any) => ValidationResult<any> {
+export function isUserPictureUrl(next?: (arg: any) => ValidationResult<any>): (arg: any) => ValidationResult<string> {
   return (arg: any) => {
     if (typeof arg !== 'string') {
       return error('NOT_USER_PICTURE', `Expected string, got ${primitiveType(arg)}`);
@@ -63,7 +39,7 @@ export function isUserPictureUrl(next?: (arg: any) => ValidationResult<any>): (a
   };
 }
 
-export function isEmail(next?: (arg: any) => ValidationResult<any>): (arg: any) => ValidationResult<any> {
+export function isEmail(next?: (arg: any) => ValidationResult<any>): (arg: any) => ValidationResult<string> {
   return (arg: any) => {
     if (typeof arg !== 'string') {
       return error('NOT_EMAIL', `Expected string, got ${primitiveType(arg)}`);
@@ -75,12 +51,15 @@ export function isEmail(next?: (arg: any) => ValidationResult<any>): (arg: any) 
   };
 }
 
+export const checkStringLength = (minLen: number, maxLen: number) => isString(minLength(minLen, maxLength(maxLen)));
+export const isUserId = () => checkStringLength(10, 40);
+export const isUserName = () => checkStringLength(1, 100);
+
 export const PlaylistValidator: Validator<Playlist> = {
-  id: isNumericId(),
+  id: checkStringLength(1, 16),
   version: isVersion(),
   userId: isUserId(),
-  name: minLength(1),
-  mount: minLength(1),
+  name: checkStringLength(MIN_PLAYLIST_NAME_LENGTH, MAX_PLAYLIST_NAME_LENGTH),
   songIds: isArray(eachItem(isNumericId())),
 };
 

@@ -12,7 +12,7 @@ interface ArtistRow {
   version: number;
 }
 
-const SELECT_ARTIST_SQL = 'SELECT id, name, type, mount, band_ids, version FROM artist';
+const SELECT_ARTIST_SQL = 'SELECT id, name, type, id, band_ids, version FROM artist';
 
 @Injectable()
 export class ArtistDbi {

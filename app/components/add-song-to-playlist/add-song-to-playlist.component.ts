@@ -46,23 +46,23 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
   }
 
-  trackById(idx: number, withId: { id: number }): number {
-    return withId.id;
+  trackByMount(idx: number, withMount: { id: string }): string {
+    return withMount.id;
   }
 
   /** Returns true if current song is in the playlist. */
-  isInPlaylist(p: Playlist|number): boolean {
-    if (typeof p !== 'number') {
+  isInPlaylist(p: Playlist|string): boolean {
+    if (typeof p === 'object') {
       return p.songIds.includes(this.songId);
     }
     const playlist = this.playlists.find(pl => pl.id === p);
     return playlist !== undefined && playlist.songIds.includes(this.songId);
   }
 
-  async togglePlaylist(playlistId: number, checkboxElement: any = {}) {
+  async togglePlaylist(playlistMount: string, checkboxElement: any = {}) {
     try {
       await this.authService.askUserToSignInOrFail();
-      const playlist = this.playlists.find(p => p.id === playlistId);
+      const playlist = this.playlists.find(p => p.id === playlistMount);
       if (!playlist) {
         this.toastService.warning(MGS_PLAYLIST_NOT_FOUND);
         return;
@@ -77,7 +77,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     } catch (err) {
       console.error(err);
       this.toastService.warning(err, MSG_NETWORK_ERROR);
-      checkboxElement.checked = this.isInPlaylist(playlistId); // enforce checkbox state.
+      checkboxElement.checked = this.isInPlaylist(playlistMount); // enforce checkbox state.
     }
   }
 

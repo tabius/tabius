@@ -53,8 +53,8 @@ async function main() {
   const connection = await mysql.createConnection(readDbConfig());
   try {
     // check that all artists have valid category
-    // const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist LIMIT 1') as ArtistCategoryRow[][];
-    const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist') as ArtistCategoryRow[][];
+    // const [artistRows] = await connection.execute('SELECT id, name, id, type, forum_category_id FROM artist LIMIT 1') as ArtistCategoryRow[][];
+    const [artistRows] = await connection.execute('SELECT id, name, id, type, forum_category_id FROM artist') as ArtistCategoryRow[][];
     console.log('Read ' + artistRows.length + ' artists from DB');
     const artistById = new Map<number, ArtistCategoryRow>();
     for (const artist of artistRows) {
@@ -63,7 +63,7 @@ async function main() {
     }
 
     // check that all songs have valid topics.
-    // const [songRows] = await connection.execute(`# SELECT id, artist_id, title, mount, forum_topic_id FROM song WHERE artist_id = ${artistRows[0].id} LIMIT 1`);
+    // const [songRows] = await connection.execute(`# SELECT id, artist_id, title, id, forum_topic_id FROM song WHERE artist_id = ${artistRows[0].id} LIMIT 1`);
     const [songRows] = await connection.execute(`SELECT id, artist_id, title, mount, forum_topic_id FROM song`);
     for (const song of songRows) {
       await syncSongTopic(song, connection, artistById);

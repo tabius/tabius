@@ -1,5 +1,5 @@
 import {UserInfo} from 'firebase/app';
-import {Versioned, WithId} from '@common/common-model';
+import {Versioned, WithStringId} from '@common/common-model';
 
 export const AUTH_TOKEN_COOKIE_NAME = 'tabius-at';
 export const USERS_STORE_SCHEMA_VERSION = 3;
@@ -36,7 +36,7 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 
 /** User settings stored on the server. */
 export interface UserSettings {
-  /** User mount tag. Can only be used for signed in users. */
+  /** User id tag. Can only be used for signed in users. */
   readonly mount: string,
   readonly songs: { [songId: number]: UserSongSettings },
   /** If true => B will be rendered instead of H for the tone Si. */
@@ -79,10 +79,12 @@ export function getDefaultUserSongFontSize(): number {
 }
 
 
-export interface Playlist extends WithId, Versioned {
+export const MIN_PLAYLIST_NAME_LENGTH = 1;
+export const MAX_PLAYLIST_NAME_LENGTH = 100;
+
+export interface Playlist extends WithStringId, Versioned {
   readonly userId: string,
   readonly name: string;
-  /** Unique for all user playlists.*/
-  readonly mount: string;
   readonly songIds: readonly number[];
 }
+

@@ -9,7 +9,7 @@
 
     <div *ngIf="playlists.length > 0">
         <div *ngFor="let playlist of playlists" class="playlist-item">
-            <a routerLink="{{playlistLink + playlist.mount}}" title="Перейти к плейлисту «{{playlist.name}}»">
+            <a routerLink="{{playlistLink + playlist.id}}" title="Перейти к плейлисту «{{playlist.name}}»">
                 {{playlist.name}}
                 <span class="song-count" title="Число песен в плейлисте">[<span>{{playlist.songIds.length}}</span>]</span>
             </a>

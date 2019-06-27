@@ -1,12 +1,12 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {combineLatest, Observable, of} from 'rxjs';
-import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {catchError, flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {UserSessionState} from '@app/store/user-session-state';
-import {isInvalidId, isValidId, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc-utils';
+import {needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
@@ -22,8 +22,6 @@ const B4SI_FLAG_KEY = 'b4Si';
 })
 export class UserDataService {
 
-  private state = new UserDataState();
-
   constructor(private readonly httpClient: HttpClient,
               private readonly session: UserSessionState,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
@@ -35,8 +33,8 @@ export class UserDataService {
         .pipe(map(s => s || newDefaultUserDeviceSettings()));
   }
 
-  setUserDeviceSettings(userDeviceSettings: UserDeviceSettings): void {
-    this.store.set(DEVICE_SETTINGS_KEY, userDeviceSettings, needUpdateByStringify);
+  async setUserDeviceSettings(userDeviceSettings: UserDeviceSettings): Promise<void> {
+    await this.store.set(DEVICE_SETTINGS_KEY, userDeviceSettings, needUpdateByStringify);
   }
 
   getUserSongSettings(songId: number): Observable<UserSongSettings> {
@@ -49,7 +47,7 @@ export class UserDataService {
         }));
   }
 
-  private fetchUserSettingsIfNeeded(user): void {
+  private fetchUserSettingsIfNeeded(user?: User): void {
     if (!this.store.isUpdated(USER_SETTINGS_KEY) && user !== undefined) {
       this.httpClient.get(`/api/user/settings`, {observe: 'response'})
           .pipe(catchError(response => of({...response, body: undefined})))
@@ -107,14 +105,16 @@ export class UserDataService {
     }
   }
 
-  updateUserSettingsOnFetch(userSettings: UserSettings): void {
-    this.store.set(USER_SETTINGS_KEY, Date.now());
+  async updateUserSettingsOnFetch(userSettings: UserSettings): Promise<void> {
+    const allOps: Promise<void>[] = [];
+    allOps.push(this.store.set(USER_SETTINGS_KEY, Date.now()));
     for (const songId in userSettings.songs) {
       const songSettings = userSettings.songs[songId];
       const key = getUserSongSettingsKey(songId);
-      this.store.set(key, songSettings, needUpdateByStringify);
+      allOps.push(this.store.set(key, songSettings, needUpdateByStringify));
     }
-    this.store.set(B4SI_FLAG_KEY, userSettings.b4Si || undefined);
+    allOps.push(this.store.set(B4SI_FLAG_KEY, userSettings.b4Si || undefined));
+    await Promise.all(allOps);
   }
 
   getUserPlaylists(): Observable<Playlist[]> {
@@ -130,10 +130,10 @@ export class UserDataService {
                     }
                 );
           }
-          return this.store.get<number[]>(USER_PLAYLISTS_KEY).pipe(
+          return this.store.get<string[]>(USER_PLAYLISTS_KEY).pipe(
               flatMap(ids =>
                   ids && ids.length > 0
-                      ? combineLatest(ids.map(id => this.store.get<Playlist>(getPlaylistKey(id))))
+                      ? combineLatest(ids.filter(m => isValidPlaylistId(m)).map(m => this.store.get<Playlist>(getPlaylistKey(m))))
                       : of([])
               ),
               map(array => array.filter(v => v !== undefined) as Playlist[]),
@@ -144,78 +144,61 @@ export class UserDataService {
   async createUserPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
     await this.session.requireSignIn();
     const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).toPromise();
-    this.cachePlaylistsInBrowserStoreOnFetch(response);
+    await this.cachePlaylistsInBrowserStoreOnFetch(response);
   }
 
   async updateUserPlaylist(playlist: Playlist): Promise<void> {
     await this.session.requireSignIn();
     const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).toPromise();
-    this.cachePlaylistsInBrowserStoreOnFetch(response);
+    await this.cachePlaylistsInBrowserStoreOnFetch(response);
   }
 
-  async deleteUserPlaylist(playlistId: number): Promise<void> {
+  async deleteUserPlaylist(playlistId: string): Promise<void> {
     await this.session.requireSignIn();
     const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).toPromise();
-    this.cachePlaylistsInBrowserStoreOnFetch(response);
+    await this.cachePlaylistsInBrowserStoreOnFetch(response);
   }
 
-  cachePlaylistsInBrowserStoreOnFetch(playlists: readonly Playlist[]): void {
-    this.store.set(USER_PLAYLISTS_KEY, playlists.map(p => p.id), needUpdateByShallowArrayCompare);
+  async cachePlaylistsInBrowserStoreOnFetch(playlists: readonly Playlist[]): Promise<void> {
+    const allOps: Promise<void>[] = [];
+    allOps.push(this.store.set(USER_PLAYLISTS_KEY, playlists.map(p => p.id), needUpdateByShallowArrayCompare));
     for (const playlist of playlists) {
-      this.state.playlistIdByMount.set(playlist.mount, playlist.id);
-      this.store.set(getPlaylistKey(playlist.id), playlist, needUpdateByVersionChange);
+      allOps.push(this.store.set(getPlaylistKey(playlist.id), playlist, needUpdateByVersionChange));
     }
     //todo: cleanup removed playlists?
+    await Promise.all(allOps);
   }
 
-  getPlaylistByMount(mount: string): Observable<Playlist|undefined> {
-    const playlistId = this.state.playlistIdByMount.get(mount);
-    if (isValidId(playlistId)) {
-      return playlistId > 0 ? this.getPlaylistById(playlistId) : of(undefined);
-    }
-    return this.httpClient.get(`/api/playlist/by-mount/${mount}`, {observe: 'response'})
-        .pipe(
-            catchError(response => of({...response, body: undefined})),
-            switchMap(response => response.ok && response.body ? this.registerPlaylistAndGet(response.body) : of(undefined))
-        );
-  }
-
-  getPlaylistById(playlistId?: number): Observable<Playlist|undefined> {
-    if (isInvalidId(playlistId)) {
+  getPlaylist(playlistId?: string): Observable<Playlist|undefined> {
+    if (!isValidPlaylistId(playlistId)) {
       return of(undefined);
     }
     const playlistKey = getPlaylistKey(playlistId);
-    if (this.store.isUpdated(playlistKey)) {
-      return this.store.get<Playlist>(playlistKey);
+    if (!this.store.isUpdated(playlistKey)) {
+      this.httpClient.get(`/api/playlist/by-id/${playlistId}`, {observe: 'response'})
+          .pipe(catchError(response => of({...response, body: undefined})))
+          .subscribe(response => {
+            if (response.ok) {
+              this.cachePlaylistsInBrowserStoreOnFetch([response.body]);
+            }
+          });
     }
-    return this.httpClient.get(`/api/playlist/by-id/${playlistId}`, {observe: 'response'})
-        .pipe(
-            catchError(response => of({...response, body: undefined})),
-            switchMap(response => response.ok && response.body ? this.registerPlaylistAndGet(response.body) : of(undefined))
-        );
-  }
-
-  private registerPlaylistAndGet(playlist: Playlist): Observable<Playlist|undefined> {
-    const key = getPlaylistKey(playlist.id);
-    this.state.playlistIdByMount.set(playlist.mount, playlist.id);
-    this.store.set(key, playlist, needUpdateByVersionChange);
-    return this.store.get<Playlist>(key);
+    return this.store.get<Playlist>(playlistKey);
   }
 
   async cleanupUserDataOnSignout(): Promise<void> {
-    this.state = new UserDataState();
-    this.store.clear();
+    await this.store.clear();
   }
-}
-
-class UserDataState {
-  readonly playlistIdByMount = new Map<string, number>();
 }
 
 function getUserSongSettingsKey(songId: number|string): string {
   return SONG_SETTINGS_KEY_PREFIX + songId;
 }
 
-function getPlaylistKey(playlistId: number): string {
+function getPlaylistKey(playlistId: string): string {
   return PLAYLIST_PREFIX_KEY + playlistId;
+}
+
+function isValidPlaylistId(playlistId?: unknown): playlistId is string {
+  return typeof playlistId === 'string' && playlistId.length >= 6;
 }

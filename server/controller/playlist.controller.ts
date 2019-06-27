@@ -56,22 +56,23 @@ export class PlaylistController {
   async delete(@Session() session, @Param('id') playlistId: string): Promise<DeletePlaylistResponse> {
     const user: User = ServerAuthGuard.getUserOrFail(session);
     this.logger.log(`delete: ${playlistId}, user: ${user.email}`);
-    await this.playlistDbi.delete(user.id, +playlistId);
+    const vr = validate(playlistId, conformsTo(PlaylistValidator.id));
+    if (!vr.success) {
+      throw Error(vr.toString());
+    }
+    await this.playlistDbi.delete(user.id, playlistId);
     return this.playlistDbi.getPlaylists(user.id);
   }
 
-  @Get('/by-mount/:mount')
-  byMount(@Session() session, @Param('mount') mountParam: string): Promise<Playlist|undefined> {
-    this.logger.log('by-mount');
-    const user = ServerAuthGuard.getUserOrUndefined(session);
-    return this.playlistDbi.getPlaylistByMount(mountParam, user ? user.id : undefined);
-  }
-
   @Get('/by-id/:id')
-  byId(@Session() session, @Param('id') idParam: string): Promise<Playlist|undefined> {
+  byId(@Session() session, @Param('id') playlistId: string): Promise<Playlist|undefined> {
     this.logger.log('by-id');
     const user = ServerAuthGuard.getUserOrUndefined(session);
-    const playlistId = +idParam;
+    const vr = validate(playlistId, conformsTo(PlaylistValidator.id));
+    if (!vr.success) {
+      throw Error(vr.toString());
+    }
     return this.playlistDbi.getPlaylistById(playlistId, user ? user.id : undefined);
   }
+
 }
