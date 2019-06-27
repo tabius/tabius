@@ -46,8 +46,8 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
   }
 
-  trackByMount(idx: number, withMount: { id: string }): string {
-    return withMount.id;
+  trackById(idx: number, playlist: Playlist): string {
+    return playlist.id;
   }
 
   /** Returns true if current song is in the playlist. */
