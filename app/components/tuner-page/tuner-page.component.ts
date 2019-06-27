@@ -28,15 +28,15 @@ export class TunerPageComponent implements OnInit, OnDestroy {
               private readonly meta: Meta,
               private readonly uds: UserDataService,
   ) {
+  }
+
+  ngOnInit(): void {
     this.uds.getUserDeviceSettings()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(deviceSettings => {
           this.deviceSettings = deviceSettings;
           this.cd.detectChanges();
         });
-  }
-
-  ngOnInit(): void {
     updatePageMetadata(this.title, this.meta, {
       title: 'Тюнер для гитары',
       description: 'Простой и удобный тюнер для настройки гитары на слух.',
