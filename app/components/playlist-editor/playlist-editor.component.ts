@@ -32,8 +32,8 @@ export class PlaylistEditorComponent {
         .catch(err => this.toastService.warning(err, MSG_NETWORK_ERROR));
   }
 
-  deletePlaylist(id: string): void {
-    this.uds.deleteUserPlaylist(id)
+  deletePlaylist(playlist: Playlist): void {
+    this.uds.deleteUserPlaylist(playlist.id)
         .catch(err => this.toastService.warning(err, MSG_NETWORK_ERROR));
   }
 

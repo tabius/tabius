@@ -1,7 +1,7 @@
 <ul *ngFor="let playlist of playlists$ | async" class="existing-playlists">
     <li>
         <a routerLink="{{getPlaylistPageLink(playlist.id)}}">{{playlist.name}} [{{playlist.songIds.length}}] </a>
-        <a (click)="deletePlaylist(playlist.id)" class="btn delete-button" title="Удалить плейлист">❌</a>
+        <a (click)="deletePlaylist(playlist)" class="btn delete-button" title="Удалить плейлист">❌</a>
     </li>
 </ul>
 

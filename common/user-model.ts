@@ -36,7 +36,7 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 
 /** User settings stored on the server. */
 export interface UserSettings {
-  /** User id tag. Can only be used for signed in users. */
+  /** User mount value. Can only be used for signed in users. */
   readonly mount: string,
   readonly songs: { [songId: number]: UserSongSettings },
   /** If true => B will be rendered instead of H for the tone Si. */

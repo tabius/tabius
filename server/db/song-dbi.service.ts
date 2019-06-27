@@ -13,7 +13,7 @@ interface SongRow {
   version: number;
 }
 
-const SONG_FIELDS = 's.id, s.artist_id, s.id, s.title, s.forum_topic_id, s.version';
+const SONG_FIELDS = 's.id, s.artist_id, s.mount, s.title, s.forum_topic_id, s.version';
 const SONG_DETAILS_FIELDS = `s.id, s.content, s.media_links, s.version`;
 const SELECT_SONG_SQL = `SELECT ${SONG_FIELDS} FROM song s`;
 const SELECT_SONG_DETAILS_SQL = `SELECT ${SONG_DETAILS_FIELDS} FROM song s`;

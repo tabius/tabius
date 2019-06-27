@@ -10,13 +10,13 @@ async function generateSitemap() {
   const connection = await mysql.createConnection(readDbConfig());
   let sitemap = '';
   try {
-    const [artistRows] = await connection.execute('SELECT id, id FROM artist');
+    const [artistRows] = await connection.execute('SELECT id, mount FROM artist');
     const artistMountById = new Map<number, string>();
     for (const row of artistRows) {
       artistMountById.set(+row.id, row.mount);
       sitemap += `https://tabius.ru/artist/${row.mount}\n`;
     }
-    const [songRows] = await connection.execute('SELECT artist_id, id FROM song');
+    const [songRows] = await connection.execute('SELECT artist_id, mount FROM song');
     for (const row of songRows) {
       const artistMount = artistMountById.get(+row.artist_id);
       if (!artistMount) {

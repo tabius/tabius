@@ -4,9 +4,9 @@ import {Meta, Title} from '@angular/platform-browser';
 import {UserDataService} from '@app/services/user-data.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {Playlist} from '@common/user-model';
-import {MOUNT_PLAYLIST_PREFIX} from '@common/mounts';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {takeUntil, throttleTime} from 'rxjs/operators';
+import {getPlaylistPageLink} from '@common/util/misc-utils';
 
 @Component({
   selector: 'gt-playlist-list-page',
@@ -19,7 +19,7 @@ export class PlaylistListPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject<unknown>();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
-  readonly playlistLink = `/${MOUNT_PLAYLIST_PREFIX}`;
+  readonly getPlaylistPageLink = getPlaylistPageLink;
 
   loaded = false;
   playlists: Playlist[] = [];

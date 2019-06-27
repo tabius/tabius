@@ -1,4 +1,4 @@
-export interface WithNumericId {
+export interface WithNumId {
   readonly id: number;
 }
 

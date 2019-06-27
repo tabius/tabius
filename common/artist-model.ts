@@ -1,4 +1,4 @@
-import {Versioned, WithNumericId} from '@common/common-model';
+import {Versioned, WithNumId} from '@common/common-model';
 
 export const ARTISTS_STORE_SCHEMA_VERSION = 3;
 
@@ -7,7 +7,7 @@ export enum ArtistType {
   Band = 2
 }
 
-export interface Artist extends WithNumericId, Versioned {
+export interface Artist extends WithNumId, Versioned {
   /** Name of the artist. For person it is <Last Name> <First Name>. */
   readonly name: string;
   /** Mount part of the artist page. Unique for all artists. */
@@ -19,11 +19,11 @@ export interface Artist extends WithNumericId, Versioned {
   readonly bandIds: readonly number[];
 }
 
-export interface ArtistDetails extends WithNumericId, Versioned {
+export interface ArtistDetails extends WithNumId, Versioned {
   readonly songIds: readonly number[];
 }
 
-export interface Song extends WithNumericId, Versioned {
+export interface Song extends WithNumId, Versioned {
   /** Mount part of the song page. Unique for all songs per artist. */
   readonly mount: string;
   /** Title of the song. */
@@ -34,7 +34,7 @@ export interface Song extends WithNumericId, Versioned {
   readonly tid: number;
 }
 
-export interface SongDetails extends WithNumericId, Versioned {
+export interface SongDetails extends WithNumId, Versioned {
   /** Text of the song with tabs & chords. */
   readonly content: string;
   /** List of media links: Youtube, etc...*/
