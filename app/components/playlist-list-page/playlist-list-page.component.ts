@@ -7,6 +7,7 @@ import {Playlist} from '@common/user-model';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {takeUntil, throttleTime} from 'rxjs/operators';
 import {getPlaylistPageLink} from '@common/util/misc-utils';
+import {MOUNT_USER_SETTINGS} from '@common/mounts';
 
 @Component({
   selector: 'gt-playlist-list-page',
@@ -20,6 +21,7 @@ export class PlaylistListPageComponent implements OnInit, OnDestroy {
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
   readonly getPlaylistPageLink = getPlaylistPageLink;
+  readonly settingsLink = `/${MOUNT_USER_SETTINGS}`;
 
   loaded = false;
   playlists: Playlist[] = [];

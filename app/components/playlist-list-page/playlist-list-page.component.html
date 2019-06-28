@@ -14,6 +14,11 @@
                 <span class="song-count" title="Число песен в плейлисте">[<span>{{playlist.songIds.length}}</span>]</span>
             </a>
         </div>
+
+        <div class="related-links-block">
+            <a routerLink="{{settingsLink}}">Управление плейлистами »</a>
+        </div>
+
     </div>
 
     <div *ngIf="playlists.length === 0" class="no-playlists-block">
