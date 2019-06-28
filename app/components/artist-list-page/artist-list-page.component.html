@@ -34,14 +34,14 @@
             <div *ngFor="let letterBlock of getVisibleLetterBlocks(); trackBy: trackByLetter" class="letter-block">
                 <div class="letter">{{letterBlock.letter}}</div>
                 <div>
-                    <div *ngFor="let artist of letterBlock.artists; trackBy: trackByArtistId" class="artist-link-block">
+                    <div *ngFor="let artist of letterBlock.artists; trackBy: trackByArtistId">
                         <a routerLink="{{getArtistPageLink(artist.mount)}}">{{artist.name}}</a>
                     </div>
                 </div>
             </div>
         </div>
         <div *ngIf="artistFilter.length > 0" class="filtered-artists-block">
-            <div *ngFor="let artist of getFilteredArtists(); trackBy: trackByArtistId" class="artist-link-block">
+            <div *ngFor="let artist of getFilteredArtists(); trackBy: trackByArtistId">
                 <a routerLink="{{getArtistPageLink(artist.mount)}}">{{artist.name}}</a>
             </div>
         </div>

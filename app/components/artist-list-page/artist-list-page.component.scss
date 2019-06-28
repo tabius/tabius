@@ -72,12 +72,12 @@ h1 {
 
   .letter-block {
     padding-top: 1em;
-    line-height: 1.7em;
+    line-height: 1.9em;
 
     .letter {
       color: #333;
       font-size: 20px;
-      padding: 5px 2px 2px;
+      padding: 5px 2px 3px;
       display: inline-block;
     }
 
@@ -105,17 +105,11 @@ h1 {
     .letter-link-block {
       min-width: 30px;
     }
+  }
 
-    .artist-list {
-      .letter-block {
-        .letter {
-          font-size: 20px;
-        }
-
-        .letter:after {
-          height: 3px;
-        }
-      }
+  .artist-list {
+    .letter-block {
+      line-height: 1.7em;
     }
   }
 }
@@ -134,6 +128,7 @@ h1 {
       .letter {
         font-size: 26px;
       }
+
       .letter:after {
         height: 3px;
       }
