@@ -55,7 +55,7 @@ async function main() {
     // check that all artists have valid category
     // const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist LIMIT 1') as ArtistCategoryRow[][];
     const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist') as ArtistCategoryRow[][];
-    console.log('Read ' + artistRows.length + ' artists from DB');
+    console.info('Read ' + artistRows.length + ' artists from DB');
     const artistById = new Map<number, ArtistCategoryRow>();
     for (const artist of artistRows) {
       await syncArtistCategory(artist, connection);
@@ -74,7 +74,7 @@ async function main() {
 }
 
 main()
-    .then(() => console.log('Done'))
+    .then(() => console.info('Done'))
     .catch(error => console.error(error));
 
 async function getCategory(id: number): Promise<ForumCategory|string> {
@@ -103,13 +103,13 @@ async function syncArtistCategory(artist: ArtistCategoryRow, connection: any): P
     };
     const categoryResponse = (await postAsync(forumUrl + '/api/v2/categories', options)).body;
     if (categoryResponse.code !== 'ok') {
-      console.log('Failed to create artist category', artist, categoryResponse);
+      console.error('Failed to create artist category', artist, categoryResponse);
       throw new Error(`Failed to create artist category: ${artist.id}`);
     }
     const category = categoryResponse.payload as ForumCategory;
     artist.forum_category_id = category.cid;
     await connection.execute(`UPDATE artist SET forum_category_id = ${category.cid} WHERE id = ${artist.id}`);
-    console.log(`Created new category for ${artist.mount}`);
+    console.info(`Created new category for ${artist.mount}`);
   } else {
     // nothing to update today.
   }
@@ -146,13 +146,13 @@ async function syncSongTopic(song: SongTopicRow, connection: any, artistById: Ma
     };
     const topicResponse = (await postAsync(forumUrl + '/api/v2/topics', options)).body;
     if (topicResponse.code !== 'ok') {
-      console.log('Failed to create song topic', song, topicResponse);
+      console.error('Failed to create song topic', song, topicResponse);
       throw new Error(`Failed to create song topic: ${song.id}`);
     }
     const topic = topicResponse.payload.topicData as ForumTopic;
     song.forum_topic_id = topic.tid;
     await connection.execute(`UPDATE song SET forum_topic_id = ${topic.tid} WHERE id = ${song.id}`);
-    console.log(`Created new topic for ${artist.mount}/${song.mount}`);
+    console.info(`Created new topic for ${artist.mount}/${song.mount}`);
   } else {
     // nothing to update today.
   }

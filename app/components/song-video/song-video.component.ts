@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {SongDetails} from '@common/artist-model';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
   selector: 'gt-song-video',
@@ -13,8 +14,11 @@ export class SongVideoComponent implements OnChanges {
   onLine = true;
   youtubeLink?: string;
 
+  constructor(private readonly bss: BrowserStateService) {
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    this.onLine = !navigator || navigator.onLine === undefined || navigator.onLine;
+    this.onLine = this.bss.isOnline();
     if (this.songDetails) {
       this.youtubeLink = this.songDetails.mediaLinks ? this.songDetails.mediaLinks.find(link => link.startsWith('https://www.youtube.com/embed/')) : undefined;
     }

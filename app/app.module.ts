@@ -33,6 +33,7 @@ import {InlineSongSettingsComponent} from './components/inline-song-settings/inl
 import {UserSettingsPageComponent} from './components/user-settings-page/user-settings-page.component';
 import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/browser-store';
 import {APP_BROWSER_STORE_TOKEN, TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
+import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserSessionState} from '@app/store/user-session-state';
 import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-song-to-playlist.component';
 import {PlaylistListPageComponent} from './components/playlist-list-page/playlist-list-page.component';
@@ -44,7 +45,7 @@ import {ToastModule} from '@app/toast';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SongComponent} from './components/song/song.component';
 import {SongHeaderComponent} from './components/song-header/song-header.component';
-import { SongVideoComponent } from './components/song-video/song-video.component';
+import {SongVideoComponent} from './components/song-video/song-video.component';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import { SongVideoComponent } from './components/song-video/song-video.component
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
     CookieService,
     UserSessionState,
+    BrowserStateService,
     PwaUpdaterService,
   ],
   bootstrap: [AppComponent]

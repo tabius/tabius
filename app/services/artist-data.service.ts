@@ -2,7 +2,7 @@ import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {combineLatest, Observable, of} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
-import {catchError, flatMap, map, take} from 'rxjs/operators';
+import {flatMap, map, take} from 'rxjs/operators';
 import {isPlatformBrowser} from '@angular/common';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
@@ -10,6 +10,7 @@ import {ArtistDetailsResponse} from '@common/ajax-model';
 import {isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
 import {WithNumId} from '@common/common-model';
 import {BrowserStore} from '@app/store/browser-store';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 const ARTIST_LIST_KEY = 'artist-list';
 const ARTIST_KEY_PREFIX = 'artist-';
@@ -28,56 +29,51 @@ export class ArtistDataService {
   private readonly browser: boolean;
 
   constructor(private readonly httpClient: HttpClient,
+              private readonly bss: BrowserStateService,
               @Inject(TABIUS_ARTISTS_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
               @Inject(PLATFORM_ID) platformId: string) {
     this.browser = isPlatformBrowser(platformId);
   }
 
-  /** Returns true if this key was not fetched before using this data service instance (during the app session). */
-  private needUpdate(key: string): boolean {
-    return !this.runningQueries.has(key) && !this.store.isUpdated(key);
+  /** Returns true if this key was not fetched before using this data service instance (during the app session) and the app is online. */
+  private isSafeToUpdate(key: string): boolean {
+    return this.bss.isOnline() && !this.runningQueries.has(key) && !this.store.isUpdated(key);
   }
 
   getAllArtists(): Observable<Artist[]> {
-    if (this.needUpdate(ARTIST_LIST_KEY)) {
-      this.fetchArtistsList();
+    if (this.isSafeToUpdate(ARTIST_LIST_KEY)) {
+      this.fetchArtistsList().catch(err => console.warn(err));
     }
-    return this.store.get<number[]>(ARTIST_LIST_KEY).pipe(
-        flatMap(ids => this.getArtistsByIds(ids || [])),
-        map(items => (items.filter(i => i !== undefined) as Artist[])),
-    );
+    return this.store.get<number[]>(ARTIST_LIST_KEY)
+        .pipe(
+            flatMap(ids => this.getArtistsByIds(ids || [])),
+            map(items => (items.filter(i => i !== undefined) as Artist[])),
+        );
   }
 
   private async fetchArtistsList(): Promise<void> {
     this.runningQueries.add(ARTIST_LIST_KEY);
-    return this.httpClient.get('/api/artist/all', {observe: 'response'}).pipe(
-        take(1),
-        catchError(response => of({...response, body: undefined})),
-        map(response => {
-              this.runningQueries.delete(ARTIST_LIST_KEY);
-              if (response.ok) {
-                const artists: Artist[] = response.body;
-                const storePromises: Promise<void>[] = artists.map(artist => this.registerArtistOnFetch(artist));
-                Promise.all(storePromises).then(() => {
-                  this.store.set(ARTIST_LIST_KEY, artists.map(artist => artist.id), needUpdateByShallowArrayCompare);
-                });
-              }
-            }
-        )
-    ).toPromise();
+    try {
+      const artists = await this.httpClient.get<Artist[]>('/api/artist/all').toPromise();
+      await Promise.all(artists.map(artist => this.registerArtistOnFetch(artist)));
+      await this.store.set(ARTIST_LIST_KEY, artists.map(artist => artist.id), needUpdateByShallowArrayCompare);
+    } finally {
+      this.runningQueries.delete(ARTIST_LIST_KEY);
+    }
   }
 
-  private registerArtistOnFetch(artist: Artist): Promise<void> {
-    return this.store.set(getArtistKey(artist.id), artist, needUpdateByVersionChange);
+  private async registerArtistOnFetch(artist: Artist): Promise<void> {
+    const artistKey = getArtistKey(artist.id);
+    return this.store.set(artistKey, artist, needUpdateByVersionChange);
   }
 
   getArtistDetails(artistId: number|undefined): Observable<ArtistDetails|undefined> {
-    if (artistId === undefined || artistId <= 0) {
+    if (isInvalidId(artistId)) {
       return of(undefined);
     }
     const artistKey = getArtistDetailsKey(artistId);
-    if (this.needUpdate(artistKey)) {
-      this.fetchArtistDetails(artistId);
+    if (this.isSafeToUpdate(artistKey)) {
+      this.fetchArtistDetails(artistId).catch(err => console.warn(err));
     }
     return this.store.get<ArtistDetails>(artistKey);
   }
@@ -88,55 +84,47 @@ export class ArtistDataService {
     }
     const artistKeys = artistIds.map(id => getArtistKey(id));
     artistKeys.forEach(key => this.runningQueries.add(key));
-    return this.httpClient.get(`/api/artist/by-ids/${artistIds.join(',')}`, {observe: 'response'}).pipe(
-        take(1),
-        catchError(response => of({...response, body: undefined})),
-        map(response => {
-              artistKeys.forEach(key => this.runningQueries.delete(key));
-              if (response.ok) {
-                const artists: Artist[] = response.body;
-                artists.forEach(artist => this.registerArtistOnFetch(artist));
-              }
-            }
-        )
-    ).toPromise();
+    try {
+      const idsParam = artistIds.join(',');
+      const artists = await this.httpClient.get<Artist[]>(`/api/artist/by-ids/${idsParam}`).toPromise();
+      await Promise.all(artists.map(artist => this.registerArtistOnFetch(artist)));
+    } finally {
+      artistKeys.forEach(key => this.runningQueries.delete(key));
+    }
   }
 
   private async fetchArtistDetails(artistId: number): Promise<void> {
     const artistDetailsKey = getArtistDetailsKey(artistId);
     this.runningQueries.add(artistDetailsKey);
-    return this.httpClient.get(`/api/artist/details-by-id/${artistId}`, {observe: 'response'}).pipe(
-        take(1),
-        catchError(response => of({...response, body: undefined})),
-        map(response => {
-          this.runningQueries.delete(artistDetailsKey);
-          if (response.ok) {
-            const {artist, songs} = response.body as ArtistDetailsResponse;
-            this.registerArtistOnFetch(artist);
-            const details: ArtistDetails = {
-              id: artist.id,
-              songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
-              version: artist.version,
-            };
-            this.store.set(artistDetailsKey, details, needUpdateByVersionChange);
-            songs.forEach(s => this.store.set(getSongKey(s.id), s, needUpdateByVersionChange));
-            if (this.browser) { // todo: find a better place for all-songs pre-fetch?
-              this.fetchAndCacheMissedSongDetails(songs.map(s => s.id)); // pre-fetch all songs
-            }
-          }
-        })
-    ).toPromise();
+    try {
+      const {artist, songs} = await this.httpClient.get<ArtistDetailsResponse>(`/api/artist/details-by-id/${artistId}`).toPromise();
+      const details: ArtistDetails = {
+        id: artist.id,
+        songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
+        version: artist.version,
+      };
+      await Promise.all([
+        ...songs.map(s => this.store.set(getSongKey(s.id), s, needUpdateByVersionChange)),
+        this.registerArtistOnFetch(artist),
+        this.store.set(artistDetailsKey, details, needUpdateByVersionChange)]
+      );
+      if (this.browser) { // todo: find a better place for all-songs pre-fetch?
+        this.fetchAndCacheMissedSongDetails(songs.map(s => s.id)); // pre-fetch all songs
+      }
+    } finally {
+      this.runningQueries.delete(artistDetailsKey);
+    }
   }
 
   getSongsByArtistId(artistId?: number): Observable<Song[]|undefined> {
     if (isInvalidId(artistId)) {
       return of([]);
     }
-    return this.getArtistDetails(artistId).pipe(
-        flatMap(details => details === undefined ? of(undefined) : this.getSongsByIds(details.songIds)),
-        // tap(songs => console.log('Songs', songs)),
-        map(songs => songs === undefined ? undefined : songs.filter(s => s !== undefined) as Song[])
-    );
+    return this.getArtistDetails(artistId)
+        .pipe(
+            flatMap(details => details === undefined ? of(undefined) : this.getSongsByIds(details.songIds)),
+            map(songs => songs === undefined ? undefined : songs.filter(s => s !== undefined) as Song[])
+        );
   }
 
   getArtistById(artistId?: number): Observable<(Artist|undefined)> {
@@ -160,13 +148,14 @@ export class ArtistDataService {
   /** Pre-fetches all song list items missed in cache. */
   private async fetchAndCacheMissedArtists(artistIds: readonly number[]): Promise<void> {
     const missedArtistIds = await this.getMissedIds(ARTIST_KEY_PREFIX, artistIds);
-    return this.fetchArtists(missedArtistIds);
+    await this.fetchArtists(missedArtistIds);
   }
 
   getArtistByMount(artistMount: string): Observable<Artist|undefined> {
-    return this.getAllArtists().pipe(
-        map(artists => artists.find(a => a.mount === artistMount)),
-    );
+    return this.getAllArtists()
+        .pipe(
+            map(artists => artists.find(a => a.mount === artistMount)),
+        );
   }
 
   getSongById(songId?: number): Observable<(Song|undefined)> {
@@ -191,8 +180,8 @@ export class ArtistDataService {
       return of(undefined);
     }
     const songDetailsKey = getSongDetailsKey(songId);
-    if (this.needUpdate(songDetailsKey)) {
-      this.fetchAndCacheMissedSongDetails([songId]);
+    if (this.isSafeToUpdate(songDetailsKey)) {
+      this.fetchAndCacheMissedSongDetails([songId]).catch(err => console.warn(err));
     }
     return this.store.get<SongDetails>(songDetailsKey);
   }
@@ -200,13 +189,13 @@ export class ArtistDataService {
   /** Pre-fetches all song list items missed in cache. */
   private async fetchAndCacheMissedSongs(songIds: readonly number[]): Promise<void> {
     const missedSongIds = await this.getMissedIds(SONG_KEY_PREFIX, songIds);
-    return this.fetchSongs(missedSongIds);
+    await this.fetchSongs(missedSongIds);
   }
 
   /** Pre-fetches all song list items missed in cache. */
   private async fetchAndCacheMissedSongDetails(songIds: readonly number[]): Promise<void> {
     const missedSongIds = await this.getMissedIds(SONG_DETAIL_KEY_PREFIX, songIds);
-    return this.fetchSongsDetails(missedSongIds);
+    await this.fetchSongsDetails(missedSongIds);
   }
 
   private async fetchSongs(songIds: readonly number[]): Promise<void> {
@@ -215,19 +204,12 @@ export class ArtistDataService {
     }
     const songKeys = songIds.map(id => getSongKey(id));
     songKeys.forEach(key => this.runningQueries.add(key));
-    return this.httpClient
-        .get(`/api/song/by-ids/${songIds}`, {observe: 'response'})
-        .pipe(
-            catchError(response => of({...response, body: undefined})),
-            take(1),
-            map(response => {
-              songKeys.forEach(key => this.runningQueries.delete(key));
-              if (response.ok) {
-                const songs = response.body as Song[];
-                songs.forEach(song => this.store.set(getSongKey(song.id), song, needUpdateByVersionChange));
-              }
-            }))
-        .toPromise();
+    try {
+      const songs = await this.httpClient.get<Song[]>(`/api/song/by-ids/${songIds}`).toPromise();
+      await Promise.all(songs.map(song => this.store.set(getSongKey(song.id), song, needUpdateByVersionChange)));
+    } finally {
+      songKeys.forEach(key => this.runningQueries.delete(key));
+    }
   }
 
   private async fetchSongsDetails(songIds: readonly number[]): Promise<void> {
@@ -236,28 +218,20 @@ export class ArtistDataService {
     }
     const songDetailsKeys = songIds.map(id => getSongDetailsKey(id));
     songDetailsKeys.forEach(key => this.runningQueries.add(key));
-    return this.httpClient
-        .get(`/api/song/details-by-ids/${songIds}`, {observe: 'response'})
-        .pipe(
-            catchError(response => of({...response, body: undefined})),
-            take(1),
-            map(response => {
-              songDetailsKeys.forEach(key => this.runningQueries.delete(key));
-              if (response.ok) {
-                const detailsList = response.body as SongDetails[];
-                for (const details of detailsList) {
-                  this.store.set(getSongDetailsKey(details.id), details, needUpdateByVersionChange);
-                }
-              }
-            }))
-        .toPromise();
+    try {
+      const detailsList = await this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songIds}`).toPromise();
+      await Promise.all(detailsList.map(details => this.store.set(getSongDetailsKey(details.id), details, needUpdateByVersionChange)));
+    } finally {
+      songDetailsKeys.forEach(key => this.runningQueries.delete(key));
+    }
   }
 
   getSongByMount(artistMount: string, songMount: string): Observable<Song|undefined> {
-    return this.getArtistByMount(artistMount).pipe(
-        flatMap(artist => this.getSongsByArtistId(artist ? artist.id : undefined)),
-        map(songs => songs === undefined ? undefined : songs.find(s => s.mount === songMount)),
-    );
+    return this.getArtistByMount(artistMount)
+        .pipe(
+            flatMap(artist => this.getSongsByArtistId(artist ? artist.id : undefined)),
+            map(songs => songs === undefined ? undefined : songs.find(s => s.mount === songMount)),
+        );
   }
 
 

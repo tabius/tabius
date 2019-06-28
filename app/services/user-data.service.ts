@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {combineLatest, Observable, of} from 'rxjs';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
-import {catchError, flatMap, map, switchMap} from 'rxjs/operators';
+import {flatMap, map, switchMap, take} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {UserSessionState} from '@app/store/user-session-state';
 import {needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc-utils';
@@ -40,23 +40,17 @@ export class UserDataService {
   getUserSongSettings(songId: number): Observable<UserSongSettings> {
     return this.session.user$.pipe(
         switchMap(user => {
-          this.fetchUserSettingsIfNeeded(user);
+          this.fetchUserSettingsIfNeeded(user).catch(err => console.warn(err));
           const key = getUserSongSettingsKey(songId);
           return this.store.get<UserSongSettings|undefined>(key)
               .pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
         }));
   }
 
-  private fetchUserSettingsIfNeeded(user?: User): void {
+  private async fetchUserSettingsIfNeeded(user?: User): Promise<void> {
     if (!this.store.isUpdated(USER_SETTINGS_KEY) && user !== undefined) {
-      this.httpClient.get(`/api/user/settings`, {observe: 'response'})
-          .pipe(catchError(response => of({...response, body: undefined})))
-          .subscribe(response => {
-                if (response.ok) {
-                  this.updateUserSettingsOnFetch(response.body);
-                }
-              }
-          );
+      const settings = await this.httpClient.get<UserSettings>(`/api/user/settings`).toPromise();
+      await this.updateUserSettingsOnFetch(settings);
     }
   }
 
@@ -65,26 +59,19 @@ export class UserDataService {
     await this.store.set(key, songSettings, needUpdateByStringify);
     const signedIn = await this.session.isSignedIn();
     if (signedIn) {
-      this.httpClient.put(`/api/user/settings/song`, songSettings, {observe: 'response'})
-          .pipe(catchError(response => of({...response, body: undefined})))
-          .subscribe(response => {
-                if (response.ok) {
-                  //todo: concurrent callbacks!
-                  this.updateUserSettingsOnFetch(response.body);
-                }
-              }
-          );
+      const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).toPromise();
+      await this.updateUserSettingsOnFetch(settings);
     }
   }
 
   getB4SiFlag(): Observable<boolean> {
     return this.session.user$.pipe(
         switchMap(user => {
-          this.fetchUserSettingsIfNeeded(user);
-          return this.store.get<boolean>(B4SI_FLAG_KEY).pipe(
-              map(flag => flag === undefined ? false : flag),
-              // tap(flag => console.log(flag)),
-          );
+          this.fetchUserSettingsIfNeeded(user).catch(err => console.warn(err));
+          return this.store.get<boolean>(B4SI_FLAG_KEY)
+              .pipe(
+                  map(flag => flag === undefined ? false : flag),
+              );
         })
     );
   }
@@ -93,15 +80,8 @@ export class UserDataService {
     await this.store.set(B4SI_FLAG_KEY, b4SiFlag || undefined); //todo: need update?
     const signedIn = await this.session.isSignedIn();
     if (signedIn) {
-      this.httpClient.put(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}, {observe: 'response'})
-          .pipe(catchError(response => of({...response, body: undefined})))
-          .subscribe(response => {
-                if (response.ok) {
-                  //todo: concurrent callbacks!
-                  this.updateUserSettingsOnFetch(response.body);
-                }
-              }
-          );
+      const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).toPromise();
+      await this.updateUserSettingsOnFetch(settings);
     }
   }
 
@@ -120,16 +100,7 @@ export class UserDataService {
   getUserPlaylists(): Observable<Playlist[]> {
     return this.session.user$.pipe(
         switchMap(user => {
-          if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined) {
-            this.httpClient.get(`/api/playlist/by-current-user`, {observe: 'response'})
-                .pipe(catchError(response => of({...response, body: undefined})))
-                .subscribe(response => {
-                      if (response.ok) {
-                        this.cachePlaylistsInBrowserStoreOnFetch(response.body);
-                      }
-                    }
-                );
-          }
+          this.fetchUserPlaylistsIfNeeded(user).catch(err => console.warn(err));
           return this.store.get<string[]>(USER_PLAYLISTS_KEY).pipe(
               flatMap(ids =>
                   ids && ids.length > 0
@@ -139,6 +110,13 @@ export class UserDataService {
               map(array => array.filter(v => v !== undefined) as Playlist[]),
           ) as Observable<Playlist[]>;
         }));
+  }
+
+  private async fetchUserPlaylistsIfNeeded(user): Promise<void> {
+    if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined) {
+      const playlists = await this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`).toPromise();
+      await this.cachePlaylistsInBrowserStoreOnFetch(playlists);
+    }
   }
 
   async createUserPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
@@ -175,13 +153,9 @@ export class UserDataService {
     }
     const playlistKey = getPlaylistKey(playlistId);
     if (!this.store.isUpdated(playlistKey)) {
-      this.httpClient.get(`/api/playlist/by-id/${playlistId}`, {observe: 'response'})
-          .pipe(catchError(response => of({...response, body: undefined})))
-          .subscribe(response => {
-            if (response.ok) {
-              this.cachePlaylistsInBrowserStoreOnFetch([response.body]);
-            }
-          });
+      this.httpClient.get<Playlist>(`/api/playlist/by-id/${playlistId}`).pipe(take(1)).subscribe(playlist => {
+        this.cachePlaylistsInBrowserStoreOnFetch([playlist]).catch(err => console.warn(err));
+      });
     }
     return this.store.get<Playlist>(playlistKey);
   }

@@ -29,7 +29,6 @@ export class PwaUpdaterService {
       console.debug('Found new app update!', event);
       // ensure we have no reload loop for whatever reason it may happen
       appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY).pipe(take(1)).subscribe(lastForcedUpdateTime => {
-        console.log('Last forced update time: ', lastForcedUpdateTime);
         const now = Date.now();
         if (lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000) {
           console.info('Enforcing app updated!');

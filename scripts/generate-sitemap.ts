@@ -33,5 +33,5 @@ async function generateSitemap() {
 }
 
 generateSitemap()
-    .then(() => console.log('Done'))
+    .then(() => console.info('Done'))
     .catch(error => console.error(error));
