@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {combineLatest, Observable, of} from 'rxjs';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
-import {flatMap, map, switchMap, take} from 'rxjs/operators';
+import {flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {UserSessionState} from '@app/store/user-session-state';
 import {needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc-utils';
@@ -116,6 +116,7 @@ export class UserDataService {
     if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined) {
       const playlists = await this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`).toPromise();
       await this.cachePlaylistsInBrowserStoreOnFetch(playlists);
+      //todo: cleanup removed playlists?
     }
   }
 
@@ -143,7 +144,6 @@ export class UserDataService {
     for (const playlist of playlists) {
       allOps.push(this.store.set(getPlaylistKey(playlist.id), playlist, needUpdateByVersionChange));
     }
-    //todo: cleanup removed playlists?
     await Promise.all(allOps);
   }
 
@@ -151,13 +151,17 @@ export class UserDataService {
     if (!isValidPlaylistId(playlistId)) {
       return of(undefined);
     }
+    this.fetchPlaylistIfNeeded(playlistId).catch(err => console.warn(err));
+    const playlistKey = getPlaylistKey(playlistId);
+    return this.store.get<Playlist>(playlistKey);
+  }
+
+  private async fetchPlaylistIfNeeded(playlistId: string): Promise<void> {
     const playlistKey = getPlaylistKey(playlistId);
     if (!this.store.isUpdated(playlistKey)) {
-      this.httpClient.get<Playlist>(`/api/playlist/by-id/${playlistId}`).pipe(take(1)).subscribe(playlist => {
-        this.cachePlaylistsInBrowserStoreOnFetch([playlist]).catch(err => console.warn(err));
-      });
+      const playlist = await this.httpClient.get<Playlist>(`/api/playlist/by-id/${playlistId}`).toPromise();
+      await this.cachePlaylistsInBrowserStoreOnFetch([playlist]);
     }
-    return this.store.get<Playlist>(playlistKey);
   }
 
   async cleanupUserDataOnSignout(): Promise<void> {
