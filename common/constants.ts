@@ -10,3 +10,12 @@ export const TABIUS_USER_BROWSER_STORE_TOKEN = 'user';
 export const TABIUS_ARTISTS_BROWSER_STORE_TOKEN = 'artists';
 export const APP_BROWSER_STORE_TOKEN = 'tabius';
 
+
+// the values below should be in sync with 'dimensions.scss'
+// export const MAX_MOBILE_WIDTH = 899;
+export const MIN_DESKTOP_WIDTH = 900;
+export const HIRES_DESKTOP_WIDTH = 1921;
+
+// Used as optimal mobile width in SSR rendering.
+export const SSR_MOBILE_WIDTH = 360;
+export const SSR_DESKTOP_WIDTH = 1920;

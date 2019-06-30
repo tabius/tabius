@@ -1,5 +1,6 @@
 import {UserInfo} from 'firebase/app';
 import {Versioned, WithStringId} from '@common/common-model';
+import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/constants';
 
 export const AUTH_TOKEN_COOKIE_NAME = 'tabius-at';
 export const USERS_STORE_SCHEMA_VERSION = 3;
@@ -66,8 +67,6 @@ export function newDefaultUserSettings(): UserSettings {
 const SONG_FONT_SIZE_MOBILE = 16;
 const SONG_FONT_SIZE_DESKTOP = 18;
 const SONG_FONT_SIZE_HIRES_DESKTOP = 20;
-const MIN_DESKTOP_WIDTH = 900;
-const HIRES_DESKTOP_WIDTH = 1921;
 
 export function getDefaultUserSongFontSize(): number {
   const width = window && window.innerWidth;

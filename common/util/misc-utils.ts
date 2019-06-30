@@ -116,3 +116,12 @@ export function getSongPageLink(artistMount: string, songMount: string): string 
 export function getPlaylistPageLink(playlistId: string): string {
   return `/${MOUNT_PLAYLIST_PREFIX}${playlistId}`;
 }
+
+/**
+ *  Returns true if userAgent is a known mobile (small screen) device user agent.
+ *  Used in server side rendering to select correct layout (when needed) to avoid flickering on re-render on the client.
+ *  Example: columns count on the song page.
+ */
+export function isSmallScreenDevice(userAgent?: string): boolean {
+  return userAgent != undefined && !!userAgent.match(/(android.*mobile|iphone|ipod|ipad|blackberry|iemobile|opera (mini|mobi))/i);
+}
