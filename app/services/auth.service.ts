@@ -85,7 +85,7 @@ export class AuthService {
       this.session.setUser(userAndToken.user);
       await Promise.all([
         this.userDataService.updateUserSettingsOnFetch(settings),
-        this.userDataService.cachePlaylistsInBrowserStoreOnFetch(playlists)]
+        this.userDataService.cachePlaylistsInBrowserStore(playlists)]
       );
       const {returnUrl} = this.session;
       if (returnUrl.length > 0) {

@@ -22,6 +22,9 @@ const B4SI_FLAG_KEY = 'b4Si';
 })
 export class UserDataService {
 
+  /** Keys of all in-flight requests. */
+  private runningQueries = new Set<string>();
+
   constructor(private readonly httpClient: HttpClient,
               private readonly session: UserSessionState,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
@@ -48,9 +51,14 @@ export class UserDataService {
   }
 
   private async fetchUserSettingsIfNeeded(user?: User): Promise<void> {
-    if (!this.store.isUpdated(USER_SETTINGS_KEY) && user !== undefined) {
-      const settings = await this.httpClient.get<UserSettings>(`/api/user/settings`).toPromise();
-      await this.updateUserSettingsOnFetch(settings);
+    if (!this.store.isUpdated(USER_SETTINGS_KEY) && user !== undefined && !this.runningQueries.has(USER_SETTINGS_KEY)) {
+      this.runningQueries.add(USER_SETTINGS_KEY);
+      try {
+        const settings = await this.httpClient.get<UserSettings>(`/api/user/settings`).toPromise();
+        await this.updateUserSettingsOnFetch(settings);
+      } finally {
+        this.runningQueries.delete(USER_SETTINGS_KEY);
+      }
     }
   }
 
@@ -113,9 +121,14 @@ export class UserDataService {
   }
 
   private async fetchUserPlaylistsIfNeeded(user): Promise<void> {
-    if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined) {
-      const playlists = await this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`).toPromise();
-      await this.cachePlaylistsInBrowserStoreOnFetch(playlists);
+    if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined && !this.runningQueries.has(USER_PLAYLISTS_KEY)) {
+      this.runningQueries.add(USER_PLAYLISTS_KEY);
+      try {
+        const playlists = await this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`).toPromise();
+        await this.cachePlaylistsInBrowserStore(playlists);
+      } finally {
+        this.runningQueries.delete(USER_PLAYLISTS_KEY);
+      }
       //todo: cleanup removed playlists?
     }
   }
@@ -123,22 +136,23 @@ export class UserDataService {
   async createUserPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
     await this.session.requireSignIn();
     const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).toPromise();
-    await this.cachePlaylistsInBrowserStoreOnFetch(response);
+    await this.cachePlaylistsInBrowserStore(response);
   }
 
   async updateUserPlaylist(playlist: Playlist): Promise<void> {
     await this.session.requireSignIn();
     const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).toPromise();
-    await this.cachePlaylistsInBrowserStoreOnFetch(response);
+    await this.cachePlaylistsInBrowserStore(response);
   }
 
   async deleteUserPlaylist(playlistId: string): Promise<void> {
     await this.session.requireSignIn();
     const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).toPromise();
-    await this.cachePlaylistsInBrowserStoreOnFetch(response);
+    await this.cachePlaylistsInBrowserStore(response);
   }
 
-  async cachePlaylistsInBrowserStoreOnFetch(playlists: readonly Playlist[]): Promise<void> {
+  /** Caches playlists in browser store. */
+  async cachePlaylistsInBrowserStore(playlists: readonly Playlist[]): Promise<void> {
     const allOps: Promise<void>[] = [];
     allOps.push(this.store.set(USER_PLAYLISTS_KEY, playlists.map(p => p.id), needUpdateByShallowArrayCompare));
     for (const playlist of playlists) {
@@ -158,9 +172,14 @@ export class UserDataService {
 
   private async fetchPlaylistIfNeeded(playlistId: string): Promise<void> {
     const playlistKey = getPlaylistKey(playlistId);
-    if (!this.store.isUpdated(playlistKey)) {
-      const playlist = await this.httpClient.get<Playlist>(`/api/playlist/by-id/${playlistId}`).toPromise();
-      await this.cachePlaylistsInBrowserStoreOnFetch([playlist]);
+    if (!this.store.isUpdated(playlistKey) && !this.runningQueries.has(playlistKey)) {
+      this.runningQueries.add(playlistKey);
+      try {
+        const playlist = await this.httpClient.get<Playlist>(`/api/playlist/by-id/${playlistId}`).toPromise();
+        await this.cachePlaylistsInBrowserStore([playlist]);
+      } finally {
+        this.runningQueries.delete(playlistKey);
+      }
     }
   }
 
