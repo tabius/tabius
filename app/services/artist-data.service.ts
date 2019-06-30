@@ -7,7 +7,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {ArtistDetailsResponse} from '@common/ajax-model';
-import {isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
+import {isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
 import {WithNumId} from '@common/common-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -35,15 +35,8 @@ export class ArtistDataService {
     this.browser = isPlatformBrowser(platformId);
   }
 
-  /** Returns true if this key was not fetched before using this data service instance (during the app session) and the app is online. */
-  private isSafeToUpdate(key: string): boolean {
-    return this.bss.isOnline() && !this.runningQueries.has(key) && !this.store.isUpdated(key);
-  }
-
   getAllArtists(): Observable<Artist[]> {
-    if (this.isSafeToUpdate(ARTIST_LIST_KEY)) {
-      this.fetchArtistsList().catch(err => console.warn(err));
-    }
+    this.fetchArtistsListIfNeeded().catch(err => console.warn(err));
     return this.store.get<number[]>(ARTIST_LIST_KEY)
         .pipe(
             flatMap(ids => this.getArtistsByIds(ids || [])),
@@ -51,14 +44,13 @@ export class ArtistDataService {
         );
   }
 
-  private async fetchArtistsList(): Promise<void> {
-    this.runningQueries.add(ARTIST_LIST_KEY);
-    try {
-      const artists = await this.httpClient.get<Artist[]>('/api/artist/all').toPromise();
-      await Promise.all(artists.map(artist => this.registerArtistOnFetch(artist)));
-      await this.store.set(ARTIST_LIST_KEY, artists.map(artist => artist.id), needUpdateByShallowArrayCompare);
-    } finally {
-      this.runningQueries.delete(ARTIST_LIST_KEY);
+  private async fetchArtistsListIfNeeded(): Promise<void> {
+    if (this.bss.isOnline() && !this.store.isUpdated(ARTIST_LIST_KEY)) {
+      await runWithDedup(ARTIST_LIST_KEY, this.runningQueries, async () => {
+        const artists = await this.httpClient.get<Artist[]>('/api/artist/all').toPromise();
+        await Promise.all(artists.map(artist => this.registerArtistOnFetch(artist)));
+        await this.store.set(ARTIST_LIST_KEY, artists.map(artist => artist.id), needUpdateByShallowArrayCompare);
+      });
     }
   }
 
@@ -71,10 +63,8 @@ export class ArtistDataService {
     if (isInvalidId(artistId)) {
       return of(undefined);
     }
+    this.fetchArtistDetailsIfNeeded(artistId).catch(err => console.warn(err));
     const artistKey = getArtistDetailsKey(artistId);
-    if (this.isSafeToUpdate(artistKey)) {
-      this.fetchArtistDetails(artistId).catch(err => console.warn(err));
-    }
     return this.store.get<ArtistDetails>(artistKey);
   }
 
@@ -93,26 +83,25 @@ export class ArtistDataService {
     }
   }
 
-  private async fetchArtistDetails(artistId: number): Promise<void> {
+  private async fetchArtistDetailsIfNeeded(artistId: number): Promise<void> {
     const artistDetailsKey = getArtistDetailsKey(artistId);
-    this.runningQueries.add(artistDetailsKey);
-    try {
-      const {artist, songs} = await this.httpClient.get<ArtistDetailsResponse>(`/api/artist/details-by-id/${artistId}`).toPromise();
-      const details: ArtistDetails = {
-        id: artist.id,
-        songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
-        version: artist.version,
-      };
-      await Promise.all([
-        ...songs.map(s => this.store.set(getSongKey(s.id), s, needUpdateByVersionChange)),
-        this.registerArtistOnFetch(artist),
-        this.store.set(artistDetailsKey, details, needUpdateByVersionChange)]
-      );
-      if (this.browser) { // todo: find a better place for all-songs pre-fetch?
-        this.fetchAndCacheMissedSongDetails(songs.map(s => s.id)); // pre-fetch all songs
-      }
-    } finally {
-      this.runningQueries.delete(artistDetailsKey);
+    if (this.bss.isOnline() && !this.store.isUpdated(artistDetailsKey)) {
+      await runWithDedup(artistDetailsKey, this.runningQueries, async () => {
+        const {artist, songs} = await this.httpClient.get<ArtistDetailsResponse>(`/api/artist/details-by-id/${artistId}`).toPromise();
+        const details: ArtistDetails = {
+          id: artist.id,
+          songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
+          version: artist.version,
+        };
+        await Promise.all([
+          ...songs.map(s => this.store.set(getSongKey(s.id), s, needUpdateByVersionChange)),
+          this.registerArtistOnFetch(artist),
+          this.store.set(artistDetailsKey, details, needUpdateByVersionChange)]
+        );
+        if (this.browser) { // todo: find a better place for all-songs pre-fetch?
+          this.fetchAndCacheMissedSongDetailsIfNeeded(songs.map(s => s.id)); // pre-fetch all songs
+        }
+      });
     }
   }
 
@@ -179,10 +168,8 @@ export class ArtistDataService {
     if (isInvalidId(songId)) {
       return of(undefined);
     }
+    this.fetchAndCacheMissedSongDetailsIfNeeded([songId]).catch(err => console.warn(err));
     const songDetailsKey = getSongDetailsKey(songId);
-    if (this.isSafeToUpdate(songDetailsKey)) {
-      this.fetchAndCacheMissedSongDetails([songId]).catch(err => console.warn(err));
-    }
     return this.store.get<SongDetails>(songDetailsKey);
   }
 
@@ -193,7 +180,10 @@ export class ArtistDataService {
   }
 
   /** Pre-fetches all song list items missed in cache. */
-  private async fetchAndCacheMissedSongDetails(songIds: readonly number[]): Promise<void> {
+  private async fetchAndCacheMissedSongDetailsIfNeeded(songIds: readonly number[]): Promise<void> {
+    if (!this.bss.isOnline()) {
+      return;
+    }
     const missedSongIds = await this.getMissedIds(SONG_DETAIL_KEY_PREFIX, songIds);
     await this.fetchSongsDetails(missedSongIds);
   }
@@ -235,6 +225,7 @@ export class ArtistDataService {
   }
 
 
+  /** Returns list of ids missed in the store. */
   private async getMissedIds(keyPrefix: string, ids: readonly number[]): Promise<number[]> {
     if (ids.length === 0) {
       return [];
