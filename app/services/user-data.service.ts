@@ -6,11 +6,11 @@ import {BrowserStore} from '@app/store/browser-store';
 import {flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {UserSessionState} from '@app/store/user-session-state';
-import {needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc-utils';
+import {needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
-const USER_SETTINGS_KEY = 'song-settings-key';
+const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
 const SONG_SETTINGS_KEY_PREFIX = 'ss-';
 const USER_PLAYLISTS_KEY = 'playlists';
 const PLAYLIST_PREFIX_KEY = 'playlist-';
@@ -23,7 +23,7 @@ const B4SI_FLAG_KEY = 'b4Si';
 export class UserDataService {
 
   /** Keys of all in-flight requests. */
-  private runningQueries = new Set<string>();
+  private readonly runningQueries = new Set<string>();
 
   constructor(private readonly httpClient: HttpClient,
               private readonly session: UserSessionState,
@@ -51,14 +51,11 @@ export class UserDataService {
   }
 
   private async fetchUserSettingsIfNeeded(user?: User): Promise<void> {
-    if (!this.store.isUpdated(USER_SETTINGS_KEY) && user !== undefined && !this.runningQueries.has(USER_SETTINGS_KEY)) {
-      this.runningQueries.add(USER_SETTINGS_KEY);
-      try {
+    if (!this.store.isUpdated(USER_SETTINGS_FETCH_DATE_KEY) && user !== undefined) {
+      await runWithDedup(USER_SETTINGS_FETCH_DATE_KEY, this.runningQueries, async () => {
         const settings = await this.httpClient.get<UserSettings>(`/api/user/settings`).toPromise();
         await this.updateUserSettingsOnFetch(settings);
-      } finally {
-        this.runningQueries.delete(USER_SETTINGS_KEY);
-      }
+      });
     }
   }
 
@@ -95,7 +92,7 @@ export class UserDataService {
 
   async updateUserSettingsOnFetch(userSettings: UserSettings): Promise<void> {
     const allOps: Promise<void>[] = [];
-    allOps.push(this.store.set(USER_SETTINGS_KEY, Date.now()));
+    allOps.push(this.store.set(USER_SETTINGS_FETCH_DATE_KEY, Date.now()));
     for (const songId in userSettings.songs) {
       const songSettings = userSettings.songs[songId];
       const key = getUserSongSettingsKey(songId);
@@ -121,15 +118,12 @@ export class UserDataService {
   }
 
   private async fetchUserPlaylistsIfNeeded(user): Promise<void> {
-    if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined && !this.runningQueries.has(USER_PLAYLISTS_KEY)) {
-      this.runningQueries.add(USER_PLAYLISTS_KEY);
-      try {
+    if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined) {
+      await runWithDedup(USER_PLAYLISTS_KEY, this.runningQueries, async () => {
         const playlists = await this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`).toPromise();
         await this.cachePlaylistsInBrowserStore(playlists);
-      } finally {
-        this.runningQueries.delete(USER_PLAYLISTS_KEY);
-      }
-      //todo: cleanup removed playlists?
+        //todo: cleanup removed playlists?
+      });
     }
   }
 
@@ -172,14 +166,11 @@ export class UserDataService {
 
   private async fetchPlaylistIfNeeded(playlistId: string): Promise<void> {
     const playlistKey = getPlaylistKey(playlistId);
-    if (!this.store.isUpdated(playlistKey) && !this.runningQueries.has(playlistKey)) {
-      this.runningQueries.add(playlistKey);
-      try {
+    if (!this.store.isUpdated(playlistKey)) {
+      await runWithDedup(playlistKey, this.runningQueries, async () => {
         const playlist = await this.httpClient.get<Playlist>(`/api/playlist/by-id/${playlistId}`).toPromise();
         await this.cachePlaylistsInBrowserStore([playlist]);
-      } finally {
-        this.runningQueries.delete(playlistKey);
-      }
+      });
     }
   }
 

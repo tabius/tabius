@@ -24,7 +24,7 @@ const SONG_DETAIL_KEY_PREFIX = 'song-d-';
 export class ArtistDataService {
 
   /** Keys of all artists/songs/lists the query is running now.*/
-  private runningQueries = new Set<string>();
+  private readonly runningQueries = new Set<string>();
 
   private readonly browser: boolean;
 
