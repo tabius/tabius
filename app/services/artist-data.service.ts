@@ -131,7 +131,7 @@ export class ArtistDataService {
     if (isInvalidId(artistId)) {
       return of(undefined);
     }
-    return this.getArtistsByIds([artistId!]).pipe(map(list => list[0]));
+    return this.getArtistsByIds([artistId]).pipe(map(list => list[0]));
   }
 
   getArtistsByIds(artistIds: readonly number[]): Observable<(Artist|undefined)[]> {
