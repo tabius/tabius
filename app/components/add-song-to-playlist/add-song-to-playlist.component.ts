@@ -86,7 +86,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
       await this.authService.askUserToSignInOrFail();
       // check for FAV list again if user has signed just now.
       const playlist = this.playlists.find(p => p.name === this.favPlaylistName);
-      if (playlist != null) {
+      if (playlist) {
         if (!playlist.songIds.includes(this.songId)) {
           await this.togglePlaylist(playlist.id);
         }
