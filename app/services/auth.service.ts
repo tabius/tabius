@@ -19,7 +19,8 @@ import {MGS_ERROR_DURING_SIGN_IN} from '@common/messages';
 export class AuthService {
 
   private readonly isBrowser: boolean;
-  private user?: User;
+
+  private postSignInAction?: Promise<void>;
 
   constructor(public readonly fireAuth: AngularFireAuth,
               private readonly httpClient: HttpClient,
@@ -30,7 +31,6 @@ export class AuthService {
               @Inject(PLATFORM_ID) readonly platformId: Object,
               @Inject(FirebaseApp) private readonly firebaseApp: FirebaseApp) {
     this.isBrowser = isPlatformBrowser(platformId);
-    this.session.user$.subscribe(user => this.user = user);
   }
 
   async signIn(): Promise<void> {
@@ -38,10 +38,9 @@ export class AuthService {
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({prompt: 'select_account'});
       await this.fireAuth.auth.signInWithPopup(provider);
-
-      // Dirty hack but what is the better solution?
-      // Problem: need to wait for all observables to push new user info before returning from this method.
-      await new Promise(resolve => setTimeout(resolve, 200));
+      if (this.postSignInAction) {
+        await this.postSignInAction;
+      }
     } catch (err) {
       console.debug('Error during sign in', err);
       throw MGS_ERROR_DURING_SIGN_IN;
@@ -53,7 +52,7 @@ export class AuthService {
    * Does nothing if user is already signed in.
    */
   async askUserToSignInOrFail(): Promise<void> {
-    if (!this.user) {
+    if (!this.firebaseApp.auth().currentUser) {
       await this.signIn();
     }
   }
@@ -69,48 +68,43 @@ export class AuthService {
   }
 
   private async firebaseAuthStateCallback(): Promise<void> {
+    this.postSignInAction = this.performPostSignInAction();
+  }
+
+  private async performPostSignInAction(): Promise<void> {
     try {
-      const userAndToken = await this.updateUserInfoInCookiesIfNeeded();
+      const userAndToken = await this.updateAuthCookie();
       if (!userAndToken) {
         this.session.setUser(undefined);
         return;
       }
 
-      this.session.setUser(userAndToken.user);
-
       // notify backend about user login event and wait for a response with settings.
       const {settings, playlists} = await this.httpClient.get<LoginResponse>('/api/user/login').toPromise();
-      await this.userDataService.updateUserSettingsOnFetch(settings);
-      await this.userDataService.cachePlaylistsInBrowserStoreOnFetch(playlists);
+
+      this.session.setUser(userAndToken.user);
+      await Promise.all([
+        this.userDataService.updateUserSettingsOnFetch(settings),
+        this.userDataService.cachePlaylistsInBrowserStoreOnFetch(playlists)]
+      );
       const {returnUrl} = this.session;
       if (returnUrl.length > 0) {
         this.router.navigate([returnUrl]).catch(err => console.warn(err));
         this.session.returnUrl = '';
       }
-    } catch (e) {
-      console.error('Error in firebaseAuthStateCallback', e);
+    } finally {
+      delete this.postSignInAction;
     }
   }
 
-  private updateAuthTokensInCookies(token: string|undefined): void {
-    if (!this.isBrowser) {
-      return;
-    }
-    if (token === undefined) {
-      this.cookieService.delete(AUTH_TOKEN_COOKIE_NAME);
-    } else {
-      this.cookieService.set(AUTH_TOKEN_COOKIE_NAME, token, undefined, '/');
-    }
-  }
-
-  async updateUserInfoInCookiesIfNeeded(): Promise<UpdateIdTokenResult|undefined> {
+  async updateAuthCookie(): Promise<UpdateIdTokenResult|undefined> {
     const firebaseUser = this.isBrowser ? this.firebaseApp.auth().currentUser : undefined;
     if (!firebaseUser) {
-      this.updateAuthTokensInCookies(undefined);
+      this.cookieService.delete(AUTH_TOKEN_COOKIE_NAME);
       return undefined;
     }
     const token = await firebaseUser.getIdToken();
-    this.updateAuthTokensInCookies(token);
+    this.cookieService.set(AUTH_TOKEN_COOKIE_NAME, token, undefined, '/');
     const user = firebaseUser2User(firebaseUser);
     return {user, token};
   }

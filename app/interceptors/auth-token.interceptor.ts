@@ -13,7 +13,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const authTokenPromise = this.authService.updateUserInfoInCookiesIfNeeded();
+    const authTokenPromise = this.authService.updateAuthCookie();
     return fromPromise(authTokenPromise).pipe(
         switchMap(() => next.handle(req.clone({withCredentials: true})))
     );
