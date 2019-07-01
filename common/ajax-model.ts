@@ -13,6 +13,7 @@ export interface ArtistDetailsResponse {
 
 export interface CreatePlaylistRequest {
   readonly name: string;
+  readonly shared: boolean;
   readonly songIds: number[];
 }
 

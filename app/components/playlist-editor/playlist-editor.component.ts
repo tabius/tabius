@@ -27,7 +27,7 @@ export class PlaylistEditorComponent {
   }
 
   createPlaylist(): void {
-    const request = {name: this.newPlaylistName, songIds: [],};
+    const request = {name: this.newPlaylistName, shared: true, songIds: [],};
     this.uds.createUserPlaylist(request)
         .catch(err => this.toastService.warning(err, MSG_NETWORK_ERROR));
   }

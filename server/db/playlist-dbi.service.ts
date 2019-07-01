@@ -31,8 +31,8 @@ export class PlaylistDbi {
   create(userId: string, playlist: CreatePlaylistRequest): Promise<void> {
     const id = generateRandomPlaylistId();
     return this.db.pool.promise()
-        .query('INSERT INTO playlist(id, user_id, name, song_ids) VALUES (?, ?, ?, ?)',
-            [id, userId, playlist.name, playlist.songIds.join(',')]);
+        .query('INSERT INTO playlist(id, user_id, name, shared, song_ids) VALUES (?, ?, ?, ?, ?)',
+            [id, userId, playlist.name, playlist.shared ? 1 : 0, playlist.songIds.join(',')]);
   }
 
   update(userId: string, playlist: Playlist): Promise<void> {

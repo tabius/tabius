@@ -92,7 +92,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
         }
         return;
       }
-      const createPlaylistRequest = {name: this.favPlaylistName, songIds: [this.songId],};
+      const createPlaylistRequest = {name: this.favPlaylistName, shared: true, songIds: [this.songId]};
       await this.uds.createUserPlaylist(createPlaylistRequest);
     } catch (err) {
       console.error(err);

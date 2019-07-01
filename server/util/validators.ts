@@ -1,6 +1,6 @@
 import {isValidId} from '@common/util/misc-utils';
 import {MAX_PLAYLIST_NAME_LENGTH, MIN_PLAYLIST_NAME_LENGTH, Playlist, User, UserSongSettings} from '@common/user-model';
-import {eachItem, error, isArray, isNumber, isString, maxLength, min, minLength, success, ValidationResult, Validator} from 'typed-validation';
+import {eachItem, error, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, success, ValidationResult, Validator} from 'typed-validation';
 import * as v from 'validator';
 import {primitiveType} from 'typed-validation/utils';
 import {CreatePlaylistRequest} from '@common/ajax-model';
@@ -65,6 +65,7 @@ export const PlaylistValidator: Validator<Playlist> = {
 
 export const CreatePlaylistRequestValidator: Validator<CreatePlaylistRequest> = {
   name: minLength(1),
+  shared: isBoolean(),
   songIds: isArray(eachItem(isNumericId())),
 };
 
