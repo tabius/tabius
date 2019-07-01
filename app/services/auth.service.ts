@@ -79,14 +79,25 @@ export class AuthService {
         return;
       }
 
+      let userIsSet = false;
       // notify backend about user login event and wait for a response with settings.
-      const {settings, playlists} = await this.httpClient.get<LoginResponse>('/api/user/login').toPromise();
+      try {
+        const {settings, playlists} = await this.httpClient.get<LoginResponse>('/api/user/login').toPromise();
 
-      this.session.setUser(userAndToken.user);
-      await Promise.all([
-        this.userDataService.updateUserSettingsOnFetch(settings),
-        this.userDataService.cachePlaylistsInBrowserStore(playlists)]
-      );
+        this.session.setUser(userAndToken.user);
+        userIsSet = true;
+        
+        await Promise.all([
+          this.userDataService.updateUserSettingsOnFetch(settings),
+          this.userDataService.cachePlaylistsInBrowserStore(playlists)]
+        );
+      } catch (e) { // if there is a network error connecting to the service - set user anyway. This can happen in offline mode.
+        console.warn(e);
+        if (!userIsSet) {
+          this.session.setUser(userAndToken.user);
+        }
+      }
+
       const {returnUrl} = this.session;
       if (returnUrl.length > 0) {
         this.router.navigate([returnUrl]).catch(err => console.warn(err));
