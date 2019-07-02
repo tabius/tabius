@@ -1,3 +1,4 @@
+@import "~app/styles/dimensions";
 
 h1 {
   text-align: center;
@@ -10,7 +11,7 @@ h1 {
 }
 
 .playlist-item {
-  line-height: 28px;
+  line-height: $mobile-lists-line-height;
 }
 
 .song-count {
@@ -33,4 +34,10 @@ h1 {
 
 .related-links-block {
   margin-top: 50px;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .playlist-item {
+    line-height: $desktop-lists-line-height;
+  }
 }

@@ -1,3 +1,5 @@
+@import "~app/styles/dimensions";
+
 :host {
   display: flex;
   justify-content: center;
@@ -21,7 +23,7 @@
       }
 
       .songs-list {
-        line-height: 1.7em;
+        line-height: $mobile-lists-line-height;
         margin-top: 15px;
       }
     }
@@ -33,5 +35,17 @@
 
   a {
     color: #704a00;
+  }
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  :host {
+    .content {
+      .artist-root {
+        .songs-list {
+          line-height: $desktop-lists-line-height;
+        }
+      }
+    }
   }
 }

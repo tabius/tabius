@@ -72,7 +72,7 @@ h1 {
 
   .letter-block {
     padding-top: 1em;
-    line-height: 1.9em;
+    line-height: $mobile-lists-line-height;
 
     .letter {
       color: #333;
@@ -109,7 +109,7 @@ h1 {
 
   .artist-list {
     .letter-block {
-      line-height: 1.7em;
+      line-height: $desktop-lists-line-height;
     }
   }
 }
