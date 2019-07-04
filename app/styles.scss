@@ -71,5 +71,11 @@ c {
 .toast-overlay {
   position: fixed;
   bottom: 20px;
-  right: 15px;
+  right: 5px;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .toast-overlay {
+    right: 15px;
+  }
 }
