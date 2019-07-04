@@ -128,24 +128,6 @@ export class CookieService {
 
     this.set(name, '', new Date('Thu, 01 Jan 1970 00:00:01 GMT'), path, domain);
   }
-
-  /**
-   * @param path   Cookie path
-   * @param domain Cookie domain
-   */
-  deleteAll(path?: string, domain?: string): void {
-    if (!this.documentIsAccessible) {
-      return;
-    }
-
-    const cookies: any = this.getAll();
-
-    for (const cookieName in cookies) {
-      if (cookies.hasOwnProperty(cookieName)) {
-        this.delete(cookieName, path, domain);
-      }
-    }
-  }
 }
 
 /**

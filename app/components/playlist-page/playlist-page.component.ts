@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Injectable, OnDestroy, OnInit, PLATFORM_ID} from '@angular/core';
-import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
 import {Meta, Title} from '@angular/platform-browser';
 import {Artist, Song} from '@common/artist-model';
 import {flatMap, map, take, takeUntil, throttleTime} from 'rxjs/operators';
@@ -120,7 +120,7 @@ export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  async resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<PlaylistPageInput> {
+  async resolve(route: ActivatedRouteSnapshot): Promise<PlaylistPageInput> {
     const mount = route.paramMap.get('playlistMount')!;
     const playlist = await this.uds.getPlaylist(mount).pipe(take(1)).toPromise();
     if (playlist) {

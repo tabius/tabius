@@ -217,7 +217,7 @@ export function getChordLayout(name: string): ChordLayout|undefined {
     return undefined;
   }
   let note = name.charAt(0).toUpperCase();
-  if (note == 'H') {
+  if (note === 'H') {
     note = 'B';
   }
   const key = note + name.substr(1);

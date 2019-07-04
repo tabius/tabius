@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
 import {SongDetails} from '@common/artist-model';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
@@ -17,7 +17,7 @@ export class SongVideoComponent implements OnChanges {
   constructor(private readonly bss: BrowserStateService) {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.onLine = this.bss.isOnline();
     if (this.songDetails) {
       this.youtubeLink = this.songDetails.mediaLinks ? this.songDetails.mediaLinks.find(link => link.startsWith('https://www.youtube.com/embed/')) : undefined;

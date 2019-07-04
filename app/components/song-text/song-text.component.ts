@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID} from '@angular/core';
 import {SongDetails} from '@common/artist-model';
 import {Observable, Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
@@ -94,7 +94,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     this.destroyed$.next();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.resetCachedSongStats();
     this.updateAvailableWidth();
     this.updateSongView();

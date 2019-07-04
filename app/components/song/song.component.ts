@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Artist, Song, SongDetails} from '@common/artist-model';
@@ -35,7 +35,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   ) {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     delete this.song;
     delete this.songDetails;
     delete this.artist;

@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, ViewChild} from '@angular/core';
 import {ChordImagePainter} from '@app/utils/chord-image-painter';
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {isPlatformBrowser} from '@angular/common';
@@ -25,7 +25,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (!this.isBrowser) {
       return;
     }

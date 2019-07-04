@@ -1,6 +1,6 @@
 import {SiteHomePageComponent} from '@app/components/site-home-page/site-home-page.component';
 import {Page404Component} from '@app/components/page404/page404.component';
-import {ActivatedRouteSnapshot, DetachedRouteHandle, ExtraOptions, Resolve, RouteReuseStrategy, RouterModule, RouterStateSnapshot, Routes} from '@angular/router';
+import {ActivatedRouteSnapshot, DetachedRouteHandle, ExtraOptions, Resolve, RouteReuseStrategy, RouterModule, Routes} from '@angular/router';
 import {Inject, Injectable, NgModule} from '@angular/core';
 import {TunerPageComponent} from '@app/components/tuner-page/tuner-page.component';
 import {ArtistListPageComponent} from '@app/components/artist-list-page/artist-list-page.component';
@@ -21,7 +21,7 @@ export class BrowserStoreStateResolver implements Resolve<any> {
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly userStore: BrowserStore) {
   }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<any> {
+  resolve(): Promise<any> {
     return Promise.all([this.artistStore.initialized$$, this.userStore.initialized$$]);
   }
 }
@@ -51,18 +51,18 @@ export class TabiusRouteReuseStrategy extends RouteReuseStrategy {
     return future.routeConfig === curr.routeConfig && JSON.stringify(future.params) === JSON.stringify(curr.params);
   }
 
-  shouldDetach(route: ActivatedRouteSnapshot): boolean {
+  shouldDetach(): boolean {
     return false;
   }
 
-  store(route: ActivatedRouteSnapshot, detachedTree: DetachedRouteHandle): void {
+  store(): void {
   }
 
-  shouldAttach(route: ActivatedRouteSnapshot): boolean {
+  shouldAttach(): boolean {
     return false;
   }
 
-  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle|null {
+  retrieve(): DetachedRouteHandle|null {
     return null;
   }
 }
