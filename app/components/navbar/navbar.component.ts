@@ -79,4 +79,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   toggleNoSleep(): void {
     this.bss.toggleNoSleepMode();
   }
+
+  getUserIconText(): string {
+    if (!this.user) {
+      return '-';
+    }
+    return this.user.name.length > 0 ? this.user.name.charAt(0) : '+';
+  }
 }

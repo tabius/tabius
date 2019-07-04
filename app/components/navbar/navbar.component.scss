@@ -141,6 +141,21 @@ a {
           margin-top: 2px;
           margin-bottom: -2px;
         }
+
+        .user-icon-desktop {
+          display: inline-block;
+          position: absolute;
+          right: 12px;
+          height: 30px;
+          width: 30px;
+          border-radius: 30%;
+          background-color: $color-dark-bg;
+          border: 2px solid #58585a;
+          color: #999;
+          font-size: 20px;
+          text-align: center;
+          line-height: 30px;
+        }
       }
 
       &.active {
@@ -195,20 +210,19 @@ a {
         -webkit-text-stroke: 1.4px #b0b0b0;
       }
 
-      .user-icon {
+      .user-icon-mobile {
         display: inline-block;
         height: 30px;
         width: 30px;
         border-radius: 30%;
-        background-color: transparent;
-        border: 2px solid #166a79;
+        border: 2px solid #58585a;
         font-size: 20px;
         text-align: center;
         line-height: 30px;
       }
 
       .no-sleep-icon {
-        fill: $color-no-sleep;
+        fill: #ddd;
         padding-top: 1px;
       }
 
