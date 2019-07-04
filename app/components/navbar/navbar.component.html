@@ -54,6 +54,10 @@
             </a>
         </div>
         <div class="spacer"></div>
+
+        <div *ngIf="!opened && user" class="item" style="margin-right: -8px;">
+            <div class="user-icon">{{user.name.length > 0 ? user.name.charAt(0) : '+'}}</div>
+        </div>
         <div *ngIf="!opened" (click)="open()" class="item">
             <gt-svg-icon icon="menu"></gt-svg-icon>
         </div>
