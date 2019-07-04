@@ -43,6 +43,7 @@
     "firebase-admin": "8.2.0",
     "hashids": "1.2.2",
     "mysql2": "1.6.5",
+    "nosleep.js": "0.9.0",
     "rxjs": "6.5.2",
     "tslib": "1.10.0",
     "typed-validation": "0.8.2",

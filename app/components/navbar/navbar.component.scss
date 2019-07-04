@@ -1,6 +1,8 @@
 @import "~app/styles/colors";
 @import "~app/styles/dimensions";
 
+$color-no-sleep: #d4c3a5;
+
 :host {
   color: #cecece;
 }
@@ -205,6 +207,10 @@ a {
         line-height: 30px;
       }
 
+      .no-sleep-icon {
+        fill: $color-no-sleep;
+      }
+
       gt-svg-icon {
         margin: 0 auto;
         fill: #ccc;
@@ -275,6 +281,11 @@ a {
       &.settings gt-svg-icon {
         fill: $color-nav-settings;
       }
+
+      &.no-sleep gt-svg-icon {
+        fill: $color-no-sleep;
+      }
+
     }
   }
 }

@@ -1,10 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {UserSessionState} from '@app/store/user-session-state';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_ARTISTS, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 enum NavSection {
   Home = 1,
@@ -33,8 +34,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly settingsLink = MOUNT_USER_SETTINGS;
 
   readonly NavSection = NavSection;
+  readonly noSleepMode$: Observable<boolean>;
 
-  constructor(private readonly session: UserSessionState, private router: Router) {
+  constructor(private readonly session: UserSessionState,
+              private readonly router: Router,
+              private readonly bss: BrowserStateService,
+  ) {
+    this.noSleepMode$ = bss.getNoSleepMode$();
   }
 
   ngOnInit() {
@@ -68,5 +74,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   close() {
     this.opened = false;
+  }
+
+  toggleNoSleep(): void {
+    this.bss.toggleNoSleepMode();
   }
 }
