@@ -4,12 +4,8 @@ import {BrowserModule, BrowserTransferStateModule} from '@angular/platform-brows
 import {AppComponent} from './components/app.component';
 import {SiteHomePageComponent} from './components/site-home-page/site-home-page.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
-import {FIREBASE_CLIENT_CONFIG} from './environments/firebase.prod';
-import {AngularFireModule} from '@angular/fire';
-import {AngularFireAuthModule} from '@angular/fire/auth';
 import {Page404Component} from './components/page404/page404.component';
 import {environment} from './environments/environment';
-import {FirestoreSettingsToken} from '@angular/fire/firestore';
 import {SongTextComponent} from './components/song-text/song-text.component';
 import {ArtistPageComponent} from './components/artist-page/artist-page.component';
 import {SongPageComponent} from './components/song-page/song-page.component';
@@ -19,7 +15,6 @@ import {NewSongsComponent} from './components/new-songs/new-songs.component';
 import {PlaylistPageComponent} from './components/playlist-page/playlist-page.component';
 import {PlaylistEditorComponent} from './components/playlist-editor/playlist-editor.component';
 import {ArtistListPageComponent} from './components/artist-list-page/artist-list-page.component';
-import {AuthTokenInterceptor} from './interceptors/auth-token.interceptor';
 import {ApiUrlInterceptor} from './interceptors/api-url.interceptor';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CookieService} from '@app/services/cookie.service';
@@ -84,8 +79,6 @@ import {SongVideoComponent} from './components/song-video/song-video.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    AngularFireModule.initializeApp(FIREBASE_CLIENT_CONFIG),
-    AngularFireAuthModule,
     BrowserModule.withServerTransition({appId: 'tabius'}),
     BrowserTransferStateModule,
     RoutingModule,
@@ -93,8 +86,6 @@ import {SongVideoComponent} from './components/song-video/song-video.component';
     ToastModule,
   ],
   providers: [
-    {provide: FirestoreSettingsToken, useValue: {}}, //  this line fixes Firebase warning about default persistence = true.
-    {provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
     {provide: TABIUS_BASE_API_URL, useValue: environment.apiUrl},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},

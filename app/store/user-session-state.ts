@@ -1,9 +1,7 @@
-import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {ReplaySubject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {User} from '@common/user-model';
-import {isPlatformBrowser} from '@angular/common';
-import {take} from 'rxjs/operators';
-import {MGS_SIGN_IN_REQUIRED} from '@common/messages';
+import {UserDataService} from '@app/services/user-data.service';
 
 /** In browser session state. */
 @Injectable({
@@ -11,47 +9,17 @@ import {MGS_SIGN_IN_REQUIRED} from '@common/messages';
 })
 export class UserSessionState {
 
-  private readonly isBrowser: boolean;
-
-  readonly user$ = new ReplaySubject<User|undefined>(1);
-
-  /** Used internally for de-dep logic. */
-  private userSnapshot?: User = undefined;
-  private firstUserUpdate: boolean = true;
+  readonly user$: Observable<User|undefined>;
 
   /** Url to return after successful sign in. */
-  public returnUrl = '';
+  public returnUrl = ''; //todo: remove? persist in LS?
 
-  constructor(@Inject(PLATFORM_ID) readonly platformId: Object) {
-    this.isBrowser = isPlatformBrowser(platformId);
+  constructor(private readonly uds: UserDataService) {
+    this.user$ = uds.getUser();
   }
 
-  /**
-   * Returns a promise that resolves to true if user signed.
-   * Promise based approach is used because firebase-auth need some time to complete.
-   */
-  async isSignedIn(): Promise<boolean> {
-    if (!this.isBrowser) {
-      return false;
-    }
-    const user = await this.user$.pipe(take(1)).toPromise();
-    return user !== undefined;
+  async setUser(user: User|undefined): Promise<void> {
+    await this.uds.setUser(user);
   }
 
-  setUser(user: User|undefined): void {
-    if (!this.firstUserUpdate && user === this.userSnapshot || (user && this.userSnapshot && user.id === this.userSnapshot.id)) {
-      return; // same value, ignore.
-    }
-    this.firstUserUpdate = false;
-    this.userSnapshot = user;
-    this.user$.next(user);
-  }
-
-  /** Throws error if user is not signed in. Does nothing if user is signed in. */
-  async requireSignIn(): Promise<void> {
-    const signedIn = await this.isSignedIn();
-    if (!signedIn) {
-      throw MGS_SIGN_IN_REQUIRED;
-    }
-  }
 }

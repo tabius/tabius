@@ -10,7 +10,7 @@ import * as NoSleep from 'nosleep.js/dist/NoSleep';
 })
 export class BrowserStateService {
 
-  private readonly isBrowser;
+  readonly isBrowser;
 
   private readonly noSleep = new NoSleep();
 

@@ -42,10 +42,6 @@ CREATE TABLE user (
     id         VARCHAR(40) PRIMARY KEY,
     # if null - user is not an ArtistDetails.
     artist_id  INT DEFAULT NULL REFERENCES artist (id),
-    name       VARCHAR(100) NOT NULL DEFAULT '',
-    picture    VARCHAR(500) NOT NULL DEFAULT '',
-    email      VARCHAR(100) NOT NULL,
-    mount      VARCHAR(40) NOT NULL UNIQUE,
     reg_date   DATETIME NOT NULL DEFAULT NOW(),
     login_date DATETIME     NOT NULL,
     settings TEXT

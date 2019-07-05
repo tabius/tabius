@@ -1,27 +1,8 @@
-import {FirebaseUser, User} from '@common/user-model';
-import * as admin from 'firebase-admin';
 import {Versioned} from '@common/common-model';
 import {ArtistType, Song} from '@common/artist-model';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import DecodedIdToken = admin.auth.DecodedIdToken;
-
-export function firebaseUser2User(firebaseUser: FirebaseUser): User {
-  return {
-    id: firebaseUser.uid,
-    name: firebaseUser.displayName || '???',
-    email: firebaseUser.email || '???',
-    picture: firebaseUser.photoURL || ''
-  };
-}
-
-export function decodedIdToken2User(token: DecodedIdToken): User {
-  return {
-    id: token.uid,
-    name: token.name,
-    email: token.email,
-    picture: token.picture
-  };
-}
+import {CookieService} from '@app/services/cookie.service';
+import {NODE_BB_SESSION_COOKIE} from '@common/constants';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length == 0) {
@@ -141,3 +122,13 @@ export async function runWithDedup<T>(opKey: string, runningOps: Set<string>, f:
     runningOps.delete(opKey);
   }
 }
+
+export function initiateSignIn(): void {
+  window.location.href = 'https://forum.tabius.ru/login';
+}
+
+export function initiateSignOut(cookieService: CookieService): void {
+  cookieService.delete(NODE_BB_SESSION_COOKIE);
+  window.location.href = 'https://forum.tabius.ru/login';
+}
+

@@ -61,7 +61,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
 
   async togglePlaylist(playlistMount: string, checkboxElement: any = {}) {
     try {
-      await this.authService.askUserToSignInOrFail();
+      //todo: await this.authService.askUserToSignInOrFail();
       const playlist = this.playlists.find(p => p.id === playlistMount);
       if (!playlist) {
         this.toastService.warning(MGS_PLAYLIST_NOT_FOUND);
@@ -83,7 +83,8 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
 
   async toggleNewFavPlaylist(checkboxElement: any = {}): Promise<void> {
     try {
-      await this.authService.askUserToSignInOrFail();
+      //todo: await this.authService.askUserToSignInOrFail();
+
       // check for FAV list again if user has signed just now.
       const playlist = this.playlists.find(p => p.name === this.favPlaylistName);
       if (playlist) {
@@ -92,7 +93,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
         }
         return;
       }
-      const createPlaylistRequest = {name: this.favPlaylistName, shared: true, songIds: [this.songId]};
+      const createPlaylistRequest = {name: this.favPlaylistName, shared: true, songIds: [this.songId]}; //todo: dedup!
       await this.uds.createUserPlaylist(createPlaylistRequest);
     } catch (err) {
       console.error(err);

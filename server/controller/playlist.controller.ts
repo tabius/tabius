@@ -5,6 +5,7 @@ import {Playlist, User} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {CreatePlaylistRequestValidator, PlaylistValidator} from '@server/util/validators';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
+import {ServerSsoService} from '@server/service/server-sso.service';
 
 @Controller('/api/playlist')
 export class PlaylistController {
@@ -17,7 +18,7 @@ export class PlaylistController {
   @UseGuards(ServerAuthGuard)
   @Get('/by-current-user')
   async getByCurrentUser(@Session() session): Promise<Playlist[]> {
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`by-current-user, user: ${user.email}`);
     return this.playlistDbi.getPlaylists(user.id);
   }
@@ -30,7 +31,7 @@ export class PlaylistController {
     if (!vr.success) {
       throw Error(vr.toString());
     }
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`create: ${createPlaylistRequest.name}, user: ${user.email}`);
     await this.playlistDbi.create(user.id, createPlaylistRequest);
     return this.playlistDbi.getPlaylists(user.id);
@@ -44,7 +45,7 @@ export class PlaylistController {
     if (!vr.success) {
       throw Error(vr.toString());
     }
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`update: ${playlist.name}, user: ${user.email}`);
     await this.playlistDbi.update(user.id, playlist);
     return this.playlistDbi.getPlaylists(user.id);
@@ -54,7 +55,7 @@ export class PlaylistController {
   @Delete('/delete/:id')
   @UseGuards(ServerAuthGuard)
   async delete(@Session() session, @Param('id') playlistId: string): Promise<DeletePlaylistResponse> {
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`delete: ${playlistId}, user: ${user.email}`);
     await this.playlistDbi.delete(user.id, playlistId);
     return this.playlistDbi.getPlaylists(user.id);
@@ -63,7 +64,7 @@ export class PlaylistController {
   @Get('/by-id/:id')
   byId(@Session() session, @Param('id') playlistId: string): Promise<Playlist|undefined> {
     this.logger.log('by-id');
-    const user = ServerAuthGuard.getUserOrUndefined(session);
+    const user = ServerSsoService.getUserOrUndefined(session);
     return this.playlistDbi.getPlaylistById(playlistId, user ? user.id : undefined);
   }
 

@@ -1,17 +1,9 @@
-/**
- * Firebase depends on Protobuf & Protobuf fails with the following error
- * Error: protobufjs/src/root.js:234 throw Error("not supported");
- *
- * Reason: Protobuf incorrectly detects that it is run in 'browser mode' because of some global variables (added by domino, etc..).
- * This should be removed after Protobuf fixed their code.
- */
-require('protobufjs');
-
 import {enableProdMode} from '@angular/core';
 import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
+import {ServerSsoService} from '@server/service/server-sso.service';
 
 const cookieParser = require('cookie-parser');
 
@@ -19,6 +11,8 @@ enableProdMode();
 
 // @ts-ignore
 global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+
+const ssoService = new ServerSsoService();
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerMainModule);
@@ -30,6 +24,7 @@ async function bootstrap() {
     resave: false,
     saveUninitialized: true
   }));
+  app.useGlobalInterceptors(ssoService);
   await app.listen(4001);
 }
 

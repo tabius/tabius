@@ -5,7 +5,6 @@ import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User
 import {BrowserStore} from '@app/store/browser-store';
 import {flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {UserSessionState} from '@app/store/user-session-state';
 import {needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
@@ -15,6 +14,7 @@ const SONG_SETTINGS_KEY_PREFIX = 'ss-';
 const USER_PLAYLISTS_KEY = 'playlists';
 const PLAYLIST_PREFIX_KEY = 'playlist-';
 const B4SI_FLAG_KEY = 'b4Si';
+const USER_KEY = 'user';
 
 /** Data that belongs to the active user. */
 @Injectable({
@@ -26,7 +26,6 @@ export class UserDataService {
   private readonly runningQueries = new Set<string>();
 
   constructor(private readonly httpClient: HttpClient,
-              private readonly session: UserSessionState,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
   ) {
   }
@@ -41,7 +40,7 @@ export class UserDataService {
   }
 
   getUserSongSettings(songId: number): Observable<UserSongSettings> {
-    return this.session.user$.pipe(
+    return this.getUser().pipe(
         switchMap(user => {
           this.fetchUserSettingsIfNeeded(user).catch(err => console.warn(err));
           const key = getUserSongSettingsKey(songId);
@@ -62,15 +61,12 @@ export class UserDataService {
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
     const key = getUserSongSettingsKey(songSettings.songId);
     await this.store.set(key, songSettings, needUpdateByStringify);
-    const signedIn = await this.session.isSignedIn();
-    if (signedIn) {
-      const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).toPromise();
-      await this.updateUserSettingsOnFetch(settings);
-    }
+    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).toPromise();
+    await this.updateUserSettingsOnFetch(settings);
   }
 
   getB4SiFlag(): Observable<boolean> {
-    return this.session.user$.pipe(
+    return this.getUser().pipe(
         switchMap(user => {
           this.fetchUserSettingsIfNeeded(user).catch(err => console.warn(err));
           return this.store.get<boolean>(B4SI_FLAG_KEY)
@@ -83,11 +79,8 @@ export class UserDataService {
 
   async setB4SiFlag(b4SiFlag: boolean): Promise<void> {
     await this.store.set(B4SI_FLAG_KEY, b4SiFlag || undefined); //todo: need update?
-    const signedIn = await this.session.isSignedIn();
-    if (signedIn) {
-      const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).toPromise();
-      await this.updateUserSettingsOnFetch(settings);
-    }
+    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).toPromise();
+    await this.updateUserSettingsOnFetch(settings);
   }
 
   async updateUserSettingsOnFetch(userSettings: UserSettings): Promise<void> {
@@ -103,7 +96,7 @@ export class UserDataService {
   }
 
   getUserPlaylists(): Observable<Playlist[]> {
-    return this.session.user$.pipe(
+    return this.getUser().pipe(
         switchMap(user => {
           this.fetchUserPlaylistsIfNeeded(user).catch(err => console.warn(err));
           return this.store.get<string[]>(USER_PLAYLISTS_KEY).pipe(
@@ -128,19 +121,16 @@ export class UserDataService {
   }
 
   async createUserPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
-    await this.session.requireSignIn();
     const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).toPromise();
     await this.cachePlaylistsInBrowserStore(response);
   }
 
   async updateUserPlaylist(playlist: Playlist): Promise<void> {
-    await this.session.requireSignIn();
     const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).toPromise();
     await this.cachePlaylistsInBrowserStore(response);
   }
 
   async deleteUserPlaylist(playlistId: string): Promise<void> {
-    await this.session.requireSignIn();
     const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).toPromise();
     await this.cachePlaylistsInBrowserStore(response);
   }
@@ -174,8 +164,16 @@ export class UserDataService {
     }
   }
 
-  async cleanupUserDataOnSignout(): Promise<void> {
-    await this.store.clear();
+  getUser(): Observable<User|undefined> {
+    return this.store.get<User>(USER_KEY);
+  }
+
+  async setUser(user?: User): Promise<void> {
+    if (!user) {
+      await this.store.clear();
+    } else {
+      await this.store.set(USER_KEY, user, needUpdateByStringify);
+    }
   }
 }
 

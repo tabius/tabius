@@ -6,6 +6,7 @@ import {LoginResponse} from '@common/ajax-model';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {conformsTo, validate} from 'typed-validation';
 import {UserSongSettingsValidator, UserValidator} from '@server/util/validators';
+import {ServerSsoService} from '@server/service/server-sso.service';
 
 @UseGuards(ServerAuthGuard)
 @Controller('/api/user')
@@ -19,7 +20,14 @@ export class UserController {
   /** Login callback. Called on successful user login. */
   @Get('/login')
   async login(@Session() session): Promise<LoginResponse> {
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user = ServerSsoService.getUserOrUndefined(session);
+    if (!user) {
+      return {
+        user: undefined,
+        settings: newDefaultUserSettings(),
+        playlists: []
+      };
+    }
     this.logger.log(`User is logged in: ${user.email}`);
     const vr = validate(user, conformsTo(UserValidator));
     if (!vr.success) {
@@ -28,6 +36,7 @@ export class UserController {
     await this.userDbi.updateOnLogin(user);
     const [settings, playlists] = await Promise.all([this._getUserSettings(user), this.playlistDbi.getPlaylists(user.id)]);
     return {
+      user,
       settings,
       playlists
     };
@@ -35,7 +44,7 @@ export class UserController {
 
   @Get('/settings')
   getSettings(@Session() session): Promise<UserSettings> {
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`get settings: ${user.email}`);
     return this._getUserSettings(user);
   }
@@ -46,21 +55,21 @@ export class UserController {
     if (!vr.success) {
       throw vr.toString();
     }
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set settings: ${user.email} for song: ${songSettings.songId}`);
     const settings = await this._getUserSettings(user);
     settings.songs[songSettings.songId] = songSettings;
-    await this.userDbi.updateUserSettings(user.id, settings);
+    await this.userDbi.updateSettings(user.id, settings);
     return settings;
   }
 
   @Put('/settings/b4Si')
   async setB4Si(@Session() session, @Body() {b4SiFlag}: { b4SiFlag: boolean|undefined }): Promise<UserSettings> {
-    const user: User = ServerAuthGuard.getUserOrFail(session);
+    const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set b4Si: ${user.email}: ${b4SiFlag}`);
     const settings = await this._getUserSettings(user);
     const updatedSettings = {...settings, b4Si: !!b4SiFlag};
-    await this.userDbi.updateUserSettings(user.id, updatedSettings);
+    await this.userDbi.updateSettings(user.id, updatedSettings);
     return settings;
   }
 

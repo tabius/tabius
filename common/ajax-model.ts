@@ -1,7 +1,8 @@
-import {Playlist, UserSettings} from '@common/user-model';
+import {Playlist, User, UserSettings} from '@common/user-model';
 import {Artist, Song} from '@common/artist-model';
 
 export interface LoginResponse {
+  readonly user?: User;
   readonly settings: UserSettings;
   readonly playlists: Playlist[];
 }

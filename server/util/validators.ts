@@ -52,7 +52,7 @@ export function isEmail(next?: (arg: any) => ValidationResult<any>): (arg: any) 
 }
 
 export const checkStringLength = (minLen: number, maxLen: number) => isString(minLength(minLen, maxLength(maxLen)));
-export const isUserId = () => checkStringLength(10, 40);
+export const isUserId = () => checkStringLength(1, 40);
 export const isUserName = () => checkStringLength(1, 100);
 
 export const PlaylistValidator: Validator<Playlist> = {

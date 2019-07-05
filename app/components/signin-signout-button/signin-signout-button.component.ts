@@ -3,7 +3,8 @@ import {UserSessionState} from '@app/store/user-session-state';
 import {AuthService} from '@app/services/auth.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {ToastService} from '@app/toast/toast.service';
+import {initiateSignIn, initiateSignOut} from '@common/util/misc-utils';
+import {CookieService} from '@app/services/cookie.service';
 
 @Component({
   selector: 'gt-signin-signout-button',
@@ -20,7 +21,7 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
   constructor(private readonly session: UserSessionState,
               private readonly authService: AuthService,
               private readonly cd: ChangeDetectorRef,
-              private readonly toastService: ToastService,
+              private readonly cookieService: CookieService,
   ) {
   }
 
@@ -38,12 +39,11 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
   }
 
   signIn() {
-    this.authService.signIn()
-        .catch(err => this.toastService.warning(err));
+    initiateSignIn();
   }
 
   signOut() {
-    this.authService.signOut();
+    initiateSignOut(this.cookieService);
   }
 
 }

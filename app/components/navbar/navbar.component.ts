@@ -88,6 +88,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!this.user) {
       return '-';
     }
-    return this.user.name.length > 0 ? this.user.name.charAt(0) : '+';
+    return this.user.name.length > 0 ? this.user.name.charAt(0).toUpperCase() : '+';
   }
 }
