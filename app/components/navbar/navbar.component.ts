@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
@@ -39,6 +39,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(private readonly session: UserSessionState,
               private readonly router: Router,
               private readonly bss: BrowserStateService,
+              private readonly cd: ChangeDetectorRef,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
   }
@@ -46,7 +47,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.session.user$
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(user => this.user = user);
+        .subscribe(user => {
+          this.user = user;
+          this.cd.detectChanges();
+        });
   }
 
   ngOnDestroy(): void {
