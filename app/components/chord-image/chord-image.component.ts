@@ -35,6 +35,9 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
+    if (!this.isBrowser) {
+      return;
+    }
     const context = this.canvas.nativeElement.getContext('2d');
     this.painter.draw(context);
   }
