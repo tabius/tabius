@@ -16,6 +16,7 @@ const GUITAR_STRINGS = ['e', 'H', 'G', 'D', 'A', 'E'];
 })
 export class TunerPageComponent implements OnInit, OnDestroy {
   private readonly destroyed$ = new Subject();
+  private destroyed = false;
 
   @ViewChild('s1', {static: true}) private s1!: ElementRef;
   @ViewChild('s2', {static: true}) private s2!: ElementRef;
@@ -53,6 +54,8 @@ export class TunerPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyed$.next();
+    this.destroyed = true;
+    this.stop();
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -133,6 +136,9 @@ export class TunerPageComponent implements OnInit, OnDestroy {
         return;
       }
       this.playingAudio.addEventListener('ended', () => {
+        if (this.destroyed) {
+          return;
+        }
         this.playingAudio = undefined;
         this.cd.detectChanges();
         if (this.deviceSettings.tunerRepeatMode && !this.forceStop) {
