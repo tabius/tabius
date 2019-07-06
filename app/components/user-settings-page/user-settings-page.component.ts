@@ -5,7 +5,6 @@ import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SongDetails} from '@common/artist-model';
-import {UserSessionState} from '@app/store/user-session-state';
 
 @Component({
   selector: 'gt-user-settings-page',
@@ -25,8 +24,8 @@ export class UserSettingsPageComponent implements OnInit, OnDestroy {
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService,
-              private readonly session: UserSessionState) {
-    this.user$ = session.user$;
+  ) {
+    this.user$ = uds.getUser();
   }
 
   ngOnInit() {

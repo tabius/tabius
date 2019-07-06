@@ -1,13 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Injectable, OnDestroy, OnInit, PLATFORM_ID} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injectable, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
 import {Meta, Title} from '@angular/platform-browser';
 import {Artist, Song} from '@common/artist-model';
 import {flatMap, map, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
-import {MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST_PREFIX, MOUNT_USER_PLAYLISTS} from '@common/mounts';
-import {UserSessionState} from '@app/store/user-session-state';
-import {isPlatformBrowser} from '@angular/common';
+import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist} from '@common/user-model';
@@ -110,14 +108,9 @@ interface PlaylistPageInput {
 @Injectable({providedIn: 'root'})
 export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
 
-  private readonly isBrowser: boolean;
-
   constructor(private readonly uds: UserDataService,
-              private readonly session: UserSessionState,
               private readonly router: Router,
-              @Inject(PLATFORM_ID) platformId: string,
   ) {
-    this.isBrowser = isPlatformBrowser(platformId);
   }
 
   async resolve(route: ActivatedRouteSnapshot): Promise<PlaylistPageInput> {
@@ -126,12 +119,7 @@ export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
     if (playlist) {
       return {playlist};
     }
-    if (!this.isBrowser) { // try login in browser and redirect back to the playlist page rendering on successful login.
-      this.session.returnUrl = `/${MOUNT_PLAYLIST_PREFIX}${mount}`;
-      this.router.navigate(['/']).catch(err => console.error(err)); //todo: create 'login-in-progress' page.
-    } else {
-      this.router.navigate([MOUNT_PAGE_NOT_FOUND]).catch(err => console.error(err));
-    }
+    this.router.navigate([MOUNT_PAGE_NOT_FOUND]).catch(err => console.error(err));
     return {playlist: {} as Playlist}; //todo: find a better pattern
   }
 }

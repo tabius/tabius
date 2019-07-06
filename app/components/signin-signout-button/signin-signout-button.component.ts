@@ -1,10 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {UserSessionState} from '@app/store/user-session-state';
 import {AuthService} from '@app/services/auth.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {initiateSignIn, initiateSignOut} from '@common/util/misc-utils';
-import {CookieService} from '@app/services/cookie.service';
+import {UserDataService} from '@app/services/user-data.service';
 
 @Component({
   selector: 'gt-signin-signout-button',
@@ -18,19 +16,18 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
 
-  constructor(private readonly session: UserSessionState,
+  constructor(private readonly uds: UserDataService,
               private readonly authService: AuthService,
               private readonly cd: ChangeDetectorRef,
-              private readonly cookieService: CookieService,
   ) {
   }
 
   ngOnInit(): void {
-    this.session.user$
+    this.uds.getUser()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {
           this.userName = user && user.name;
-          this.cd.markForCheck();
+          this.cd.detectChanges();
         });
   }
 
@@ -38,12 +35,12 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
   }
 
-  signIn() {
-    initiateSignIn();
+  signIn(): void {
+    AuthService.signIn();
   }
 
-  signOut() {
-    initiateSignOut(this.cookieService);
+  signOut(): void {
+    this.authService.signOut();
   }
 
 }

@@ -13,6 +13,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.updateSignInState();
+    this.authService.updateSignInState().catch(err => console.warn(err));
   }
 }

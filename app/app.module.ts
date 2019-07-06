@@ -28,7 +28,6 @@ import {UserSettingsPageComponent} from './components/user-settings-page/user-se
 import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/browser-store';
 import {APP_BROWSER_STORE_TOKEN, TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {UserSessionState} from '@app/store/user-session-state';
 import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-song-to-playlist.component';
 import {PlaylistListPageComponent} from './components/playlist-list-page/playlist-list-page.component';
 import {SigninSignoutButtonComponent} from './components/signin-signout-button/signin-signout-button.component';
@@ -90,7 +89,6 @@ import {SongVideoComponent} from './components/song-video/song-video.component';
     {provide: TABIUS_ARTISTS_BROWSER_STORE_TOKEN, useClass: ArtistsBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
     CookieService,
-    UserSessionState,
     BrowserStateService,
     PwaUpdaterService,
   ],

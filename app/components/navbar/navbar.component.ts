@@ -3,9 +3,9 @@ import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
-import {UserSessionState} from '@app/store/user-session-state';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_ARTISTS, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {UserDataService} from '@app/services/user-data.service';
 
 enum NavSection {
   Home = 1,
@@ -36,7 +36,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly NavSection = NavSection;
   readonly noSleepMode$: Observable<boolean>;
 
-  constructor(private readonly session: UserSessionState,
+  constructor(private readonly uds: UserDataService,
               private readonly router: Router,
               private readonly bss: BrowserStateService,
               private readonly cd: ChangeDetectorRef,
@@ -45,7 +45,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.session.user$
+    this.uds.getUser()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {
           this.user = user;

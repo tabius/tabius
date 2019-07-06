@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {LoginResponse} from '@common/ajax-model';
-import {UserSessionState} from '@app/store/user-session-state';
 import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {NODE_BB_SESSION_COOKIE} from '@common/constants';
+import {CookieService} from '@app/services/cookie.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,9 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 export class AuthService {
 
   constructor(private readonly httpClient: HttpClient,
-              private readonly session: UserSessionState,
-              private readonly userDataService: UserDataService,
+              private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
+              private readonly cookieService: CookieService,
   ) {
   }
 
@@ -25,13 +26,27 @@ export class AuthService {
     try {
       const {user, settings, playlists} = await this.httpClient.get<LoginResponse>('/api/user/login').toPromise();
       await Promise.all([
-        this.session.setUser(user),
-        this.userDataService.updateUserSettingsOnFetch(settings),
-        this.userDataService.cachePlaylistsInBrowserStore(playlists)]
+        this.uds.setUser(user),
+        this.uds.updateUserSettingsOnFetch(settings),
+        this.uds.cachePlaylistsInBrowserStore(playlists)]
       );
     } catch (e) {
       console.warn(e);
     }
   }
+
+  static signIn(): void {
+    window.location.href = 'https://forum.tabius.ru/login';
+  }
+
+  signOut(): void {
+    this.cookieService.delete(NODE_BB_SESSION_COOKIE);
+    this.uds.setUser(undefined)
+        .then(() => {
+          setTimeout(() => window.location.href = 'https://forum.tabius.ru/login', 500);
+        })
+        .catch(err => console.warn(err));
+  }
+
 }
 
