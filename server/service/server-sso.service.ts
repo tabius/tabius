@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {User} from '@common/user-model';
 
 import {Db, MongoClient, MongoClientOptions} from 'mongodb';
-import {NODE_BB_SESSION_COOKIE} from '@common/constants';
+import {NODE_BB_SESSION_COOKIE, NODE_BB_URL} from '@common/constants';
 import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';
@@ -128,7 +128,7 @@ export class ServerSsoService implements NestInterceptor {
       id: user.uid,
       name: user.username,
       email: user.email,
-      picture: user.picture,
+      picture: NODE_BB_URL + user.picture,
     };
   }
 }

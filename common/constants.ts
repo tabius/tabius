@@ -10,7 +10,8 @@ export const TABIUS_USER_BROWSER_STORE_TOKEN = 'user';
 export const TABIUS_ARTISTS_BROWSER_STORE_TOKEN = 'artists';
 export const APP_BROWSER_STORE_TOKEN = 'tabius';
 
-export const NODE_BB_SESSION_COOKIE ='express.sid';
+export const NODE_BB_SESSION_COOKIE = 'express.sid';
+export const NODE_BB_URL = 'https://forum.tabius.ru';
 
 // the values below should be in sync with 'dimensions.scss'
 // export const MAX_MOBILE_WIDTH = 899;

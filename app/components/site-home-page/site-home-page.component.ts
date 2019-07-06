@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {MOUNT_ARTISTS} from '@common/mounts';
+import {NODE_BB_URL} from '@common/constants';
 
 @Component({
   selector: 'gt-site-home-page',
@@ -9,4 +10,5 @@ import {MOUNT_ARTISTS} from '@common/mounts';
 })
 export class SiteHomePageComponent {
   readonly artistsLink = MOUNT_ARTISTS;
+  readonly forumLink = NODE_BB_URL + "/category/1";
 }

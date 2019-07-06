@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {LoginResponse} from '@common/ajax-model';
 import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {NODE_BB_SESSION_COOKIE} from '@common/constants';
+import {NODE_BB_SESSION_COOKIE, NODE_BB_URL} from '@common/constants';
 import {CookieService} from '@app/services/cookie.service';
 
 @Injectable({
@@ -36,14 +36,14 @@ export class AuthService {
   }
 
   static signIn(): void {
-    window.location.href = 'https://forum.tabius.ru/login';
+    window.location.href = `${NODE_BB_URL}/login`;
   }
 
   signOut(): void {
     this.cookieService.delete(NODE_BB_SESSION_COOKIE);
     this.uds.setUser(undefined)
         .then(() => {
-          setTimeout(() => window.location.href = 'https://forum.tabius.ru/login', 500);
+          setTimeout(() => window.location.href = `${NODE_BB_URL}/login`, 500);
         })
         .catch(err => console.warn(err));
   }
