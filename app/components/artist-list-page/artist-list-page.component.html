@@ -10,8 +10,10 @@
         <div class="letters-navigator">
             <div *ngFor="let letterBlock of letterBlocks; trackBy: trackByLetter"
                  class="letter-link-block"
-                 [class.selected]="isLetterSelected(letterBlock.letter)">
-                <a (click)="activateLetter(letterBlock.letter)" class="letter-link">{{letterBlock.letter}}</a>
+                 [class.selected]="isLetterSelected(letterBlock.letter)"
+                 (click)="activateLetter(letterBlock.letter)"
+            >
+                <a class="letter-link">{{letterBlock.letter}}</a>
             </div>
             <div class="letter-link-block">
                 <a (click)="activateLetter(null)" class="letter-link" title="Показать всех артистов">ВСЕ</a>
