@@ -26,8 +26,7 @@ export class UserDbi {
   }
 
   updateSettings(userId: string, userSettings: UserSettings): Promise<void> {
-    const settingsWithoutMount = {...userSettings};
-    const settingsJson = JSON.stringify(settingsWithoutMount);
+    const settingsJson = JSON.stringify(userSettings);
     return this.db.pool.promise()
         .query('UPDATE user SET settings = ? WHERE id = ?',
             [settingsJson, userId]);
@@ -39,7 +38,7 @@ export class UserDbi {
         .then(([rows]: [{ settings: string }[]]) =>
             rows.length === 0 || rows[0].settings.length === 0
                 ? undefined
-                : {...newDefaultUserSettings(), ...JSON.parse(rows[0].settings), mount: rows[0].mount}
+                : {...newDefaultUserSettings(), ...JSON.parse(rows[0].settings)}
         );
   }
 }
