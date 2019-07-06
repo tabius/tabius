@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Logger, Put, Session, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, HttpStatus, Logger, Put, Res, Session, UseGuards} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {newDefaultUserSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
@@ -7,6 +7,7 @@ import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {conformsTo, validate} from 'typed-validation';
 import {UserSongSettingsValidator, UserValidator} from '@server/util/validators';
 import {ServerSsoService} from '@server/service/server-sso.service';
+import {Response} from 'express';
 
 @UseGuards(ServerAuthGuard)
 @Controller('/api/user')
@@ -40,6 +41,13 @@ export class UserController {
       settings,
       playlists
     };
+  }
+
+  @Get('/logout')
+  async logout(@Res() response: Response, @Session() session): Promise<void> {
+    this.logger.log('/logout ' + JSON.stringify(ServerSsoService.getUserOrUndefined(session)));
+    ServerSsoService.logout(response);
+    response.status(HttpStatus.ACCEPTED).send('done');
   }
 
   @Get('/settings')

@@ -3,8 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {LoginResponse} from '@common/ajax-model';
 import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {NODE_BB_SESSION_COOKIE, NODE_BB_URL} from '@common/constants';
-import {CookieService} from '@app/services/cookie.service';
+import {NODE_BB_URL} from '@common/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,6 @@ export class AuthService {
   constructor(private readonly httpClient: HttpClient,
               private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
-              private readonly cookieService: CookieService,
   ) {
   }
 
@@ -39,14 +37,10 @@ export class AuthService {
     window.location.href = `${NODE_BB_URL}/login`;
   }
 
-  signOut(): void {
-    this.cookieService.delete(NODE_BB_SESSION_COOKIE);
-    this.uds.setUser(undefined)
-        .then(() => {
-          setTimeout(() => window.location.href = '/', 500);
-        })
-        .catch(err => console.warn(err));
+  async signOut(): Promise<void> {
+    await this.httpClient.get<void>('/api/user/logout').toPromise();
+    await this.uds.setUser(undefined);
+    setTimeout(() => window.location.href = '/', 500);
   }
-
 }
 

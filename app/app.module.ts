@@ -16,7 +16,6 @@ import {PlaylistEditorComponent} from './components/playlist-editor/playlist-edi
 import {ArtistListPageComponent} from './components/artist-list-page/artist-list-page.component';
 import {ApiUrlInterceptor} from './interceptors/api-url.interceptor';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {CookieService} from '@app/services/cookie.service';
 import {RoutingModule} from '@app/routing.module';
 import {SvgIconComponent} from './components/svg-icon/svg-icon.component';
 import {TunerPageComponent} from './components/tuner-page/tuner-page.component';
@@ -88,7 +87,6 @@ import {SongVideoComponent} from './components/song-video/song-video.component';
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_ARTISTS_BROWSER_STORE_TOKEN, useClass: ArtistsBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
-    CookieService,
     BrowserStateService,
     PwaUpdaterService,
   ],

@@ -1,6 +1,7 @@
 import {CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, Logger, NestInterceptor} from '@nestjs/common';
 import {Observable} from 'rxjs';
 import {User} from '@common/user-model';
+import {Response} from 'express';
 
 import {Db, MongoClient, MongoClientOptions} from 'mongodb';
 import {NODE_BB_SESSION_COOKIE, NODE_BB_URL} from '@common/constants';
@@ -130,5 +131,9 @@ export class ServerSsoService implements NestInterceptor {
       email: user.email,
       picture: NODE_BB_URL + user.picture,
     };
+  }
+
+  static logout(res: Response): void {
+    res.clearCookie(NODE_BB_SESSION_COOKIE);
   }
 }

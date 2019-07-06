@@ -40,7 +40,7 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
   }
 
   signOut(): void {
-    this.authService.signOut();
+    this.authService.signOut(); //todo: show toast on error?
   }
 
 }
