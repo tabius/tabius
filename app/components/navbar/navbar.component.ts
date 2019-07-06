@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
@@ -70,6 +70,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return NavSection.Settings;
     }
     return NavSection.Home;
+  }
+
+  /** Close menu on navigation. */
+  @HostListener('window:popstate', ['$event'])
+  onPopState() {
+    if (this.opened) {
+      this.close();
+      this.cd.detectChanges();
+    }
   }
 
   open() {
