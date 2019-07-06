@@ -47,7 +47,7 @@ export class UserController {
   async logout(@Res() response: Response, @Session() session): Promise<void> {
     this.logger.log('/logout ' + JSON.stringify(ServerSsoService.getUserOrUndefined(session)));
     ServerSsoService.logout(response);
-    response.status(HttpStatus.ACCEPTED).send('done');
+    response.status(HttpStatus.OK).send();
   }
 
   @Get('/settings')
