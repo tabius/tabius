@@ -11,6 +11,7 @@ export const TABIUS_ARTISTS_BROWSER_STORE_TOKEN = 'artists';
 export const APP_BROWSER_STORE_TOKEN = 'tabius';
 
 export const NODE_BB_SESSION_COOKIE = 'express.sid';
+export const NODE_BB_COOKIE_DOMAIN = '.tabius.ru';
 export const NODE_BB_URL = 'https://forum.tabius.ru';
 
 // the values below should be in sync with 'dimensions.scss'
