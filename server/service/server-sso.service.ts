@@ -121,7 +121,7 @@ export class ServerSsoService implements NestInterceptor {
     }
     this.logger.debug(`Found valid user for SSO session: ${ssoSessionId}, user: ${user.username}/${user.email}`);
     const groups: UserGroup[] = [];
-    if (user.groupTitle.contains('Global Moderators') || user.uid === '1') {
+    if (user.groupTitle.includes('Global Moderators') || user.uid === '1') {
       groups.push(UserGroup.Moderator);
     }
     return {
