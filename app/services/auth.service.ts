@@ -43,7 +43,7 @@ export class AuthService {
     this.cookieService.delete(NODE_BB_SESSION_COOKIE);
     this.uds.setUser(undefined)
         .then(() => {
-          setTimeout(() => window.location.href = `${NODE_BB_URL}/login`, 500);
+          setTimeout(() => window.location.href = '/', 500);
         })
         .catch(err => console.warn(err));
   }
