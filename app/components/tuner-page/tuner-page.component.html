@@ -5,13 +5,13 @@
     <div>
         <div class="settings-row">
             Тон
-            <select [ngModel]="deviceSettings.tunerToneType" (ngModelChange)="setToneType($event)" style="margin-left: 5px;">
+            <select [ngModel]="getToneType()" (ngModelChange)="setToneType($event)" style="margin-left: 5px;">
                 <option value="c">Классика</option>
                 <option value="e">Электро</option>
             </select>
 
             <label class="checkbox" style="margin-left: 25px;">
-                <input type="checkbox" [checked]="deviceSettings.tunerRepeatMode" (change)="setRepeatMode($event.target.checked)"><span>повтор</span>
+                <input type="checkbox" [checked]="getRepeatMode()" (change)="setRepeatMode($event.target.checked)"><span>повтор</span>
             </label>
 
         </div>

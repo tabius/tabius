@@ -20,6 +20,10 @@ export interface User {
   readonly groups: UserGroup[];
 }
 
+
+/** 'c' for Classic, 'e' for Electro. */
+export type TunerToneType = 'c'|'e';
+
 /**
  * Settings that stored in the browser and never saved on server.
  * Usually these settings are different per device. Example: font sizes.
@@ -29,8 +33,7 @@ export interface UserDeviceSettings {
   readonly songFontSize: number;
   /** If true -> repeat mode is checked by default in tuner. */
   readonly tunerRepeatMode: boolean;
-  /** 'c' for Classic, 'e' for Electro. */
-  readonly tunerToneType: 'c'|'e';
+  readonly tunerToneType: TunerToneType;
 }
 
 export function newDefaultUserDeviceSettings(): UserDeviceSettings {

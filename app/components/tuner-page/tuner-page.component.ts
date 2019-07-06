@@ -4,7 +4,7 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {Subject} from 'rxjs';
 import {UserDataService} from '@app/services/user-data.service';
 import {takeUntil} from 'rxjs/operators';
-import {newDefaultUserDeviceSettings} from '@common/user-model';
+import {newDefaultUserDeviceSettings, TunerToneType} from '@common/user-model';
 
 const GUITAR_STRINGS = ['e', 'H', 'G', 'D', 'A', 'E'];
 
@@ -24,11 +24,11 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   @ViewChild('s5', {static: true}) private s5!: ElementRef;
   @ViewChild('s6', {static: true}) private s6!: ElementRef;
 
-  currentString = 'e';
-  deviceSettings = newDefaultUserDeviceSettings();
-  playingAudio?: HTMLAudioElement;
-  forceStop = false;
-  focusedString = '';
+  private currentString = 'e';
+  private deviceSettings = newDefaultUserDeviceSettings();
+  private playingAudio?: HTMLAudioElement;
+  private forceStop = false;
+  private focusedString = '';
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly title: Title,
@@ -154,11 +154,19 @@ export class TunerPageComponent implements OnInit, OnDestroy {
     return !!this.playingAudio && (!guitarString || guitarString === this.currentString);
   }
 
+  getRepeatMode(): boolean {
+    return this.deviceSettings.tunerRepeatMode;
+  }
+
   setRepeatMode(repeat: boolean): void {
     this.uds.setUserDeviceSettings({...this.deviceSettings, tunerRepeatMode: repeat});
   }
 
-  setToneType(toneType: 'c'|'e'): void {
+  getToneType(): TunerToneType {
+    return this.deviceSettings.tunerToneType;
+  }
+
+  setToneType(toneType: TunerToneType): void {
     this.uds.setUserDeviceSettings({...this.deviceSettings, tunerToneType: toneType});
   }
 
