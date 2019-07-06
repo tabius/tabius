@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {Subject} from 'rxjs';
@@ -16,6 +16,13 @@ const GUITAR_STRINGS = ['e', 'H', 'G', 'D', 'A', 'E'];
 })
 export class TunerPageComponent implements OnInit, OnDestroy {
   private readonly destroyed$ = new Subject();
+
+  @ViewChild('s1', {static: true}) private s1!: ElementRef;
+  @ViewChild('s2', {static: true}) private s2!: ElementRef;
+  @ViewChild('s3', {static: true}) private s3!: ElementRef;
+  @ViewChild('s4', {static: true}) private s4!: ElementRef;
+  @ViewChild('s5', {static: true}) private s5!: ElementRef;
+  @ViewChild('s6', {static: true}) private s6!: ElementRef;
 
   currentString = 'e';
   deviceSettings = newDefaultUserDeviceSettings();
@@ -52,7 +59,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   keyEvent(event: KeyboardEvent): void {
     switch (event.code) {
       case 'Space':
-        if (this.playingAudio || this.focusedString === '') {
+        if ((this.playingAudio && this.focusedString === this.currentString) || this.focusedString === '') {
           this.stop();
           this.forceStop = true;
         } else {
@@ -71,16 +78,17 @@ export class TunerPageComponent implements OnInit, OnDestroy {
       case 'Digit4':
       case 'Digit5':
       case 'Digit6':
-        const guitarString = GUITAR_STRINGS[parseInt(event.code.replace('Digit', '')) - 1];
-        this.play(guitarString);
+        this.handlePlayByKey(parseInt(event.code.replace('Digit', '')) - 1);
         break;
       case 'ArrowRight':
       case 'KeyX':
-        this.play(GUITAR_STRINGS[(getGuitarStringIndex(this.currentString) + 1) % 6]);
+        const nextStringIdx = (getGuitarStringIndex(this.currentString) + 1) % GUITAR_STRINGS.length;
+        this.handlePlayByKey(nextStringIdx);
         break;
       case 'ArrowLeft':
       case 'KeyZ':
-        this.play(GUITAR_STRINGS[(getGuitarStringIndex(this.currentString) + 5) % 6]);
+        const prevStringIdx = (getGuitarStringIndex(this.currentString) + GUITAR_STRINGS.length - 1) % GUITAR_STRINGS.length;
+        this.handlePlayByKey(prevStringIdx);
         break;
       case 'ArrowUp':
       case 'ArrowDown':
@@ -94,6 +102,15 @@ export class TunerPageComponent implements OnInit, OnDestroy {
     }
     event.preventDefault();
     event.stopPropagation();
+  }
+
+  private handlePlayByKey(stringIdx: number): void {
+    const guitarString = GUITAR_STRINGS[stringIdx];
+    if (this.focusedString !== guitarString) {
+      const el = this.getStringElement(guitarString);
+      el && el.nativeElement.focus();
+    }
+    this.play(guitarString);
   }
 
   play(guitarString: string): void {
@@ -143,6 +160,25 @@ export class TunerPageComponent implements OnInit, OnDestroy {
 
   setToneType(toneType: 'c'|'e'): void {
     this.uds.setUserDeviceSettings({...this.deviceSettings, tunerToneType: toneType});
+  }
+
+  private getStringElement(guitarString: string): ElementRef|undefined {
+    const stringNum = getGuitarStringIndex(guitarString) + 1;
+    switch (stringNum) {
+      case 1:
+        return this.s1;
+      case 2:
+        return this.s2;
+      case 3:
+        return this.s3;
+      case 4:
+        return this.s4;
+      case 5:
+        return this.s5;
+      case 6:
+        return this.s6;
+    }
+    return undefined;
   }
 }
 
