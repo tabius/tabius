@@ -1,6 +1,6 @@
 import {CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, Logger, NestInterceptor} from '@nestjs/common';
 import {Observable} from 'rxjs';
-import {User} from '@common/user-model';
+import {User, UserGroup} from '@common/user-model';
 import {Response} from 'express';
 
 import {Db, MongoClient, MongoClientOptions} from 'mongodb';
@@ -11,12 +11,7 @@ const USER_SESSION_KEY = 'user';
 
 interface SsoServiceConfig {
   useTestUser: boolean,
-  testUser?: {
-    id: string,
-    name: string,
-    email: string,
-    picture: string,
-  },
+  testUser?: User,
   sessionCookieSecret?: string,
   mongo?: {
     url: string,
@@ -125,11 +120,16 @@ export class ServerSsoService implements NestInterceptor {
       return;
     }
     this.logger.debug(`Found valid user for SSO session: ${ssoSessionId}, user: ${user.username}/${user.email}`);
+    const groups: UserGroup[] = [];
+    if (user.groupTitle.contains('Global Moderators') || user.uid === '1') {
+      groups.push(UserGroup.Moderator);
+    }
     return {
       id: user.uid,
-      name: user.username,
+      username: user.username,
       email: user.email,
       picture: NODE_BB_URL + user.picture,
+      groups,
     };
   }
 

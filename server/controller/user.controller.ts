@@ -5,7 +5,7 @@ import {newDefaultUserSettings, User, UserSettings, UserSongSettings} from '@com
 import {LoginResponse} from '@common/ajax-model';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {conformsTo, validate} from 'typed-validation';
-import {UserSongSettingsValidator, UserValidator} from '@server/util/validators';
+import {UserSongSettingsValidator} from '@server/util/validators';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {Response} from 'express';
 
@@ -30,10 +30,6 @@ export class UserController {
       };
     }
     this.logger.log(`User is logged in: ${user.email}`);
-    const vr = validate(user, conformsTo(UserValidator));
-    if (!vr.success) {
-      throw vr.toString();
-    }
     await this.userDbi.updateOnLogin(user);
     const [settings, playlists] = await Promise.all([this._getUserSettings(user), this.playlistDbi.getPlaylists(user.id)]);
     return {

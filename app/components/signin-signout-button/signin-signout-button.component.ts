@@ -12,7 +12,7 @@ import {UserDataService} from '@app/services/user-data.service';
 })
 export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
 
-  userName?: string;
+  username?: string;
 
   private readonly destroyed$ = new Subject();
 
@@ -26,7 +26,7 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
     this.uds.getUser()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {
-          this.userName = user && user.name;
+          this.username = user && user.username;
           this.cd.detectChanges();
         });
   }
