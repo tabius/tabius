@@ -11,7 +11,6 @@ import {ArtistPageComponent} from './components/artist-page/artist-page.componen
 import {SongPageComponent} from './components/song-page/song-page.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {FooterComponent} from './components/footer/footer.component';
-import {NewSongsComponent} from './components/new-songs/new-songs.component';
 import {PlaylistPageComponent} from './components/playlist-page/playlist-page.component';
 import {PlaylistEditorComponent} from './components/playlist-editor/playlist-editor.component';
 import {ArtistListPageComponent} from './components/artist-list-page/artist-list-page.component';
@@ -53,7 +52,6 @@ import {SongVideoComponent} from './components/song-video/song-video.component';
     SongTextComponent,
     NavbarComponent,
     FooterComponent,
-    NewSongsComponent,
     PlaylistPageComponent,
     PlaylistEditorComponent,
     ArtistListPageComponent,

@@ -27,16 +27,16 @@ export class UserDbi {
 
   updateSettings(userId: string, userSettings: UserSettings): Promise<void> {
     const settingsWithoutMount = {...userSettings};
-    delete settingsWithoutMount.mount;
     const settingsJson = JSON.stringify(settingsWithoutMount);
     return this.db.pool.promise()
-        .query('UPDATE user SET settings = ?, mount = ? WHERE id = ?', [settingsJson, userSettings.mount, userId]);
+        .query('UPDATE user SET settings = ? WHERE id = ?',
+            [settingsJson, userId]);
   }
 
   getSettings(userId: string): Promise<UserSettings|undefined> {
     return this.db.pool.promise()
-        .query('SELECT mount, settings FROM user WHERE id = ?', [userId])
-        .then(([rows]: [{ mount: string, settings: string }[]]) =>
+        .query('SELECT settings FROM user WHERE id = ?', [userId])
+        .then(([rows]: [{ settings: string }[]]) =>
             rows.length === 0 || rows[0].settings.length === 0
                 ? undefined
                 : {...newDefaultUserSettings(), ...JSON.parse(rows[0].settings), mount: rows[0].mount}
