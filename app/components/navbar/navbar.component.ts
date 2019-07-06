@@ -97,6 +97,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!this.user) {
       return '-';
     }
-    return this.user.username.length > 0 ? this.user.username.charAt(0).toUpperCase() : '+';
+    return this.user.username && this.user.username.length > 0 ? this.user.username.charAt(0).toUpperCase() : '+';
   }
 }
