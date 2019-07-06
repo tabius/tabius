@@ -111,8 +111,13 @@ export class ServerSsoService implements NestInterceptor {
       this.logger.debug(`SSO session is expired: ${ssoSessionId}`);
       return;
     }
+    const passport = session.passport;
+    if (!passport) {
+      this.logger.debug(`SSO session has no passport: ${ssoSessionId}`);
+      return;
+    }
     const objects = this.db!.collection('objects');
-    const userKey = `user:${session.passport.user}`;
+    const userKey = `user:${passport.user}`;
     const user = await objects.findOne({_key: userKey});
     if (!user) {
       this.logger.error(`User is not found for SSO session: ${JSON.stringify(session)}`);
