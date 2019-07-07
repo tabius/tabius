@@ -5,28 +5,29 @@ import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';
 import {USER_STORE_NAME} from '@common/constants';
 
 describe('Store adapter [IndexedDb]', () => {
+
   it('should support simple get and set operations', async () => {
-    await testGetAndSet(new IndexedDbStoreAdapter(USER_STORE_NAME));
+    await testGetAndSet(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db1'));
   });
 
   it('should support list operation', async () => {
-    await testList(new IndexedDbStoreAdapter(USER_STORE_NAME));
+    await testList(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db2'));
   });
 
   it('should remove entries when value is undefined', async () => {
-    await testRemove(new IndexedDbStoreAdapter(USER_STORE_NAME));
+    await testRemove(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db3'));
   });
 
   it('should clear all entries when clear() is called', async () => {
-    await testClear(new IndexedDbStoreAdapter(USER_STORE_NAME));
+    await testClear(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db4'));
   });
 
   it('should support getAll method', async () => {
-    await testGetAll(new IndexedDbStoreAdapter(USER_STORE_NAME));
+    await testGetAll(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db4'));
   });
 
   it('should support setAll method', async () => {
-    await testSetAll(new IndexedDbStoreAdapter(USER_STORE_NAME));
+    await testSetAll(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db5'));
   });
 });
 

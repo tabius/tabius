@@ -3,15 +3,18 @@ import {ARTISTS_STORE_NAME, USER_STORE_NAME} from '@common/constants';
 
 const MAX_KEY_CHAR = '~';
 
+const INDEX_DB_NAME = 'tabius';
+const INDEX_DB_SCHEMA_VERSION = 2;
+
 /** Indexed DB bases store adapter. */
 export class IndexedDbStoreAdapter implements StoreAdapter {
-  constructor(private readonly storeName: string) {
+  constructor(private readonly storeName: string, private readonly indexDbName = INDEX_DB_NAME) {
   }
 
   get<T>(key: string): Promise<T|undefined> {
     const storeName = this.storeName;
     return new Promise<T|undefined>((resolve, reject) => {
-      execute(db => {
+      this.execute(db => {
         const request: IDBRequest<any|undefined> = db.transaction(storeName)
             .objectStore(storeName)
             .get(key);
@@ -30,7 +33,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
     }
     const storeName = this.storeName;
     return new Promise<(T|undefined)[]>((resolve, reject) => {
-      execute(db => {
+      this.execute(db => {
         const store = db.transaction(storeName).objectStore(storeName);
         const resultValues = new Array<T|undefined>(keys.length);
         let nFinished = 0;
@@ -57,7 +60,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   set<T>(key: string, value: T|undefined): Promise<void> {
     const storeName = this.storeName;
     return new Promise<void>((resolve, reject) => {
-      execute(db => {
+      this.execute(db => {
         if (value) {
           const request = db.transaction(storeName, 'readwrite').objectStore(storeName).put({key: key, value: value});
           request.onerror = err => {
@@ -80,7 +83,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   setAll(map: { [p: string]: any }): Promise<void> {
     const storeName = this.storeName;
     return new Promise<void>((resolve, reject) => {
-      execute(db => {
+      this.execute(db => {
         const tx = db.transaction(storeName, 'readwrite');
         const store = tx.objectStore(storeName);
         for (const [key, value] of Object.entries(map)) {
@@ -99,7 +102,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   list<T>(keyPrefix: string): Promise<T[]> {
     const storeName = this.storeName;
     return new Promise<T[]>((resolve, reject) => {
-      execute(db => {
+      this.execute(db => {
         const query: IDBKeyRange = IDBKeyRange.bound(keyPrefix, keyPrefix + MAX_KEY_CHAR);
         const request = db.transaction(storeName).objectStore(storeName).getAll(query);
         request.onerror = err => {
@@ -114,7 +117,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   clear(): Promise<void> {
     const storeName = this.storeName;
     return new Promise<void>((resolve, reject) => {
-      execute(db => {
+      this.execute(db => {
         const request = db.transaction(storeName, 'readwrite').objectStore(storeName).clear();
         request.onerror = err => {
           console.error(`IndexDb.clean error in ${storeName}!`, err);
@@ -134,20 +137,18 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
     }
     return Promise.resolve();
   }
-}
 
-const INDEX_DB_NAME = 'tabius';
-const INDEX_DB_SCHEMA_VERSION = 2;
+  execute(dbOp: (db: IDBDatabase) => void): void {
+    const request: IDBOpenDBRequest = window.indexedDB.open(this.indexDbName, INDEX_DB_SCHEMA_VERSION);
+    request.onerror = err => console.error(err);
+    request.onsuccess = () => dbOp(request.result);
+    request.onupgradeneeded = (e: IDBVersionChangeEvent) => {
+      const result = (e.currentTarget as any).result;
+      const objectStoreParams = {keyPath: 'key'};
+      //FIXME: GH-1 remove hardcoded store names.
+      result.createObjectStore(USER_STORE_NAME, objectStoreParams);
+      result.createObjectStore(ARTISTS_STORE_NAME, objectStoreParams);
+    };
+  }
 
-function execute(dbOp: (db: IDBDatabase) => void): void {
-  const request: IDBOpenDBRequest = window.indexedDB.open(INDEX_DB_NAME, INDEX_DB_SCHEMA_VERSION);
-  request.onerror = err => console.error(err);
-  request.onsuccess = () => dbOp(request.result);
-  request.onupgradeneeded = (e: IDBVersionChangeEvent) => {
-    const result = (e.currentTarget as any).result;
-    const objectStoreParams = {keyPath: 'key'};
-    //FIXME: GH-1 remove hardcoded store names.
-    result.createObjectStore(USER_STORE_NAME, objectStoreParams);
-    result.createObjectStore(ARTISTS_STORE_NAME, objectStoreParams);
-  };
 }
