@@ -46,8 +46,8 @@ export class ToastComponent implements OnInit, OnDestroy {
   }
 
   onFadeFinished(event: AnimationEvent): void {
-    const {toState} = event as any;
-    const isFadeOut = (toState as ToastAnimationState) === 'closing';
+    const toState = (event as any).toState as ToastAnimationState;
+    const isFadeOut = toState === 'closing';
     const itFinished = this.animationState === 'closing';
     if (isFadeOut && itFinished) {
       this.close();
