@@ -14,7 +14,7 @@ import {parseChords} from '@app/utils/chords-parser';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongChordsComponent implements OnInit, OnDestroy {
-  private readonly destroyed$ = new Subject<void>();
+  private readonly destroyed$ = new Subject();
 
   //TODO: handle song change.
   @Input() songDetails!: SongDetails;

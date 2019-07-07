@@ -31,7 +31,7 @@ let letterBlockFilters: string[] = [];
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArtistListPageComponent implements OnInit {
-  readonly destroyed$ = new Subject<unknown>();
+  readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   readonly getArtistPageLink = getArtistPageLink;
 

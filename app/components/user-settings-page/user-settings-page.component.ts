@@ -17,7 +17,7 @@ export class UserSettingsPageComponent implements OnInit, OnDestroy {
   deviceSettings!: UserDeviceSettings;
   b4Si!: boolean;
 
-  readonly destroyed$ = new Subject<unknown>();
+  readonly destroyed$ = new Subject();
   readonly defaultFontSize = getDefaultUserSongFontSize();
   readonly settingsDemoSong = SETTINGS_DEMO_SONG;
   readonly user$: Observable<User|undefined>;

@@ -17,7 +17,7 @@ import {MOUNT_USER_SETTINGS} from '@common/mounts';
 })
 export class PlaylistListPageComponent implements OnInit, OnDestroy {
 
-  readonly destroyed$ = new Subject<unknown>();
+  readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
   readonly getPlaylistPageLink = getPlaylistPageLink;

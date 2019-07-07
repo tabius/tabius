@@ -19,7 +19,7 @@ export const MIN_SONG_FONT_SIZE = 8;
 })
 export class InlineSongSettingsComponent implements OnInit, OnDestroy {
 
-  readonly destroyed$ = new Subject<unknown>();
+  readonly destroyed$ = new Subject();
 
   @Input() songId!: number;
 
