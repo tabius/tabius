@@ -5,7 +5,7 @@ import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User
 import {BrowserStore} from '@app/store/browser-store';
 import {flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
+import {defined, keepDefined, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
@@ -100,12 +100,12 @@ export class UserDataService {
         switchMap(user => {
           this.fetchUserPlaylistsIfNeeded(user).catch(err => console.warn(err));
           return this.store.get<string[]>(USER_PLAYLISTS_KEY).pipe(
-              flatMap(ids =>
-                  ids && ids.length > 0
-                      ? combineLatest(ids.filter(m => isValidPlaylistId(m)).map(m => this.store.get<Playlist>(getPlaylistKey(m))))
-                      : of([])
+              flatMap(ids => {
+                    const playlist$Array = (ids || []).map(m => this.store.get<Playlist>(getPlaylistKey(m)));
+                    return playlist$Array.length > 0 ? combineLatest(playlist$Array).pipe(keepDefined) : of([]);
+                  }
               ),
-              map(array => array.filter(v => v !== undefined) as Playlist[]),
+              map(array => array.filter(defined) as Playlist[]),
           ) as Observable<Playlist[]>;
         }));
   }

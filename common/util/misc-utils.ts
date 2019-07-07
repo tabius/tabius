@@ -1,6 +1,7 @@
 import {Versioned} from '@common/common-model';
 import {ArtistType, Song} from '@common/artist-model';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
+import {filter} from 'rxjs/operators';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length == 0) {
@@ -120,3 +121,9 @@ export async function runWithDedup<T>(opKey: string, runningOps: Set<string>, f:
     runningOps.delete(opKey);
   }
 }
+
+/** Accepts 1 argument and returns true if the argument !== undefined. */
+export const defined = v => v !== undefined;
+
+/** RxJS wrapper to keep only defined elements in the stream. */
+export const keepDefined = filter(defined);

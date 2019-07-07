@@ -7,7 +7,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {ArtistDetailsResponse} from '@common/ajax-model';
-import {isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
+import {defined, isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
 import {WithNumId} from '@common/common-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -40,7 +40,7 @@ export class ArtistDataService {
     return this.store.get<number[]>(ARTIST_LIST_KEY)
         .pipe(
             flatMap(ids => this.getArtistsByIds(ids || [])),
-            map(items => (items.filter(i => i !== undefined) as Artist[])),
+            map(items => (items.filter(defined) as Artist[])),
         );
   }
 
@@ -112,7 +112,7 @@ export class ArtistDataService {
     return this.getArtistDetails(artistId)
         .pipe(
             flatMap(details => details === undefined ? of(undefined) : this.getSongsByIds(details.songIds)),
-            map(songs => songs === undefined ? undefined : songs.filter(s => s !== undefined) as Song[])
+            map(songs => songs === undefined ? undefined : songs.filter(defined) as Song[])
         );
   }
 
@@ -231,12 +231,12 @@ export class ArtistDataService {
       return [];
     }
     type EntityFlag = { id: number, found: boolean };
-    const arrayOfFlags$: Observable<EntityFlag>[] = ids.map(
+    const flag$Array: Observable<EntityFlag>[] = ids.map(
         id => combineLatest([of(id), this.store.get<WithNumId>(keyPrefix + id)])
             .pipe(map(([id, withId]) => ({id, found: withId !== undefined})))
     );
 
-    const latestFlags$ = arrayOfFlags$.length === 0 ? of([]) : combineLatest(arrayOfFlags$);
+    const latestFlags$ = flag$Array.length === 0 ? of([]) : combineLatest(flag$Array);
     const arrayOfPairs: EntityFlag[] = await latestFlags$.pipe(take(1)).toPromise();
     return arrayOfPairs.filter(p => !p.found).map(p => p.id);
   }

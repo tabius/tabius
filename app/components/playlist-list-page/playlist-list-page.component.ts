@@ -35,7 +35,6 @@ export class PlaylistListPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     throttleIndicator(this);
-
     this.uds.getUserPlaylists()
         .pipe(
             takeUntil(this.destroyed$),
@@ -44,7 +43,7 @@ export class PlaylistListPageComponent implements OnInit, OnDestroy {
         .subscribe(playlists => {
           this.loaded = true;
           this.playlists = playlists;
-          this.cd.markForCheck();
+          this.cd.detectChanges();
         });
     this.updateMeta();
   }
