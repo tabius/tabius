@@ -31,7 +31,7 @@ export class UserController {
     }
     this.logger.log(`User is logged in: ${user.email}`);
     await this.userDbi.updateOnLogin(user);
-    const [settings, playlists] = await Promise.all([this._getUserSettings(user), this.playlistDbi.getPlaylists(user.id)]);
+    const [settings, playlists] = await Promise.all([this._getSettings(user), this.playlistDbi.getPlaylists(user.id)]);
     return {
       user,
       settings,
@@ -50,7 +50,7 @@ export class UserController {
   getSettings(@Session() session): Promise<UserSettings> {
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`get settings: ${user.email}`);
-    return this._getUserSettings(user);
+    return this._getSettings(user);
   }
 
   @Put('/settings/song')
@@ -61,24 +61,24 @@ export class UserController {
     }
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set settings: ${user.email} for song: ${songSettings.songId}`);
-    const settings = await this._getUserSettings(user);
-    settings.songs[songSettings.songId] = songSettings;
-    await this.userDbi.updateSettings(user.id, settings);
-    return settings;
+    const settings = await this._getSettings(user);
+    const updatedSettings = {...settings, songs: {...settings.songs, songId: songSettings}};
+    await this.userDbi.updateSettings(user.id, updatedSettings);
+    return updatedSettings;
   }
 
   @Put('/settings/b4Si')
   async setB4Si(@Session() session, @Body() {b4SiFlag}: { b4SiFlag: boolean|undefined }): Promise<UserSettings> {
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set b4Si: ${user.email}: ${b4SiFlag}`);
-    const settings = await this._getUserSettings(user);
+    const settings = await this._getSettings(user);
     const updatedSettings = {...settings, b4Si: !!b4SiFlag};
     await this.userDbi.updateSettings(user.id, updatedSettings);
-    return settings;
+    return updatedSettings;
   }
 
   //todo: move to dbi?
-  private async _getUserSettings(user: User): Promise<UserSettings> {
+  private async _getSettings(user: User): Promise<UserSettings> {
     const settings = await this.userDbi.getSettings(user.id);
     if (settings === undefined) {
       throw `Settings not found! User: ${user.email}, id: ${user.id}`;

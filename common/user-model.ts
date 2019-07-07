@@ -46,7 +46,7 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 
 /** User settings stored on the server. */
 export interface UserSettings {
-  readonly songs: { [songId: number]: UserSongSettings },
+  readonly songs: { readonly [songId: number]: UserSongSettings },
   /** If true => B will be rendered instead of H for the tone Si. */
   readonly b4Si?: boolean,
 }
