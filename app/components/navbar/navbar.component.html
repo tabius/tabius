@@ -37,7 +37,7 @@
         </div>
         <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
             <a routerLink="{{settingsLink}}">
-                <div *ngIf="user" class="user-icon-desktop" title="Аккаунт: {{user.name}}">{{getUserIconText()}}</div>
+                <div *ngIf="user" class="user-icon-desktop" title="Аккаунт: {{user.username}}" (click)="showUserInfo()">{{getUserIconText()}}</div>
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="settings"></gt-svg-icon>
                 <div class="title">НАСТРОЙКИ</div>
@@ -63,7 +63,7 @@
             </a>
         </div>
 
-        <div *ngIf="!opened && user" class="item" style="margin-right: -8px;">
+        <div *ngIf="!opened && user" class="item" style="margin-right: -8px;" (click)="showUserInfo()">
             <div class="user-icon-mobile">{{getUserIconText()}}</div>
         </div>
 

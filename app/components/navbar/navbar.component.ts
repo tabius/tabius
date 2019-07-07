@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_ARTISTS, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserDataService} from '@app/services/user-data.service';
+import {ToastService} from '@app/toast/toast.service';
 
 enum NavSection {
   Home = 1,
@@ -39,6 +40,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(private readonly uds: UserDataService,
               private readonly router: Router,
               private readonly bss: BrowserStateService,
+              private readonly toast: ToastService,
               private readonly cd: ChangeDetectorRef,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
@@ -98,5 +100,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return '-';
     }
     return this.user.username && this.user.username.length > 0 ? this.user.username.charAt(0).toUpperCase() : '+';
+  }
+
+  showUserInfo(): void {
+    if (this.user) {
+      this.toast.info(`Аккаунт: ${this.user.username}, ${this.user.email}`);
+    } else {
+      this.toast.info('Вы не вошли в систему');
+    }
   }
 }

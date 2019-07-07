@@ -22,6 +22,10 @@ export class ToastService {
     return this.show(message, 'warning');
   }
 
+  info(text: string): ToastRef {
+    return this.show(text, 'info');
+  }
+
   show(text: string, type: ToastType): ToastRef {
     if (this.lastToast) {
       if (this.lastToast.isVisible()) {
