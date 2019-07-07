@@ -6,6 +6,7 @@ import {takeUntil} from 'rxjs/operators';
 import {SongDetails} from '@common/artist-model';
 import {Subject} from 'rxjs';
 import {parseChords} from '@app/utils/chords-parser';
+import {defined} from '@common/util/misc-utils';
 
 @Component({
   selector: 'gt-song-chords',
@@ -64,7 +65,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
     }
     this.chords = orderedChordNames
         .map(name => getChordLayout(name))
-        .filter(layout => layout !== undefined) as ChordLayout[];
+        .filter(defined) as ChordLayout[];
   }
 
 }

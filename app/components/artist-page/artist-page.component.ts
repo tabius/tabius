@@ -7,7 +7,7 @@ import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
+import {defined, getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
 
 export class ArtistViewModel {
   readonly displayName: string;
@@ -53,7 +53,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
     const artist$: Observable<Artist|undefined> = this.ads.getArtistByMount(artistMount);
     const bands$ = artist$.pipe(
         flatMap(artist => artist ? this.ads.getArtistsByIds(artist.bandIds) : of(undefined)),
-        map(bands => bands ? bands.filter(v => v !== undefined) : undefined),
+        map(bands => bands ? bands.filter(defined) : undefined),
     ) as Observable<Artist[]>;
 
     const songs$ = artist$.pipe(

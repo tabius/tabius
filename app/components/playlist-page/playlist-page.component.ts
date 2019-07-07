@@ -9,7 +9,7 @@ import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist} from '@common/user-model';
-import {getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
+import {defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 
 interface PlaylistSongModel {
@@ -54,7 +54,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
 
     const songs$: Observable<Song[]> = playlist$.pipe(
         flatMap(playlist => playlist === undefined ? of([]) : this.ads.getSongsByIds(playlist.songIds)),
-        map(songs => songs.filter(song => song !== undefined) as Song[]),
+        map(songs => songs.filter(defined) as Song[]),
     );
     const artists$: Observable<(Artist|undefined)[]> = songs$.pipe(
         flatMap(songs => this.ads.getArtistsByIds(songs.map(s => s.artistId)))
