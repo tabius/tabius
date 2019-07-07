@@ -4,13 +4,14 @@
   "license": "GPL-3.0-only",
   "repository": {},
   "scripts": {
-    "start": "npm run update-version && ng serve",
     "build": "npm run update-version && ng build",
-    "ssr:prod": "npm run update-version && ng build --prod && ng run tabius:ssr:production",
-    "ssr:dev": "npm run update-version && ng build && ng run tabius:ssr",
     "server": "nodemon",
-    "update-version": "node scripts/update-build-version.js",
-    "sitemap": "ts-node scripts/generate-sitemap.ts"
+    "sitemap": "ts-node scripts/generate-sitemap.ts",
+    "ssr:dev": "npm run update-version && ng build && ng run tabius:ssr",
+    "ssr:prod": "npm run update-version && ng build --prod && ng run tabius:ssr:production",
+    "start": "npm run update-version && ng serve",
+    "test": "ng test",
+    "update-version": "node scripts/update-build-version.js"
   },
   "private": true,
   "dependencies": {
