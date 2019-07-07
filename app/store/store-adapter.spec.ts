@@ -23,11 +23,11 @@ describe('Store adapter [IndexedDb]', () => {
   });
 
   it('should support getAll method', async () => {
-    await testGetAll(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db4'));
+    await testGetAll(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db5'));
   });
 
   it('should support setAll method', async () => {
-    await testSetAll(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db5'));
+    await testSetAll(new IndexedDbStoreAdapter(USER_STORE_NAME, 'db6'));
   });
 });
 
