@@ -3,8 +3,12 @@ import {Chord, CHORD_LETTERS, CHORD_TYPE_BY_RAW_TYPE, ChordLocation, ChordType, 
 const ALPHA_EN = /^[A-Z]+$/i;
 const ALPHA_RU = /^[А-ЯЁ]+$/i;
 
-export function isAlpha(text: string): boolean {
-  return ALPHA_EN.test(text) || ALPHA_RU.test(text);
+export function isAlpha(char: string): boolean {
+  return ALPHA_EN.test(char) || ALPHA_RU.test(char);
+}
+
+export function isWordChar(char: string): boolean {
+  return isAlpha(char) || char == '’';
 }
 
 export function parseChords(text: string): ChordLocation[] {
@@ -95,7 +99,7 @@ export function parseChord(text: string, startIdx?: number, endIdx?: number): Ch
         }
       }
     }
-    if (isAlpha(c)) { // the word continues with some letters -> most probably this is not a chord but an ordinary word.
+    if (isWordChar(c)) { // the word continues with some letters -> most probably this is not a chord but an ordinary word.
       return undefined;
     }
     break;
