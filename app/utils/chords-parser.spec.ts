@@ -38,6 +38,10 @@ describe('Chords Parser, parseChord', () => {
     expect(parseChord('A7sus24')).toEqual({chord: c('A', '7sus24'), startIdx: 0, endIdx: 7});
   });
 
+  it('should parse chords with "/" in the middle', () => {
+    expect(parseChord('C7/9')).toEqual({chord: c('C', '+7x9'), startIdx: 0, endIdx: 4});
+  });
+
 });
 
 

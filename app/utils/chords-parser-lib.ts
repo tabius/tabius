@@ -27,7 +27,7 @@ export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'2'|'5'|'6_9'|'7_6'|'7B5b9
  */
 export const CHORDS_LIB: { [key in ChordType]: string } = {
   '+7B9': 'A+7b9, A7♯5b9, A7+5b9',
-  '+7x9': 'A7+9, A+7♯9, A7♯5♯9, A7+5+9',
+  '+7x9': 'A7+9, C7/9, A+7♯9, A7♯5♯9, A7+5+9',
   '+M7B9': 'A+M7b9, A+Δb9, AM7♯5b9, AM7+5b9, AΔ♯5b9, AΔ+5b9',
   '+M7x9': 'A+M7♯9, A+Δ♯9, AM7♯5♯9, AM7+5+9, AΔ♯5♯9, AΔ+5+9',
   '2': 'Aadd9, Aadd2, A2',
@@ -105,6 +105,9 @@ export const CHORD_TYPE_BY_RAW_TYPE = new Map<string, ChordType>();
 export const VISUAL_TYPE_BY_CHORD_TYPE_KEY = new Map<string, string>();
 for (const [key, value] of Object.entries(CHORDS_LIB)) {
   const rawTypes = value.split(',').map(v => v.trim().substring(1));
+  if (!rawTypes.includes(key)) {
+    rawTypes.push(key);
+  }
   for (const rawType of rawTypes) {
     if (CHORD_TYPE_BY_RAW_TYPE.has(rawType)) {
       throw `Duplicate chord mapping: ${rawType} => ${key}`;

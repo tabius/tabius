@@ -23,6 +23,11 @@ describe('Chords Renderer ', () => {
     expect(renderChords('Am Em')).toEqual('Am Em');
   });
 
+  it('should render chords with non-standard characters', () => {
+    expect(renderChords('C7/9', {tag: 'i'})).toEqual('<i>C7+9</i>');
+  });
+
+
   it('should transpose chords correctly to +1', () => {
     expect(renderChords('A', {transpose: 1})).toEqual('A#');
     expect(renderChords('A#', {transpose: 1})).toEqual('B');
