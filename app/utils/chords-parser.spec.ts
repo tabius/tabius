@@ -31,6 +31,7 @@ describe('Chords Parser, parseChord', () => {
     expect(parseChord('Capital')).toBeUndefined();
     expect(parseChord('Amplifier')).toBeUndefined();
     expect(parseChord('House')).toBeUndefined();
+    expect(parseChord('D’aller')).toBeUndefined();
   });
 
   it('should use the longest chord name', () => {
