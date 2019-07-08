@@ -2,7 +2,7 @@
  * Local storage backed store adapter.
  * Note: has memory limits: 2-5Mb.
  */
-import {StoreAdapter} from '@app/store/store-adapter';
+import {KV, StoreAdapter} from '@app/store/store-adapter';
 
 export class LocalStorageStoreAdapter implements StoreAdapter {
   constructor(private readonly keyPrefix: string) {
@@ -58,16 +58,18 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
     }
   }
 
-  list<T>(keyPrefix: string): Promise<T[]> {
-    return new Promise<T[]>(resolve => {
+  list<T>(keyPrefix: string): Promise<KV<T>[]> {
+    return new Promise<KV<T>[]>(resolve => {
       const storeKeyPrefix = this.getStoreKey(keyPrefix);
-      const result: T[] = [];
+      const result: KV<T>[] = [];
+      const storePrefixLen = this.getStoreKey('').length;
       for (let i = 0; i < window.localStorage.length; i++) {
         const key = window.localStorage.key(i);
         if (key && key.startsWith(storeKeyPrefix)) {
           const value = window.localStorage.getItem(key);
           if (value != null) {
-            result.push(JSON.parse(value));
+            const userKey = key.substring(storePrefixLen);
+            result.push({key: userKey, value: JSON.parse(value)});
           }
         }
       }

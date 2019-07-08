@@ -2,7 +2,7 @@
 import {Observable, ReplaySubject} from 'rxjs';
 import {Inject, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
-import {StoreAdapter} from '@app/store/store-adapter';
+import {KV, StoreAdapter} from '@app/store/store-adapter';
 import {IndexedDbStoreAdapter} from '@app/store/indexed-db-store-adapter';
 import {LocalStorageStoreAdapter} from '@app/store/local-storage-store-adapter';
 import {makeStateKey, StateKey, TransferState} from '@angular/platform-browser';
@@ -23,7 +23,7 @@ export interface BrowserStore {
   set<T>(key: string, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void>;
 
   /** Lists all values by key prefix. */
-  list<T>(keyPrefix: string): Promise<T[]>;
+  list<T>(keyPrefix: string): Promise<KV<T>[]>;
 
   clear(): Promise<void>;
 
@@ -115,7 +115,7 @@ class BrowserStoreImpl implements BrowserStore {
     });
   }
 
-  async list<T>(keyPrefix: string): Promise<T[]> {
+  async list<T>(keyPrefix: string): Promise<KV<T>[]> {
     const store = await this.storeAdapter$$;
     return store.list(keyPrefix);
   }

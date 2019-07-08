@@ -92,17 +92,25 @@ async function testGetAndSet(adapter: StoreAdapter) {
   expect(JSON.stringify(result)).toEqual(JSON.stringify(value));
 }
 
+interface TestListItem {
+  foo: string;
+}
+
 async function testList(adapter: StoreAdapter) {
   const keys = ['k1', 'k2', 'k22', 'k3'];
   for (const key of keys) {
-    await adapter.set(key, {foo: key});
+    await adapter.set<TestListItem>(key, {foo: key + '-foo'});
   }
-  const result = await adapter.list<any>('k2');
+  const result = await adapter.list<TestListItem>('k2');
   expect(result).toBeDefined();
   expect(result.length).toEqual(2);
-  result.sort((e1, e2) => e1.foo.localeCompare(e2.foo));
-  expect(result[0].foo).toEqual('k2');
-  expect(result[1].foo).toEqual('k22');
+  result.sort((e1, e2) => e1.key.localeCompare(e2.key));
+
+  expect(result[0].key).toEqual('k2');
+  expect(result[0].value.foo).toEqual('k2-foo');
+
+  expect(result[1].key).toEqual('k22');
+  expect(result[1].value.foo).toEqual('k22-foo');
 }
 
 async function testRemove(adapter: StoreAdapter) {
@@ -126,7 +134,7 @@ async function testRemove(adapter: StoreAdapter) {
   const list2 = await adapter.list<any>(keyPrefix);
   expect(list2).toBeDefined();
   expect(list2.length).toEqual(1);
-  expect(list2[0].x).toEqual('value2');
+  expect(list2[0].value.x).toEqual('value2');
 }
 
 async function testClear(adapter: StoreAdapter) {
@@ -179,5 +187,6 @@ async function testSetAll(adapter: StoreAdapter) {
 
   expect(result).toBeDefined();
   expect(result.length).toBe(2);
-  expect(result.sort()).toEqual(['k1-value', 'k2-value']);
+  result.sort((e1, e2) => e1.key.localeCompare(e2.key));
+  expect(result).toEqual([{key: 'k1', value: 'k1-value'}, {key: 'k2', value: 'k2-value'}]);
 }

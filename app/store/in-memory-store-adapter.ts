@@ -1,5 +1,5 @@
 /** Store that does nothing. */
-import {StoreAdapter} from '@app/store/store-adapter';
+import {KV, StoreAdapter} from '@app/store/store-adapter';
 
 export class InMemoryStoreAdapter implements StoreAdapter {
   readonly map = new Map<string, any>();
@@ -38,12 +38,13 @@ export class InMemoryStoreAdapter implements StoreAdapter {
     });
   }
 
-  list<T>(keyPrefix: string): Promise<T[]> {
-    return new Promise<T[]>(resolve => {
-      const result: T[] = [];
+  list<T>(keyPrefix: string): Promise<KV<T>[]> {
+    return new Promise<KV<T>[]>(resolve => {
+      const result: KV<T>[] = [];
       for (const key of this.map.keys()) {
         if (key.startsWith(keyPrefix)) {
-          result.push(this.map.get(key));
+          const value = this.map.get(key);
+          result.push({key, value});
         }
       }
       resolve(result);

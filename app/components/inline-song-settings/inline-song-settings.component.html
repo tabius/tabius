@@ -23,6 +23,18 @@
                 <button (click)="transposeUp()" class="btn inc mono f16px">+</button>
             </td>
         </tr>
+
+        <tr title="Используйте эту опцию чтобы более эффективно использовать место на экране.">
+            <td>скрыть аккорды:</td>
+            <td class="value">
+                <label class="checkbox">
+                    <input type="checkbox" [checked]="songSettings.hideChords" (change)="toggleChordsVisibility($event.target.checked)">
+                    <span style="display: inherit"></span>
+                </label>
+            </td>
+            <td></td>
+        </tr>
+
     </table>
 </div>
 

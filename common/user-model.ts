@@ -55,12 +55,14 @@ export interface UserSettings {
 export interface UserSongSettings {
   readonly songId: number;
   readonly transpose: number;
+  readonly hideChords: boolean;
 }
 
 export function newDefaultUserSongSettings(songId: number): UserSongSettings {
   return {
     songId,
-    transpose: 0
+    transpose: 0,
+    hideChords: false,
   };
 }
 

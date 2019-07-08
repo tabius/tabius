@@ -1,3 +1,9 @@
+/** Key & value pair. */
+export interface KV<T> {
+  key: string;
+  value: T;
+}
+
 export interface StoreAdapter {
   /** Returns value by key. */
   get<T>(key: string): Promise<T|undefined>;
@@ -13,7 +19,7 @@ export interface StoreAdapter {
   setAll(map: { [key: string]: any }): Promise<void>;
 
   /** Returns all objects with a given key prefix. */
-  list<T>(keyPrefix: string): Promise<T[]>;
+  list<T>(keyPrefix: string): Promise<KV<T>[]>;
 
   /** Removes all data in the store. */
   clear(): Promise<void>;

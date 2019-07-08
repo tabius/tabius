@@ -5,7 +5,7 @@ import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User
 import {BrowserStore} from '@app/store/browser-store';
 import {flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {defined, keepDefined, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
+import {defined, isValidId, keepDefined, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
@@ -39,7 +39,10 @@ export class UserDataService {
     await this.store.set(DEVICE_SETTINGS_KEY, userDeviceSettings, needUpdateByStringify);
   }
 
-  getUserSongSettings(songId: number): Observable<UserSongSettings> {
+  getUserSongSettings(songId?: number): Observable<UserSongSettings> {
+    if (!isValidId(songId)) {
+      return of(newDefaultUserSongSettings(0));
+    }
     return this.getUser().pipe(
         switchMap(user => {
           this.fetchUserSettingsIfNeeded(user).catch(err => console.warn(err));
@@ -84,13 +87,25 @@ export class UserDataService {
   }
 
   async updateUserSettingsOnFetch(userSettings: UserSettings): Promise<void> {
+    const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
+
     const allOps: Promise<void>[] = [];
     allOps.push(this.store.set(USER_SETTINGS_FETCH_DATE_KEY, Date.now()));
+    const updatedKeys = new Set<string>();
     for (const songId in userSettings.songs) {
       const songSettings = userSettings.songs[songId];
-      const key = getUserSongSettingsKey(songId);
+      const key = getUserSongSettingsKey(songSettings.songId);
+      updatedKeys.add(key);
       allOps.push(this.store.set(key, songSettings, needUpdateByStringify));
     }
+
+    // delete missed settings.
+    for (const kv of oldSongSettings) {
+      if (!updatedKeys.has(kv.key)) {
+        allOps.push(this.store.set(kv.key, undefined));
+      }
+    }
+
     allOps.push(this.store.set(B4SI_FLAG_KEY, userSettings.b4Si || undefined));
     await Promise.all(allOps);
   }

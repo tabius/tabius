@@ -8,6 +8,7 @@ import {renderChords} from '@app/utils/chords-renderer';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
 import {isSmallScreenDevice} from '@common/util/misc-utils';
 import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/constants';
+import {newDefaultUserSongSettings} from '@common/user-model';
 
 /** Heuristic used to enable multicolumn mode. */
 const MIN_SONG_LINES_FOR_2_COLUMN_MODE = 30;
@@ -33,7 +34,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   readonly isBrowser: boolean;
 
-  private transpose = 0;
+  private songSettings = newDefaultUserSongSettings(0);
   private b4Si?: boolean;
   private songFontSize?: number;
   private availableWidth = 0;
@@ -75,7 +76,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     this.uds.getUserSongSettings(this.song.id)
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {
-          this.transpose = songSettings.transpose;
+          this.songSettings = songSettings;
           this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
           this.updateSongView();
           this.cd.detectChanges();
@@ -105,7 +106,8 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private updateSongView(): void {
-    this.songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose: this.transpose, useH: !this.b4Si}) : '';
+    const {transpose, hideChords} = this.songSettings;
+    this.songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: !this.b4Si}) : '';
   }
 
   @HostListener('window:resize', [])

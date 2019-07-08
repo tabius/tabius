@@ -1,4 +1,4 @@
-import {StoreAdapter} from '@app/store/store-adapter';
+import {KV, StoreAdapter} from '@app/store/store-adapter';
 import {ARTISTS_STORE_NAME, USER_STORE_NAME} from '@common/constants';
 
 const MAX_KEY_CHAR = '~';
@@ -99,9 +99,9 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   }
 
 
-  list<T>(keyPrefix: string): Promise<T[]> {
+  list<T>(keyPrefix: string): Promise<KV<T>[]> {
     const storeName = this.storeName;
-    return new Promise<T[]>((resolve, reject) => {
+    return new Promise<KV<T>[]>((resolve, reject) => {
       this.execute(db => {
         const query: IDBKeyRange = IDBKeyRange.bound(keyPrefix, keyPrefix + MAX_KEY_CHAR);
         const request = db.transaction(storeName).objectStore(storeName).getAll(query);
@@ -109,7 +109,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
           console.error(`IndexDb.list error in ${storeName}!`, err);
           reject();
         };
-        request.onsuccess = () => resolve(request.result.map(e => e.value));
+        request.onsuccess = () => resolve(request.result.map(e => ({key: e.key, value: e.value})));
       });
     });
   }

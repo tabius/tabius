@@ -3,7 +3,7 @@ import {Chord, CHORD_LETTERS, CHORD_TYPE_BY_RAW_TYPE, ChordLocation, ChordType, 
 const ALPHA_EN = /^[A-Z]+$/i;
 const ALPHA_RU = /^[А-ЯЁ]+$/i;
 
-function isAlpha(text: string): boolean {
+export function isAlpha(text: string): boolean {
   return ALPHA_EN.test(text) || ALPHA_RU.test(text);
 }
 

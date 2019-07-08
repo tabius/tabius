@@ -44,4 +44,5 @@ export const CreatePlaylistRequestValidator: Validator<CreatePlaylistRequest> = 
 export const UserSongSettingsValidator: Validator<UserSongSettings> = {
   songId: isNumericId(),
   transpose: isNumber(),
+  hideChords: isBoolean(),
 };

@@ -84,4 +84,8 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
   resetSongTranspose() {
     this.uds.setUserSongSettings({...this.songSettings, transpose: 0});
   }
+
+  toggleChordsVisibility(hideChords: boolean): void {
+    this.uds.setUserSongSettings({...this.songSettings, hideChords});
+  }
 }

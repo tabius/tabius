@@ -101,4 +101,11 @@ describe('Chords Renderer ', () => {
     expect(renderChords('Am Em DmC#')).toEqual('Am Em DmC#');
   });
 
+  it('should support rendering mode with chords hidden', () => {
+    expect(renderChords('Am Em and some text', {hideChords: true})).toEqual('and some text');
+    expect(renderChords('line 1 \n Am Em \n line 2', {hideChords: true})).toEqual('line 1 \n line 2');
+    expect(renderChords('line 1 \n Am Em \n G\nline 2', {hideChords: true})).toEqual('line 1 \nline 2');
+    expect(renderChords('line 1 \n Am Em \n \nline 2', {hideChords: true})).toEqual('line 1 \n \nline 2');
+  });
+
 });

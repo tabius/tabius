@@ -4,6 +4,8 @@ import {throttleIndicator} from '@app/utils/component-utils';
 import {Artist, Song, SongDetails} from '@common/artist-model';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {flatMap, takeUntil} from 'rxjs/operators';
+import {UserSongSettings} from '@common/user-model';
+import {UserDataService} from '@app/services/user-data.service';
 
 @Component({
   selector: 'gt-song',
@@ -22,6 +24,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   song?: Song;
   songDetails?: SongDetails;
   artist?: Artist;
+  songSettings?: UserSongSettings;
   private songSubscription?: Subscription;
 
   readonly SongPageMode = SongComponentMode.SongPage;
@@ -31,6 +34,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   };
 
   constructor(private readonly ads: ArtistDataService,
+              private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
   ) {
   }
@@ -46,16 +50,18 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
     const song$ = this.ads.getSongById(this.songId);
     const songDetails$ = this.ads.getSongDetailsById(this.songId);
     const artist$ = song$.pipe(flatMap(song => this.ads.getArtistById(song ? song.artistId : undefined)));
+    const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song ? song.id : undefined)));
 
-    this.songSubscription = combineLatest([song$, songDetails$, artist$])
+    this.songSubscription = combineLatest([song$, songDetails$, artist$, songSettings$])
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(([song, songDetails, artist]) => {
-          if (!song || !songDetails || !artist) {
+        .subscribe(([song, songDetails, artist, songSettings]) => {
+          if (!song || !songDetails || !artist || !songSettings) {
             return; // reasons: not everything is loaded
           }
           this.song = song;
           this.songDetails = songDetails;
           this.artist = artist;
+          this.songSettings = songSettings;
           this.cd.detectChanges();
         });
   }

@@ -1,13 +1,14 @@
 import {Body, Controller, Get, HttpStatus, Logger, Put, Res, Session, UseGuards} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {ServerAuthGuard} from '@server/util/server-auth.guard';
-import {newDefaultUserSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
+import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
 import {LoginResponse} from '@common/ajax-model';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {conformsTo, validate} from 'typed-validation';
 import {UserSongSettingsValidator} from '@server/util/validators';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {Response} from 'express';
+import {needUpdateByStringify} from '@common/util/misc-utils';
 
 @UseGuards(ServerAuthGuard)
 @Controller('/api/user')
@@ -60,9 +61,16 @@ export class UserController {
       throw vr.toString();
     }
     const user: User = ServerSsoService.getUserOrFail(session);
-    this.logger.log(`set settings: ${user.email} for song: ${songSettings.songId}`);
+    this.logger.log(`set settings: ${user.email}, song: ${songSettings.songId}`);
     const settings = await this._getSettings(user);
-    const updatedSettings = {...settings, songs: {...settings.songs, songId: songSettings}};
+    const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
+    const sameAsDefault = !needUpdateByStringify(defaultSettings, songSettings);
+    const updatedSettings = {...settings} as any;
+    if (sameAsDefault) {
+      delete updatedSettings.songs[songSettings.songId];
+    } else {
+      updatedSettings.songs[songSettings.songId] = songSettings;
+    }
     await this.userDbi.updateSettings(user.id, updatedSettings);
     return updatedSettings;
   }
