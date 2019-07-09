@@ -12,7 +12,8 @@ describe('Chords parser, parseChord', () => {
   });
 
   it('should recognize chords with suffixes', () => {
-    expect(parseChord('Esus2', 0, 10)).toEqual({chord: c('E', 'sus2'), startIdx: 0, endIdx: 5});
+    expect(parseChord('Esus2')).toEqual({chord: c('E', 'sus2'), startIdx: 0, endIdx: 5});
+    expect(parseChord('C#m7+5')).toEqual({chord: c('C#', 'min7dim5'), startIdx: 0, endIdx: 6});
   });
 
   it('should support long minor/major variants', () => {
@@ -44,7 +45,6 @@ describe('Chords parser, parseChord', () => {
   });
 
   it('should recognize chords with raw type variation chars', () => {
-    expect(parseChord('A♯')).toEqual({chord: c('A', 'aug'), startIdx: 0, endIdx: 2});
     expect(parseChord('A♯')).toEqual({chord: c('A', 'aug'), startIdx: 0, endIdx: 2});
     expect(parseChord('AΔ')).toEqual({chord: c('A', 'maj'), startIdx: 0, endIdx: 2});
     expect(parseChord('Ao')).toEqual({chord: c('A', 'dim'), startIdx: 0, endIdx: 2});

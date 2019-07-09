@@ -11,13 +11,13 @@ export interface ChordLocation {
 
 export const CHORD_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'add11'|'2'|'5'|'6/9'
+export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add11'|'2'|'5'|'6/9'
     |'7/6'|'7/9'|'7B5b9'|'7B9'|'7sus2'|'7sus24'|'7sus4'|'7susB13'|'7x11'|'7x9'|'7x9x11'|'9sus4'
     |'aug'|'aug7'|'aug9'|'augmaj7'|'augmaj9'|'B5'
-    |'dim'|'dim7'|'dim9'|'dimB9'|'dom'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'
+    |'dim'|'dim7'|'dim9'|'dimB9'|'dim7B9'|'dom'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'
     |'m11B5b9'|'m11B9'|'m2'|'m7B9'|'M7B9'|'M7x11'|'m7x11'|'m7x9'|'M7x9'|'M9x11'
     |'maj'|'maj11'|'maj13'|'maj6'|'maj7'|'maj7sus2'|'maj7sus24'|'maj7sus4'|'maj9'
-    |'min'|'min11'|'min13'|'min6'|'min7'|'min7dim5'|'min9'|'minmaj11'|'minmaj13'|'minmaj7'|'minmaj9'|'mM7B5'|'mM7B9'|'Mx11'|'o7B9'
+    |'min'|'min11'|'min13'|'min6'|'min7'|'min7dim5'|'min9'|'minmaj11'|'minmaj13'|'minmaj7'|'minmaj9'|'mM7B5'|'mM7B9'|'Mx11'
     |'sus2'|'sus24'|'sus2B5'|'sus4';
 
 // noinspection SpellCheckingInspection
@@ -31,20 +31,20 @@ export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'add11'|'2'|'5'|'6/9'
  */
 export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '+7B9': 'A+7b9, A7+5b9',
-  '+7x9': 'A+7x9, A+7+9, A7+5+9',
+  '+7+9': 'A+7+9, A7+5+9',
   '+M7B9': 'A+M7b9, A+Mb9, AM7+5b9, AM+5b9',
-  '+M7x9': 'A+M7+9, A+M+9, AM7+5+9, AM+5+9',
+  '+M7+9': 'A+M7+9, A+M+9, AM7+5+9, AM+5+9',
   '2': 'Aadd9, Aadd2, A2',
   '5': 'A5',
-  '6/9': 'A6/9, A6_9, AM6/9',
-  '7/6': 'A7/6, A7_6',
-  '7/9': 'A7/9',
+  '6/9': 'A6/9, AM6/9',
+  '7/6': 'A7/6, AM7/6',
+  '7/9': 'A7/9, AM7/9',
   '7B5b9': 'A7b5b9',
   '7B9': 'A7-9, A7b9',
   '7sus2': 'A7sus2',
   '7sus24': 'A7sus24',
   '7sus4': 'A7sus4, A7sus',
-  '7susB13': 'A7susb13, A7suso13',
+  '7susB13': 'A7susb13',
   '7x11': 'A7+11',
   '7x9': 'A7+9',
   '7x9x11': 'A7+9+11',
@@ -53,13 +53,13 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'aug': 'A+, Am#5, Am+5, Aaug, AAugmented',
   'aug7': 'A+7, A7+5, Aaug7, A7#5, A7/5#, A7/5+, A75#, A75+',
   'aug9': 'A+9, A9#5, Aaug9',
-  'augmaj7': 'A+M7, A+M, AM7+5, AM+5, Aaugmaj7',
-  'augmaj9': 'A+M9, Aaugmaj9',
+  'augmaj7': 'A+M7, A+M, AM7+5, AM+5, AaugM7',
+  'augmaj9': 'A+M9, AaugM9',
   'B5': 'Ab5, AMb5, AM-5',
-  'dim': 'Adim, Ao, Amb5, Amo5, ADiminished',
-  'dim7': 'Adim7, Ao7',
-  'dim9': 'Adim9, Ao9',
-  'dimB9': 'Adimb9, Aob9',
+  'dim': 'Adim, Amb5, Amo5, ADiminished',
+  'dim7': 'Adim7',
+  'dim9': 'Adim9',
+  'dimB9': 'Adimb9',
   'dom': 'A7, Adom, Adom7',
   'dom11': 'A11, Adom11',
   'dom13': 'A13, Adom13',
@@ -71,36 +71,36 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'm11B9': 'Am11b9',
   'm2': 'Am2, Amadd2, Amadd9',
   'm7B9': 'Am7b9',
-  'M7B9': 'AM7b9, AMa7b9, AMb9',
+  'M7B9': 'AM7b9, AMb9',
   'M7x11': 'AM7+11',
   'm7x11': 'Am7+11',
   'm7x9': 'Am7+9',
-  'M7x9': 'AM7+9, AMa7+9, AM+9',
-  'M9x11': 'AM9+11, A9+11',
-  'maj': 'A, AM, Amaj, AMajor, Amajor', // major
-  'maj11': 'AM11, Amaj11',
-  'maj13': 'AM13, Amaj13',
-  'maj6': 'A6, AM6, Amaj6',
-  'maj7': 'AM7, AMa7, Amaj7',
-  'maj7sus2': 'AM7sus2, AMa7sus2, Aj7sus2, AMsus2, Amaj7sus2, Amajor7sus2',
-  'maj7sus24': 'AM7sus24, AMa7sus24, Aj7sus24, AMsus24, Amaj7sus24, Amajor7sus24',
-  'maj7sus4': 'AM7sus4, AMa7sus4, Aj7sus4, AMsus4, Amaj7sus4, Amajor7sus4',
-  'maj9': 'AM9, Amaj9',
-  'min': 'Am, Amin, AMinor, Aminor', // minor
-  'min11': 'Am11, Amin11',
-  'min13': 'Am13, Amin13',
-  'min6': 'Am6, Amin6',
-  'min7': 'Am7, Amin7',
-  'min7dim5': 'Am7dim5, Am7b5, AØ, AØ7, Am7o5, Amin7dim5, Am7-5, Am7/5-, Am75-, Am75b, Am+75',
-  'min9': 'Am9, Amin9',
-  'minmaj11': 'AmM11, Aminmaj11',
-  'minmaj13': 'AmM13, Aminmaj13',
-  'minmaj7': 'Am+7, Am7+, AmM, AmM7, Am#7, Aminmaj7, Am/maj7, Amin/maj7, Ammaj7',
-  'minmaj9': 'AmM9, Aminmaj9',
+  'M7x9': 'AM7+9, AM+9',
+  'M9x11': 'A9+11, AM9+11',
+  'maj': 'A, AM',
+  'maj11': 'AM11',
+  'maj13': 'AM13',
+  'maj6': 'A6, AM6',
+  'maj7': 'AM7',
+  'maj7sus2': 'AM7sus2, AMsus2',
+  'maj7sus24': 'AM7sus24, AMsus24',
+  'maj7sus4': 'AM7sus4, AMsus4',
+  'maj9': 'AM9',
+  'min': 'Am',
+  'min11': 'Am11',
+  'min13': 'Am13',
+  'min6': 'Am6',
+  'min7': 'Am7',
+  'min7dim5': 'Am7b5, Am7dim5, AØ, AØ7, Am7-5, Am7/5-, Am75-, Am75b, Am7+5',
+  'min9': 'Am9',
+  'minmaj11': 'AmM11',
+  'minmaj13': 'AmM13',
+  'minmaj7': 'Am+7, Am7+, AmM, AmM7, Am#7, Am/M7',
+  'minmaj9': 'AmM9',
   'mM7B5': 'AmM7b5',
   'mM7B9': 'AmM7b9, Am#7b9',
   'Mx11': 'AM+11',
-  'o7B9': 'Ao7b9',
+  'dim7B9': 'Adim7b9',
   'sus2': 'Asus2',
   'sus24': 'Asus24, Asus42',
   'sus2B5': 'Asus2b5, A2-5, Asus2-5',
@@ -118,10 +118,6 @@ export const VISUAL_TYPE_BY_CHORD_TYPE = new Map<ChordType, string>();
 
 for (const [key, value] of Object.entries(CHORDS_LIB)) {
   const rawTypes = value.split(',').map(v => v.trim().substring(1));
-  if (!rawTypes.includes(key)) {
-    rawTypes.push(key);
-  }
-
   const chordType = key as ChordType;
   const visualType = rawTypes[0];
   VISUAL_TYPE_BY_CHORD_TYPE.set(chordType, visualType);
@@ -157,18 +153,56 @@ function getRawTypeVariations(originalVariant: string): string[] {
   if (originalVariant.includes('+')) {
     derivedVariants.push(originalVariant.replace('+', '♯'));
   }
+
+  if (originalVariant.includes('dim')) {
+    derivedVariants.push(originalVariant.replace('dim', 'o'));
+  }
+
   if (originalVariant.includes('Ø')) {
     derivedVariants.push(originalVariant.replace('Ø', 'ø'));
   }
+
+  if (originalVariant.includes('/')) {
+    derivedVariants.push(originalVariant.replace('/', '_'));
+  }
+
   if (originalVariant.includes('M')) {
     derivedVariants.push(originalVariant.replace('M', 'Δ'));
+    derivedVariants.push(originalVariant.replace('M', 'maj'));
+    derivedVariants.push(originalVariant.replace('M', 'major'));
+    derivedVariants.push(originalVariant.replace('M', 'Major'));
+  }
+
+  if (originalVariant.includes('M7')) {
+    derivedVariants.push(originalVariant.replace('M7', 'Ma7'));
+  }
+
+  if (originalVariant.includes('b1')) {
+    derivedVariants.push(originalVariant.replace('b1', 'B1'));
+  }
+
+  if (originalVariant.includes('b5')) {
+    derivedVariants.push(originalVariant.replace('b5', 'B5'));
+  }
+
+  if (originalVariant.includes('b9')) {
+    derivedVariants.push(originalVariant.replace('b9', 'B9'));
   }
 
   const allVariants: string[] = [...derivedVariants, ...[originalVariant]];
   for (const variant of allVariants) {
-    if (variant.startsWith('m')) {
-      derivedVariants.push(`−${variant.substring(1)}`);
-      derivedVariants.push(`-${variant.substring(1)}`);
+    if (variant.startsWith('m') && !variant.startsWith('ma')) {
+      const suffix = variant.substring(1);
+      derivedVariants.push(`min${suffix}`);
+      derivedVariants.push(`minor${suffix}`);
+      derivedVariants.push(`Minor${suffix}`);
+      derivedVariants.push(`−${suffix}`);
+      derivedVariants.push(`-${suffix}`);
+    }
+  }
+  for (const variant of allVariants) {
+    if (variant.lastIndexOf('+') > 0) {
+      derivedVariants.push(variant.charAt(0) + variant.substring(1).replace(/\+/g, 'x'));
     }
   }
   return derivedVariants;
