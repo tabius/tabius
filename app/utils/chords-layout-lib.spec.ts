@@ -13,13 +13,17 @@ describe('Chords layout lib', () => {
     }
   });
 
+
   it('should not have duplicate layouts', () => {
-    const allLayouts = Object.values(CHORDS_LAYOUTS);
+    function removeFingers(v: string) {
+      const fingeringPos = v.indexOf('&');
+      return fingeringPos < 0 ? v : v.substring(0, fingeringPos);
+    }
+
+    const allLayouts = Object.values(CHORDS_LAYOUTS).map(removeFingers);
     const allLayoutsString = allLayouts.join('\n');
     for (const layout of allLayouts) {
-      const fingeringPos = layout.indexOf('&');
-      const cleanLayout = fingeringPos < 0 ? layout : layout.substring(0, fingeringPos);
-      expect(allLayouts.indexOf(cleanLayout)).toBe(allLayouts.lastIndexOf(cleanLayout), `Duplicate chord layout: ${cleanLayout}`);
+      expect(allLayoutsString.indexOf(layout)).toBe(allLayoutsString.lastIndexOf(layout), `Duplicate chord layout: ${layout}`);
     }
   });
 

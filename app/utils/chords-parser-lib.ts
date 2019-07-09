@@ -50,8 +50,8 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7x9x11': 'A7+9+11',
   '9sus4': 'A9sus4',
   'add11': 'Aadd11',
-  'aug': 'A+, Am#5, Am+5, Aaug, AAugmented',
-  'aug7': 'A+7, A7+5, Aaug7, A7#5, A7/5#, A7/5+, A75#, A75+',
+  'aug': 'A+, Am+5, Aaug, AAugmented',
+  'aug7': 'A+7, A7+5, Aaug7',
   'aug9': 'A+9, A9#5, Aaug9',
   'augmaj7': 'A+M7, A+M, AM7+5, AM+5, AaugM7',
   'augmaj9': 'A+M9, AaugM9',
@@ -95,7 +95,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'min9': 'Am9',
   'minmaj11': 'AmM11',
   'minmaj13': 'AmM13',
-  'minmaj7': 'Am+7, Am7+, AmM, AmM7, Am#7, Am/M7',
+  'minmaj7': 'Am+7, AmM, AmM7, Am/M7',
   'minmaj9': 'AmM9',
   'mM7B5': 'AmM7b5',
   'mM7B9': 'AmM7b9, Am#7b9',
@@ -150,6 +150,7 @@ function addToRawTypesByFirstChar(rawType): void {
 
 function getRawTypeVariations(originalVariant: string): string[] {
   const derivedVariants: string[] = [];
+
   if (originalVariant.includes('+')) {
     derivedVariants.push(originalVariant.replace('+', '♯'));
   }
@@ -177,16 +178,27 @@ function getRawTypeVariations(originalVariant: string): string[] {
     derivedVariants.push(originalVariant.replace('M7', 'Ma7'));
   }
 
-  if (originalVariant.includes('b1')) {
+  if (originalVariant.includes('b1')) { // b1 -> ignore case
     derivedVariants.push(originalVariant.replace('b1', 'B1'));
   }
 
-  if (originalVariant.includes('b5')) {
+  if (originalVariant.includes('b5')) { // b5 -> ignore case
     derivedVariants.push(originalVariant.replace('b5', 'B5'));
   }
 
-  if (originalVariant.includes('b9')) {
+  if (originalVariant.includes('b9')) { // b9 -> ignore case
     derivedVariants.push(originalVariant.replace('b9', 'B9'));
+  }
+
+  const len = originalVariant.length;
+  if (len > 2 && (originalVariant.endsWith('+5') || originalVariant.endsWith('+7'))) {
+    const d = originalVariant.charAt(len - 1);
+    const p = originalVariant.substring(0, len - 2);
+    derivedVariants.push(`${p + d}+`);  // Am+5 -> Am5+
+    derivedVariants.push(`${p}/${d}+`); // Am+5 -> Am/5+
+    derivedVariants.push(`${p}#${d}`);  // Am+5 -> Am#5
+    derivedVariants.push(`${p + d}#`);  // Am+5 -> Am5#
+    derivedVariants.push(`${p}/${d}#`); // Am+5 -> Am/5#
   }
 
   const allVariants: string[] = [...derivedVariants, ...[originalVariant]];
