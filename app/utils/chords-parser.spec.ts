@@ -40,7 +40,14 @@ describe('Chords parser, parseChord', () => {
   });
 
   it('should parse chords with "/" in the middle', () => {
-    expect(parseChord('C7/9')).toEqual({chord: c('C', '+7x9'), startIdx: 0, endIdx: 4});
+    expect(parseChord('A7/9')).toEqual({chord: c('A', '7/9'), startIdx: 0, endIdx: 4});
+  });
+
+  it('should recognize chords with raw type variation chars', () => {
+    expect(parseChord('A♯')).toEqual({chord: c('A', 'aug'), startIdx: 0, endIdx: 2});
+    expect(parseChord('A♯')).toEqual({chord: c('A', 'aug'), startIdx: 0, endIdx: 2});
+    expect(parseChord('AΔ')).toEqual({chord: c('A', 'maj'), startIdx: 0, endIdx: 2});
+    expect(parseChord('Ao')).toEqual({chord: c('A', 'dim'), startIdx: 0, endIdx: 2});
   });
 
 });

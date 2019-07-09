@@ -24,7 +24,7 @@ describe('Chords renderer ', () => {
   });
 
   it('should render chords with non-standard characters', () => {
-    expect(renderChords('C7/9', {tag: 'i'})).toEqual('<i>C7+9</i>');
+    expect(renderChords('C7/9', {tag: 'i'})).toEqual('<i>C7/9</i>');
   });
 
 
