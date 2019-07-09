@@ -34,7 +34,6 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '+7x9': 'A+7x9, A+7+9, A7+5+9',
   '+M7B9': 'A+M7b9, A+Mb9, AM7+5b9, AM+5b9',
   '+M7x9': 'A+M7+9, A+M+9, AM7+5+9, AM+5+9',
-  'add11': 'Aadd11',
   '2': 'Aadd9, Aadd2, A2',
   '5': 'A5',
   '6/9': 'A6/9, A6_9, AM6/9',
@@ -50,6 +49,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7x9': 'A7+9',
   '7x9x11': 'A7+9+11',
   '9sus4': 'A9sus4',
+  'add11': 'Aadd11',
   'aug': 'A+, Am#5, Am+5, Aaug, AAugmented',
   'aug7': 'A+7, A7+5, Aaug7, A7#5, A7/5#, A7/5+, A75#, A75+',
   'aug9': 'A+9, A9#5, Aaug9',
@@ -67,14 +67,14 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'dom9': 'A9, Adom9',
   'half_diminished9': 'AØ9',
   'half_diminishedB9': 'AØb9',
-  'm11B5b9': 'Am11b5b9, Am11o5b9, A−11b5b9, A−11o5b9',
-  'm11B9': 'Am11b9, A−11b9',
+  'm11B5b9': 'Am11b5b9, Am11o5b9',
+  'm11B9': 'Am11b9',
   'm2': 'Am2, Amadd2, Amadd9',
-  'm7B9': 'Am7b9, A-7b9',
+  'm7B9': 'Am7b9',
   'M7B9': 'AM7b9, AMa7b9, AMb9',
   'M7x11': 'AM7+11',
-  'm7x11': 'Am7+11, A−7+11',
-  'm7x9': 'Am7+9, A-7+9',
+  'm7x11': 'Am7+11',
+  'm7x9': 'Am7+9',
   'M7x9': 'AM7+9, AMa7+9, AM+9',
   'M9x11': 'AM9+11, A9+11',
   'maj': 'A, AM, Amaj, AMajor, Amajor', // major
@@ -86,19 +86,19 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'maj7sus24': 'AM7sus24, AMa7sus24, Aj7sus24, AMsus24, Amaj7sus24, Amajor7sus24',
   'maj7sus4': 'AM7sus4, AMa7sus4, Aj7sus4, AMsus4, Amaj7sus4, Amajor7sus4',
   'maj9': 'AM9, Amaj9',
-  'min': 'Am, A-, Amin, AMinor, Aminor', // minor
-  'min11': 'Am11, A-11, Amin11',
-  'min13': 'Am13, A-13, Amin13',
+  'min': 'Am, Amin, AMinor, Aminor', // minor
+  'min11': 'Am11, Amin11',
+  'min13': 'Am13, Amin13',
   'min6': 'Am6, Amin6',
-  'min7': 'Am7, A-7, Amin7',
-  'min7dim5': 'Am7b5, AØ, AØ7, Am7o5, A−7b5, A−7o5, Amin7dim5, Am7-5, Am7/5-, Am75-, Am75b',
-  'min9': 'Am9, A-9, Amin9',
-  'minmaj11': 'AmM11, A-M11, Aminmaj11',
-  'minmaj13': 'AmM13, A-M13, Aminmaj13',
-  'minmaj7': 'Am+7, Am7+, AmM7, Am#7, A-M7, A−M7, A−M, Aminmaj7, Am/maj7, Amin/maj7, Ammaj7',
-  'minmaj9': 'AmM9, A-M9, Aminmaj9',
+  'min7': 'Am7, Amin7',
+  'min7dim5': 'Am7dim5, Am7b5, AØ, AØ7, Am7o5, Amin7dim5, Am7-5, Am7/5-, Am75-, Am75b, Am+75',
+  'min9': 'Am9, Amin9',
+  'minmaj11': 'AmM11, Aminmaj11',
+  'minmaj13': 'AmM13, Aminmaj13',
+  'minmaj7': 'Am+7, Am7+, AmM, AmM7, Am#7, Aminmaj7, Am/maj7, Amin/maj7, Ammaj7',
+  'minmaj9': 'AmM9, Aminmaj9',
   'mM7B5': 'AmM7b5',
-  'mM7B9': 'AmM7b9, Am#7b9, A-M7b9, A−M7b9, A−Mb9',
+  'mM7B9': 'AmM7b9, Am#7b9',
   'Mx11': 'AM+11',
   'o7B9': 'Ao7b9',
   'sus2': 'Asus2',
@@ -152,21 +152,26 @@ function addToRawTypesByFirstChar(rawType): void {
   byFirstChar.push(rawType);
 }
 
-function getRawTypeVariations(rawType: string): string[] {
-  const res: string[] = [];
-  if (rawType.includes('+')) {
-    res.push(rawType.replace('+', '♯'));
+function getRawTypeVariations(originalVariant: string): string[] {
+  const derivedVariants: string[] = [];
+  if (originalVariant.includes('+')) {
+    derivedVariants.push(originalVariant.replace('+', '♯'));
   }
-  if (rawType.includes('o')) {
-    res.push(rawType.replace('o', '°'));
+  if (originalVariant.includes('Ø')) {
+    derivedVariants.push(originalVariant.replace('Ø', 'ø'));
   }
-  if (rawType.includes('Ø')) {
-    res.push(rawType.replace('Ø', 'ø'));
+  if (originalVariant.includes('M')) {
+    derivedVariants.push(originalVariant.replace('M', 'Δ'));
   }
-  if (rawType.includes('M')) {
-    res.push(rawType.replace('M', 'Δ'));
+
+  const allVariants: string[] = [...derivedVariants, ...[originalVariant]];
+  for (const variant of allVariants) {
+    if (variant.startsWith('m')) {
+      derivedVariants.push(`−${variant.substring(1)}`);
+      derivedVariants.push(`-${variant.substring(1)}`);
+    }
   }
-  return res;
+  return derivedVariants;
 }
 
 
