@@ -1,4 +1,4 @@
-import {Chord, VISUAL_TYPE_BY_CHORD_TYPE_KEY} from '@app/utils/chords-parser-lib';
+import {Chord, VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 import {isAlpha, parseChords} from '@app/utils/chords-parser';
 
 export interface ChordRenderingOptions {
@@ -94,7 +94,7 @@ export function renderChord(chord: Chord, options: ChordRenderingOptions = {}): 
     tone = 'H' + tone.substring(1);
   }
 
-  const visualType = chord.type ? VISUAL_TYPE_BY_CHORD_TYPE_KEY.get(chord.type) || '' : '';
+  const visualType = chord.type ? VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type) || '' : '';
   const chordString = `${tone + visualType}`;
   const {tag} = options;
   return tag ? `<${tag}>${chordString}</${tag}>` : chordString;

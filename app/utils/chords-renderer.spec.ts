@@ -3,7 +3,7 @@ import {Chord, ChordType} from '@app/utils/chords-parser-lib';
 
 const c = (tone: string, type: ChordType): Chord => ({tone, type});
 
-describe('Chords Renderer ', () => {
+describe('Chords renderer ', () => {
 
   it('should recognize simple chords', () => {
     expect(renderChords('C', {tag: 'x'})).toEqual('<x>C</x>');

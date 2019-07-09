@@ -3,7 +3,7 @@ import {Chord, ChordType} from '@app/utils/chords-parser-lib';
 
 const c = (tone: string, type: ChordType): Chord => ({tone, type});
 
-describe('Chords Parser, parseChord', () => {
+describe('Chords parser, parseChord', () => {
 
   it('should recognize simple chords', () => {
     expect(parseChord('A', 0, 1)).toEqual({chord: c('A', 'maj'), startIdx: 0, endIdx: 1});
@@ -46,7 +46,7 @@ describe('Chords Parser, parseChord', () => {
 });
 
 
-describe('Chords Parser, parseChordsLine', () => {
+describe('Chords parser, parseChordsLine', () => {
 
   it('should recognize 1-chord lines', () => {
     expect(parseChordsLine(' Cmajor ')).toEqual([{chord: c('C', 'maj'), startIdx: 1, endIdx: 7}]);
@@ -79,7 +79,7 @@ describe('Chords Parser, parseChordsLine', () => {
 });
 
 
-describe('Chords Parser, parseChords', () => {
+describe('Chords parser, parseChords', () => {
 
   it('should recognize chords on multiple lines', () => {
     expect(parseChords(' Cm \n G7 ')).toEqual([

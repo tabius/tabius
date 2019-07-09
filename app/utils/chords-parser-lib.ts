@@ -11,8 +11,8 @@ export interface ChordLocation {
 
 export const CHORD_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'2'|'5'|'6_9'|'7_6'|'7B5b9'|'7B9'|'7sus2'|'7sus24'|'7sus4'|'7susB13'|'7x11'|'7x9'|'7x9x11'|'aug'|'aug7'
-    |'aug9'|'augmaj7'|'augmaj9'|'B5'|'dim'|'dim7'|'dim9'|'dimB9'|'dom'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'|'m11B5b9'
+export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'2'|'5'|'6_9'|'7_6'|'7B5b9'|'7B9'|'7sus2'|'7sus24'|'7sus4'|'7susB13'|'7x11'|'7x9'|'7x9x11'|'9sus4'|'aug'
+    |'aug7'|'aug9'|'augmaj7'|'augmaj9'|'B5'|'dim'|'dim7'|'dim9'|'dimB9'|'dom'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'|'m11B5b9'
     |'m11B9'|'m2'|'m7B9'|'M7B9'|'M7x11'|'m7x11'|'m7x9'|'M7x9'|'M9x11'|'maj'|'maj11'|'maj13'|'maj6'|'maj7'|'maj7sus2'|'maj7sus24'|'maj7sus4'|'maj9'|'min'
     |'min11'|'min13'|'min6'|'min7'|'min7dim5'|'min9'|'minmaj11'|'minmaj13'|'minmaj7'|'minmaj9'|'mM7B5'|'mM7B9'|'Mx11'|'o7B9'|'sus2'|'sus24'|'sus2B5'
     |'sus4';
@@ -24,8 +24,9 @@ export type ChordType = '+7B9'|'+7x9'|'+M7B9'|'+M7x9'|'2'|'5'|'6_9'|'7_6'|'7B5b9
  * Value => comma separated chords prefixed by 'A' (for readability).
  *
  * The first token in the value used for visual chord representation (rendering).
+ * Note: chords-layout-lib.ts depends on the rendered (visual) chord name!
  */
-export const CHORDS_LIB: { [key in ChordType]: string } = {
+export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '+7B9': 'A+7b9, A7♯5b9, A7+5b9',
   '+7x9': 'A7+9, C7/9, A+7♯9, A7♯5♯9, A7+5+9',
   '+M7B9': 'A+M7b9, A+Δb9, AM7♯5b9, AM7+5b9, AΔ♯5b9, AΔ+5b9',
@@ -43,6 +44,7 @@ export const CHORDS_LIB: { [key in ChordType]: string } = {
   '7x11': 'A7♯11',
   '7x9': 'A7♯9',
   '7x9x11': 'A7♯9♯11, A7+9+11',
+  '9sus4': 'A9sus4',
   'aug': 'A+, Am#5, Am+5, Aaug, AAugmented',
   'aug7': 'A+7, A7♯5, A7+5, Aaug7, A7#5, A7/5#, A7/5+, A75#, A75+',
   'aug9': 'A+9, A9#5, Aaug9',
@@ -100,21 +102,30 @@ export const CHORDS_LIB: { [key in ChordType]: string } = {
   'sus4': 'Asus4, Asus, A4, Aadd4',
 };
 
+/** List of chord types by 1st char: s => [sus2,sus24,sus2B5...]. */
 export const RAW_CHORD_TYPES_BY_FIRST_CHAR = new Map<string, string[]>();
+
+/** System chord name by raw name: 'minor' => 'min', '-' => min, 'm' => 'min' */
 export const CHORD_TYPE_BY_RAW_TYPE = new Map<string, ChordType>();
-export const VISUAL_TYPE_BY_CHORD_TYPE_KEY = new Map<string, string>();
+
+/** Visual type by chord type: first element in the list by key in CHORDS_LIB. */
+export const VISUAL_TYPE_BY_CHORD_TYPE = new Map<ChordType, string>();
+
 for (const [key, value] of Object.entries(CHORDS_LIB)) {
   const rawTypes = value.split(',').map(v => v.trim().substring(1));
   if (!rawTypes.includes(key)) {
     rawTypes.push(key);
   }
+
+  const chordType = key as ChordType;
+  const visualType = rawTypes[0];
+  VISUAL_TYPE_BY_CHORD_TYPE.set(chordType, visualType);
+
   for (const rawType of rawTypes) {
     if (CHORD_TYPE_BY_RAW_TYPE.has(rawType)) {
       throw `Duplicate chord mapping: ${rawType} => ${key}`;
     }
-    CHORD_TYPE_BY_RAW_TYPE.set(rawType, key as ChordType);
-    const visualType = rawTypes[0];
-    VISUAL_TYPE_BY_CHORD_TYPE_KEY.set(rawType, visualType);
+    CHORD_TYPE_BY_RAW_TYPE.set(rawType, chordType);
     if (rawType.length > 0) {
       const firstChar = rawType.charAt(0);
       let byFirstChar = RAW_CHORD_TYPES_BY_FIRST_CHAR.get(firstChar);
