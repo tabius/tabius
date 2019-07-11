@@ -95,7 +95,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gsus4': '330033',
   'G#sus4': '446644',
 
-  // 5th
+  // 5th, Power chords
   'A5': 'x022xx&f=--11--',
   'A#5': 'x133xx&f=--11--',
   'B5': 'x244xx&f=-134--',
@@ -109,7 +109,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'G5': 'xxx033',
   'G#5': 'xxx144',
 
-  // 6th
+  // Major 6th
   'Amaj6': 'x02222',
   'A#maj6': 'x13333',
   'Bmaj6': 'x24444',
@@ -137,7 +137,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gmin6': '310030',
   'G#min6': 'xxx101',
 
-  // 7th
+  // Dominant 7th
   'Adom7': 'x02020',
   'A#dom7': 'x13131',
   'Bdom7': 'x21202',
