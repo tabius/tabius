@@ -24,7 +24,7 @@ describe('Chords parser, parseChord', () => {
 
   it('should recognize chords by a valid prefix', () => {
     expect(parseChord('D*')).toEqual({chord: c('D', 'maj'), startIdx: 0, endIdx: 1});
-    expect(parseChord('C7/')).toEqual({chord: c('C', 'dom'), startIdx: 0, endIdx: 2});
+    expect(parseChord('C7/')).toEqual({chord: c('C', 'dom7'), startIdx: 0, endIdx: 2});
     expect(parseChord('Em$')).toEqual({chord: c('E', 'min'), startIdx: 0, endIdx: 2});
   });
 
@@ -91,7 +91,7 @@ describe('Chords parser, parseChords', () => {
   it('should recognize chords on multiple lines', () => {
     expect(parseChords(' Cm \n G7 ')).toEqual([
       {chord: c('C', 'min'), startIdx: 1, endIdx: 3},
-      {chord: c('G', 'dom'), startIdx: 6, endIdx: 8}
+      {chord: c('G', 'dom7'), startIdx: 6, endIdx: 8}
     ]);
 
     expect(parseChords('A\n\nB')).toEqual([

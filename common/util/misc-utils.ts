@@ -123,7 +123,9 @@ export async function runWithDedup<T>(opKey: string, runningOps: Set<string>, f:
 }
 
 /** Accepts 1 argument and returns true if the argument !== undefined. */
-export const defined = v => v !== undefined;
+export function defined<T>(v: T|undefined): v is T {
+  return v !== undefined;
+}
 
 /** RxJS wrapper to keep only defined elements in the stream. */
 export const keepDefined = filter(defined);

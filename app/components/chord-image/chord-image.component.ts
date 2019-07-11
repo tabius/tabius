@@ -2,6 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, I
 import {ChordImagePainter} from '@app/utils/chord-image-painter';
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {isPlatformBrowser} from '@angular/common';
+import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 
 @Component({
   selector: 'gt-chord-image',
@@ -29,7 +30,9 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
     if (!this.isBrowser) {
       return;
     }
-    this.painter = new ChordImagePainter(this.chord.name, this.chord.positions, this.chord.fingers, this.scale);
+    const {chord} = this.chord;
+    const visualChordName = chord.tone + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type);
+    this.painter = new ChordImagePainter(visualChordName, this.chord.positions, this.chord.fingers, this.scale);
     this.width = this.painter.imageWidth;
     this.height = this.painter.imageHeight;
   }

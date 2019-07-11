@@ -1,41 +1,43 @@
+import {Chord, NEXT_TONE_LETTER_MAP} from '@app/utils/chords-parser-lib';
+
 export interface ChordLayout {
-  name: string,
+  chord: Chord,
   positions: string,
   fingers: string
 }
 
-//noinspection SpellCheckingInspection
-export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = {
+// noinspection SpellCheckingInspection
 
-  ///////////// Triads /////////////
+/** The chord name is a tone + type (Chord Type) */
+export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFromSharps({
 
   // Major
-  'A': 'x02220&f=--123-',
-  'A#': 'x13331&f=112341',
-  'B': 'x24442&f=112341',
-  'C': 'x32010&f=-32-1-',
-  'C#': 'x43121&f=112341',
-  'D': 'xx0232&f=---132',
-  'D#': 'xx1343',
-  'E': '022100&f=-231--',
-  'F': '133211&f=134211',
-  'F#': '244322&f=134211',
-  'G': '320003&f=12--34',
-  'G#': '466544&f=134211',
+  'Amaj': 'x02220&f=--123-',
+  'A#maj': 'x13331&f=112341',
+  'Bmaj': 'x24442&f=112341',
+  'Cmaj': 'x32010&f=-32-1-',
+  'C#maj': 'x43121&f=112341',
+  'Dmaj': 'xx0232&f=---132',
+  'D#maj': 'xx1343',
+  'Emaj': '022100&f=-231--',
+  'Fmaj': '133211&f=134211',
+  'F#maj': '244322&f=134211',
+  'Gmaj': '320003&f=12--34',
+  'G#maj': '466544&f=134211',
 
   // Minor
-  'Am': 'x02210&f=--231-',
-  'A#m': 'x13321&f=113421',
-  'Bm': 'x24432&f=113421',
-  'Cm': 'x35543&f=113421',
-  'C#m': 'x46654&f=113421',
-  'Dm': 'xx0231&f=---231',
-  'D#m': 'x68876',
-  'Em': '022000&f=-23---',
-  'Fm': '133111&f=134111',
-  'F#m': '244222&f=134111',
-  'Gm': '355333&f=134111',
-  'G#m': '466444&f=134111',
+  'Amin': 'x02210&f=--231-',
+  'A#min': 'x13321&f=113421',
+  'Bmin': 'x24432&f=113421',
+  'Cmin': 'x35543&f=113421',
+  'C#min': 'x46654&f=113421',
+  'Dmin': 'xx0231&f=---231',
+  'D#min': 'x68876',
+  'Emin': '022000&f=-23---',
+  'Fmin': '133111&f=134111',
+  'F#min': '244222&f=134111',
+  'Gmin': '355333&f=134111',
+  'G#min': '466444&f=134111',
 
   // Diminished
   'Adim': 'x0121x',
@@ -52,18 +54,18 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = {
   'G#dim': '4564xx',
 
   // Augmented
-  // 'A+': 'x02220',
-  // 'A#+': 'x13331',
-  // 'B+': 'x24442',
-  // 'C+': 'x32010',
-  // 'C#+': 'x43121',
-  // 'D+': 'xx0232',
-  // 'D#+': 'x6544x',
-  // 'E+': '022100',
-  // 'F+': '133211',
-  // 'F#+': '244322',
-  // 'G+': '320003',
-  // 'G#+': '466544',
+  'Aaug': 'x03221',
+  'A#aug': 'x10332',
+  'Baug': 'x21003&f=-21--4',
+  'Caug': 'x32110&f=-4312-',
+  'C#aug': 'x43225',
+  'Daug': 'xx0332&f=---231',
+  'D#aug': 'xx1003',
+  'Eaug': '032110&f=-4312-',
+  'Faug': 'xx3221&f=--4231',
+  'F#aug': 'xx4332',
+  'Gaug': '321003&f=321--4',
+  'G#aug': '43211x',
 
   // Suspended 2nd
   'Asus2': 'x02200',
@@ -93,8 +95,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = {
   'Gsus4': '330033',
   'G#sus4': '446644',
 
-  ///////////// 5th /////////////
-
+  // 5th
   'A5': 'x022xx&f=--11--',
   'A#5': 'x133xx&f=--11--',
   'B5': 'x244xx&f=-134--',
@@ -108,80 +109,75 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = {
   'G5': 'xxx033',
   'G#5': 'xxx144',
 
-  ///////////// Sixth Chords  /////////////
-
   // 6th
-  'A6': 'x02222',
-  'A#6': 'x13333',
-  'B6': 'x24444',
-  'C6': 'x35555',
-  'C#6': 'x46666',
-  'D6': 'xx0202',
-  'D#6': 'xx1013',
-  'E6': '022120',
-  'F6': '100211',
-  'F#6': '21132x',
-  'G6': '320000',
-  'G#6': '431111',
+  'Amaj6': 'x02222',
+  'A#maj6': 'x13333',
+  'Bmaj6': 'x24444',
+  'Cmaj6': 'x35555',
+  'C#maj6': 'x46666',
+  'Dmaj6': 'xx0202',
+  'D#maj6': 'xx1013',
+  'Emaj6': '022120',
+  'Fmaj6': '100211',
+  'F#maj6': '21132x',
+  'Gmaj6': '320000',
+  'G#maj6': '431111',
 
   // Minor 6th
-  'Am6': 'x02212',
-  'A#m6': 'x13021',
-  'Bm6': 'x20102',
-  'Cm6': 'x31213',
-  'C#m6': 'x42324',
-  'Dm6': 'xx0201',
-  'D#m6': 'xx1312',
-  'Em6': '022020',
-  'Fm6': '133131',
-  'F#m6': '20122x',
-  'Gm6': '310030',
-  'G#m6': 'xxx101',
-
-
-  ///////////// Seventh Chords /////////////
+  'Amin6': 'x02212',
+  'A#min6': 'x13021',
+  'Bmin6': 'x20102',
+  'Cmin6': 'x31213',
+  'C#min6': 'x42324',
+  'Dmin6': 'xx0201',
+  'D#min6': 'xx1312',
+  'Emin6': '022020',
+  'Fmin6': '133131',
+  'F#min6': '20122x',
+  'Gmin6': '310030',
+  'G#min6': 'xxx101',
 
   // 7th
-  'A7': 'x02020',
-  'A#7': 'x13131',
-  'B7': 'x21202',
-  'C7': 'x32310',
-  'C#7': 'x46464',
-  'D7': 'xx0212',
-  'D#7': 'xx1023',
-  'E7': '020100',
-  'F7': '131211&f=131211',
-  'F#7': '242322',
-  'G7': '320001',
-  'G#7': '464544',
+  'Adom7': 'x02020',
+  'A#dom7': 'x13131',
+  'Bdom7': 'x21202',
+  'Cdom7': 'x32310',
+  'C#dom7': 'x46464',
+  'Ddom7': 'xx0212',
+  'D#dom7': 'xx1023',
+  'Edom7': '020100',
+  'Fdom7': '131211&f=131211',
+  'F#dom7': '242322',
+  'Gdom7': '320001',
+  'G#dom7': '464544',
 
   // Major 7th
-  'AM7': 'x02120',
-  'A#M7': 'x13231',
-  'BM7': 'x24342',
-  'CM7': 'x32000',
-  'C#M7': 'x43111',
-  'DM7': 'xx0222',
-  'D#M7': 'xx1333',
-  'EM7': '021100',
-  'FM7': '132211',
-  'F#M7': '243322',
-  'GM7': '354433',
-  'G#M7': '465544',
+  'Amaj7': 'x02120',
+  'A#maj7': 'x13231',
+  'Bmaj7': 'x24342',
+  'Cmaj7': 'x32000',
+  'C#maj7': 'x43111',
+  'Dmaj7': 'xx0222',
+  'D#maj7': 'xx1333',
+  'Emaj7': '021100',
+  'Fmaj7': '132211',
+  'F#maj7': '243322',
+  'Gmaj7': '354433',
+  'G#maj7': '465544',
 
   // Minor 7th
-  'Am7': 'x02010',
-  'A#m7': 'x13121',
-  'Bm7': 'x20202',
-  'Cm7': 'x35343',
-  'C#m7': 'x46454',
-  'Dm7': 'xx0211',
-  'D#m7': 'xx1322',
-  'Em7': '020000',
-  'Fm7': '131111',
-  'F#m7': '202220',
-  'Gm7': '353333',
-  'G#m7': 'xxx102',
+  'Amin7': 'x02010',
+  'A#min7': 'x13121',
+  'Bmin7': 'x20202',
+  'Cmin7': 'x35343',
+  'C#min7': 'x46454',
+  'Dmin7': 'xx0211',
+  'D#min7': 'xx1322',
+  'Emin7': '020000',
+  'Fmin7': '131111',
+  'F#min7': '202220',
+  'Gmin7': '353333',
+  'G#min7': 'xxx102',
 
   // Diminished 7th
   'Adim7': 'x01212',
@@ -198,32 +194,32 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = {
   'G#dim7': '456464',
 
   // Augmented 7th
-  'A+7': 'x0302x&f=x0201x',
-  // 'A#+7': 'x13131',
-  // 'B+7': 'x21202',
-  // 'C+7': 'x32310',
-  // 'C#+7': 'x46464',
-  // 'D+7': 'xx0212',
-  // 'D#+7': 'xx1023',
-  // 'E+7': '020100',
-  // 'F+7': '131211',
-  // 'F#+7': '242322',
-  // 'G+7': '320001',
-  // 'G#+7': '464544',
+  'Aaug7': 'x03021',
+  'A#aug7': 'x10132',
+  'Baug7': 'x21203',
+  'Caug7': 'x36354',
+  'C#aug7': 'x47465',
+  'Daug7': 'xx0312',
+  'D#aug7': 'xx1423',
+  'Eaug7': '030110',
+  'Faug7': '101221',
+  'F#aug7': '210330',
+  'Gaug7': '321001',
+  'G#aug7': '141221',
 
-  ///////////// 9th /////////////
-  'A9': 'x02423&f=x01312',
-  'A#9': 'x1011x',
-  'B9': 'x2122x',
-  'C9': 'x32330',
-  'C#9': 'x4344x',
-  'D9': 'xx0210',
-  'D#9': 'x6566x',
-  'E9': '020102',
-  'F9': '131213',
-  'F#9': '242324',
-  'G9': '353435',
-  'G#9': '464546',
+  // 9th
+  'Adom9': 'x02423&f=x01312',
+  'A#dom9': 'x1011x',
+  'Bdom9': 'x2122x',
+  'Cdom9': 'x32330',
+  'C#dom9': 'x4344x',
+  'Ddom9': 'xx0210',
+  'D#dom9': 'x6566x',
+  'Edom9': '020102',
+  'Fdom9': '131213',
+  'F#dom9': '242324',
+  'Gdom9': '353435',
+  'G#dom9': '464546',
 
   // Template:
   // 'A': '&f=',
@@ -238,25 +234,34 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = {
   // 'F#': '&f=',
   // 'G': '&f=',
   // 'G#': '&f=',
-};
+});
 
-/** Returns chord layout for the given chord name (visual name in the chords-parser-lib.ts) */
-export function getChordLayout(name: string): ChordLayout|undefined {
-  if (!name || name.length == 0) {
-    return undefined;
+type StringMap = { [chord: string]: string };
+
+/** Adds flats to the existing mapping using sharps mappings. */
+function withFlatsFromSharps(chordsMap: StringMap): StringMap {
+  const res: StringMap = {};
+  for (const name in chordsMap) {
+    const layout = chordsMap[name];
+    res[name] = layout;
+    if (name.length >= 2 && name.charAt(1) == '#') {
+      const bKey = `${NEXT_TONE_LETTER_MAP[name.charAt(0)]}b${name.substring(2)}`;
+      res[bKey] = layout;
+    }
   }
-  let note = name.charAt(0).toUpperCase();
-  if (note === 'H') {
-    note = 'B';
-  }
-  const key = note + name.substr(1);
+  return res;
+}
+
+/** Returns chord layout for the given chord. */
+export function getChordLayout(chord: Chord): ChordLayout|undefined {
+  const key = (chord.tone === 'H' ? 'B' : chord.tone) + chord.type;
   const res = CHORDS_LAYOUTS[key];
   if (!res) {
     return undefined;
   }
   const tokens = res.split('&');
   return {
-    name: name,
+    chord: chord,
     positions: tokens[0],
     fingers: tokens.length > 1 && tokens[1] ? tokens[1] : ''
   };

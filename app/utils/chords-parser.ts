@@ -1,4 +1,4 @@
-import {Chord, CHORD_LETTERS, CHORD_TYPE_BY_RAW_TYPE, ChordLocation, ChordType, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
+import {Chord, CHORD_LETTERS, CHORD_TYPE_BY_RAW_NAME, ChordLocation, ChordType, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
 
 const ALPHA_EN = /^[A-Z]+$/i;
 const ALPHA_RU = /^[А-ЯЁ]+$/i;
@@ -70,7 +70,10 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
 }
 
 /** Parses 1 chord starting from the startIdx. */
-export function parseChord(text: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
+export function parseChord(text?: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
+  if (!text) {
+    return undefined;
+  }
   let idx = startIdx === undefined ? 0 : startIdx;
   const tone = findPrefixToken(text, idx, CHORD_LETTERS);
   if (tone == undefined) {
@@ -93,7 +96,7 @@ export function parseChord(text: string, startIdx?: number, endIdx?: number): Ch
         const rawType = findPrefixToken(text, idx, typesByFirstChar);
         if (rawType !== undefined) {
           idx += rawType.length;
-          chord.type = CHORD_TYPE_BY_RAW_TYPE.get(rawType)!;
+          chord.type = CHORD_TYPE_BY_RAW_NAME.get(rawType)!;
           parsedType = chord.type;
           continue;
         }

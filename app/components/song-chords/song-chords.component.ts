@@ -5,7 +5,7 @@ import {UserDataService} from '@app/services/user-data.service';
 import {takeUntil} from 'rxjs/operators';
 import {SongDetails} from '@common/artist-model';
 import {Subject} from 'rxjs';
-import {parseChords} from '@app/utils/chords-parser';
+import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
 
 @Component({
@@ -64,9 +64,9 @@ export class SongChordsComponent implements OnInit, OnDestroy {
       }
     }
     this.chords = orderedChordNames
-        .map(name => getChordLayout(name))
+        .map(name => parseChord(name))
+        .filter(defined)
+        .map(({chord}) => getChordLayout(chord))
         .filter(defined) as ChordLayout[];
   }
-
 }
-

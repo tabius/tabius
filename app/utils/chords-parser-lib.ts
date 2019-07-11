@@ -9,12 +9,15 @@ export interface ChordLocation {
   endIdx: number; // exclusive
 }
 
+/** All possible chord letters (including H). */
 export const CHORD_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+export const NEXT_TONE_LETTER_MAP: { readonly [key: string]: string } = {'A': 'B', 'B': 'C', 'C': 'D', 'D': 'E', 'E': 'F', 'F': 'G', 'G': 'A'};
 
 export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add11'|'2'|'5'|'6/9'
     |'7/6'|'7/9'|'7B5b9'|'7B9'|'7sus2'|'7sus24'|'7sus4'|'7susB13'|'7x11'|'7x9'|'7x9x11'|'9sus4'
     |'aug'|'aug7'|'aug9'|'augmaj7'|'augmaj9'|'B5'
-    |'dim'|'dim7'|'dim9'|'dimB9'|'dim7B9'|'dom'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'
+    |'dim'|'dim7'|'dim9'|'dimB9'|'dim7B9'|'dom7'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'
     |'m11B5b9'|'m11B9'|'m2'|'m7B9'|'M7B9'|'M7x11'|'m7x11'|'m7x9'|'M7x9'|'M9x11'
     |'maj'|'maj11'|'maj13'|'maj6'|'maj7'|'maj7sus2'|'maj7sus24'|'maj7sus4'|'maj9'
     |'min'|'min11'|'min13'|'min6'|'min7'|'min7dim5'|'min9'|'minmaj11'|'minmaj13'|'minmaj7'|'minmaj9'|'mM7B5'|'mM7B9'|'Mx11'
@@ -26,8 +29,7 @@ export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add11'|'2'|'5'|'6/9'
  * Key => system chord name.
  * Value => comma separated chords prefixed by 'A' (for readability).
  *
- * The first token in the value used for visual chord representation (rendering).
- * Note: chords-layout-lib.ts depends on the rendered (visual) chord name!
+ * The first token in the value used for the visual chord representation (rendering).
  */
 export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '+7B9': 'A+7b9, A7+5b9',
@@ -50,17 +52,17 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7x9x11': 'A7+9+11',
   '9sus4': 'A9sus4',
   'add11': 'Aadd11',
-  'aug': 'A+, Am+5, Aaug, AAugmented',
+  'aug': 'A+, A+5, Am+5, Aaug, AAugmented',
   'aug7': 'A+7, A7+5, Aaug7',
   'aug9': 'A+9, A9#5, Aaug9',
   'augmaj7': 'A+M7, A+M, AM7+5, AM+5, AaugM7',
   'augmaj9': 'A+M9, AaugM9',
   'B5': 'Ab5, AMb5, AM-5',
-  'dim': 'Adim, Amb5, Amo5, ADiminished',
+  'dim': 'Adim, Amb5, Amo5, Am5-, ADiminished',
   'dim7': 'Adim7',
   'dim9': 'Adim9',
   'dimB9': 'Adimb9',
-  'dom': 'A7, Adom, Adom7',
+  'dom7': 'A7, Adom, Adom7',
   'dom11': 'A11, Adom11',
   'dom13': 'A13, Adom13',
   'dom7dim5': 'A7b5, Adom7dim5',
@@ -111,7 +113,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
 export const RAW_CHORD_TYPES_BY_FIRST_CHAR = new Map<string, string[]>();
 
 /** System chord name by raw name: 'minor' => 'min', '-' => min, 'm' => 'min' */
-export const CHORD_TYPE_BY_RAW_TYPE = new Map<string, ChordType>();
+export const CHORD_TYPE_BY_RAW_NAME = new Map<string, ChordType>();
 
 /** Visual type by chord type: first element in the list by key in CHORDS_LIB. */
 export const VISUAL_TYPE_BY_CHORD_TYPE = new Map<ChordType, string>();
@@ -157,6 +159,7 @@ function getRawTypeVariations(originalVariant: string): string[] {
 
   if (originalVariant.includes('dim')) {
     derivedVariants.push(originalVariant.replace('dim', 'o'));
+    derivedVariants.push(originalVariant.replace('dim', '°'));
   }
 
   if (originalVariant.includes('Ø')) {
@@ -190,15 +193,17 @@ function getRawTypeVariations(originalVariant: string): string[] {
     derivedVariants.push(originalVariant.replace('b9', 'B9'));
   }
 
-  const len = originalVariant.length;
-  if (len > 2 && (originalVariant.endsWith('+5') || originalVariant.endsWith('+7'))) {
+  if (originalVariant.endsWith('+5') || originalVariant.endsWith('+7')) {
+    const len = originalVariant.length;
     const d = originalVariant.charAt(len - 1);
     const p = originalVariant.substring(0, len - 2);
     derivedVariants.push(`${p + d}+`);  // Am+5 -> Am5+
     derivedVariants.push(`${p}/${d}+`); // Am+5 -> Am/5+
-    derivedVariants.push(`${p}#${d}`);  // Am+5 -> Am#5
     derivedVariants.push(`${p + d}#`);  // Am+5 -> Am5#
     derivedVariants.push(`${p}/${d}#`); // Am+5 -> Am/5#
+    if (p.length > 1) {
+      derivedVariants.push(`${p}#${d}`);  // Am+5 -> Am#5
+    }
   }
 
   const allVariants: string[] = [...derivedVariants, ...[originalVariant]];
@@ -222,9 +227,9 @@ function getRawTypeVariations(originalVariant: string): string[] {
 
 
 function registerChordTypeByRawType(chordType: ChordType, rawType: string): void {
-  if (CHORD_TYPE_BY_RAW_TYPE.has(rawType)) {
+  if (CHORD_TYPE_BY_RAW_NAME.has(rawType)) {
     throw `Duplicate chord mapping: A${rawType} => ${chordType}`;
   }
-  CHORD_TYPE_BY_RAW_TYPE.set(rawType, chordType);
+  CHORD_TYPE_BY_RAW_NAME.set(rawType, chordType);
 }
 
