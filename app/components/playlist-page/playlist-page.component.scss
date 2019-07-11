@@ -36,9 +36,13 @@
 
           .links-block {
             display: flex;
-            max-width: 400px;
+            max-width: 360px;
             justify-content: space-between;
             margin-top: 20px;
+
+            .links-spacer {
+              width: 60px;
+            }
           }
 
         }

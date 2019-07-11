@@ -14,6 +14,7 @@
                     <a routerLink="{{getArtistPageLink(item.artist.mount)}}">Артист »</a>
                     <a routerLink="{{getSongPageLink(item.artist.mount, item.song.mount)}}">Песня »</a>
                     <a *ngIf="hasEditRight" href="javascript:" (click)="toggleEditor(item.song.id)">Правка »</a>
+                    <div *ngIf="!hasEditRight" class="links-spacer"></div>
                 </div>
 
                 <gt-song-editor *ngIf="isEditorOpened(item.song.id)"
