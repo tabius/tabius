@@ -7,6 +7,8 @@ import {flatMap, map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {defined, isValidId, keepDefined, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
+import {BrowserStateService} from '@app/services/browser-state.service';
+import {fromPromise} from 'rxjs/internal-compatibility';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
@@ -26,6 +28,7 @@ export class UserDataService {
   private readonly runningQueries = new Set<string>();
 
   constructor(private readonly httpClient: HttpClient,
+              private readonly bss: BrowserStateService,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
   ) {
   }
@@ -164,6 +167,9 @@ export class UserDataService {
     if (!isValidPlaylistId(playlistId)) {
       return of(undefined);
     }
+    if (this.bss.isServer) {
+      return fromPromise(this.fetchPlaylist(playlistId));
+    }
     this.fetchPlaylistIfNeeded(playlistId).catch(err => console.warn(err));
     const playlistKey = getPlaylistKey(playlistId);
     return this.store.get<Playlist>(playlistKey);
@@ -172,11 +178,19 @@ export class UserDataService {
   private async fetchPlaylistIfNeeded(playlistId: string): Promise<void> {
     const playlistKey = getPlaylistKey(playlistId);
     if (!this.store.isUpdated(playlistKey)) {
-      await runWithDedup(playlistKey, this.runningQueries, async () => {
-        const playlist = await this.httpClient.get<Playlist>(`/api/playlist/by-id/${playlistId}`).toPromise();
-        await this.cachePlaylistsInBrowserStore([playlist]);
-      });
+      await this.fetchPlaylist(playlistId);
     }
+  }
+
+  private async fetchPlaylist(playlistId: string): Promise<Playlist|undefined> {
+    const playlistKey = getPlaylistKey(playlistId);
+    return await runWithDedup(playlistKey, this.runningQueries, async () => {
+      const playlist = await this.httpClient.get<Playlist|undefined>(`/api/playlist/by-id/${playlistId}`).toPromise();
+      if (playlist) {
+        await this.cachePlaylistsInBrowserStore([playlist]);
+      }
+      return playlist;
+    });
   }
 
   getUser(): Observable<User|undefined> {

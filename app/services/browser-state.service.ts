@@ -11,6 +11,7 @@ import * as NoSleep from 'nosleep.js/dist/NoSleep';
 export class BrowserStateService {
 
   readonly isBrowser;
+  readonly isServer;
 
   private readonly noSleep = new NoSleep();
 
@@ -21,6 +22,7 @@ export class BrowserStateService {
       toaster: ToastService,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
+    this.isServer = !this.isBrowser;
     this.noSleepMode$.pipe(skip(1)).subscribe(mode => {
       const msg = mode
           ? 'Включена блокировка сна.\nТеперь экран будет всегда включён.'

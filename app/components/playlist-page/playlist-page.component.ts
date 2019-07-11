@@ -4,7 +4,7 @@ import {Meta, Title} from '@angular/platform-browser';
 import {Artist, Song} from '@common/artist-model';
 import {flatMap, map, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
-import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
 import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
@@ -119,7 +119,7 @@ export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
     if (playlist) {
       return {playlist};
     }
-    this.router.navigate([MOUNT_PAGE_NOT_FOUND]).catch(err => console.error(err));
-    return {playlist: {} as Playlist}; //todo: find a better pattern
+    await this.router.navigate([MOUNT_PAGE_NOT_FOUND]);
+    return EMPTY.toPromise();
   }
 }
