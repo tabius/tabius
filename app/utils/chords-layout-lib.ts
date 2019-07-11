@@ -95,7 +95,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gsus4': '330033',
   'G#sus4': '446644',
 
-  // 5th, Power chords
+  // 5th, Power chord
   'A5': 'x022xx&f=--11--',
   'A#5': 'x133xx&f=--11--',
   'B5': 'x244xx&f=-134--',
@@ -207,7 +207,21 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gaug7': '321001',
   'G#aug7': '141221',
 
-  // 9th
+  // Major add 9th
+  'Aadd9': '54242x',
+  'A#add9': 'x10311',
+  'Badd9': 'x2142x',
+  'Cadd9': 'x32030',
+  'C#add9': 'x43141',
+  'Dadd9': 'x54252',
+  'D#add9': 'x65363',
+  'Eadd9': '022102',
+  'Fadd9': '103011',
+  'F#add9': 'xx4324',
+  'Gadd9': '320203',
+  'G#add9': '43131x',
+
+  // Dominant 9th
   'Adom9': 'x02423&f=x01312',
   'A#dom9': 'x1011x',
   'Bdom9': 'x2122x',
@@ -222,18 +236,18 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'G#dom9': '464546',
 
   // Template:
-  // 'A': '&f=',
-  // 'A#': '&f=',
-  // 'B': '&f=',
-  // 'C': '&f=',
-  // 'C#': '&f=',
-  // 'D': '&f=',
-  // 'D#': '&f=',
-  // 'E': '&f=',
-  // 'F': '&f=',
-  // 'F#': '&f=',
-  // 'G': '&f=',
-  // 'G#': '&f=',
+  // 'A': '',
+  // 'A#': '',
+  // 'B': '',
+  // 'C': '',
+  // 'C#': '',
+  // 'D': '',
+  // 'D#': '',
+  // 'E': '',
+  // 'F': ',
+  // 'F#': '',
+  // 'G': '',
+  // 'G#': '',
 });
 
 type StringMap = { [chord: string]: string };

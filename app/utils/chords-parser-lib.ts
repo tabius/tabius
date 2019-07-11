@@ -14,7 +14,7 @@ export const CHORD_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
 export const NEXT_TONE_LETTER_MAP: { readonly [key: string]: string } = {'A': 'B', 'B': 'C', 'C': 'D', 'D': 'E', 'E': 'F', 'F': 'G', 'G': 'A'};
 
-export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add11'|'2'|'5'|'6/9'
+export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add9'|'add11'|'2'|'5'|'6/9'
     |'7/6'|'7/9'|'7B5b9'|'7B9'|'7sus2'|'7sus24'|'7sus4'|'7susB13'|'7x11'|'7x9'|'7x9x11'|'9sus4'
     |'aug'|'aug7'|'aug9'|'augmaj7'|'augmaj9'|'B5'
     |'dim'|'dim7'|'dim9'|'dimB9'|'dim7B9'|'dom7'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'
@@ -32,12 +32,12 @@ export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add11'|'2'|'5'|'6/9'
  * The first token in the value used for the visual chord representation (rendering).
  */
 export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
-  '+7B9': 'A+7b9, A7+5b9',
   '+7+9': 'A+7+9, A7+5+9',
-  '+M7B9': 'A+M7b9, A+Mb9, AM7+5b9, AM+5b9',
+  '+7B9': 'A+7b9, A7+5b9',
   '+M7+9': 'A+M7+9, A+M+9, AM7+5+9, AM+5+9',
-  '2': 'Aadd9, Aadd2, A2',
-  '5': 'A5',
+  '+M7B9': 'A+M7b9, A+Mb9, AM7+5b9, AM+5b9',
+  '2': 'A2, Aadd2',
+  '5': 'A5', // 5th, Power chord
   '6/9': 'A6/9, AM6/9',
   '7/6': 'A7/6, AM7/6',
   '7/9': 'A7/9, AM7/9',
@@ -52,21 +52,23 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7x9x11': 'A7+9+11',
   '9sus4': 'A9sus4',
   'add11': 'Aadd11',
-  'aug': 'A+, A+5, Am+5, Aaug, AAugmented',
-  'aug7': 'A+7, A7+5, Aaug7',
+  'add9': 'Aadd9', // Major add 9th
+  'aug': 'A+, A+5, Am+5, Aaug, AAugmented', // Augmented
+  'aug7': 'A+7, A7+5, Aaug7', // Augmented 7th
   'aug9': 'A+9, A9#5, Aaug9',
   'augmaj7': 'A+M7, A+M, AM7+5, AM+5, AaugM7',
   'augmaj9': 'A+M9, AaugM9',
   'B5': 'Ab5, AMb5, AM-5',
-  'dim': 'Adim, Amb5, Amo5, Am5-, ADiminished',
-  'dim7': 'Adim7',
+  'dim': 'Adim, Amb5, Amo5, Am5-, ADiminished', // Diminished
+  'dim7': 'Adim7', // Diminished 7th
+  'dim7B9': 'Adim7b9',
   'dim9': 'Adim9',
   'dimB9': 'Adimb9',
-  'dom7': 'A7, Adom, Adom7',
   'dom11': 'A11, Adom11',
   'dom13': 'A13, Adom13',
+  'dom7': 'A7, Adom, Adom7', // Dominant 7th
   'dom7dim5': 'A7b5, Adom7dim5',
-  'dom9': 'A9, Adom9',
+  'dom9': 'A9, Adom9', // Dominant 9th
   'half_diminished9': 'AØ9',
   'half_diminishedB9': 'AØb9',
   'm11B5b9': 'Am11b5b9, Am11o5b9',
@@ -79,20 +81,20 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'm7x9': 'Am7+9',
   'M7x9': 'AM7+9, AM+9',
   'M9x11': 'A9+11, AM9+11',
-  'maj': 'A, AM',
+  'maj': 'A, AM', // Major
   'maj11': 'AM11',
   'maj13': 'AM13',
-  'maj6': 'A6, AM6',
-  'maj7': 'AM7',
+  'maj6': 'A6, AM6, Aadd6', // Major 6th
+  'maj7': 'AM7', // Major 7th
   'maj7sus2': 'AM7sus2, AMsus2',
   'maj7sus24': 'AM7sus24, AMsus24',
   'maj7sus4': 'AM7sus4, AMsus4',
   'maj9': 'AM9',
-  'min': 'Am',
+  'min': 'Am', // Minor
   'min11': 'Am11',
   'min13': 'Am13',
-  'min6': 'Am6',
-  'min7': 'Am7',
+  'min6': 'Am6', // Minor 6th
+  'min7': 'Am7', // Minor 7th
   'min7dim5': 'Am7b5, Am7dim5, AØ, AØ7, Am7-5, Am7/5-, Am75-, Am75b, Am7+5',
   'min9': 'Am9',
   'minmaj11': 'AmM11',
@@ -102,11 +104,10 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'mM7B5': 'AmM7b5',
   'mM7B9': 'AmM7b9, Am#7b9',
   'Mx11': 'AM+11',
-  'dim7B9': 'Adim7b9',
-  'sus2': 'Asus2',
+  'sus2': 'Asus2', // Suspended 2nd
   'sus24': 'Asus24, Asus42',
   'sus2B5': 'Asus2b5, A2-5, Asus2-5',
-  'sus4': 'Asus4, Asus, A4, Aadd4',
+  'sus4': 'Asus4, Asus, A4, Aadd4', // Suspended 4th
 };
 
 /** List of chord types by 1st char: s => [sus2,sus24,sus2B5...]. */
