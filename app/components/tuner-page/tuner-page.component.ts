@@ -6,7 +6,7 @@ import {UserDataService} from '@app/services/user-data.service';
 import {takeUntil} from 'rxjs/operators';
 import {newDefaultUserDeviceSettings, TunerToneType} from '@common/user-model';
 
-const GUITAR_STRINGS = ['e', 'H', 'G', 'D', 'A', 'E'];
+const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
 @Component({
   selector: 'gt-tuner-page',

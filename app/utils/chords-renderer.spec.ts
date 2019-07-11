@@ -1,7 +1,7 @@
-import {getToneNameByNumber, renderChord, renderChords} from '@app/utils/chords-renderer';
-import {Chord, ChordType} from '@app/utils/chords-parser-lib';
+import {getToneByToneNumber, renderChord, renderChords} from '@app/utils/chords-renderer';
+import {Chord, ChordTone, ChordType} from '@app/utils/chords-parser-lib';
 
-const c = (tone: string, type: ChordType): Chord => ({tone, type});
+const c = (tone: ChordTone, type: ChordType): Chord => ({tone, type});
 
 describe('Chords renderer ', () => {
 
@@ -79,14 +79,12 @@ describe('Chords renderer ', () => {
 
   it('should render H but not B if asked', () => {
     expect(renderChord(c('B', 'maj'), {useH: true})).toEqual('H');
-    expect(renderChord(c('H', 'maj'), {useH: true})).toEqual('H');
-    expect(renderChord(c('H', 'maj'))).toEqual('B');
     expect(renderChord(c('B', 'maj'))).toEqual('B');
   });
 
-  it('should respect flat|sharp flags in getToneNameByNumber', () => {
-    expect(getToneNameByNumber(1, false)).toEqual('C#');
-    expect(getToneNameByNumber(1, true)).toEqual('Db');
+  it('should respect flat|sharp flags in getToneByToneNumber', () => {
+    expect(getToneByToneNumber(1, false)).toEqual('C#');
+    expect(getToneByToneNumber(1, true)).toEqual('Db');
   });
 
   it('should parse long chord names (minor/major) correctly', () => {

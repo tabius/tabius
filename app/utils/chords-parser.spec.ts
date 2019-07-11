@@ -1,7 +1,7 @@
 import {parseChord, parseChords, parseChordsLine} from '@app/utils/chords-parser';
-import {Chord, ChordType} from '@app/utils/chords-parser-lib';
+import {Chord, ChordTone, ChordType} from '@app/utils/chords-parser-lib';
 
-const c = (tone: string, type: ChordType): Chord => ({tone, type});
+const c = (tone: ChordTone, type: ChordType): Chord => ({tone, type});
 
 describe('Chords parser, parseChord', () => {
 

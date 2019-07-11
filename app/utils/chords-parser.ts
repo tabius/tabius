@@ -1,4 +1,5 @@
-import {Chord, CHORD_LETTERS, CHORD_TYPE_BY_RAW_NAME, ChordLocation, ChordType, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
+import {Chord, CHORD_TONES, CHORD_TYPE_BY_RAW_NAME, ChordLocation, ChordTone, ChordType, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
+import {defined} from '@common/util/misc-utils';
 
 const ALPHA_EN = /^[A-Z]+$/i;
 const ALPHA_RU = /^[А-ЯЁ]+$/i;
@@ -69,17 +70,21 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
   return chordLocations;
 }
 
+/** All possible chord letters (including H). */
+const EXTENDED_CHORD_LETTERS: string[] = CHORD_TONES.map(t => t.length === 1 ? t : undefined).filter(defined);
+EXTENDED_CHORD_LETTERS.push('H');
+
 /** Parses 1 chord starting from the startIdx. */
 export function parseChord(text?: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
   if (!text) {
     return undefined;
   }
   let idx = startIdx === undefined ? 0 : startIdx;
-  const tone = findPrefixToken(text, idx, CHORD_LETTERS);
+  const tone = findPrefixToken(text, idx, EXTENDED_CHORD_LETTERS);
   if (tone == undefined) {
     return undefined;
   }
-  const chord: Chord = {tone, type: 'maj'};
+  const chord: Chord = {tone: tone == 'H' ? 'B' : tone as ChordTone, type: 'maj'};
   let parsedType: ChordType|undefined = undefined;
   idx += tone.length;
   let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);

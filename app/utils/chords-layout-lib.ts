@@ -1,10 +1,12 @@
-import {Chord, NEXT_TONE_LETTER_MAP} from '@app/utils/chords-parser-lib';
+import {Chord, ChordTone} from '@app/utils/chords-parser-lib';
 
 export interface ChordLayout {
   chord: Chord,
   positions: string,
   fingers: string
 }
+
+export const NEXT_TONE_LETTER_MAP: { readonly [key: string]: ChordTone } = {'A': 'B', 'B': 'C', 'C': 'D', 'D': 'E', 'E': 'F', 'F': 'G', 'G': 'A'};
 
 // noinspection SpellCheckingInspection
 
@@ -268,12 +270,12 @@ function withFlatsFromSharps(chordsMap: StringMap): StringMap {
 
 /** Returns chord layout for the given chord. */
 export function getChordLayout(chord: Chord): ChordLayout|undefined {
-  const key = (chord.tone === 'H' ? 'B' : chord.tone) + chord.type;
-  const res = CHORDS_LAYOUTS[key];
-  if (!res) {
+  const key = chord.tone + chord.type;
+  const layout = CHORDS_LAYOUTS[key];
+  if (!layout) {
     return undefined;
   }
-  const tokens = res.split('&');
+  const tokens = layout.split('&');
   return {
     chord: chord,
     positions: tokens[0],

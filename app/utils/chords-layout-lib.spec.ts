@@ -1,5 +1,5 @@
-import {CHORDS_LAYOUTS} from '@app/utils/chords-layout-lib';
-import {NEXT_TONE_LETTER_MAP, VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
+import {CHORDS_LAYOUTS, NEXT_TONE_LETTER_MAP} from '@app/utils/chords-layout-lib';
+import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 
 
 describe('Chords layout lib', () => {

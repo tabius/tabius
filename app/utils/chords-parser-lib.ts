@@ -1,5 +1,5 @@
 export interface Chord {
-  tone: string; //todo: make tones type safe
+  tone: ChordTone;
   type: ChordType;
 }
 
@@ -9,10 +9,8 @@ export interface ChordLocation {
   endIdx: number; // exclusive
 }
 
-/** All possible chord letters (including H). */
-export const CHORD_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-
-export const NEXT_TONE_LETTER_MAP: { readonly [key: string]: string } = {'A': 'B', 'B': 'C', 'C': 'D', 'D': 'E', 'E': 'F', 'F': 'G', 'G': 'A'};
+export const CHORD_TONES = <const>['A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab'];
+export type ChordTone = typeof CHORD_TONES[number];
 
 export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add9'|'add11'|'2'|'5'|'6/9'
     |'7/6'|'7/9'|'7B5b9'|'7B9'|'7sus2'|'7sus24'|'7sus4'|'7susB13'|'7x11'|'7x9'|'7x9x11'|'9sus4'
