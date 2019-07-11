@@ -20,7 +20,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
   //TODO: handle song change.
   @Input() songDetails!: SongDetails;
 
-  chords: ChordLayout[] = [];
+  chordLayouts: ChordLayout[] = [];
 
   private transpose = 0;
   private b4Si?: boolean;
@@ -63,7 +63,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
         orderedChordNames.push(chordName);
       }
     }
-    this.chords = orderedChordNames
+    this.chordLayouts = orderedChordNames
         .map(name => parseChord(name))
         .filter(defined)
         .map(({chord}) => getChordLayout(chord))

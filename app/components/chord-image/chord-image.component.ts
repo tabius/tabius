@@ -11,7 +11,7 @@ import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 })
 export class ChordImageComponent implements AfterViewInit, OnChanges {
 
-  @Input() chord!: ChordLayout;
+  @Input() layout!: ChordLayout;
   @Input() scale = 2;
 
   width = 32;
@@ -30,9 +30,9 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
     if (!this.isBrowser) {
       return;
     }
-    const {chord} = this.chord;
+    const {chord} = this.layout;
     const visualChordName = chord.tone + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type);
-    this.painter = new ChordImagePainter(visualChordName, this.chord.positions, this.chord.fingers, this.scale);
+    this.painter = new ChordImagePainter(visualChordName, this.layout.positions, this.layout.fingers, this.scale);
     this.width = this.painter.imageWidth;
     this.height = this.painter.imageHeight;
   }
@@ -43,5 +43,10 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
     }
     const context = this.canvas.nativeElement.getContext('2d');
     this.painter.draw(context);
+  }
+
+  getChordDisplayName(): string {
+    const {chord} = this.layout;
+    return chord.tone + chord.type;
   }
 }
