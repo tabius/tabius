@@ -129,3 +129,20 @@ export function defined<T>(v: T|undefined): v is T {
 
 /** RxJS wrapper to keep only defined elements in the stream. */
 export const keepDefined = filter(defined);
+
+export function countOccurrences(text: string, token: string): number {
+  let hits = 0;
+  for (let idx = 0; idx < text.length - token.length;) {
+    const matchIdx = text.indexOf(token, idx);
+    if (matchIdx === -1) {
+      break;
+    }
+    hits++;
+    idx = matchIdx + token.length;
+  }
+  return hits;
+}
+
+export function bound(min: number, value: number, max: number): number {
+  return value <= min ? min : value >= max ? max : value;
+}

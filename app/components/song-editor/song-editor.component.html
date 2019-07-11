@@ -1,0 +1,15 @@
+<div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+    <div class="message">Загружаем детали песни…</div>
+    <gt-loading-indicator></gt-loading-indicator>
+</div>
+
+<div *ngIf="loaded">
+    <div>
+        <textarea [(ngModel)]="content" class="content" rows="{{getContentRowsCount()}}"></textarea>
+    </div>
+    <div class="buttons-row">
+        <button class="btn btn-info save-button" (click)="save()">Сохранить</button>
+        <button class="btn close-button" (click)="close()">Закрыть</button>
+    </div>
+</div>
+

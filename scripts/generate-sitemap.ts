@@ -25,7 +25,7 @@ async function generateSitemap() {
       sitemap += `https://tabius.ru/song/${artistMount}/${row.mount}\n`;
     }
   } finally {
-    connection.close();
+    connection.closeRequest();
   }
   const sitemapFileName = '/opt/tabius/www/sitemap-1.txt';
   await writeFile(sitemapFileName, sitemap);

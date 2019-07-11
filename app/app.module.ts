@@ -38,6 +38,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SongComponent} from './components/song/song.component';
 import {SongHeaderComponent} from './components/song-header/song-header.component';
 import {SongVideoComponent} from './components/song-video/song-video.component';
+import { SongEditorComponent } from './components/song-editor/song-editor.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import {SongVideoComponent} from './components/song-video/song-video.component';
     SongComponent,
     SongHeaderComponent,
     SongVideoComponent,
+    SongEditorComponent,
   ],
   imports: [
     BrowserAnimationsModule,

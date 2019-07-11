@@ -8,7 +8,7 @@ import {combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
 import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {Playlist} from '@common/user-model';
+import {Playlist, UserGroup} from '@common/user-model';
 import {defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 
@@ -29,6 +29,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   playlist!: Playlist;
   songItems: PlaylistSongModel[] = [];
+  hasEditRight = false;
 
   readonly mode = SongComponentMode.Playlist;
   readonly hasValidForumTopic = hasValidForumTopic;
@@ -36,6 +37,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   readonly playlistsLink = `/${MOUNT_USER_PLAYLISTS}`;
   readonly getArtistPageLink = getArtistPageLink;
   readonly getSongPageLink = getSongPageLink;
+  private readonly songsWithOpenEditors = new Set<number>();
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
@@ -85,6 +87,10 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       this.updateMeta();
       this.cd.detectChanges();
     });
+
+    this.uds.getUser().pipe(takeUntil(this.destroyed$)).subscribe(user => {
+      this.hasEditRight = user ? user.groups.includes(UserGroup.Moderator) : false;
+    });
   }
 
   ngOnDestroy(): void {
@@ -98,6 +104,19 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       description: `Плейлист ${this.playlist.name}`,
       keywords: ['плейлист', 'аккорды', 'гитара'],
     });
+  }
+
+  isEditorOpened(songId: number): boolean {
+    return this.songsWithOpenEditors.has(songId);
+  }
+
+  toggleEditor(songId: number): void {
+    if (this.songsWithOpenEditors.has(songId) || !this.hasEditRight) {
+      this.songsWithOpenEditors.delete(songId);
+    } else {
+      this.songsWithOpenEditors.add(songId);
+    }
+    this.cd.detectChanges();
   }
 }
 

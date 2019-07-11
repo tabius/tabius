@@ -1,0 +1,22 @@
+@import "~app/styles/fonts";
+
+:host {
+  margin-top: 10px;
+  display: block;
+}
+
+textarea.content {
+  width: 100%;
+  min-height: 50%;
+  font-size: 18px;
+  font-family: $font-family-mono;
+  padding: 7px;
+}
+
+.buttons-row {
+  button{
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+}

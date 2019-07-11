@@ -69,7 +69,7 @@ async function main() {
       await syncSongTopic(song, connection, artistById);
     }
   } finally {
-    connection.close();
+    connection.closeRequest();
   }
 }
 

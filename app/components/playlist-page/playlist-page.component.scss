@@ -35,11 +35,10 @@
           }
 
           .links-block {
+            display: flex;
+            max-width: 400px;
+            justify-content: space-between;
             margin-top: 20px;
-
-            a:not(:first-of-type) {
-              margin-left: 50px;
-            }
           }
 
         }
