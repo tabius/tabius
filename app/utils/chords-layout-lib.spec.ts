@@ -13,12 +13,26 @@ describe('Chords layout lib', () => {
     }
   });
 
-  it('should not have duplicate layouts', () => {
-    function removeFingers(v: string): string {
-      const fingeringPos = v.indexOf('&');
-      return fingeringPos < 0 ? v : v.substring(0, fingeringPos);
+  it('should have 6-fingers layouts with a valid characters', () => {
+    const allLayouts = Object.keys(CHORDS_LAYOUTS).map(key => CHORDS_LAYOUTS[key]).map(removeFingers);
+
+    function hasValidLayoutChars(layout: string): boolean {
+      for (let i = 0; i < layout.length; i++) {
+        const c = layout.charAt(i);
+        if (!'x0123456789'.includes(c)) {
+          return false;
+        }
+      }
+      return true;
     }
 
+    for (const layout of allLayouts) {
+      expect(layout.length).toBe(6, `Bad chord layout length: ${layout}`);
+      expect(hasValidLayoutChars(layout)).toBeTruthy(`Bad chord layout chars: ${layout}`);
+    }
+  });
+
+  it('should not have duplicate layouts', () => {
     function removeFlats(v: string): boolean {
       return v.length < 2 || v.charAt(1) != 'b';
     }
@@ -42,3 +56,8 @@ describe('Chords layout lib', () => {
   });
 
 });
+
+function removeFingers(v: string): string {
+  const fingeringPos = v.indexOf('&');
+  return fingeringPos < 0 ? v : v.substring(0, fingeringPos);
+}

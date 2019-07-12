@@ -69,34 +69,6 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gaug': '321003&f=321--4',
   'G#aug': '43211x',
 
-  // Suspended 2nd
-  'Asus2': 'x02200',
-  'A#sus2': 'x13311',
-  'Bsus2': 'x24422',
-  'Csus2': 'x30033',
-  'C#sus2': 'x46644',
-  'Dsus2': 'xx0230',
-  'D#sus2': 'xx1341',
-  'Esus2': 'xx2452',
-  'Fsus2': 'xx3011',
-  'F#sus2': 'xx4122',
-  'Gsus2': '300033',
-  'G#sus2': '411144',
-
-  // Suspended 4th
-  'Asus4': 'x00230',
-  'A#sus4': 'x11341',
-  'Bsus4': 'x22452',
-  'Csus4': 'x33011',
-  'C#sus4': 'x44122',
-  'Dsus4': 'xx0233',
-  'D#sus4': 'xx1344',
-  'Esus4': '002200',
-  'Fsus4': '113311',
-  'F#sus4': '224422',
-  'Gsus4': '330033',
-  'G#sus4': '446644',
-
   // 5th, Power chord
   'A5': 'x022xx&f=--11--',
   'A#5': 'x133xx&f=--11--',
@@ -236,6 +208,49 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'F#dom9': '242324',
   'Gdom9': '353435',
   'G#dom9': '464546',
+
+
+  // Suspended 2nd
+  'Asus2': 'x02200',
+  'A#sus2': 'x13311',
+  'Bsus2': 'x24422',
+  'Csus2': 'x30033',
+  'C#sus2': 'x46644',
+  'Dsus2': 'xx0230',
+  'D#sus2': 'xx1341',
+  'Esus2': 'xx2452',
+  'Fsus2': 'xx3011',
+  'F#sus2': 'xx4122',
+  'Gsus2': '300033',
+  'G#sus2': '411144',
+
+  // Suspended 4th
+  'Asus4': 'x00230',
+  'A#sus4': 'x11341',
+  'Bsus4': 'x22452',
+  'Csus4': 'x33011',
+  'C#sus4': 'x44122',
+  'Dsus4': 'xx0233',
+  'D#sus4': 'xx1344',
+  'Esus4': '002200',
+  'Fsus4': '113311',
+  'F#sus4': '224422',
+  'Gsus4': '330033',
+  'G#sus4': '446644',
+
+  // 7th Suspended 4th
+  'A7sus4': 'x00233',
+  'A#7sus4': 'x11344',
+  'B7sus4': 'x22200',
+  'C7sus4': 'x33311',
+  'C#7sus4': 'x44422',
+  'D7sus4': 'xx0013',
+  'D#7sus4': 'xx1124',
+  'E7sus4': '020200',
+  'F7sus4': '131311',
+  'F#7sus4': '242422',
+  'G7sus4': '330011',
+  'G#7sus4': '444644',
 
   // Template:
   // 'A': '',

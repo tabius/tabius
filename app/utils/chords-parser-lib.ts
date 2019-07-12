@@ -43,7 +43,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7B9': 'A7-9, A7b9',
   '7sus2': 'A7sus2',
   '7sus24': 'A7sus24',
-  '7sus4': 'A7sus4, A7sus',
+  '7sus4': 'A7sus4, A7sus', // 7th Suspended 4th
   '7susB13': 'A7susb13',
   '7x11': 'A7+11',
   '7x9': 'A7+9',
