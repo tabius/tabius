@@ -88,9 +88,9 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     });
 
-    this.uds.getUser().pipe(takeUntil(this.destroyed$)).subscribe(user => {
-      this.hasEditRight = user ? user.groups.includes(UserGroup.Moderator) : false;
-    });
+    this.uds.getUser()
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(user => this.hasEditRight = user ? user.groups.includes(UserGroup.Moderator) : false);
   }
 
   ngOnDestroy(): void {
@@ -106,7 +106,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  isEditorOpened(songId: number): boolean {
+  isEditorOpen(songId: number): boolean {
     return this.songsWithOpenEditors.has(songId);
   }
 

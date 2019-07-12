@@ -10,6 +10,7 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
 import {getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
+import {UserGroup} from '@common/user-model';
 
 @Component({
   selector: 'gt-song-page',
@@ -24,6 +25,9 @@ export class SongPageComponent implements OnInit, OnDestroy {
   song?: Song;
   songDetails?: SongDetails;
   artist?: Artist;
+
+  hasEditRight = false;
+  editorIsOpen = false;
 
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
@@ -67,6 +71,9 @@ export class SongPageComponent implements OnInit, OnDestroy {
           this.updateMeta();
           this.cd.detectChanges();
         });
+    this.uds.getUser()
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(user => this.hasEditRight = user ? user.groups.includes(UserGroup.Moderator) : false);
   }
 
   ngOnDestroy(): void {
@@ -83,6 +90,12 @@ export class SongPageComponent implements OnInit, OnDestroy {
       keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
   }
+
+  toggleEditor(): void {
+    this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
+    this.cd.detectChanges();
+  }
+
 }
 
 function isServiceLineChar(c: string): boolean {

@@ -17,7 +17,7 @@
                     <div *ngIf="!hasEditRight" class="links-spacer"></div>
                 </div>
 
-                <gt-song-editor *ngIf="isEditorOpened(item.song.id)"
+                <gt-song-editor *ngIf="isEditorOpen(item.song.id)"
                                 (closeRequest)="toggleEditor(item.song.id)"
                                 [songId]="item.song.id"></gt-song-editor>
 
