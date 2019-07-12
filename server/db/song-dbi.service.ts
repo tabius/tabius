@@ -44,7 +44,19 @@ export class SongDbi {
         .query(`${SELECT_SONG_SQL}, artist a WHERE s.artist_id = a.id AND a.id IN ( ${idList} )`)
         .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
   }
+
+  async updateDetails(details: SongDetails): Promise<SongDetails> {
+    await this.db.pool.promise()
+        .query('UPDATE song SET content = ?, media_links = ?, version = version + 1 WHERE id = ?',
+            [details.content, details.mediaLinks.join('\n'), details.id]);
+    const updatedDetails = await this.getSongsDetails([details.id]);
+    if (updatedDetails.length === 0) {
+      throw `Song not found ${details.id}`;
+    }
+    return updatedDetails[0];
+  }
 }
+
 
 function row2Song(row: SongRow): Song {
   return {

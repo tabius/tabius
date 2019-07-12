@@ -1,7 +1,11 @@
 import {SongDbi} from '@server/db/song-dbi.service';
-import {Controller, Get, Logger, Param} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Logger, Param, Put, Session, UseGuards} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
-import {stringToArrayOfNumericIds} from '@server/util/validators';
+import {SongDetailsValidator, stringToArrayOfNumericIds} from '@server/util/validators';
+import {ServerAuthGuard} from '@server/util/server-auth.guard';
+import {User, UserGroup} from '@common/user-model';
+import {conformsTo, validate} from 'typed-validation';
+import {ServerSsoService} from '@server/service/server-sso.service';
 
 @Controller('/api/song')
 export class SongController {
@@ -24,5 +28,22 @@ export class SongController {
     const ids = stringToArrayOfNumericIds(idsParam);
     return this.songDbi.getSongsDetails(ids);
   }
+
+  /** Updates song details playlist and returns updated details. */
+  @Put('/update-details')
+  @UseGuards(ServerAuthGuard)
+  async update(@Session() session, @Body() songDetails: SongDetails): Promise<SongDetails> {
+    this.logger.log('/update-details');
+    const user: User = ServerSsoService.getUserOrFail(session);
+    if (!user.groups.includes(UserGroup.Moderator)) {
+      throw new HttpException('Insufficient rights', HttpStatus.UNAUTHORIZED);
+    }
+    const vr = validate(songDetails, conformsTo(SongDetailsValidator));
+    if (!vr.success) {
+      throw vr.toString();
+    }
+    return await this.songDbi.updateDetails(songDetails);
+  }
+
 
 }

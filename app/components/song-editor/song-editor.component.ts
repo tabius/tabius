@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {UserDataService} from '@app/services/user-data.service';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences} from '@common/util/misc-utils';
+import {SongDetails} from '@common/artist-model';
+import {ToastService} from '@app/toast/toast.service';
 
 /** Embeddable song editor component. */
 @Component({
@@ -26,24 +27,38 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   loaded = false;
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   content = '';
+  details?: SongDetails;
 
-  constructor(private readonly ads: ArtistDataService, private readonly uds: UserDataService) {
+  constructor(private readonly ads: ArtistDataService,
+              private readonly toastService: ToastService
+  ) {
   }
 
   ngOnInit(): void {
     throttleIndicator(this);
-    this.ads.getSongDetailsById(this.songId).pipe(takeUntil(this.destroyed$)).subscribe(details => {
-      this.content = details ? details.content : '?';
-      this.loaded = true;
-    });
+    this.ads.getSongDetailsById(this.songId)
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(details => {
+          this.details = details;
+          this.content = details ? details.content : '?';
+          this.loaded = true;
+        });
   }
 
   ngOnDestroy(): void {
     this.destroyed$.next();
   }
 
-  save(): void {
-    alert('TODO: ' + this.content);
+  async save(): Promise<void> {
+    if (!this.details || this.details.content === this.content) {
+      return;
+    }
+    try {
+      await this.ads.updateSongDetails({...this.details, content: this.content});
+      this.close();
+    } catch (err) {
+      this.toastService.warning(`Ошибка: ${err}`);
+    }
   }
 
   getContentRowsCount(): number {

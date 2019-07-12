@@ -240,6 +240,11 @@ export class ArtistDataService {
     const arrayOfPairs: EntityFlag[] = await latestFlags$.pipe(take(1)).toPromise();
     return arrayOfPairs.filter(p => !p.found).map(p => p.id);
   }
+
+  async updateSongDetails(details: SongDetails): Promise<void> {
+    const updatedDetails = await this.httpClient.put<SongDetails>(`/api/song/update-details`, details).toPromise();
+    await this.store.set(getSongDetailsKey(updatedDetails.id), updatedDetails, needUpdateByVersionChange);
+  }
 }
 
 function getArtistDetailsKey(artistId: number): string {
