@@ -96,6 +96,9 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
       continue;
     }
     if (parsedType === undefined) {
+      if (isKnownTypeAndTextConflict(c, text, idx)) {
+        return undefined;
+      }
       const typesByFirstChar = RAW_CHORD_TYPES_BY_FIRST_CHAR.get(c);
       if (typesByFirstChar !== undefined) {
         const rawType = findPrefixToken(text, idx, typesByFirstChar);
@@ -140,3 +143,19 @@ function isStringTabLikeLine(text: string): boolean {
   }
   return dashCount >= 2;
 }
+
+
+/** Returns true if the char at the given position is a text start. Chord parsing must start in this case. */
+function isKnownTypeAndTextConflict(c: string, text: string, idx: number): boolean {
+  return (c === '-' || c === '−') && (idx < text.length - 1 && !isWhitespaceOrChordExtender(text.charAt(idx + 1)));
+}
+
+/** Return true if a chord in any form can have this character as the last. */
+function isWhitespaceOrChordExtender(c: string): boolean {
+  return c === ' ' || c === '\n' || c === '/' || c === '(';
+}
+
+
+
+
+

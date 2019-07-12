@@ -50,6 +50,11 @@ describe('Chords parser, parseChord', () => {
     expect(parseChord('Ao')).toEqual({chord: c('A', 'dim'), startIdx: 0, endIdx: 2});
   });
 
+  it('does not false predict A-- as Am', () => {
+    expect(parseChord('A-')).toEqual({chord: c('A', 'min'), startIdx: 0, endIdx: 2});
+    expect(parseChord('A--')).toBeUndefined();
+  });
+
 });
 
 
