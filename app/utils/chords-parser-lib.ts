@@ -97,7 +97,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'min9': 'Am9',
   'minmaj11': 'AmM11',
   'minmaj13': 'AmM13',
-  'minmaj7': 'Am+7, AmM, AmM7, Am/M7',
+  'minmaj7': 'AmM7, Am7M, Am+7, AmM, Am/M7', // Minor Major 7th
   'minmaj9': 'AmM9',
   'mM7B5': 'AmM7b5',
   'mM7B9': 'AmM7b9, Am#7b9',

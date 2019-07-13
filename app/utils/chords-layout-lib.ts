@@ -153,6 +153,20 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gmin7': '353333',
   'G#min7': 'xxx102',
 
+  // Minor Major 7th
+  'Aminmaj7': 'x02110',
+  'A#minmaj7': 'x13221',
+  'Bminmaj7': 'x20302',
+  'Cminmaj7': 'x31003',
+  'C#minmaj7': 'x42114',
+  'Dminmaj7': 'xx0221',
+  'D#minmaj7': 'xx1332',
+  'Eminmaj7': '021000',
+  'Fminmaj7': '132111',
+  'F#minmaj7': '243222',
+  'Gminmaj7': '354333',
+  'G#minmaj7': '465444',
+
   // Diminished 7th
   'Adim7': 'x01212',
   'A#dim7': 'x12020',
@@ -209,7 +223,6 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gdom9': '353435',
   'G#dom9': '464546',
 
-
   // Suspended 2nd
   'Asus2': 'x02200',
   'A#sus2': 'x13311',
@@ -261,7 +274,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   // 'D': '',
   // 'D#': '',
   // 'E': '',
-  // 'F': ',
+  // 'F': '',
   // 'F#': '',
   // 'G': '',
   // 'G#': '',
