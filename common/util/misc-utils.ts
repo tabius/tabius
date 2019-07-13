@@ -107,22 +107,6 @@ export function isSmallScreenDevice(userAgent?: string): boolean {
   return userAgent != undefined && !!userAgent.match(/(android.*mobile|iphone|ipod|ipad|blackberry|iemobile|opera (mini|mobi))/i);
 }
 
-/**
- * Runs f() only if there is no opKey in the runningOps set.
- * Uses runningOps to keep track of the running state and cleans it up after f() is finished.
- */
-export async function runWithDedup<T>(opKey: string, runningOps: Set<string>, f: () => Promise<T>): Promise<T|undefined> {
-  if (runningOps.has(opKey)) {
-    return;
-  }
-  runningOps.add(opKey);
-  try {
-    return await f();
-  } finally {
-    runningOps.delete(opKey);
-  }
-}
-
 /** Accepts 1 argument and returns true if the argument !== undefined. */
 export function defined<T>(v: T|undefined): v is T {
   return v !== undefined;

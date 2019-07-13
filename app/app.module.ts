@@ -38,7 +38,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SongComponent} from './components/song/song.component';
 import {SongHeaderComponent} from './components/song-header/song-header.component';
 import {SongVideoComponent} from './components/song-video/song-video.component';
-import { SongEditorComponent } from './components/song-editor/song-editor.component';
+import {SongEditorComponent} from './components/song-editor/song-editor.component';
+import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { SongEditorComponent } from './components/song-editor/song-editor.compon
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
     {provide: TABIUS_BASE_API_URL, useValue: environment.apiUrl},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_ARTISTS_BROWSER_STORE_TOKEN, useClass: ArtistsBrowserStore},

@@ -13,10 +13,7 @@ import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
     ServerTransferStateModule,
   ],
 
-  bootstrap: [AppComponent],
-  providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
-  ]
+  bootstrap: [AppComponent]
 })
 export class AppServerModule {
 }

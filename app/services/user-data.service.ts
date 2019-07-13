@@ -3,9 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {combineLatest, Observable, of} from 'rxjs';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
-import {flatMap, map, switchMap} from 'rxjs/operators';
+import {flatMap, map, switchMap, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {defined, isValidId, keepDefined, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange, runWithDedup} from '@common/util/misc-utils';
+import {defined, isValidId, keepDefined, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
@@ -22,16 +22,13 @@ const USER_KEY = 'user';
 })
 export class UserDataService {
 
-  /** Keys of all in-flight requests. */
-  private readonly runningQueries = new Set<string>();
-
   constructor(private readonly httpClient: HttpClient,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
   ) {
   }
 
   getUserDeviceSettings(): Observable<UserDeviceSettings> {
-    return this.store.get<UserDeviceSettings|undefined>(DEVICE_SETTINGS_KEY)
+    return this.store.get<UserDeviceSettings>(DEVICE_SETTINGS_KEY)
         .pipe(map(s => s || newDefaultUserDeviceSettings()));
   }
 
@@ -44,21 +41,16 @@ export class UserDataService {
       return of(newDefaultUserSongSettings(0));
     }
     return this.getUser().pipe(
-        switchMap(user => {
-          this.fetchUserSettingsIfNeeded(user).catch(err => console.warn(err));
-          const key = getUserSongSettingsKey(songId);
-          return this.store.get<UserSongSettings|undefined>(key)
+        switchMap(() => {
+          return this.store.get<UserSongSettings>(getUserSongSettingsKey(songId),
+              () => this.fetchAndProcessUserSettings().pipe(map(userSettings => userSettings.songs[songId])), true)
               .pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
         }));
   }
 
-  private async fetchUserSettingsIfNeeded(user?: User): Promise<void> {
-    if (!this.store.isUpdated(USER_SETTINGS_FETCH_DATE_KEY) && user !== undefined) {
-      await runWithDedup(USER_SETTINGS_FETCH_DATE_KEY, this.runningQueries, async () => {
-        const settings = await this.httpClient.get<UserSettings>(`/api/user/settings`).toPromise();
-        await this.updateUserSettingsOnFetch(settings);
-      });
-    }
+  private fetchAndProcessUserSettings(): Observable<UserSettings> {
+    return this.httpClient.get<UserSettings>(`/api/user/settings`)
+        .pipe(tap(userSettings => this.updateUserSettingsOnFetch(userSettings)));
   }
 
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
@@ -70,12 +62,9 @@ export class UserDataService {
 
   getB4SiFlag(): Observable<boolean> {
     return this.getUser().pipe(
-        switchMap(user => {
-          this.fetchUserSettingsIfNeeded(user).catch(err => console.warn(err));
-          return this.store.get<boolean>(B4SI_FLAG_KEY)
-              .pipe(
-                  map(flag => flag === undefined ? false : flag),
-              );
+        switchMap(() => {
+          return this.store.get<boolean>(B4SI_FLAG_KEY, () => this.fetchAndProcessUserSettings().pipe(map(userSettings => userSettings.b4Si)), true)
+              .pipe(map(flag => flag === undefined ? false : flag));
         })
     );
   }
@@ -112,27 +101,23 @@ export class UserDataService {
 
   getUserPlaylists(): Observable<Playlist[]> {
     return this.getUser().pipe(
-        switchMap(user => {
-          this.fetchUserPlaylistsIfNeeded(user).catch(err => console.warn(err));
-          return this.store.get<string[]>(USER_PLAYLISTS_KEY).pipe(
-              flatMap(ids => {
-                    const playlist$Array = (ids || []).map(m => this.store.get<Playlist>(getPlaylistKey(m)));
-                    return playlist$Array.length > 0 ? combineLatest(playlist$Array).pipe(keepDefined) : of([]);
-                  }
-              ),
-              map(array => array.filter(defined) as Playlist[]),
-          ) as Observable<Playlist[]>;
+        switchMap(() => {
+          return this.store.get<string[]>(USER_PLAYLISTS_KEY, () => {
+            return this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`)
+                .pipe(
+                    tap(playlists => this.cachePlaylists(playlists)),
+                    map(playlists => playlists ? playlists.map(p => p.id) : []),
+                );
+          }, true)
+              .pipe(
+                  flatMap(ids => {
+                        const playlist$Array = (ids || []).map(m => this.store.get<Playlist>(getPlaylistKey(m)));
+                        return playlist$Array.length > 0 ? combineLatest(playlist$Array).pipe(keepDefined) : of([]);
+                      }
+                  ),
+                  map(array => array.filter(defined) as Playlist[]),
+              ) as Observable<Playlist[]>;
         }));
-  }
-
-  private async fetchUserPlaylistsIfNeeded(user): Promise<void> {
-    if (!this.store.isUpdated(USER_PLAYLISTS_KEY) && user !== undefined) {
-      await runWithDedup(USER_PLAYLISTS_KEY, this.runningQueries, async () => {
-        const playlists = await this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`).toPromise();
-        await this.cachePlaylists(playlists);
-        //todo: cleanup removed playlists?
-      });
-    }
   }
 
   async createPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
