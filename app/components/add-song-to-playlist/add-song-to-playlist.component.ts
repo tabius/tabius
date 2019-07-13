@@ -73,7 +73,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
       } else {
         newSongIds.push(this.songId);
       }
-      await this.uds.updateUserPlaylist({...playlist, songIds: newSongIds});
+      await this.uds.updatePlaylist({...playlist, songIds: newSongIds});
     } catch (err) {
       console.error(err);
       this.toastService.warning(err, MSG_NETWORK_ERROR);
@@ -94,7 +94,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
         return;
       }
       const createPlaylistRequest = {name: this.favPlaylistName, shared: true, songIds: [this.songId]}; //todo: dedup!
-      await this.uds.createUserPlaylist(createPlaylistRequest);
+      await this.uds.createPlaylist(createPlaylistRequest);
     } catch (err) {
       console.error(err);
       this.toastService.warning(err, MSG_NETWORK_ERROR);

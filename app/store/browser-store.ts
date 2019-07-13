@@ -1,5 +1,5 @@
 /** Browser storage with optimized interface to be used both on server & client sides.*/
-import {Observable, ReplaySubject} from 'rxjs';
+import {Observable, of, ReplaySubject} from 'rxjs';
 import {Inject, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {KV, StoreAdapter} from '@app/store/store-adapter';
@@ -17,7 +17,7 @@ const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
 export type NeedUpdateFn<T> = (oldValue?: T, newValue?: T) => boolean;
 
 export interface BrowserStore {
-  get<T>(key: string): Observable<T|undefined>;
+  get<T>(key?: string, fetchFn?: () => Observable<T|undefined>, refresh?: boolean): Observable<T|undefined>;
 
   /** Sets value. 'undefined' will trigger entry removal. */
   set<T>(key: string, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void>;
@@ -80,13 +80,33 @@ class BrowserStoreImpl implements BrowserStore {
     });
   }
 
-  get<T>(key: string): Observable<T|undefined> {
+  get<T>(key?: string, fetchFn?: () => Observable<T|undefined>, refresh?: boolean): Observable<T|undefined> {
+    if (!key) {
+      return of(undefined);
+    }
     let rs$ = this.dataMap.get(key);
     if (!rs$) {
       rs$ = this.newReplaySubject(key);
-      this.storeAdapter$$.then(store => store.get(key).then(value => rs$!.next(this.freezeFn(value))));
+      this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh).catch(err => console.error(err));
     }
     return rs$;
+  }
+
+  private async triggerFetchIfNotCached<T>(key: string,
+                                           rs$: ReplaySubject<T|undefined>,
+                                           fetchFn: (() => Observable<T|undefined>)|undefined,
+                                           refresh: boolean|undefined): Promise<void> {
+    const store = await this.storeAdapter$$;
+    let value = await store.get<T>(key);
+    if (!value) {
+      if (fetchFn) {
+        value = await fetchFn().toPromise();
+        await store.set(key, value);
+      }
+    } else if (fetchFn && refresh) { // this is first access to the cached value. Check if asked to refresh it.
+      fetchFn().toPromise().then(value => store.set(key, value).catch(err => console.log(err))); // fetch and refresh it asynchronously.
+    }
+    rs$.next(this.freezeFn(value));
   }
 
   private newReplaySubject<T>(key: string, initValue?: T): ReplaySubject<T|undefined> {

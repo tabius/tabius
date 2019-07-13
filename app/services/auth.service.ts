@@ -26,7 +26,7 @@ export class AuthService {
       await Promise.all([
         this.uds.setUser(user),
         this.uds.updateUserSettingsOnFetch(settings),
-        this.uds.cachePlaylistsInBrowserStore(playlists)]
+        this.uds.cachePlaylists(playlists)]
       );
     } catch (e) {
       console.warn(e);
