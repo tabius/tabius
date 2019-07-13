@@ -27,6 +27,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   loaded = false;
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   content = '';
+  mediaLinks = '';
   details?: SongDetails;
 
   constructor(private readonly ads: ArtistDataService,
@@ -41,6 +42,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
         .subscribe(details => {
           this.details = details;
           this.content = details ? details.content : '?';
+          this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
           this.loaded = true;
         });
   }
@@ -50,11 +52,11 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   }
 
   async save(): Promise<void> {
-    if (!this.details || this.details.content === this.content) {
+    if (!this.details || (this.details.content === this.content && this.details.mediaLinks.join(' ') == this.mediaLinks)) {
       return;
     }
     try {
-      await this.ads.updateSongDetails({...this.details, content: this.content});
+      await this.ads.updateSongDetails({...this.details, content: this.content, mediaLinks: this.mediaLinks.split(' ')});
       this.close();
     } catch (err) {
       this.toastService.warning(`Ошибка: ${err}`);

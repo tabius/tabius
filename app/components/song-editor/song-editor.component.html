@@ -7,6 +7,9 @@
     <div>
         <textarea [(ngModel)]="content" class="content" rows="{{getContentRowsCount()}}"></textarea>
     </div>
+    <div class="media-links-block">
+        <input [(ngModel)]="mediaLinks" type="text" placeholder="Ссылка на YouTube">
+    </div>
     <div class="buttons-row">
         <button class="btn btn-info save-button" (click)="save()">Сохранить</button>
         <button class="btn close-button" (click)="close()">Закрыть</button>
