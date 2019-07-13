@@ -19,6 +19,9 @@ export const NODE_BB_URL = 'https://forum.tabius.ru';
 export const MIN_DESKTOP_WIDTH = 900;
 export const HIRES_DESKTOP_WIDTH = 1921;
 
+export const MOBILE_NAV_HEIGHT = 60;
+export const DESKTOP_NAV_HEIGHT = 164;
+
 // Used as optimal mobile width in SSR rendering.
 export const SSR_MOBILE_WIDTH = 360;
 export const SSR_DESKTOP_WIDTH = 1920;

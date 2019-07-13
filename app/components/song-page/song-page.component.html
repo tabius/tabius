@@ -20,7 +20,9 @@
 
             <gt-song-editor *ngIf="editorIsOpen"
                             (closeRequest)="toggleEditor()"
-                            [songId]="song.id"></gt-song-editor>
+                            [songId]="song.id"
+                            [scrollIntoView]="true"
+            ></gt-song-editor>
         </div>
 
         <div *ngIf="hasValidForumTopic(song)" class="forum-link-block">

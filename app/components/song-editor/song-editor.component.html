@@ -4,7 +4,7 @@
 </div>
 
 <div *ngIf="loaded">
-    <div>
+    <div #contentBlock>
         <textarea [(ngModel)]="content" class="content" rows="{{getContentRowsCount()}}"></textarea>
     </div>
     <div class="media-links-block">

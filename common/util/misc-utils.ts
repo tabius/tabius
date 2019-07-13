@@ -2,6 +2,7 @@ import {Versioned} from '@common/common-model';
 import {ArtistType, Song} from '@common/artist-model';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {filter} from 'rxjs/operators';
+import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length == 0) {
@@ -145,4 +146,13 @@ export function countOccurrences(text: string, token: string): number {
 
 export function bound(min: number, value: number, max: number): number {
   return value <= min ? min : value >= max ? max : value;
+}
+
+
+export function scrollToView(element?: HTMLElement): void {
+  if (!element) {
+    return;
+  }
+  const headerHeight = window.innerWidth >= MIN_DESKTOP_WIDTH ? DESKTOP_NAV_HEIGHT + 10 : MOBILE_NAV_HEIGHT + 5;
+  window.scroll({left: window.scrollX, top: element.offsetTop - headerHeight, behavior: 'smooth'});
 }
