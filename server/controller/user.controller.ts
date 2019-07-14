@@ -48,10 +48,10 @@ export class UserController {
   }
 
   @Get('/settings')
-  getSettings(@Session() session): Promise<UserSettings> {
+  async getSettings(@Session() session): Promise<UserSettings> {
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`get settings: ${user.email}`);
-    return this._getSettings(user);
+    return await this._getSettings(user);
   }
 
   @Put('/settings/song')

@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {combineLatest, Observable, of} from 'rxjs';
-import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {flatMap, map, switchMap, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
@@ -41,14 +41,17 @@ export class UserDataService {
       return of(newDefaultUserSongSettings(0));
     }
     return this.getUser().pipe(
-        switchMap(() => {
+        switchMap(user => {
           return this.store.get<UserSongSettings>(getUserSongSettingsKey(songId),
-              () => this.fetchAndProcessUserSettings().pipe(map(userSettings => userSettings.songs[songId])), true)
+              () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])), true)
               .pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
         }));
   }
 
-  private fetchAndProcessUserSettings(): Observable<UserSettings> {
+  private fetchAndProcessUserSettings(user: User|undefined): Observable<UserSettings> {
+    if (!user) {
+      return of(newDefaultUserSettings());
+    }
     return this.httpClient.get<UserSettings>(`/api/user/settings`)
         .pipe(tap(userSettings => this.updateUserSettingsOnFetch(userSettings)));
   }
@@ -62,8 +65,8 @@ export class UserDataService {
 
   getB4SiFlag(): Observable<boolean> {
     return this.getUser().pipe(
-        switchMap(() => {
-          return this.store.get<boolean>(B4SI_FLAG_KEY, () => this.fetchAndProcessUserSettings().pipe(map(userSettings => userSettings.b4Si)), true)
+        switchMap(user => {
+          return this.store.get<boolean>(B4SI_FLAG_KEY, () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.b4Si)), true)
               .pipe(map(flag => flag === undefined ? false : flag));
         })
     );
@@ -101,7 +104,10 @@ export class UserDataService {
 
   getUserPlaylists(): Observable<Playlist[]> {
     return this.getUser().pipe(
-        switchMap(() => {
+        switchMap(user => {
+          if (!user) {
+            return of([]);
+          }
           return this.store.get<string[]>(USER_PLAYLISTS_KEY, () => {
             return this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`)
                 .pipe(
@@ -158,6 +164,10 @@ export class UserDataService {
     if (!user) {
       await this.store.clear();
     } else {
+      const currentUser = await this.store.get<User>(USER_KEY).toPromise();
+      if (currentUser && currentUser.id !== user.id) {
+        await this.store.clear();
+      }
       await this.store.set(USER_KEY, user, needUpdateByStringify);
     }
   }
