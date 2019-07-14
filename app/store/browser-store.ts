@@ -104,7 +104,8 @@ class BrowserStoreImpl implements BrowserStore {
         await store.set(key, value);
       }
     } else if (fetchFn && refresh) { // this is first access to the cached value. Check if asked to refresh it.
-      fetchFn().toPromise().then(value => store.set(key, value).catch(err => console.log(err))); // fetch and refresh it asynchronously.
+      // this action is performed async (non-blocking).
+      fetchFn().toPromise().then(value => store.set(key, value).catch(err => console.warn(err))); // fetch and refresh it asynchronously.
     }
     rs$.next(this.freezeFn(value));
   }
