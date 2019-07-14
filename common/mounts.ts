@@ -1,4 +1,5 @@
 export const FORUM_LINK = 'https://forum.tabius.ru';
+export const FORUM_LOGIN_LINK = `${FORUM_LINK}/login`;
 
 export const MOUNT_ARTISTS = 'artists';
 export const MOUNT_ARTIST_PREFIX = 'artist/';
