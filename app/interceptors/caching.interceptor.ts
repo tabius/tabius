@@ -16,26 +16,25 @@ export class CachingInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const cacheKey = req.method === 'GET' ? req.urlWithParams : undefined;
-    console.debug(`New request: ${cacheKey}`);
+    // console.debug(`New request: ${cacheKey}`);
     if (cacheKey) {
       const inFlightResponse = this.inFlight.get(cacheKey);
       if (inFlightResponse) {
-        console.log(`Found inFlight: ${cacheKey}`);
         return inFlightResponse;
       }
     }
-    console.debug(`Not found inFlight: ${cacheKey}`);
+    // console.debug(`Not found inFlight: ${cacheKey}`);
     if (this.bss.isBrowser) {
       if (!cacheKey) {
         return next.handle(req);
       }
-      console.debug(`Adding to inFlight: ${cacheKey}`);
+      // console.debug(`Adding to inFlight: ${cacheKey}`);
       const response$ = new ReplaySubject<HttpResponse<any>>(1);
       this.inFlight.set(cacheKey, response$);
       const responseObservable = next.handle(req);
       return responseObservable.pipe(tap(event => {
         if (event instanceof HttpResponse) {
-          console.debug(`Removing from inFlight: ${cacheKey}`, event);
+          // console.debug(`Removing from inFlight: ${cacheKey}`, event);
           this.inFlight.delete(cacheKey);
           response$.next(event);
         }
