@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {combineLatest, Observable, of} from 'rxjs';
 import {newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
-import {flatMap, map, switchMap, tap} from 'rxjs/operators';
+import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {defined, isValidId, keepDefined, needUpdateByShallowArrayCompare, needUpdateByStringify, needUpdateByVersionChange} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
@@ -164,7 +164,7 @@ export class UserDataService {
     if (!user) {
       await this.store.clear();
     } else {
-      const currentUser = await this.store.get<User>(USER_KEY).toPromise();
+      const currentUser = await this.store.get<User>(USER_KEY).pipe(take(1)).toPromise();
       if (currentUser && currentUser.id !== user.id) {
         await this.store.clear();
       }
