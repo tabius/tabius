@@ -128,12 +128,11 @@ class BrowserStoreImpl implements BrowserStore {
         return;
       }
     }
-    return store.set(key, value).then(() => {
-      const rs$ = this.dataMap.get(key);
-      if (rs$) {
-        rs$.next(this.freezeFn(value));
-      }
-    });
+    await store.set(key, value);
+    const rs$ = this.dataMap.get(key);
+    if (rs$) {
+      rs$.next(this.freezeFn(value));
+    }
   }
 
   async list<T>(keyPrefix: string): Promise<KV<T>[]> {
