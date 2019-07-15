@@ -3,6 +3,7 @@ import {ArtistType, Song} from '@common/artist-model';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {filter} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
+import {combineLatest, Observable, of} from 'rxjs';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length == 0) {
@@ -114,6 +115,15 @@ export function defined<T>(v: T|undefined): v is T {
 
 /** RxJS wrapper to keep only defined elements in the stream. */
 export const keepDefined = filter(defined);
+
+/**
+ * RxJS wrapper over Rx.combineLatest with a specific handling of an empty input arrays:
+ *  when empty array or observables is given as an input it will emit an empty array of values before completion.
+ */
+export function combineLatest0<T>(array: Observable<T>[]): Observable<T[]> {
+  const result$ = array.length === 0 ? of([]) : combineLatest(array);
+  return result$ as any as Observable<T[]>;
+}
 
 export function countOccurrences(text: string, token: string): number {
   let hits = 0;

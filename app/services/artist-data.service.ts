@@ -6,7 +6,7 @@ import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {ArtistDetailsResponse} from '@common/ajax-model';
-import {defined, isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
+import {combineLatest0, defined, isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
 import {WithNumId} from '@common/common-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -109,10 +109,7 @@ export class ArtistDataService {
     return fromPromise(this.fetchAndCacheMissedArtists(artistIds))
         .pipe(
             take(1),
-            flatMap(() => {
-              const artistArray$ = artistIds.map(id => this.store.get<Artist>(getArtistKey(id)));
-              return artistArray$.length === 0 ? of([]) : combineLatest(artistArray$);
-            }),
+            flatMap(() => combineLatest0(artistIds.map(id => this.store.get<Artist>(getArtistKey(id))))),
         );
   }
 
@@ -140,10 +137,7 @@ export class ArtistDataService {
     return fromPromise(this.fetchAndCacheMissedSongs(songIds))
         .pipe(
             take(1),
-            flatMap(() => {
-              const songArray$ = songIds.map(id => this.store.get<Song>(getSongKey(id)));
-              return songArray$.length === 0 ? of([]) : combineLatest(songArray$);
-            }));
+            flatMap(() => combineLatest0(songIds.map(id => this.store.get<Song>(getSongKey(id))))));
   }
 
   getSongDetailsById(songId: number|undefined): Observable<SongDetails|undefined> {
@@ -206,7 +200,7 @@ export class ArtistDataService {
             .pipe(map(([id, withId]) => ({id, found: withId !== undefined})))
     );
 
-    const latestFlags$ = flag$Array.length === 0 ? of([]) : combineLatest(flag$Array);
+    const latestFlags$: Observable<EntityFlag[]> = combineLatest0(flag$Array);
     const arrayOfPairs: EntityFlag[] = await latestFlags$.pipe(take(1)).toPromise();
     return arrayOfPairs.filter(p => !p.found).map(p => p.id);
   }
