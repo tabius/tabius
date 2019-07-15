@@ -66,6 +66,7 @@ export function newDefaultUserSongSettings(songId: number): UserSongSettings {
   };
 }
 
+export const DEFAULT_B4SI_FLAG = false;
 export function newDefaultUserSettings(): UserSettings {
   return {
     songs: {}

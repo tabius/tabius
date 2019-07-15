@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {combineLatest, Observable, of} from 'rxjs';
-import {newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {DEFAULT_B4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
@@ -42,6 +42,9 @@ export class UserDataService {
     }
     return this.getUser().pipe(
         switchMap(user => {
+          if (!user) {
+            return new BehaviorSubject(newDefaultUserSongSettings(songId));
+          }
           return this.store.get<UserSongSettings>(getUserSongSettingsKey(songId),
               () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])), true)
               .pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
@@ -66,6 +69,9 @@ export class UserDataService {
   getB4SiFlag(): Observable<boolean> {
     return this.getUser().pipe(
         switchMap(user => {
+          if (!user) {
+            return new BehaviorSubject(DEFAULT_B4SI_FLAG);
+          }
           return this.store.get<boolean>(B4SI_FLAG_KEY, () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.b4Si)), true)
               .pipe(map(flag => flag === undefined ? false : flag));
         })
@@ -113,7 +119,7 @@ export class UserDataService {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
-            return of([]);
+            return new BehaviorSubject([]);
           }
           return this.store.get<string[]>(USER_PLAYLISTS_KEY, () => {
             return this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`)
@@ -169,11 +175,11 @@ export class UserDataService {
 
   async setUser(user?: User): Promise<void> {
     if (!user) {
-      await this.store.clear();
+      // await this.store.clear();
     } else {
       const currentUser = await this.store.get<User>(USER_KEY).pipe(take(1)).toPromise();
       if (currentUser && currentUser.id !== user.id) {
-        await this.store.clear();
+        // await this.store.clear();
       }
       await this.store.set(USER_KEY, user, needUpdateByStringify);
     }
