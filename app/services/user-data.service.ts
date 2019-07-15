@@ -181,8 +181,8 @@ export class UserDataService {
       if (currentUser && currentUser.id !== user.id) {
         // await this.store.clear();
       }
-      await this.store.set(USER_KEY, user, needUpdateByStringify);
     }
+    await this.store.set(USER_KEY, user, needUpdateByStringify);
   }
 }
 
