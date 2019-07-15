@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injectable, OnDes
 import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
 import {Meta, Title} from '@angular/platform-browser';
 import {Artist, Song} from '@common/artist-model';
-import {flatMap, map, shareReplay, take, takeUntil, throttleTime} from 'rxjs/operators';
+import {flatMap, map, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
 import {combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
 import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
@@ -52,12 +52,11 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
     const pageInput = this.route.data['value'].input as PlaylistPageInput;
     this.playlist = pageInput.playlist;
 
-    const playlist$ = this.uds.getPlaylist(this.playlist.id).pipe(shareReplay(1));
+    const playlist$ = this.uds.getPlaylist(this.playlist.id);
 
     const songs$: Observable<Song[]> = playlist$.pipe(
         flatMap(playlist => playlist === undefined ? of([]) : this.ads.getSongsByIds(playlist.songIds)),
         map(songs => songs.filter(defined) as Song[]),
-        shareReplay(1)
     );
     const artists$: Observable<(Artist|undefined)[]> = songs$.pipe(
         flatMap(songs => this.ads.getArtistsByIds(songs.map(s => s.artistId)))

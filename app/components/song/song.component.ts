@@ -3,7 +3,7 @@ import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Artist, Song, SongDetails} from '@common/artist-model';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {flatMap, shareReplay, takeUntil} from 'rxjs/operators';
+import {flatMap, takeUntil} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
 
@@ -47,7 +47,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
       this.songSubscription.unsubscribe();
     }
 
-    const song$ = this.ads.getSongById(this.songId).pipe(shareReplay(1));
+    const song$ = this.ads.getSongById(this.songId);
     const songDetails$ = this.ads.getSongDetailsById(this.songId);
     const artist$ = song$.pipe(flatMap(song => this.ads.getArtistById(song ? song.artistId : undefined)));
     const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song ? song.id : undefined)));
