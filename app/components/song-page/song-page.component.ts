@@ -3,7 +3,7 @@ import {ArtistDataService} from '@app/services/artist-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {Artist, Song, SongDetails} from '@common/artist-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
-import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
+import {flatMap, shareReplay, takeUntil, throttleTime} from 'rxjs/operators';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
@@ -53,7 +53,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
     const songMount = params['songMount'];
 
     const artist$ = this.ads.getArtistByMount(artistMount);
-    const song$ = this.ads.getSongByMount(artistMount, songMount);
+    const song$ = this.ads.getSongByMount(artistMount, songMount).pipe(shareReplay(1));
     const songDetails$ = song$.pipe(flatMap(song => this.ads.getSongDetailsById(song ? song.id : undefined)));
 
     combineLatest([artist$, song$, songDetails$])

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Artist, Song} from '@common/artist-model';
 import {ActivatedRoute} from '@angular/router';
-import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
+import {flatMap, map, shareReplay, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
@@ -50,7 +50,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
     throttleIndicator(this);
 
     const artistMount = this.route.snapshot.params['artistMount'];
-    const artist$: Observable<Artist|undefined> = this.ads.getArtistByMount(artistMount);
+    const artist$: Observable<Artist|undefined> = this.ads.getArtistByMount(artistMount).pipe(shareReplay(1));
     const bands$ = artist$.pipe(
         flatMap(artist => artist ? this.ads.getArtistsByIds(artist.bandIds) : of(undefined)),
         map(bands => bands ? bands.filter(defined) : undefined),
