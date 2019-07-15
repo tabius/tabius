@@ -33,7 +33,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   mediaLinks = '';
   details?: SongDetails;
 
-  @ViewChild('contentBlock', {static: false, read: ElementRef}) private contentRef?: ElementRef;
+  @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef?: ElementRef;
 
   constructor(private readonly ads: ArtistDataService,
               private readonly toastService: ToastService
@@ -50,7 +50,14 @@ export class SongEditorComponent implements OnInit, OnDestroy {
           this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
           this.loaded = true;
           if (this.scrollIntoView) {
-            setTimeout(() => scrollToView(this.contentRef && this.contentRef.nativeElement), 200);
+            setTimeout(() => {
+              if (this.contentRef && this.contentRef.nativeElement) {
+                const textArea: HTMLTextAreaElement = this.contentRef.nativeElement;
+                textArea.focus({preventScroll: true});
+                textArea.selectionEnd = 0;
+                scrollToView(textArea);
+              }
+            }, 200);
           }
         });
   }

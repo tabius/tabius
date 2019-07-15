@@ -4,8 +4,8 @@
 </div>
 
 <div *ngIf="loaded">
-    <div #contentBlock>
-        <textarea [(ngModel)]="content" class="content" rows="{{getContentRowsCount()}}"></textarea>
+    <div>
+        <textarea #textArea [(ngModel)]="content" class="content" rows="{{getContentRowsCount()}}"></textarea>
     </div>
     <div class="media-links-block">
         <input [(ngModel)]="mediaLinks" type="text" placeholder="Ссылка на YouTube">
