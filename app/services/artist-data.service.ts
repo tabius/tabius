@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
 import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
@@ -51,7 +51,7 @@ export class ArtistDataService {
 
   getArtistDetails(artistId: number|undefined): Observable<ArtistDetails|undefined> {
     if (isInvalidId(artistId)) {
-      return of(undefined);
+      return new BehaviorSubject(undefined);
     }
     this.fetchArtistDetailsIfNeeded(artistId).catch(err => console.warn(err));
     const artistKey = getArtistDetailsKey(artistId);
@@ -100,7 +100,7 @@ export class ArtistDataService {
 
   getArtistById(artistId?: number): Observable<(Artist|undefined)> {
     if (isInvalidId(artistId)) {
-      return of(undefined);
+      return new BehaviorSubject(undefined);
     }
     return this.getArtistsByIds([artistId]).pipe(map(list => list[0]));
   }
@@ -131,7 +131,7 @@ export class ArtistDataService {
 
   getSongById(songId?: number): Observable<(Song|undefined)> {
     if (isInvalidId(songId)) {
-      return of(undefined);
+      return new BehaviorSubject(undefined);
     }
     return this.getSongsByIds([songId]).pipe(map(list => list[0]));
   }
@@ -148,7 +148,7 @@ export class ArtistDataService {
 
   getSongDetailsById(songId: number|undefined): Observable<SongDetails|undefined> {
     if (isInvalidId(songId)) {
-      return of(undefined);
+      return new BehaviorSubject(undefined);
     }
     this.fetchAndCacheMissedSongDetailsIfNeeded([songId]).catch(err => console.warn(err));
     const songDetailsKey = getSongDetailsKey(songId);
