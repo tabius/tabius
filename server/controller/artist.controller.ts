@@ -30,7 +30,7 @@ export class ArtistController {
     this.logger.log(`details-by-id: ${id}`);
     const artistIds = stringToArrayOfNumericIds(id);
     if (artistIds.length != 1) {
-      throw new Error('Expecting only 1 artist id as input: ' + id);
+      throw `Expecting only 1 artist id as input: ${id}`;
     }
     const artists$$ = this.artistDbi.getArtistsByIds(artistIds);
     const songs$$ = this.songsDbi.getSongsByArtistIds(artistIds);

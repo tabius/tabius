@@ -43,7 +43,7 @@ export function getToneNumberByTone(tone: ChordTone): number {
     case 'B':
       return 11;
   }
-  throw new Error(`Bad tone: ${tone}`);
+  throw `Bad tone: ${tone}`;
 }
 
 export function getToneByToneNumber(toneNumber: number, flat?: boolean): ChordTone {
@@ -73,7 +73,7 @@ export function getToneByToneNumber(toneNumber: number, flat?: boolean): ChordTo
     case 11:
       return 'B';
   }
-  throw new Error(`Illegal tone number: ${toneNumber}`);
+  throw `Illegal tone number: ${toneNumber}`;
 }
 
 export function renderChord(chord: Chord, options: ChordRenderingOptions = {}): string {

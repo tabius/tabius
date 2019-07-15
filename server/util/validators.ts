@@ -10,7 +10,7 @@ import {SongDetails} from '@common/artist-model';
  */
 export function stringToArrayOfNumericIds(text: unknown): number[] {
   if (typeof text !== 'string') {
-    throw new Error(`Value is not a string: ${text}`);
+    throw `Value is not a string: ${text}`;
   }
   const result: number[] = [];
   for (const token of text.split(',')) {
