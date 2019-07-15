@@ -78,7 +78,14 @@ export class UserDataService {
     await this.updateUserSettingsOnFetch(settings);
   }
 
+  /** Used to dedup updates triggered by the same de-multiplexed fetch call.*/
+  private lastUpdatedSettings?: UserSettings;
+
   async updateUserSettingsOnFetch(userSettings: UserSettings): Promise<void> {
+    if (this.lastUpdatedSettings === userSettings) {
+      return;
+    }
+    this.lastUpdatedSettings = userSettings;
     const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
 
     const allOps: Promise<void>[] = [];
