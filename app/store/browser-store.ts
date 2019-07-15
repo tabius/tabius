@@ -1,5 +1,5 @@
 /** Browser storage with optimized interface to be used both on server & client sides.*/
-import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from 'rxjs';
 import {Inject, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {KV, StoreAdapter} from '@app/store/store-adapter';
@@ -10,7 +10,8 @@ import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';
 import {ARTISTS_STORE_SCHEMA_VERSION} from '@common/artist-model';
 import {APP_STORE_NAME, ARTISTS_STORE_NAME, USER_STORE_NAME} from '@common/constants';
 import {USERS_STORE_SCHEMA_VERSION} from '@common/user-model';
-import {take} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
+import {fromPromise} from 'rxjs/internal-compatibility';
 
 const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
 
@@ -86,11 +87,13 @@ class BrowserStoreImpl implements BrowserStore {
       return new BehaviorSubject(undefined);
     }
     let rs$ = this.dataMap.get(key);
-    if (!rs$) {
-      rs$ = this.newReplaySubject(key);
-      this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh).catch(err => console.error(err));
+    if (rs$) {
+      return rs$;
     }
-    return rs$;
+    rs$ = this.newReplaySubject(key);
+    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh).catch(err => console.error(err));
+    const fetch$: Observable<void> = fromPromise(fetch$$);
+    return combineLatest([fetch$, rs$]).pipe(map(([, rs]) => rs));
   }
 
   private async triggerFetchIfNotCached<T>(key: string,
