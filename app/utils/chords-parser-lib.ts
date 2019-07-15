@@ -41,7 +41,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7/9': 'A7/9, AM7/9',
   '7B5b9': 'A7b5b9',
   '7B9': 'A7-9, A7b9',
-  '7sus2': 'A7sus2',
+  '7sus2': 'A7sus2', // 7th Suspended 2nd
   '7sus24': 'A7sus24',
   '7sus4': 'A7sus4, A7sus', // 7th Suspended 4th
   '7susB13': 'A7susb13',
@@ -64,9 +64,9 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'dimB9': 'Adimb9',
   'dom11': 'A11, Adom11',
   'dom13': 'A13, Adom13',
-  'dom7': 'A7, Adom, Adom7', // Dominant 7th
+  'dom7': 'A7, Adom, Adom7', // 7th, Dominant 7th
   'dom7dim5': 'A7b5, Adom7dim5',
-  'dom9': 'A9, Adom9', // Dominant 9th
+  'dom9': 'A9, Adom9', // 9th, Dominant 9th
   'half_diminished9': 'AØ9',
   'half_diminishedB9': 'AØb9',
   'm11B5b9': 'Am11b5b9, Am11o5b9',

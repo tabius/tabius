@@ -111,7 +111,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gmin6': '310030',
   'G#min6': 'xxx101',
 
-  // Dominant 7th
+  // 7th, Dominant 7th
   'Adom7': 'x02020',
   'A#dom7': 'x13131',
   'Bdom7': 'x21202',
@@ -209,14 +209,14 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gadd9': '320203',
   'G#add9': '43131x',
 
-  // Dominant 9th
+  // 9th, Dominant 9th
   'Adom9': 'x02423&f=x01312',
   'A#dom9': 'x1011x',
   'Bdom9': 'x2122x',
   'Cdom9': 'x32330',
   'C#dom9': 'x4344x',
-  'Ddom9': 'xx0210',
-  'D#dom9': 'x6566x',
+  'Ddom9': 'x5455x',
+  'D#dom9': 'xx1021',
   'Edom9': '020102',
   'Fdom9': '131213',
   'F#dom9': '242324',
@@ -264,6 +264,20 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'F#sus4': '224422',
   'Gsus4': '330033',
   'G#sus4': '446644',
+
+  // 7th Suspended 2nd
+  'A7sus2': 'x02000',
+  'A#7sus2': 'x13111',
+  'B7sus2': 'x24222',
+  'C7sus2': 'x30333',
+  'C#7sus2': 'x46444',
+  'D7sus2': 'xx0210',
+  'D#7sus2': 'xx1321',
+  'E7sus2': 'xx2432',
+  'F7sus2': 'xx3543',
+  'F#7sus2': 'xx4654',
+  'G7sus2': '303033',
+  'G#7sus2': 'xx6876',
 
   // 7th Suspended 4th
   'A7sus4': 'x00233',
