@@ -19,7 +19,7 @@ export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add9'|'add11'|'2'|'5'|'6/
     |'m11B5b9'|'m11B9'|'m2'|'m7B9'|'M7B9'|'M7x11'|'m7x11'|'m7x9'|'M7x9'|'M9x11'
     |'maj'|'maj11'|'maj13'|'maj6'|'maj7'|'maj7sus2'|'maj7sus24'|'maj7sus4'|'maj9'
     |'min'|'min11'|'min13'|'min6'|'min7'|'min7dim5'|'min9'|'minmaj11'|'minmaj13'|'minmaj7'|'minmaj9'|'mM7B5'|'mM7B9'|'Mx11'
-    |'sus2'|'sus24'|'sus2B5'|'sus4';
+    |'sus2'|'sus2sus4'|'sus2B5'|'sus4';
 
 // noinspection SpellCheckingInspection
 /**
@@ -103,7 +103,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'mM7B9': 'AmM7b9, Am#7b9',
   'Mx11': 'AM+11',
   'sus2': 'Asus2', // Suspended 2nd
-  'sus24': 'Asus24, Asus42',
+  'sus2sus4': 'Asus24, Asus42', // Suspended 2nd Suspended 4th
   'sus2B5': 'Asus2b5, A2-5, Asus2-5',
   'sus4': 'Asus4, Asus, A4, Aadd4', // Suspended 4th
 };
