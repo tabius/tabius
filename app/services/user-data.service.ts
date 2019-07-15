@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {DEFAULT_B4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
@@ -43,7 +43,7 @@ export class UserDataService {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
-            return new BehaviorSubject(newDefaultUserSongSettings(songId));
+            return of(newDefaultUserSongSettings(songId));
           }
           return this.store.get<UserSongSettings>(getUserSongSettingsKey(songId),
               () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])), true)
@@ -70,7 +70,7 @@ export class UserDataService {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
-            return new BehaviorSubject(DEFAULT_B4SI_FLAG);
+            return of(DEFAULT_B4SI_FLAG);
           }
           return this.store.get<boolean>(B4SI_FLAG_KEY, () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.b4Si)), true)
               .pipe(map(flag => flag === undefined ? false : flag));
@@ -119,7 +119,7 @@ export class UserDataService {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
-            return new BehaviorSubject([]);
+            return of([]);
           }
           return this.store.get<string[]>(USER_PLAYLISTS_KEY, () => {
             return this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`)

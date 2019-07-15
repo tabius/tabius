@@ -1,5 +1,5 @@
 /** Browser storage with optimized interface to be used both on server & client sides.*/
-import {BehaviorSubject, combineLatest, Observable, ReplaySubject} from 'rxjs';
+import {combineLatest, Observable, of, ReplaySubject} from 'rxjs';
 import {Inject, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {KV, StoreAdapter} from '@app/store/store-adapter';
@@ -84,7 +84,7 @@ class BrowserStoreImpl implements BrowserStore {
 
   get<T>(key?: string, fetchFn?: () => Observable<T|undefined>, refresh?: boolean): Observable<T|undefined> {
     if (!key) {
-      return new BehaviorSubject(undefined);
+      return of(undefined);
     }
     let rs$ = this.dataMap.get(key);
     if (rs$) {
