@@ -62,7 +62,7 @@ export class UserDataService {
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
     const key = getUserSongSettingsKey(songSettings.songId);
     await this.store.set(key, songSettings, needUpdateByStringify);
-    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).toPromise();
+    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).pipe(take(1)).toPromise();
     await this.updateUserSettingsOnFetch(settings);
   }
 
@@ -80,7 +80,7 @@ export class UserDataService {
 
   async setB4SiFlag(b4SiFlag: boolean): Promise<void> {
     await this.store.set(B4SI_FLAG_KEY, b4SiFlag || undefined); //todo: need update?
-    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).toPromise();
+    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).pipe(take(1)).toPromise();
     await this.updateUserSettingsOnFetch(settings);
   }
 
@@ -140,17 +140,17 @@ export class UserDataService {
   }
 
   async createPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
-    const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).toPromise();
+    const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).pipe(take(1)).toPromise();
     await this.cachePlaylists(response);
   }
 
   async updatePlaylist(playlist: Playlist): Promise<void> {
-    const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).toPromise();
+    const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).pipe(take(1)).toPromise();
     await this.cachePlaylists(response);
   }
 
   async deleteUserPlaylist(playlistId: string): Promise<void> {
-    const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).toPromise();
+    const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).pipe(take(1)).toPromise();
     await this.cachePlaylists(response);
   }
 

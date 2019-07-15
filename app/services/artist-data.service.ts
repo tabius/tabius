@@ -38,7 +38,7 @@ export class ArtistDataService {
 
   private async fetchArtistsListIfNeeded(): Promise<void> {
     if (this.bss.isOnline() && !this.store.isUpdated(ARTIST_LIST_KEY)) {
-      const artists = await this.httpClient.get<Artist[]>('/api/artist/all').toPromise();
+      const artists = await this.httpClient.get<Artist[]>('/api/artist/all').pipe(take(1)).toPromise();
       await Promise.all(artists.map(artist => this.registerArtistOnFetch(artist)));
       await this.store.set(ARTIST_LIST_KEY, artists.map(artist => artist.id), needUpdateByShallowArrayCompare);
     }
@@ -63,14 +63,14 @@ export class ArtistDataService {
       return;
     }
     const idsParam = artistIds.join(',');
-    const artists = await this.httpClient.get<Artist[]>(`/api/artist/by-ids/${idsParam}`).toPromise();
+    const artists = await this.httpClient.get<Artist[]>(`/api/artist/by-ids/${idsParam}`).pipe(take(1)).toPromise();
     await Promise.all(artists.map(artist => this.registerArtistOnFetch(artist)));
   }
 
   private async fetchArtistDetailsIfNeeded(artistId: number): Promise<void> {
     const artistDetailsKey = getArtistDetailsKey(artistId);
     if (this.bss.isOnline() && !this.store.isUpdated(artistDetailsKey)) {
-      const {artist, songs} = await this.httpClient.get<ArtistDetailsResponse>(`/api/artist/details-by-id/${artistId}`).toPromise();
+      const {artist, songs} = await this.httpClient.get<ArtistDetailsResponse>(`/api/artist/details-by-id/${artistId}`).pipe(take(1)).toPromise();
       const details: ArtistDetails = {
         id: artist.id,
         songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
@@ -174,7 +174,7 @@ export class ArtistDataService {
     if (songIds.length === 0) {
       return;
     }
-    const songs = await this.httpClient.get<Song[]>(`/api/song/by-ids/${songIds}`).toPromise();
+    const songs = await this.httpClient.get<Song[]>(`/api/song/by-ids/${songIds}`).pipe(take(1)).toPromise();
     await Promise.all(songs.map(song => this.store.set(getSongKey(song.id), song, needUpdateByVersionChange)));
   }
 
@@ -182,7 +182,7 @@ export class ArtistDataService {
     if (songIds.length === 0) {
       return;
     }
-    const detailsList = await this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songIds}`).toPromise();
+    const detailsList = await this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songIds}`).pipe(take(1)).toPromise();
     await Promise.all(detailsList.map(details => this.store.set(getSongDetailsKey(details.id), details, needUpdateByVersionChange)));
   }
 
@@ -212,7 +212,7 @@ export class ArtistDataService {
   }
 
   async updateSongDetails(details: SongDetails): Promise<void> {
-    const updatedDetails = await this.httpClient.put<SongDetails>(`/api/song/update-details`, details).toPromise();
+    const updatedDetails = await this.httpClient.put<SongDetails>(`/api/song/update-details`, details).pipe(take(1)).toPromise();
     await this.store.set(getSongDetailsKey(updatedDetails.id), updatedDetails, needUpdateByVersionChange);
   }
 }
