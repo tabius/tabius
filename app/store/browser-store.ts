@@ -10,6 +10,7 @@ import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';
 import {ARTISTS_STORE_SCHEMA_VERSION} from '@common/artist-model';
 import {APP_STORE_NAME, ARTISTS_STORE_NAME, USER_STORE_NAME} from '@common/constants';
 import {USERS_STORE_SCHEMA_VERSION} from '@common/user-model';
+import {take} from 'rxjs/operators';
 
 const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
 
@@ -100,7 +101,7 @@ class BrowserStoreImpl implements BrowserStore {
     let value = await store.get<T>(key);
     if (!value) {
       if (fetchFn) {
-        value = await fetchFn().toPromise();
+        value = await fetchFn().pipe(take(1)).toPromise();
         await store.set(key, value);
       }
     } else if (fetchFn && refresh) { // this is first access to the cached value. Check if asked to refresh it.
