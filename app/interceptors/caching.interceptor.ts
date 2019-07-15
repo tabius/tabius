@@ -1,13 +1,13 @@
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Observable, of, ReplaySubject} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {tap} from 'rxjs/operators';
 
 @Injectable()
 export class CachingInterceptor implements HttpInterceptor {
 
-  private readonly inFlight = new Map<string, ReplaySubject<HttpResponse<any>>>();
+  private readonly inFlight = new Map<string, Observable<HttpEvent<any>>>();
 
   private readonly cachedResponses = new Map<string, any>();
 
@@ -29,16 +29,13 @@ export class CachingInterceptor implements HttpInterceptor {
         return next.handle(req);
       }
       // console.debug(`Adding to inFlight: ${cacheKey}`);
-      const response$ = new ReplaySubject<HttpResponse<any>>(1);
+      const response$ = next.handle(req);
       this.inFlight.set(cacheKey, response$);
-      const responseObservable = next.handle(req);
-      return responseObservable.pipe(tap(event => {
-        if (event instanceof HttpResponse) {
-          // console.debug(`Removing from inFlight: ${cacheKey}`, event);
-          this.inFlight.delete(cacheKey);
-          response$.next(event);
-        }
-      }));
+      response$.toPromise().then(() => {
+        // console.debug(`Removing from inFlight: ${cacheKey}`, event);
+        this.inFlight.delete(cacheKey);
+      });
+      return response$;
     }
 
     // Server side mode from here
