@@ -195,6 +195,20 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gaug7': '321001',
   'G#aug7': '141221',
 
+  // 9th, Dominant 9th
+  'Adom9': 'x02423&f=x01312',
+  'A#dom9': 'x1011x',
+  'Bdom9': 'x2122x',
+  'Cdom9': 'x32330',
+  'C#dom9': 'x4344x',
+  'Ddom9': 'x5455x',
+  'D#dom9': 'xx1021',
+  'Edom9': '020102',
+  'Fdom9': '131213',
+  'F#dom9': '242324',
+  'Gdom9': '353435',
+  'G#dom9': '464546',
+
   // Major Add 9th
   'Aadd9': '54242x',
   'A#add9': 'x10311',
@@ -209,19 +223,19 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gadd9': '320203',
   'G#add9': '43131x',
 
-  // 9th, Dominant 9th
-  'Adom9': 'x02423&f=x01312',
-  'A#dom9': 'x1011x',
-  'Bdom9': 'x2122x',
-  'Cdom9': 'x32330',
-  'C#dom9': 'x4344x',
-  'Ddom9': 'x5455x',
-  'D#dom9': 'xx1021',
-  'Edom9': '020102',
-  'Fdom9': '131213',
-  'F#dom9': '242324',
-  'Gdom9': '353435',
-  'G#dom9': '464546',
+  // 11th, Dominant 11th
+  'Adom11': '542233',
+  'A#dom11': '653344',
+  'Bdom11': 'x21200',
+  'Cdom11': 'x32311',
+  'C#dom11': 'x43422',
+  'Ddom11': 'x54533',
+  'D#dom11': 'x65644',
+  'Edom11': 'x76755',
+  'Fdom11': '10131x',
+  'F#dom11': '212100',
+  'Gdom11': '320011',
+  'G#dom11': '431122',
 
   // Major Add 11th
   'Aadd11': '54223x',
