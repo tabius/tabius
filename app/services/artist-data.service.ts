@@ -6,7 +6,7 @@ import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {ArtistDetailsResponse} from '@common/ajax-model';
-import {combineLatest0, defined, isInvalidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
+import {combineLatest0, defined, isInvalidId, isValidId, needUpdateByShallowArrayCompare, needUpdateByVersionChange} from '@common/util/misc-utils';
 import {WithNumId} from '@common/common-model';
 import {BrowserStore} from '@app/store/browser-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -70,21 +70,25 @@ export class ArtistDataService {
   private async fetchArtistDetailsIfNeeded(artistId: number): Promise<void> {
     const artistDetailsKey = getArtistDetailsKey(artistId);
     if (this.bss.isOnline() && !this.store.isUpdated(artistDetailsKey)) {
-      const {artist, songs} = await this.httpClient.get<ArtistDetailsResponse>(`/api/artist/details-by-id/${artistId}`).pipe(take(1)).toPromise();
-      const details: ArtistDetails = {
-        id: artist.id,
-        songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
-        version: artist.version,
-      };
-      await Promise.all([
-        ...songs.map(s => this.store.set(getSongKey(s.id), s, needUpdateByVersionChange)),
-        this.registerArtistOnFetch(artist),
-        this.store.set(artistDetailsKey, details, needUpdateByVersionChange)]
-      );
+      const details = await this.httpClient.get<ArtistDetailsResponse>(`/api/artist/details-by-id/${artistId}`).pipe(take(1)).toPromise();
+      await this.registerArtistDetailsOnFetch(details);
       if (this.bss.isBrowser) { // todo: find a better place for all-songs pre-fetch?
-        this.fetchAndCacheMissedSongDetailsIfNeeded(songs.map(s => s.id)); // pre-fetch all songs
+        this.fetchAndCacheMissedSongDetailsIfNeeded(details.songs.map(s => s.id)); // pre-fetch all songs
       }
     }
+  }
+
+  private async registerArtistDetailsOnFetch({artist, songs}: ArtistDetailsResponse): Promise<void> {
+    const details: ArtistDetails = {
+      id: artist.id,
+      songIds: songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
+      version: artist.version,
+    };
+    await Promise.all([
+      ...songs.map(s => this.store.set(getSongKey(s.id), s, needUpdateByVersionChange)),
+      this.registerArtistOnFetch(artist),
+      this.store.set(getArtistDetailsKey(artist.id), details, needUpdateByVersionChange)]
+    );
   }
 
   getSongsByArtistId(artistId?: number): Observable<Song[]|undefined> {
@@ -208,6 +212,14 @@ export class ArtistDataService {
   async updateSongDetails(details: SongDetails): Promise<void> {
     const updatedDetails = await this.httpClient.put<SongDetails>(`/api/song/update-details`, details).pipe(take(1)).toPromise();
     await this.store.set(getSongDetailsKey(updatedDetails.id), updatedDetails, needUpdateByVersionChange);
+  }
+
+  async deleteSong(songId?: number): Promise<void> {
+    if (!isValidId(songId)) {
+      return;
+    }
+    const details = await this.httpClient.delete<ArtistDetailsResponse>('/api/song/' + songId).pipe(take(1)).toPromise();
+    await this.registerArtistDetailsOnFetch(details);
   }
 }
 

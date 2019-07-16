@@ -6,6 +6,8 @@ import {takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences, scrollToView} from '@common/util/misc-utils';
 import {SongDetails} from '@common/artist-model';
 import {ToastService} from '@app/toast/toast.service';
+import {MOUNT_ARTISTS} from '@common/mounts';
+import {Router} from '@angular/router';
 
 /** Embeddable song editor component. */
 @Component({
@@ -32,11 +34,13 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   content = '';
   mediaLinks = '';
   details?: SongDetails;
+  deleteConfirmationFlag = false;
 
   @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef?: ElementRef;
 
   constructor(private readonly ads: ArtistDataService,
-              private readonly toastService: ToastService
+              private readonly toastService: ToastService,
+              private readonly router: Router,
   ) {
   }
 
@@ -84,5 +88,20 @@ export class SongEditorComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.closeRequest.emit();
+  }
+
+  toggleDeleteConfirmationFlag($event): void {
+    this.deleteConfirmationFlag = $event.target.checked;
+  }
+
+  async delete(): Promise<void> {
+    if (!this.deleteConfirmationFlag) {
+      this.toastService.warning('Необходимо подтвердить действие!');
+      return;
+    }
+    await this.ads.deleteSong(this.songId);
+    this.close();
+    this.toastService.info('Песня удалена!');
+    await this.router.navigate([MOUNT_ARTISTS]);
   }
 }

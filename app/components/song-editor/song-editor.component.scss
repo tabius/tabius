@@ -12,8 +12,10 @@ textarea.content {
   font-family: $font-family-mono;
   padding: 7px;
 }
+
 .media-links-block {
   margin-top: 5px;
+
   input {
     width: 100%;
   }
@@ -21,9 +23,15 @@ textarea.content {
 
 .buttons-row {
   margin-top: 10px;
-  button {
+
+  > button {
     &:not(:first-child) {
       margin-left: 10px;
     }
   }
+}
+
+.delete-button-group {
+  margin-left: 10px;
+  float: right;
 }

@@ -13,6 +13,17 @@
     <div class="buttons-row">
         <button class="btn btn-info save-button" (click)="save()">Сохранить</button>
         <button class="btn close-button" (click)="close()">Закрыть</button>
+
+        <div class="delete-button-group">
+            <label class="checkbox">
+                <input type="checkbox"
+                       [checked]="deleteConfirmationFlag"
+                       (change)="toggleDeleteConfirmationFlag($event)"
+                       title="Подтверждение удаления песни">
+                <span>&nbsp;</span>
+            </label>
+            <button class="btn btn-danger delete-button" [disabled]="!deleteConfirmationFlag" (click)="delete()">Удалить</button>
+        </div>
     </div>
 </div>
 
