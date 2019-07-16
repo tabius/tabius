@@ -195,7 +195,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gaug7': '321001',
   'G#aug7': '141221',
 
-  // Major add 9th
+  // Major Add 9th
   'Aadd9': '54242x',
   'A#add9': 'x10311',
   'Badd9': 'x2142x',
@@ -222,6 +222,20 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'F#dom9': '242324',
   'Gdom9': '353435',
   'G#dom9': '464546',
+
+  // Major Add 11th
+  'Aadd11': '54223x',
+  'A#add11': '65334x',
+  'Badd11': '76445x',
+  'Cadd11': 'x32011',
+  'C#add11': 'x43122',
+  'Dadd11': 'x54233',
+  'D#add11': 'x65344',
+  'Eadd11': 'x76455',
+  'Fadd11': '10331x',
+  'F#add11': '2144xx',
+  'Gadd11': '320013',
+  'G#add11': '43112x',
 
   // Suspended 2nd
   'Asus2': 'x02200',
