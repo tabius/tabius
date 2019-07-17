@@ -1,7 +1,7 @@
 import {getTestBed, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule,} from '@angular/common/http/testing';
 import {HTTP_INTERCEPTORS, HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Injectable, Optional} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {delay} from 'rxjs/operators';
 import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
@@ -11,14 +11,12 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 export class FakeResponseInterceptor implements HttpInterceptor {
   response?: HttpEvent<any>;
   count = 0;
-
-  constructor(@Optional() private readonly delayMillis = 20) {
-  }
+  responseDelayMillis = 20;
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.count++;
     const response = this.response || new HttpResponse({body: `Response body ${this.count}`});
-    return of(response).pipe(delay(this.delayMillis));
+    return of(response).pipe(delay(this.responseDelayMillis));
   }
 
   reset(): void {

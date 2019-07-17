@@ -4,7 +4,8 @@ import {HTTP_INTERCEPTORS, HttpClient, HttpResponse} from '@angular/common/http'
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
 import {FakeResponseInterceptor} from '@app/interceptors/caching.interceptor.spec';
 
-const responseInterceptor = new FakeResponseInterceptor(0);
+const responseInterceptor = new FakeResponseInterceptor();
+responseInterceptor.responseDelayMillis = 0;
 
 function newBatchInterceptor(): BatchRequestOptimizerInterceptor {
   const interceptor = new BatchRequestOptimizerInterceptor();
