@@ -39,9 +39,9 @@ import {SongComponent} from './components/song/song.component';
 import {SongHeaderComponent} from './components/song-header/song-header.component';
 import {SongVideoComponent} from './components/song-video/song-video.component';
 import {SongEditorComponent} from './components/song-editor/song-editor.component';
-import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
-import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
+import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
+import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 
 @NgModule({
   declarations: [

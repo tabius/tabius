@@ -110,17 +110,16 @@ class BrowserStoreImpl implements BrowserStore {
     let value = await store.get<T>(key);
     if (!value) {
       if (fetchFn) {
-        value = await fetchFn().pipe(
-            take(1),
-            catchError(err => {
-              console.warn('Error in fetch', err);
-              return of(undefined);
-            })).toPromise();
+        value = await fetchAndFallbackToUnresolved(fetchFn);
         await store.set(key, value);
       }
     } else if (fetchFn && refresh) { // this is first access to the cached value. Check if asked to refresh it.
-      // this action is performed async (non-blocking).
-      fetchFn().pipe(take(1)).toPromise().then(value => this.set(key, value, needUpdateFn).catch(err => console.warn(err))); // fetch and refresh it asynchronously.
+      // refresh action is performed async (non-blocking).
+      fetchAndFallbackToUnresolved(fetchFn).then(value => {
+        if (value !== undefined) {
+          this.set(key, value, needUpdateFn).then(err => console.error(err));
+        }
+      }); // fetch and refresh it asynchronously.
     }
     rs$.next(this.freezeFn(value));
   }
@@ -227,4 +226,11 @@ export function deepFreeze<T>(obj: T|undefined): T|undefined {
     }
   }
   return obj;
+}
+
+function fetchAndFallbackToUnresolved<T>(fetchFn: (() => Observable<T|undefined>)): Promise<T|undefined> {
+  return fetchFn().pipe(
+      take(1),
+      catchError(() => of(undefined)),
+  ).toPromise();
 }
