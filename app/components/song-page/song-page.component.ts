@@ -62,7 +62,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
         .subscribe(([artist, song, songDetails]) => {
-          if (artist === undefined || song === undefined || songDetails == undefined) {
+          if (artist === undefined || song === undefined || songDetails === undefined) {
             return; // reasons: not everything is loaded
           }
           this.song = song;

@@ -10,7 +10,7 @@ import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';
 import {ARTISTS_STORE_SCHEMA_VERSION} from '@common/artist-model';
 import {APP_STORE_NAME, ARTISTS_STORE_NAME, USER_STORE_NAME} from '@common/constants';
 import {USERS_STORE_SCHEMA_VERSION} from '@common/user-model';
-import {map, take} from 'rxjs/operators';
+import {catchError, map, take} from 'rxjs/operators';
 import {fromPromise} from 'rxjs/internal-compatibility';
 
 const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
@@ -23,7 +23,11 @@ export const DO_NOT_REFRESH = false;
 export const DO_REFRESH = true;
 
 export interface BrowserStore {
-  get<T>(key: string|undefined, fetchFn: (() => Observable<T|undefined>)|undefined, refresh: boolean, needUpdateFn: NeedUpdateFn<T>|undefined): Observable<T|undefined>;
+  get<T>(key: string|undefined,
+         fetchFn: (() => Observable<T|undefined>)|undefined,
+         refresh: boolean,
+         needUpdateFn: NeedUpdateFn<T>|undefined,
+  ): Observable<T|undefined>;
 
   /** Sets value. 'undefined' value will trigger entry removal. 'undefined' key will result to no-op. */
   set<T>(key: string|undefined, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void>;
@@ -82,7 +86,8 @@ class BrowserStoreImpl implements BrowserStore {
   get<T>(key: string|undefined,
          fetchFn: (() => Observable<T|undefined>)|undefined,
          refresh: boolean,
-         needUpdateFn: NeedUpdateFn<T>|undefined): Observable<T|undefined> {
+         needUpdateFn: NeedUpdateFn<T>|undefined,
+  ): Observable<T|undefined> {
     if (!key) {
       return of(undefined);
     }
@@ -91,7 +96,7 @@ class BrowserStoreImpl implements BrowserStore {
       return rs$;
     }
     rs$ = this.newReplaySubject(key);
-    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh, needUpdateFn).catch(err => console.error(err));
+    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh, needUpdateFn);
     const fetch$: Observable<void> = fromPromise(fetch$$);
     return combineLatest([fetch$, rs$]).pipe(map(([, rs]) => rs));
   }
@@ -105,7 +110,12 @@ class BrowserStoreImpl implements BrowserStore {
     let value = await store.get<T>(key);
     if (!value) {
       if (fetchFn) {
-        value = await fetchFn().pipe(take(1)).toPromise();
+        value = await fetchFn().pipe(
+            take(1),
+            catchError(err => {
+              console.warn('Error in fetch', err);
+              return of(undefined);
+            })).toPromise();
         await store.set(key, value);
       }
     } else if (fetchFn && refresh) { // this is first access to the cached value. Check if asked to refresh it.

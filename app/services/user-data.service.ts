@@ -40,7 +40,7 @@ export class UserDataService {
     await this.store.set(DEVICE_SETTINGS_KEY, userDeviceSettings, checkUpdateByStringify);
   }
 
-  getUserSongSettings(songId?: number): Observable<UserSongSettings> {
+  getUserSongSettings(songId: number|undefined): Observable<UserSongSettings> {
     if (!isValidId(songId)) {
       return of(newDefaultUserSongSettings(0));
     }
@@ -52,7 +52,7 @@ export class UserDataService {
           return this.store.get<UserSongSettings>(
               getUserSongSettingsKey(songId),
               () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])),
-              DO_NOT_REFRESH,
+              DO_NOT_REFRESH, // refreshed on every login as a part of login response
               checkUpdateByStringify
           ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
         }));
