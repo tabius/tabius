@@ -13,7 +13,7 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
   readonly pendingBatchRequests = new Map<string, BatchRequest>();
 
   /** Time in milliseconds the batch request will wait for new requests to merge before the real run. */
-  debounceTimeInMillis = 25;
+  batchWaitTimeInMillis = 100;
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const url = req.method === 'GET' ? req.urlWithParams : undefined;
@@ -26,25 +26,26 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
     }
     const type = url.substring(0, byIdsIdx);
     const ids = url.substring(byIdsIdx + BY_IDS_TOKEN.length).split(BY_IDS_SEPARATOR);
-    const batchRequest = this.pendingBatchRequests.get(type);
-    if (!batchRequest) {
+    const batch = this.pendingBatchRequests.get(type);
+    if (!batch) {
       return this.startBatchRequest(type, ids, req, next);
     }
-    ids.forEach(id => batchRequest.ids.push(id));
-    return this.selectFromBatchResponse(batchRequest, ids);
+    ids.forEach(id => batch.ids.push(id));
+    return this.selectFromBatchResponse(batch, ids);
   }
 
   startBatchRequest(type: string, ids: readonly string[], req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const response = timer(this.debounceTimeInMillis)
+    const batchIds = [...ids];
+    const response = timer(this.batchWaitTimeInMillis)
         .pipe(
             flatMap(() => {
               this.pendingBatchRequests.delete(type); // delete from the pending list right before real run.
-              const batchReq = {...req, urlWithParams: type + BY_IDS_TOKEN + ids.join(BY_IDS_SEPARATOR)} as HttpRequest<any>;
+              const batchReq = req.clone({url: type + BY_IDS_TOKEN + batchIds.join(BY_IDS_SEPARATOR)});
               return next.handle(batchReq);
             }),
             share(),
         );
-    const batch = {type, ids: [...ids], response};
+    const batch = {type, ids: batchIds, response};
     this.pendingBatchRequests.set(type, batch);
     return this.selectFromBatchResponse(batch, ids);
   }

@@ -87,10 +87,10 @@ import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-
     ToastModule,
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
     {provide: TABIUS_BASE_API_URL, useValue: environment.apiUrl},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_ARTISTS_BROWSER_STORE_TOKEN, useClass: ArtistsBrowserStore},

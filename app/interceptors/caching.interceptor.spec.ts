@@ -10,18 +10,22 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 @Injectable()
 export class FakeResponseInterceptor implements HttpInterceptor {
   response?: HttpEvent<any>;
-  count = 0;
   responseDelayMillis = 20;
+  requests: string[] = [];
+
+  get count() {
+    return this.requests.length;
+  };
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.count++;
+    this.requests.push(req.urlWithParams);
     const response = this.response || new HttpResponse({body: `Response body ${this.count}`});
     return of(response).pipe(delay(this.responseDelayMillis));
   }
 
   reset(): void {
-    this.count = 0;
     delete this.response;
+    this.requests = [];
   }
 }
 
@@ -89,7 +93,7 @@ describe(`CachingInterceptor`, () => {
     expect(responseInterceptor.count).toBe(1);
     expect(results1.length).toBe(2);
 
-    responseInterceptor.count = 0;
+    responseInterceptor.reset();
     responseInterceptor.response = new HttpResponse({body: 'result2 response'});
     const results2: any[] = [];
     await Promise.all([

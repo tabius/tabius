@@ -9,7 +9,7 @@ responseInterceptor.responseDelayMillis = 0;
 
 function newBatchInterceptor(): BatchRequestOptimizerInterceptor {
   const interceptor = new BatchRequestOptimizerInterceptor();
-  interceptor.debounceTimeInMillis = 5;
+  interceptor.batchWaitTimeInMillis = 5;
   return interceptor;
 }
 
@@ -36,6 +36,7 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     ]);
 
     expect(responseInterceptor.count).toBe(1);
+    expect(responseInterceptor.requests[0]).toBe('/api/artist/by-ids/0,1');
     expect(results.length).toBe(2);
     expect(results[0]).toEqual(['r0']);
     expect(results[1]).toEqual(['r1']);
