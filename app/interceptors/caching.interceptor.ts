@@ -31,11 +31,12 @@ export class CachingInterceptor implements HttpInterceptor {
       // console.debug(`Adding to inFlight: ${cacheKey}`);
       const response$ = next.handle(req);
       this.inFlight.set(cacheKey, response$);
-      response$.toPromise().then(() => {
-        // console.debug(`Removing from inFlight: ${cacheKey}`, event);
-        this.inFlight.delete(cacheKey);
-      });
-      return response$;
+      return response$.pipe(
+          tap(() => {
+            // console.debug(`Removing from inFlight: ${cacheKey}`, event);
+            this.inFlight.delete(cacheKey);
+          }),
+      );
     }
 
     // Server side mode from here
