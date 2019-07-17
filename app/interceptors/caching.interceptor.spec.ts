@@ -1,54 +1,45 @@
 import {getTestBed, TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController,} from '@angular/common/http/testing';
+import {HttpClientTestingModule,} from '@angular/common/http/testing';
 import {HTTP_INTERCEPTORS, HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, Optional} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {delay} from 'rxjs/operators';
 import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Injectable()
-export class CountingInterceptor implements HttpInterceptor {
+export class FakeResponseInterceptor implements HttpInterceptor {
+  response?: HttpEvent<any>;
   count = 0;
+
+  constructor(@Optional() private readonly delayMillis = 20) {
+  }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.count++;
-    return next.handle(req);
+    const response = this.response || new HttpResponse({body: `Response body ${this.count}`});
+    return of(response).pipe(delay(this.delayMillis));
+  }
+
+  reset(): void {
+    this.count = 0;
+    delete this.response;
   }
 }
 
-const countingInterceptor = new CountingInterceptor();
-
-@Injectable()
-export class FakeResponseInterceptor implements HttpInterceptor {
-  response?: HttpEvent<any>;
-  private counter = 0;
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const response = this.response || new HttpResponse({body: `Response body ${++this.counter}`});
-    return of(response).pipe(delay(20));
-  }
-}
-
-const fakeResponseInterceptor = new FakeResponseInterceptor();
+const responseInterceptor = new FakeResponseInterceptor();
 
 describe(`CachingInterceptor`, () => {
-  let httpMock: HttpTestingController;
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
         {provide: BrowserStateService, useValue: {isBrowser: true}},
         {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true,},
-        {provide: HTTP_INTERCEPTORS, useValue: countingInterceptor, multi: true,},
-        {provide: HTTP_INTERCEPTORS, useValue: fakeResponseInterceptor, multi: true,},
+        {provide: HTTP_INTERCEPTORS, useValue: responseInterceptor, multi: true,},
       ],
     });
-
-    httpMock = TestBed.get(HttpTestingController);
-    countingInterceptor.count = 0;
-    delete fakeResponseInterceptor.response;
+    responseInterceptor.reset();
   });
 
   it('does not deduplicate different GET requests', async done => {
@@ -59,7 +50,7 @@ describe(`CachingInterceptor`, () => {
       http.get('/callA').toPromise().then(r => results.push(r)),
       http.get('/callB').toPromise().then(r => results.push(r))
     ]);
-    expect(countingInterceptor.count).toBe(2);
+    expect(responseInterceptor.count).toBe(2);
     expect(results.length).toBe(2);
     expect(results[0]).toBeDefined();
     expect(results[0]).not.toBe(null);
@@ -77,7 +68,7 @@ describe(`CachingInterceptor`, () => {
       http.get('/callA').toPromise().then(r => results.push(r)),
       http.get('/callA').toPromise().then(r => results.push(r))
     ]);
-    expect(countingInterceptor.count).toBe(1);
+    expect(responseInterceptor.count).toBe(1);
     expect(results.length).toBe(3);
     expect(results[0]).toBeDefined();
     expect(results[0]).not.toBe(null);
@@ -91,23 +82,23 @@ describe(`CachingInterceptor`, () => {
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
 
-    fakeResponseInterceptor.response = new HttpResponse({body: 'result1 response'});
+    responseInterceptor.response = new HttpResponse({body: 'result1 response'});
     const results1: any[] = [];
     await Promise.all([
       http.get('/callA').toPromise().then(r => results1.push(r)),
       http.get('/callA').toPromise().then(r => results1.push(r))
     ]);
-    expect(countingInterceptor.count).toBe(1);
+    expect(responseInterceptor.count).toBe(1);
     expect(results1.length).toBe(2);
 
-    countingInterceptor.count = 0;
-    fakeResponseInterceptor.response = new HttpResponse({body: 'result2 response'});
+    responseInterceptor.count = 0;
+    responseInterceptor.response = new HttpResponse({body: 'result2 response'});
     const results2: any[] = [];
     await Promise.all([
       http.get('/callA').toPromise().then(r => results2.push(r)),
       http.get('/callA').toPromise().then(r => results2.push(r))
     ]);
-    expect(countingInterceptor.count).toBe(1);
+    expect(responseInterceptor.count).toBe(1);
     expect(results2.length).toBe(2);
 
     expect(results1[0]).not.toBe(results2[0]);

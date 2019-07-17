@@ -41,6 +41,7 @@ import {SongVideoComponent} from './components/song-video/song-video.component';
 import {SongEditorComponent} from './components/song-editor/song-editor.component';
 import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
+import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
 
 @NgModule({
   declarations: [
@@ -87,8 +88,9 @@ import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
     {provide: TABIUS_BASE_API_URL, useValue: environment.apiUrl},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_ARTISTS_BROWSER_STORE_TOKEN, useClass: ArtistsBrowserStore},

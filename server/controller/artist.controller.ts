@@ -19,7 +19,7 @@ export class ArtistController {
   }
 
   @Get('/by-ids/:ids')
-  getArtistsByIds(@Param('ids') idsParam: string): Promise<(Artist)[]> {
+  getArtistsByIds(@Param('ids') idsParam: string): Promise<Artist[]> {
     this.logger.log(`by-ids: ${idsParam}`);
     const artistIds = stringToArrayOfNumericIds(idsParam);
     return this.artistDbi.getArtistsByIds(artistIds);
