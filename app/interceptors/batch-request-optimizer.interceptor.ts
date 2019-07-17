@@ -3,10 +3,13 @@ import {Injectable} from '@angular/core';
 import {Observable, timer} from 'rxjs';
 import {flatMap, map, share} from 'rxjs/operators';
 
+/** Prefix for all 'by-ids' requests. Example: /api/song/by-ids/id1,id2,id3 or /api/song/details-by-ids/ia1,id2,id3.. */
 export const BY_IDS_TOKEN = 'by-ids/';
+
+/** Ids separator. */
 export const BY_IDS_SEPARATOR = ',';
 
-/** Merges multiple 'by-id' requests into a single 'by-ids' request. */
+/** Merges multiple 'by-ids' requests into a single 'by-ids' request. */
 @Injectable()
 export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
 
@@ -17,7 +20,7 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const url = req.method === 'GET' ? req.urlWithParams : undefined;
-    if (!url || !url.startsWith('/api/')) {
+    if (!url) {
       return next.handle(req);
     }
     const byIdsIdx = url.indexOf(BY_IDS_TOKEN);
@@ -27,14 +30,10 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
     const type = url.substring(0, byIdsIdx);
     const ids = url.substring(byIdsIdx + BY_IDS_TOKEN.length).split(BY_IDS_SEPARATOR);
     const batch = this.pendingBatchRequests.get(type);
-    if (!batch) {
-      return this.startBatchRequest(type, ids, req, next);
-    }
-    ids.forEach(id => batch.ids.push(id));
-    return this.selectFromBatchResponse(batch, ids);
+    return batch ? this.joinToBatchRequest(batch, ids) : this.startBatchRequest(type, ids, req, next);
   }
 
-  startBatchRequest(type: string, ids: readonly string[], req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  private startBatchRequest(type: string, ids: readonly string[], req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const batchIds = [...ids];
     const response = timer(this.batchWaitTimeInMillis)
         .pipe(
@@ -50,7 +49,12 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
     return this.selectFromBatchResponse(batch, ids);
   }
 
-  selectFromBatchResponse(batch: BatchRequest, ids: readonly string[]): Observable<HttpEvent<any>> {
+  private joinToBatchRequest(batch: BatchRequest, ids: readonly string[]): Observable<HttpEvent<any>> {
+    ids.forEach(id => batch.ids.push(id));
+    return this.selectFromBatchResponse(batch, ids);
+  }
+
+  private selectFromBatchResponse(batch: BatchRequest, ids: readonly string[]): Observable<HttpEvent<any>> {
     return batch.response.pipe(
         map(event => {
           if (event instanceof HttpResponse) {
@@ -66,7 +70,10 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
 }
 
 interface BatchRequest {
+  /** Url prefix before ids. */
   type: string;
+  /** List of ids to be queried. */
   ids: string[];
+  /** Response chain. */
   response: Observable<HttpEvent<any>>;
 }
