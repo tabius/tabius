@@ -8,7 +8,7 @@ import {conformsTo, validate} from 'typed-validation';
 import {UserSongSettingsValidator} from '@server/util/validators';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {Response} from 'express';
-import {needUpdateByStringify} from '@common/util/misc-utils';
+import {checkUpdateByStringify} from '@common/util/misc-utils';
 
 @UseGuards(ServerAuthGuard)
 @Controller('/api/user')
@@ -64,7 +64,7 @@ export class UserController {
     this.logger.log(`set settings: ${user.email}, song: ${songSettings.songId}`);
     const settings = await this._getSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
-    const sameAsDefault = !needUpdateByStringify(defaultSettings, songSettings);
+    const sameAsDefault = !checkUpdateByStringify(defaultSettings, songSettings);
     const updatedSettings = {...settings} as any;
     if (sameAsDefault) {
       delete updatedSettings.songs[songSettings.songId];

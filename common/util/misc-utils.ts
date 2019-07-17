@@ -1,7 +1,7 @@
 import {Versioned} from '@common/common-model';
 import {ArtistType, Song} from '@common/artist-model';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {filter} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
 
@@ -13,7 +13,7 @@ export function toArrayOfInts(text: string, sep: string): number[] {
 }
 
 /** Returns true if update is needed. */
-export function needUpdateByVersionChange(oldValue?: Versioned, newValue?: Versioned): boolean {
+export function checkUpdateByVersion(oldValue: Versioned|undefined, newValue: Versioned|undefined): boolean {
   if (oldValue === newValue) {
     return false;
   }
@@ -23,11 +23,11 @@ export function needUpdateByVersionChange(oldValue?: Versioned, newValue?: Versi
   return newValue.version > oldValue.version;
 }
 
-export function needUpdateByShallowArrayCompare(oldValue?: readonly any[], newValue?: readonly any[]): boolean {
+export function checkUpdateByShallowArrayCompare(oldValue: readonly any[]|undefined, newValue: readonly any[]|undefined): boolean {
   return !shallowArraysEquals(oldValue, newValue);
 }
 
-export function needUpdateByStringify(oldValue?: any, newValue?: any): boolean {
+export function checkUpdateByStringify(oldValue: any|undefined, newValue: any|undefined): boolean {
   if (oldValue === newValue) {
     return false;
   }
@@ -35,6 +35,14 @@ export function needUpdateByStringify(oldValue?: any, newValue?: any): boolean {
     return true;
   }
   return JSON.stringify(oldValue) !== JSON.stringify(newValue);
+}
+
+export function checkUpdateByReference(oldValue: any|undefined, newValue: any|undefined): boolean {
+  return newValue !== oldValue;
+}
+
+export function skipUpdateCheck(): boolean {
+  return true;
 }
 
 /** Returns true if arrays are equal. */
@@ -115,6 +123,13 @@ export function defined<T>(v: T|undefined): v is T {
 
 /** RxJS wrapper to keep only defined elements in the stream. */
 export const keepDefined = filter(defined);
+
+export function firstInArray<T>(v: T[]|undefined): T|undefined {
+  return v && v.length > 0 ? v[0] : undefined;
+}
+
+/** RxJS wrapper to get only 1st element of the array. */
+export const mapToFirstInArray = map(firstInArray);
 
 /**
  * RxJS wrapper over Rx.combineLatest with a specific handling of an empty input arrays:

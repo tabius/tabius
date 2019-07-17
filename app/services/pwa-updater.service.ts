@@ -2,7 +2,8 @@ import {ApplicationRef, Inject, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {first, take} from 'rxjs/operators';
 import {APP_BROWSER_STORE_TOKEN} from '@common/constants';
-import {BrowserStore} from '@app/store/browser-store';
+import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH} from '@app/store/browser-store';
+import {skipUpdateCheck} from '@common/util/misc-utils';
 
 const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';
 
@@ -28,15 +29,17 @@ export class PwaUpdaterService {
     updates.available.subscribe(event => {
       console.debug('Found new app update!', event);
       // ensure we have no reload loop for whatever reason it may happen
-      appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY).pipe(take(1)).subscribe(lastForcedUpdateTime => {
-        const now = Date.now();
-        if (lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000) {
-          console.info('Enforcing app updated!');
-          appStore.set(LAST_FORCED_UPDATE_TIME_KEY, now).then(() => document.location.reload());
-        } else {
-          console.info(`Ignoring update, time since last forced update: ${now - lastForcedUpdateTime}ms`);
-        }
-      });
+      appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, DO_NOT_REFRESH, skipUpdateCheck)
+          .pipe(take(1))
+          .subscribe(lastForcedUpdateTime => {
+            const now = Date.now();
+            if (lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000) {
+              console.info('Enforcing app updated!');
+              appStore.set(LAST_FORCED_UPDATE_TIME_KEY, now).then(() => document.location.reload());
+            } else {
+              console.info(`Ignoring update, time since last forced update: ${now - lastForcedUpdateTime}ms`);
+            }
+          });
     });
   }
 }

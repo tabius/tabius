@@ -18,22 +18,20 @@ const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
 /** Returns true if old value is different from new. */
 export type NeedUpdateFn<T> = (oldValue?: T, newValue?: T) => boolean;
 
-export interface BrowserStore {
-  get<T>(key?: string, fetchFn?: () => Observable<T|undefined>, refresh?: boolean): Observable<T|undefined>;
+export const DO_NOT_PREFETCH = undefined;
+export const DO_NOT_REFRESH = false;
+export const DO_REFRESH = true;
 
-  /** Sets value. 'undefined' will trigger entry removal. */
-  set<T>(key: string, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void>;
+export interface BrowserStore {
+  get<T>(key: string|undefined, fetchFn: (() => Observable<T|undefined>)|undefined, refresh: boolean, needUpdateFn: NeedUpdateFn<T>|undefined): Observable<T|undefined>;
+
+  /** Sets value. 'undefined' value will trigger entry removal. 'undefined' key will result to no-op. */
+  set<T>(key: string|undefined, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void>;
 
   /** Lists all values by key prefix. */
   list<T>(keyPrefix: string): Promise<KV<T>[]>;
 
   clear(): Promise<void>;
-
-  /**
-   * Returns true if the value was updated during the session.
-   * Note: clear() call resets all isUpdated flags.
-   */
-  isUpdated(key: string): boolean;
 
   initialized$$: Promise<void>;
 }
@@ -44,7 +42,6 @@ class BrowserStoreImpl implements BrowserStore {
   readonly initialized$$ = new Promise<void>(resolve => this.markAsInitialized = resolve);
 
   private readonly dataMap = new Map<string, ReplaySubject<any>>();
-  private readonly updatedKeys = new Set<string>();
   private readonly serverStateKey: StateKey<any>;
   private readonly storeAdapter$$: Promise<StoreAdapter>;
 
@@ -82,7 +79,10 @@ class BrowserStoreImpl implements BrowserStore {
     });
   }
 
-  get<T>(key?: string, fetchFn?: () => Observable<T|undefined>, refresh?: boolean): Observable<T|undefined> {
+  get<T>(key: string|undefined,
+         fetchFn: (() => Observable<T|undefined>)|undefined,
+         refresh: boolean,
+         needUpdateFn: NeedUpdateFn<T>|undefined): Observable<T|undefined> {
     if (!key) {
       return of(undefined);
     }
@@ -91,7 +91,7 @@ class BrowserStoreImpl implements BrowserStore {
       return rs$;
     }
     rs$ = this.newReplaySubject(key);
-    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh).catch(err => console.error(err));
+    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh, needUpdateFn).catch(err => console.error(err));
     const fetch$: Observable<void> = fromPromise(fetch$$);
     return combineLatest([fetch$, rs$]).pipe(map(([, rs]) => rs));
   }
@@ -99,7 +99,8 @@ class BrowserStoreImpl implements BrowserStore {
   private async triggerFetchIfNotCached<T>(key: string,
                                            rs$: ReplaySubject<T|undefined>,
                                            fetchFn: (() => Observable<T|undefined>)|undefined,
-                                           refresh: boolean|undefined): Promise<void> {
+                                           refresh: boolean|undefined,
+                                           needUpdateFn: NeedUpdateFn<T>|undefined): Promise<void> {
     const store = await this.storeAdapter$$;
     let value = await store.get<T>(key);
     if (!value) {
@@ -109,7 +110,7 @@ class BrowserStoreImpl implements BrowserStore {
       }
     } else if (fetchFn && refresh) { // this is first access to the cached value. Check if asked to refresh it.
       // this action is performed async (non-blocking).
-      fetchFn().pipe(take(1)).toPromise().then(value => store.set(key, value).catch(err => console.warn(err))); // fetch and refresh it asynchronously.
+      fetchFn().pipe(take(1)).toPromise().then(value => this.set(key, value, needUpdateFn).catch(err => console.warn(err))); // fetch and refresh it asynchronously.
     }
     rs$.next(this.freezeFn(value));
   }
@@ -123,9 +124,11 @@ class BrowserStoreImpl implements BrowserStore {
     return rs$;
   }
 
-  async set<T>(key: string, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void> {
+  async set<T>(key: string|undefined, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void> {
+    if (!key) {
+      return;
+    }
     const store = await this.storeAdapter$$;
-    this.updatedKeys.add(key);
     if (needUpdateFn) {
       const oldValue = await store.get<T>(key);
       if (!needUpdateFn(oldValue, value)) {
@@ -147,12 +150,7 @@ class BrowserStoreImpl implements BrowserStore {
   async clear(): Promise<void> {
     const store = await this.storeAdapter$$;
     this.dataMap.forEach(subj$ => subj$.next(undefined));
-    this.updatedKeys.clear();
     return store.clear();
-  }
-
-  isUpdated(key: string): boolean {
-    return this.updatedKeys.has(key);
   }
 
   /**
