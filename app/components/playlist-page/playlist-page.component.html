@@ -7,6 +7,7 @@
     <div class="playlist-root">
         <div class="songs-list">
             <div *ngFor="let item of songItems" class="song-list-item">
+
                 <gt-song [songId]="item.song.id" [mode]="mode"></gt-song>
 
                 <div class="links-block">
