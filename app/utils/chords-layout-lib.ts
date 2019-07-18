@@ -237,6 +237,20 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gdom11': '320011',
   'G#dom11': '431122',
 
+  // Minor 11th
+  'Amin11': '535533',
+  'A#min11': '646644',
+  'Bmin11': 'x20200',
+  'Cmin11': 'x31311',
+  'C#min11': 'x42422',
+  'Dmin11': 'x53533',
+  'D#min11': 'x64644',
+  'Emin11': '022233',
+  'Fmin11': '131314',
+  'F#min11': '202200',
+  'Gmin11': '313311',
+  'G#min11': '464677',
+
   // Major Add 11th
   'Aadd11': '54223x',
   'A#add11': '65334x',
