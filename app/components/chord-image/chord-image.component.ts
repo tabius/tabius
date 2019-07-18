@@ -12,11 +12,11 @@ import {ChordTone, VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib
 export class ChordImageComponent implements AfterViewInit, OnChanges {
 
   @Input() layout!: ChordLayout;
-  @Input() scale = 2;
+  @Input() size = 2.3;
   @Input() b4Si = true;
 
-  width = 32;
-  height = 32;
+  width = 70;
+  height = 90;
 
   private readonly isBrowser: boolean;
   private painter!: ChordImagePainter;
@@ -33,7 +33,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
     }
     const {chord} = this.layout;
     const visualChordName = this.getToneWithB4SiFix(chord.tone) + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type);
-    this.painter = new ChordImagePainter(visualChordName, this.layout.positions, this.layout.fingers, this.scale);
+    this.painter = new ChordImagePainter(visualChordName, this.layout.positions, this.layout.fingers, this.size);
     this.width = this.painter.imageWidth;
     this.height = this.painter.imageHeight;
   }

@@ -2,7 +2,8 @@
  * Based On "Chord Image Generator" http://einaregilsson.com/2009/07/23/chord-image-generator/
  */
 
-//todo: move to dynamic props.
+import {bound} from '@common/util/misc-utils';
+
 const NO_FINGER = '-';
 const OPEN = 0;
 const MUTED = -1;
@@ -118,11 +119,7 @@ export class ChordImagePainter {
 
   constructor(name: string, positions: string, fingers: string, size: number) {
     // parse chord name
-    if (name == null || typeof name == 'undefined') {
-      this.chordName = '';
-    } else {
-      this.chordName = name.replace(' ', '');
-    }
+    this.chordName = !name ? '' : name.replace(' ', '');
 
     this.parsePositions(positions);
 
@@ -132,10 +129,7 @@ export class ChordImagePainter {
     this.fingers = f.substr(0, 6).split('');
 
     // set up sizes
-    this.size = size;
-    if (isNaN(this.size)) {
-      this.size = 1;
-    }
+    this.size = bound(1, size, 5);
     this.fretWidth = 4 * this.size;
     this.nutHeight = this.fretWidth / 2;
     this.lineWidth = Math.ceil(this.size * 0.31);
@@ -146,7 +140,7 @@ export class ChordImagePainter {
     const percent = 0.8;
     this.fretFontSize = this.fretWidth / percent;
     this.fingerFontSize = this.fretWidth * 0.8;
-    this.nameFontSize = this.fretWidth * 2 / percent;
+    this.nameFontSize = Math.max(Math.round(this.fretWidth * 1.7) / percent, 20);
     this.superScriptFontSize = 0.7 * this.nameFontSize;
     if (this.size == 1) {
       this.nameFontSize += 2;
