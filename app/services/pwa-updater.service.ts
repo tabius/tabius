@@ -2,8 +2,7 @@ import {ApplicationRef, Inject, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {first, take} from 'rxjs/operators';
 import {APP_BROWSER_STORE_TOKEN} from '@common/constants';
-import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH} from '@app/store/browser-store';
-import {skipUpdateCheck} from '@common/util/misc-utils';
+import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH, skipUpdateCheck} from '@app/store/browser-store';
 
 const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';
 
@@ -35,7 +34,7 @@ export class PwaUpdaterService {
             const now = Date.now();
             if (lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000) {
               console.info('Enforcing app updated!');
-              appStore.set(LAST_FORCED_UPDATE_TIME_KEY, now).then(() => document.location.reload());
+              appStore.set(LAST_FORCED_UPDATE_TIME_KEY, now, skipUpdateCheck).then(() => document.location.reload());
             } else {
               console.info(`Ignoring update, time since last forced update: ${now - lastForcedUpdateTime}ms`);
             }

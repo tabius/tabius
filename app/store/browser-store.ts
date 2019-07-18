@@ -26,11 +26,11 @@ export interface BrowserStore {
   get<T>(key: string|undefined,
          fetchFn: (() => Observable<T|undefined>)|undefined,
          refresh: boolean,
-         needUpdateFn: NeedUpdateFn<T>|undefined,
+         needUpdateFn: NeedUpdateFn<T>,
   ): Observable<T|undefined>;
 
   /** Sets value. 'undefined' value will trigger entry removal. 'undefined' key will result to no-op. */
-  set<T>(key: string|undefined, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void>;
+  set<T>(key: string|undefined, value: T|undefined, needUpdateFn: NeedUpdateFn<T>): Promise<void>;
 
   /** Lists all values by key prefix. */
   list<T>(keyPrefix: string): Promise<KV<T>[]>;
@@ -86,7 +86,7 @@ class BrowserStoreImpl implements BrowserStore {
   get<T>(key: string|undefined,
          fetchFn: (() => Observable<T|undefined>)|undefined,
          refresh: boolean,
-         needUpdateFn: NeedUpdateFn<T>|undefined,
+         needUpdateFn: NeedUpdateFn<T>,
   ): Observable<T|undefined> {
     if (!key) {
       return of(undefined);
@@ -105,7 +105,7 @@ class BrowserStoreImpl implements BrowserStore {
                                            rs$: ReplaySubject<T|undefined>,
                                            fetchFn: (() => Observable<T|undefined>)|undefined,
                                            refresh: boolean|undefined,
-                                           needUpdateFn: NeedUpdateFn<T>|undefined): Promise<void> {
+                                           needUpdateFn: NeedUpdateFn<T>): Promise<void> {
     const store = await this.storeAdapter$$;
     let value = await store.get<T>(key);
     if (!value) {
@@ -133,12 +133,12 @@ class BrowserStoreImpl implements BrowserStore {
     return rs$;
   }
 
-  async set<T>(key: string|undefined, value: T|undefined, needUpdateFn?: NeedUpdateFn<T>): Promise<void> {
+  async set<T>(key: string|undefined, value: T|undefined, needUpdateFn: NeedUpdateFn<T>): Promise<void> {
     if (!key) {
       return;
     }
     const store = await this.storeAdapter$$;
-    if (needUpdateFn) {
+    if (needUpdateFn !== skipUpdateCheck) {
       const oldValue = await store.get<T>(key);
       if (!needUpdateFn(oldValue, value)) {
         return;
@@ -234,3 +234,8 @@ function fetchAndFallbackToUnresolved<T>(fetchFn: (() => Observable<T|undefined>
       catchError(() => of(undefined)),
   ).toPromise();
 }
+
+export function skipUpdateCheck(): boolean {
+  throw 'This function should never be called!';
+}
+

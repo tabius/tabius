@@ -41,10 +41,6 @@ export function checkUpdateByReference(oldValue: any|undefined, newValue: any|un
   return newValue !== oldValue;
 }
 
-export function skipUpdateCheck(): boolean {
-  return true;
-}
-
 /** Returns true if arrays are equal. */
 export function shallowArraysEquals(a1?: readonly any[], a2?: readonly any[]): boolean {
   if (a1 === a2) {

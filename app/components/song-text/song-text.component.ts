@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID} from '@angular/core';
 import {SongDetails} from '@common/artist-model';
-import {Observable, Subject} from 'rxjs';
-import {map, takeUntil} from 'rxjs/operators';
+import {combineLatest, Subject} from 'rxjs';
+import {takeUntil, tap} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
 import {isPlatformBrowser} from '@angular/common';
 import {renderChords} from '@app/utils/chords-renderer';
@@ -28,9 +28,9 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   @Input() multiColumnMode = true;
 
   /** Pre-rendered raw HTML for song text with all chords wrapped with a <c></c> tag*/
-  songHtml: string = '';
+  private songHtml: string = '';
 
-  userSongStyle$!: Observable<{ [key: string]: string; }>;
+  userSongStyle: { [key: string]: string; } = {};
 
   readonly isBrowser: boolean;
 
@@ -59,10 +59,9 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSongStyle$ = this.uds.getUserDeviceSettings()
+    const style$ = this.uds.getUserDeviceSettings()
         .pipe(
-            takeUntil(this.destroyed$),
-            map(settings => {
+            tap(settings => {
               const style = {};
               if (settings.songFontSize) {
                 style['fontSize'] = `${settings.songFontSize}px`;
@@ -72,23 +71,25 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
               return style;
             }));
 
-    //todo: handle song text update
-    this.uds.getUserSongSettings(this.song.id)
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(songSettings => {
-          this.songSettings = songSettings;
-          this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
-          this.updateSongView();
-          this.cd.detectChanges();
-        });
+    //todo: handle song text update too
+    const settings$ = this.uds.getUserSongSettings(this.song.id)
+        .pipe(
+            tap(songSettings => {
+              this.songSettings = songSettings;
+              this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
+              this.resetSongView();
+            }));
 
-    this.uds.getB4SiFlag()
+    const b4Si$ = this.uds.getB4SiFlag()
+        .pipe(
+            tap(b4Si => {
+              this.b4Si = b4Si;
+              this.resetSongView();
+            }));
+
+    combineLatest([style$, settings$, b4Si$])
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(b4Si => {
-          this.b4Si = b4Si;
-          this.updateSongView();
-          this.cd.detectChanges();
-        });
+        .subscribe(() => this.cd.detectChanges());
   }
 
   ngOnDestroy(): void {
@@ -98,16 +99,23 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(): void {
     this.resetCachedSongStats();
     this.updateAvailableWidth();
-    this.updateSongView();
+    this.resetSongView();
+  }
+
+  getSongHtml(): string {
+    if (this.songHtml === '') {
+      const {transpose, hideChords} = this.songSettings;
+      this.songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: !this.b4Si}) : '';
+    }
+    return this.songHtml;
   }
 
   private resetCachedSongStats(): void {
     delete this.songStats;
   }
 
-  private updateSongView(): void {
-    const {transpose, hideChords} = this.songSettings;
-    this.songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: !this.b4Si}) : '';
+  private resetSongView(): void {
+    this.songHtml = '';
   }
 
   @HostListener('window:resize', [])

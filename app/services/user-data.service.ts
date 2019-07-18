@@ -2,10 +2,10 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {DEFAULT_B4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
-import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH, DO_REFRESH} from '@app/store/browser-store';
+import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH, DO_REFRESH, skipUpdateCheck} from '@app/store/browser-store';
 import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId, keepDefined, skipUpdateCheck} from '@common/util/misc-utils';
+import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId, keepDefined} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
@@ -90,7 +90,7 @@ export class UserDataService {
   }
 
   async setB4SiFlag(b4SiFlag: boolean): Promise<void> {
-    await this.store.set(B4SI_FLAG_KEY, b4SiFlag || undefined); //todo: need update?
+    await this.store.set(B4SI_FLAG_KEY, b4SiFlag, skipUpdateCheck);
     const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).pipe(take(1)).toPromise();
     await this.updateUserSettingsOnFetch(settings);
   }
@@ -106,7 +106,7 @@ export class UserDataService {
     const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
 
     const allOps: Promise<void>[] = [];
-    allOps.push(this.store.set(USER_SETTINGS_FETCH_DATE_KEY, Date.now()));
+    allOps.push(this.store.set(USER_SETTINGS_FETCH_DATE_KEY, Date.now(), skipUpdateCheck));
     const updatedKeys = new Set<string>();
     for (const songId in userSettings.songs) {
       const songSettings = userSettings.songs[songId];
@@ -116,13 +116,13 @@ export class UserDataService {
     }
 
     // delete missed settings.
-    for (const kv of oldSongSettings) {
-      if (!updatedKeys.has(kv.key)) {
-        allOps.push(this.store.set(kv.key, undefined));
+    for (const oldSettingsEntry of oldSongSettings) {
+      if (!updatedKeys.has(oldSettingsEntry.key)) {
+        allOps.push(this.store.set(oldSettingsEntry.key, undefined, skipUpdateCheck));
       }
     }
 
-    allOps.push(this.store.set(B4SI_FLAG_KEY, userSettings.b4Si || undefined));
+    allOps.push(this.store.set(B4SI_FLAG_KEY, userSettings.b4Si || undefined, checkUpdateByReference));
     await Promise.all(allOps);
   }
 
