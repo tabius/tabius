@@ -8,6 +8,7 @@ import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {getArtistPageLink} from '@common/util/misc-utils';
+import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 
 interface LetterBlock {
   letter: string,
@@ -43,7 +44,9 @@ export class ArtistListPageComponent implements OnInit {
   constructor(private readonly ads: ArtistDataService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,
-              private readonly meta: Meta,) {
+              private readonly meta: Meta,
+              private readonly navHelper: RoutingNavigationHelper,
+  ) {
   }
 
   ngOnInit() {
@@ -58,12 +61,13 @@ export class ArtistListPageComponent implements OnInit {
     this.ads.getAllArtists()
         .pipe(
             takeUntil(this.destroyed$),
-            throttleTime(100, undefined, {leading: true, trailing: true}), //todo: show warnings if is throttled.
+            throttleTime(50, undefined, {leading: true, trailing: true}), //todo: show warnings if is throttled.
         )
         .subscribe(artists => {
           this.letterBlocks = toLetterBlocks(artists);
           this.loaded = true;
-          this.cd.markForCheck();
+          this.cd.detectChanges();
+          this.navHelper.restoreScrollPosition();
         });
     this.updateMeta();
   }
