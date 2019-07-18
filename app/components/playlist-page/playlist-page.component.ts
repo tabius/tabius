@@ -11,6 +11,7 @@ import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist, UserGroup} from '@common/user-model';
 import {defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
+import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 
 interface PlaylistSongModel {
   song: Song;
@@ -45,6 +46,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
               private readonly uds: UserDataService,
               private title: Title,
               private readonly meta: Meta,
+              private readonly navHelper: RoutingNavigationHelper,
   ) {
   }
 
@@ -86,6 +88,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       }
       this.updateMeta();
       this.cd.detectChanges();
+      this.navHelper.restoreScrollPosition();
     });
 
     this.uds.getUser()

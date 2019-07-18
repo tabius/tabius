@@ -11,6 +11,7 @@ import {UserDataService} from '@app/services/user-data.service';
 import {getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {UserGroup} from '@common/user-model';
+import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 
 @Component({
   selector: 'gt-song-page',
@@ -42,6 +43,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
               private readonly route: ActivatedRoute,
               private readonly title: Title,
               private readonly meta: Meta,
+              private readonly navHelper: RoutingNavigationHelper,
   ) {
   }
 
@@ -70,6 +72,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
           this.artist = artist;
           this.updateMeta();
           this.cd.detectChanges();
+          this.navHelper.restoreScrollPosition();
         });
     this.uds.getUser()
         .pipe(takeUntil(this.destroyed$))

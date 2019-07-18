@@ -8,6 +8,7 @@ import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {defined, getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
+import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 
 export class ArtistViewModel {
   readonly displayName: string;
@@ -42,10 +43,10 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
               private readonly route: ActivatedRoute,
               private title: Title,
               private readonly meta: Meta,
+              private readonly navHelper: RoutingNavigationHelper,
   ) {
   }
 
-  //TODO: use https://angular.io/guide/router#resolve-guard to get initial data
   ngOnInit() {
     throttleIndicator(this);
 
@@ -71,7 +72,8 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
           }
           this.artistViewModel = new ArtistViewModel(artist, bands, songs);
           this.updateMeta();
-          this.cd.markForCheck();
+          this.cd.detectChanges();
+          this.navHelper.restoreScrollPosition();
         });
   }
 

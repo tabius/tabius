@@ -61,7 +61,7 @@ export class ArtistListPageComponent implements OnInit {
     this.ads.getAllArtists()
         .pipe(
             takeUntil(this.destroyed$),
-            throttleTime(50, undefined, {leading: true, trailing: true}), //todo: show warnings if is throttled.
+            throttleTime(100, undefined, {leading: true, trailing: true}),
         )
         .subscribe(artists => {
           this.letterBlocks = toLetterBlocks(artists);

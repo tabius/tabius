@@ -20,7 +20,6 @@ export class RoutingNavigationHelper {
           .subscribe(events => {
             if (events instanceof NavigationStart) {
               this.pageOffsetYPerRoute.set(this.router.url, window.pageYOffset);
-              console.log('Position:', window.pageYOffset, ', route:', this.router.url);
             }
           });
     }
