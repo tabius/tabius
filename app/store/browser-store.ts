@@ -117,7 +117,7 @@ class BrowserStoreImpl implements BrowserStore {
       // refresh action is performed async (non-blocking).
       fetchAndFallbackToUnresolved(fetchFn).then(value => {
         if (value !== undefined) {
-          this.set(key, value, needUpdateFn).then(err => console.error(err));
+          this.set(key, value, needUpdateFn).catch(err => console.error(err));
         }
       }); // fetch and refresh it asynchronously.
     }
