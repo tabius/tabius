@@ -34,12 +34,13 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
   }
 
   private startBatchRequest(type: string, ids: readonly string[], req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const batchIds = [...ids];
+    const batchIds = new Set<string>(ids);
     const response = timer(this.batchWaitTimeInMillis)
         .pipe(
             flatMap(() => {
               this.pendingBatchRequests.delete(type); // delete from the pending list right before real run.
-              const batchReq = req.clone({url: type + BY_IDS_TOKEN + batchIds.join(BY_IDS_SEPARATOR)});
+              const sortedUniqueIds = [...batchIds.keys()].sort();
+              const batchReq = req.clone({url: type + BY_IDS_TOKEN + sortedUniqueIds.join(BY_IDS_SEPARATOR)});
               return next.handle(batchReq);
             }),
             share(),
@@ -50,7 +51,7 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
   }
 
   private joinToBatchRequest(batch: BatchRequest, ids: readonly string[]): Observable<HttpEvent<any>> {
-    ids.forEach(id => batch.ids.push(id));
+    ids.forEach(id => batch.ids.add(id));
     return this.selectFromBatchResponse(batch, ids);
   }
 
@@ -58,9 +59,16 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
     return batch.response.pipe(
         map(event => {
           if (event instanceof HttpResponse) {
-            const results = event.body as any[];
-            const indexesToReturn = ids.map(id => batch.ids.indexOf(id));
-            const filteredResults = indexesToReturn.map(idx => results[idx]);
+            const results = event.body as { id: any }[];
+            const filteredResults: any[] = [];
+            for (const id of ids) {
+              for (const result of results) {
+                if (result.id === id) {
+                  filteredResults.push(result);
+                  break;
+                }
+              }
+            }
             return event.clone({body: filteredResults});
           }
           return event;
@@ -73,7 +81,7 @@ interface BatchRequest {
   /** Url prefix before ids. */
   type: string;
   /** List of ids to be queried. */
-  ids: string[];
+  ids: Set<string>;
   /** Response chain. */
   response: Observable<HttpEvent<any>>;
 }

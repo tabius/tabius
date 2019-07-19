@@ -63,7 +63,7 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
   // strings-like lines heuristics: A|--1-2-3--x-
   if (chordLocations.length === 1 && chordLocations[0].endIdx - chordLocations[0].startIdx <= 2) { // <=2: A or A- (minor)
     const textWithoutChord = text.substring(minIdx, maxIdx).replace(chordLocations[0].chord.tone, '');
-    if (isStringTabLikeLine(textWithoutChord)) {
+    if (isTabsLikeLine(textWithoutChord)) {
       return [];
     }
   }
@@ -127,21 +127,15 @@ function findPrefixToken(text: string, idx: number, tokens: readonly string[]): 
   return undefined;
 }
 
-function isStringTabLikeLine(text: string): boolean {
+export function isTabsLikeLine(text: string): boolean {
   let dashCount = 0;
-  let alpha: string|undefined = undefined; // allow only 1 extra alpha per string
   for (let idx = 0; idx < text.length; idx++) {
     const c = text.charAt(idx);
     if (c === '-') {
       dashCount++;
-    } else if (isAlpha(c)) {
-      if (alpha !== undefined && alpha !== c) {
-        return false;
-      }
-      alpha = c;
     }
   }
-  return dashCount >= 2;
+  return dashCount > text.length / 2;
 }
 
 

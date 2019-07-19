@@ -17,6 +17,7 @@ export class SongController {
   constructor(private readonly songDbi: SongDbi, private readonly crossDbi: CrossEntityDbi) {
   }
 
+  /** Returns found songs  by ids. The order of results is not specified. */
   @Get('/by-ids/:ids')
   getSongs(@Param('ids') idsParam: string): Promise<Song[]> {
     this.logger.log(`by-ids: ${idsParam}`);
@@ -24,6 +25,7 @@ export class SongController {
     return this.songDbi.getSongs(ids);
   }
 
+  /** Returns found song details by ids. The order of results is not specified. */
   @Get('/details-by-ids/:ids')
   getSongDetails(@Param('ids') idsParam: string): Promise<SongDetails[]> {
     this.logger.log(`details-by-ids: ${idsParam}`);

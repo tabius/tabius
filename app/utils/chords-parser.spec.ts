@@ -1,4 +1,4 @@
-import {parseChord, parseChords, parseChordsLine} from '@app/utils/chords-parser';
+import {isTabsLikeLine, parseChord, parseChords, parseChordsLine} from '@app/utils/chords-parser';
 import {Chord, ChordTone, ChordType} from '@app/utils/chords-parser-lib';
 
 const c = (tone: ChordTone, type: ChordType): Chord => ({tone, type});
@@ -86,6 +86,11 @@ describe('Chords parser, parseChordsLine', () => {
   it('should correctly filter string tabs', () => {
     expect(parseChordsLine('E--2-3--4-4\nC--3-3-2')).toEqual([]);
     expect(parseChordsLine('A|--2-3--4-4\nC|--3-3-2')).toEqual([]);
+    expect(parseChordsLine('H  ||--------1----------1h3p-0--|-----1-------------------||')).toEqual([]);
+  });
+
+  it('should correctly detect tabs-like lines', () => {
+    expect(isTabsLikeLine('H  ||--------1----------1h3p-0--|-----1-------------------||')).toBeTruthy();
   });
 
 });

@@ -26,7 +26,7 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
   });
 
   it('merges multiple get requests into batches', async done => {
-    responseInterceptor.response = new HttpResponse({body: ['r0', 'r1']});
+    responseInterceptor.response = new HttpResponse({body: [{id: '0'}, {id: '1'}]});
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
@@ -38,8 +38,8 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     expect(responseInterceptor.count).toBe(1);
     expect(responseInterceptor.requests[0]).toBe('/api/artist/by-ids/0,1');
     expect(results.length).toBe(2);
-    expect(results[0]).toEqual(['r0']);
-    expect(results[1]).toEqual(['r1']);
+    expect(results[0]).toEqual([{id: '0'}]);
+    expect(results[1]).toEqual([{id: '1'}]);
 
     done();
   });
@@ -54,6 +54,34 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
       http.post('/api/artist/by-ids/2').toPromise(),
     ]);
     expect(responseInterceptor.count).toBe(4);
+    done();
+  });
+
+
+  it('correctly matched ids to the results', async done => {
+    responseInterceptor.response = new HttpResponse({body: [{id: '1'}, {id: '2'}, {id: '0'}, {id: '5'}]});
+    const testBed = getTestBed();
+    const http = testBed.get<HttpClient>(HttpClient);
+    const results: any[] = [];
+    await Promise.all([
+      http.get('/api/artist/by-ids/0').toPromise().then(r => results.push(r)),
+      http.get('/api/artist/by-ids/1,5').toPromise().then(r => results.push(r)),
+      http.get('/api/artist/by-ids/2,1').toPromise().then(r => results.push(r)),
+      http.get('/api/artist/by-ids/3').toPromise().then(r => results.push(r)),
+      http.get('/api/artist/by-ids/1,4,2').toPromise().then(r => results.push(r)),
+      http.get('/api/artist/by-ids/1,1,1').toPromise().then(r => results.push(r)),
+    ]);
+
+    expect(responseInterceptor.count).toBe(1);
+    expect(responseInterceptor.requests[0]).toBe('/api/artist/by-ids/0,1,2,3,4,5');
+    expect(results.length).toBe(6);
+    expect(results[0]).toEqual([{id: '0'}]);
+    expect(results[1]).toEqual([{id: '1'}, {id: '5'}]);
+    expect(results[2]).toEqual([{id: '2'}, {id: '1'}]);
+    expect(results[3]).toEqual([]);
+    expect(results[4]).toEqual([{id: '1'}, {id: '2'}]);
+    expect(results[5]).toEqual([{id: '1'}, {id: '1'}, {id: '1'}]);
+
     done();
   });
 });
