@@ -223,6 +223,20 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gadd9': '320203',
   'G#add9': '43131x',
 
+  // Diminished 9th
+  'Adim9': '535443',
+  'A#dim9': '646554',
+  'Bdim9': 'x20221',
+  'Cdim9': 'x31332',
+  'C#dim9': 'x41000',
+  'Ddim9': 'x52111',
+  'D#dim9': 'x63222',
+  'Edim9': '010032',
+  'Fdim9': '121004',
+  'F#dim9': '202110',
+  'Gdim9': '303321',
+  'G#dim9': '410102',
+
   // 11th, Dominant 11th
   'Adom11': '542233',
   'A#dom11': '653344',

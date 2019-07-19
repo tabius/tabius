@@ -60,7 +60,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'dim': 'Adim, Amb5, Amo5, Am5-, ADiminished', // Diminished
   'dim7': 'Adim7', // Diminished 7th
   'dim7B9': 'Adim7b9',
-  'dim9': 'Adim9',
+  'dim9': 'Adim9, Adim7/9, Adim7add2, Adim7add9, Am7b5add2', // Diminished 9th
   'dimB9': 'Adimb9',
   'dom11': 'A11, Adom11', // 11th, Dominant 11th
   'dom13': 'A13, Adom13',
