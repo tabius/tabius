@@ -48,18 +48,19 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     }
     const chordLocation = parseChord(text, idx, maxIdx);
     if (chordLocation === undefined) {
-      if (chordLocations.length == 1) {
-        const first = chordLocations[0];
-        if (first.endIdx - first.startIdx === 1 && first.chord.tone === 'A') { // special heuristics for text lines that starts with 'A'
-          return [];
-        }
-      }
       idx++;
       continue;
     }
     chordLocations.push(chordLocation);
     idx += chordLocation.endIdx - chordLocation.startIdx;
   }
+
+  if (chordLocations.length > 0 && !hasChordsNotLikeWords(chordLocations, text)) {
+    if ((chordLocations.length > 1 && allChordsAreTheSame(chordLocations)) || !isTheOnlyAlphaInText(chordLocations[0], text, minIdx, maxIdx)) {
+      return [];
+    }
+  }
+
   // strings-like lines heuristics: A|--1-2-3--x-
   if (chordLocations.length === 1 && chordLocations[0].endIdx - chordLocations[0].startIdx <= 2) { // <=2: A or A- (minor)
     const textWithoutChord = text.substring(minIdx, maxIdx).replace(chordLocations[0].chord.tone, '');
@@ -149,7 +150,51 @@ function isWhitespaceOrChordExtender(c: string): boolean {
   return c === ' ' || c === '\n' || c === '/' || c === '(';
 }
 
+const CHORDS_LIKE_WORDS_LC = new Set<string>(['a', 'go']);
 
+function hasChordsNotLikeWords(locations: ChordLocation[], text: string): boolean {
+  for (const l of locations) {
+    const chordText = text.substring(l.startIdx, l.endIdx).toLocaleLowerCase();
+    if (!CHORDS_LIKE_WORDS_LC.has(chordText)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function allChordsAreTheSame(chordLocations: ChordLocation[]): boolean {
+  if (chordLocations.length === 0) {
+    return true;
+  }
+  const chord0 = chordLocations[0];
+  for (let i = 1; i < chordLocations.length; i++) {
+    const chordI = chordLocations[i];
+    if (chord0.chord.tone !== chordI.chord.tone || chord0.chord.type !== chordI.chord.type) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isTheOnlyAlphaInText(chordLocation: ChordLocation, text: string, minIdx: number, maxIdx: number): boolean {
+  if (chordLocation.startIdx > minIdx && !containsNonAlphaCharsOnly(text.substring(minIdx, chordLocation.startIdx))) {
+    return false;
+  }
+  // noinspection RedundantIfStatementJS
+  if (chordLocation.endIdx < maxIdx - 1 && !containsNonAlphaCharsOnly(text.substring(chordLocation.endIdx, maxIdx))) {
+    return false;
+  }
+  return true;
+}
+
+export function containsNonAlphaCharsOnly(text: string): boolean {
+  for (let i = 0; i < text.length; i++) {
+    if (isAlpha(text.charAt(i))) {
+      return false;
+    }
+  }
+  return true;
+}
 
 
 

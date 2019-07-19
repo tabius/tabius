@@ -1,5 +1,5 @@
 import {Chord, ChordTone, VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
-import {isAlpha, parseChords} from '@app/utils/chords-parser';
+import {containsNonAlphaCharsOnly, parseChords} from '@app/utils/chords-parser';
 
 export interface ChordRenderingOptions {
   readonly tag?: string;
@@ -154,13 +154,3 @@ function countChar(text: string, char: string): number {
   }
   return count;
 }
-
-function containsNonAlphaCharsOnly(text: string): boolean {
-  for (let i = 0; i < text.length; i++) {
-    if (isAlpha(text.charAt(i))) {
-      return false;
-    }
-  }
-  return true;
-}
-

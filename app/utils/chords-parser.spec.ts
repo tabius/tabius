@@ -74,7 +74,15 @@ describe('Chords parser, parseChordsLine', () => {
 
   it('should correctly process lines with non-chords text', () => {
     expect(parseChordsLine('A little snail')).toEqual([]);
+    expect(parseChordsLine('One More A Little Snail')).toEqual([]);
+    expect(parseChordsLine('On The Go')).toEqual([]);
+    expect(parseChordsLine('Go Go Go')).toEqual([]);
+    expect(parseChordsLine('Go Am')).toEqual([
+      {chord: {tone: 'G', type: 'dim'}, startIdx: 0, endIdx: 2},
+      {chord: {tone: 'A', type: 'min'}, startIdx: 3, endIdx: 5},
+    ]);
   });
+
 
   it('should correctly parse chords with non-chords text in the line', () => {
     expect(parseChordsLine(' A E - 2x')).toEqual([
