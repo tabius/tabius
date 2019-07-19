@@ -11,7 +11,7 @@ export const NEXT_TONE_LETTER_MAP: { readonly [key: string]: ChordTone } = {'A':
 // noinspection SpellCheckingInspection
 
 /** The chord name is a tone + type (Chord Type) */
-export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFromSharps({
+export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFromSharps(withAutoAssignedFingers({
 
   // Major
   'Amaj': 'x02220&f=--123-',
@@ -362,9 +362,28 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   // 'F#': '',
   // 'G': '',
   // 'G#': '',
-});
+}));
 
 type StringMap = { [chord: string]: string };
+
+/** Adds barre to the some chords. This changes the rendering. */
+function withAutoAssignedFingers(chordsMap: StringMap): StringMap {
+  for (const name in chordsMap) {
+    const layout = chordsMap[name];
+    if (layout.includes('&')) {
+      continue;
+    }
+    const chars = layout.split('');
+    const c0 = chars.find(c => c !== 'x');
+    const cN = [...chars].reverse().find(c => c !== 'x');
+    if (c0 && c0 === cN && c0.charCodeAt(0) === Math.min(...chars.map(c => c.charCodeAt(0)))) {
+      let fingers = '';
+      chars.forEach(c => fingers += c === c0 ? '1' : '-');
+      chordsMap[name] = layout + '&f=' + fingers;
+    }
+  }
+  return chordsMap;
+}
 
 /** Adds flats to the existing mapping using sharps mappings. */
 function withFlatsFromSharps(chordsMap: StringMap): StringMap {
