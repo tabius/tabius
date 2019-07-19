@@ -84,5 +84,20 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
 
     done();
   });
+
+  it('correctly compares result ids', async done => {
+    responseInterceptor.response = new HttpResponse({body: [{id: 100}]});
+    const testBed = getTestBed();
+    const http = testBed.get<HttpClient>(HttpClient);
+    const results: any[] = [];
+    await http.get('/api/artist/by-ids/100').toPromise().then(r => results.push(r));
+
+    expect(responseInterceptor.count).toBe(1);
+    expect(results.length).toBe(1);
+    expect(results[0]).toEqual([{id: 100}]);
+
+    done();
+  });
+
 });
 

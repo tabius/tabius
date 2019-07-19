@@ -59,13 +59,17 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
     return batch.response.pipe(
         map(event => {
           if (event instanceof HttpResponse) {
-            const results = event.body as { id: any }[];
+            const results = event.body as { id: string|number }[];
             const filteredResults: any[] = [];
-            for (const id of ids) {
-              for (const result of results) {
-                if (result.id === id) {
-                  filteredResults.push(result);
-                  break;
+            if (results.length > 0) {
+              const unifyTypes = typeof (results[0].id) === 'number' ? (v) => Number(v) : (v) => v;
+              for (const id of ids) {
+                const typeSafeId = unifyTypes(id);
+                for (const result of results) {
+                  if (result.id === typeSafeId) {
+                    filteredResults.push(result);
+                    break;
+                  }
                 }
               }
             }
