@@ -2,8 +2,6 @@
  * Based On "Chord Image Generator" http://einaregilsson.com/2009/07/23/chord-image-generator/
  */
 
-import {bound} from '@common/util/misc-utils';
-
 const NO_FINGER = '-';
 const OPEN = 0;
 const MUTED = -1;
@@ -129,7 +127,7 @@ export class ChordImagePainter {
     this.fingers = f.substr(0, 6).split('');
 
     // set up sizes
-    this.size = bound(1, size, 5);
+    this.size = Math.max(size, 1);
     this.fretWidth = 4 * this.size;
     this.nutHeight = this.fretWidth / 2;
     this.lineWidth = Math.ceil(this.size * 0.31);
@@ -138,16 +136,10 @@ export class ChordImagePainter {
     this.boxWidth = 5 * this.fretWidth + 6 * this.lineWidth;
     this.boxHeight = FRET_COUNT * (this.fretWidth + this.lineWidth) + this.lineWidth;
     const percent = 0.8;
-    this.fretFontSize = this.fretWidth / percent;
-    this.fingerFontSize = this.fretWidth * 0.8;
+    this.fretFontSize = Math.max(this.fretWidth / percent, 12);
+    this.fingerFontSize = Math.max(this.fretWidth * 0.8, 12);
     this.nameFontSize = Math.max(Math.round(this.fretWidth * 1.7) / percent, 20);
-    this.superScriptFontSize = 0.7 * this.nameFontSize;
-    if (this.size == 1) {
-      this.nameFontSize += 2;
-      this.fingerFontSize += 2;
-      this.fretFontSize += 2;
-      this.superScriptFontSize += 2;
-    }
+    this.superScriptFontSize = Math.max(0.7 * this.nameFontSize, 10);
     this.xStart = this.fretWidth;
     this.yStart = Math.round(0.2 * this.superScriptFontSize + this.nameFontSize + this.nutHeight + 1.7 * this.markerWidth);
     this.imageWidth = this.boxWidth + 2 * this.fretWidth; // +2 fret width for borders
