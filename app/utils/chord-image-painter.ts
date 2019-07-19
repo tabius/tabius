@@ -8,6 +8,7 @@ const MUTED = -1;
 const FRET_COUNT = 5;
 const FONT_NAME = 'Ubuntu Mono';
 const FOREGROUND_BRUSH = '#000';
+const BARRE_BRUSH = '#333';
 const BACKGROUND_BRUSH = '#FFF';
 
 interface ChordImageStyle {
@@ -179,10 +180,10 @@ export class ChordImagePainter {
       graphics.drawLine(errorPen, 0, this.imageHeight, this.imageWidth, 0);
     } else {
       this.drawChordBox(graphics);
+      this.drawBars(graphics);
       this.drawPositions(graphics);
       this.drawName(graphics);
       //TODO: make optional: this.drawFingers();
-      this.drawBars(graphics);
     }
   }
 
@@ -230,7 +231,7 @@ export class ChordImagePainter {
         const xStart = this.xStart + bar['Str'] * totalFretWidth;
         const xEnd = xStart + bar['Length'] * totalFretWidth;
         const y = this.yStart + (bar['Pos'] - this.baseFret + 1) * totalFretWidth - (totalFretWidth / 2);
-        const pen = new ChordImagePenStyle(FOREGROUND_BRUSH, this.dotWidth / 2);
+        const pen = new ChordImagePenStyle(BARRE_BRUSH, this.dotWidth / 2.2);
         graphics.drawLine(pen, xStart, y, xEnd, y);
       }
     }
