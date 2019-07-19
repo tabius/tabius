@@ -122,9 +122,7 @@ export class ChordImagePainter {
     this.parsePositions(positions);
 
     // parse fingers
-    let f = String(fingers).toUpperCase() + '------';
-    f = f.replace(/[^\-T1234]/g, '');
-    this.fingers = f.substr(0, 6).split('');
+    this.fingers = (fingers.toUpperCase() + '------').replace(/[^\-T1234]/g, '').substr(0, 6).split('');
 
     // set up sizes
     this.size = Math.max(size, 1);
@@ -150,7 +148,7 @@ export class ChordImagePainter {
 
 
   private parsePositions(positions: string): void {
-    if (positions == null || typeof positions == 'undefined' || !positions.match(/[\dxX]{6}|(([12])?[\dxX]-){5}([12])?[\dxX]/)) {
+    if (!positions || !positions.match(/[\dxX]{6}|(([12])?[\dxX]-){5}([12])?[\dxX]/)) {
       this.error = true;
       return;
     }
@@ -158,12 +156,12 @@ export class ChordImagePainter {
     let maxFret = 0;
     let minFret = Number.MAX_VALUE;
     for (let i = 0; i < 6; i++) {
-      if (parts[i].toUpperCase() == 'X') {
+      if (parts[i].toUpperCase() === 'X') {
         this.chordPositions[i] = MUTED;
       } else {
         this.chordPositions[i] = parseInt(parts[i]);
         maxFret = Math.max(maxFret, this.chordPositions[i]);
-        if (this.chordPositions[i] != 0) {
+        if (this.chordPositions[i] !== 0) {
           minFret = Math.min(minFret, this.chordPositions[i]);
         }
       }
@@ -202,7 +200,7 @@ export class ChordImagePainter {
       graphics.drawLine(pen, x, this.yStart, x, this.yStart + this.boxHeight - this.lineWidth);
     }
 
-    if (this.baseFret == 1) {
+    if (this.baseFret === 1) {
       //Need to draw the nut
       const nutHeight = this.fretWidth / 2;
       graphics.fillRectangle(FOREGROUND_BRUSH, this.xStart - this.lineWidth / 2, this.yStart - nutHeight, this.boxWidth, nutHeight);
@@ -212,10 +210,10 @@ export class ChordImagePainter {
   private drawBars(graphics: ChordImageGraphics): void {
     const bars = {};
     for (let i = 0; i < 5; i++) {
-      if (this.chordPositions[i] != MUTED && this.chordPositions[i] != OPEN && this.fingers[i] != NO_FINGER && !bars.hasOwnProperty(this.fingers[i])) {
-        let bar = {'Str': i, 'Pos': this.chordPositions[i], 'Length': 0, 'Finger': this.fingers[i]};
+      if (this.chordPositions[i] !== MUTED && this.chordPositions[i] !== OPEN && this.fingers[i] !== NO_FINGER && !bars.hasOwnProperty(this.fingers[i])) {
+        const bar = {'Str': i, 'Pos': this.chordPositions[i], 'Length': 0, 'Finger': this.fingers[i]};
         for (let j = i + 1; j < 6; j++) {
-          if (this.fingers[j] == bar['Finger'] && this.chordPositions[j] == this.chordPositions[i]) {
+          if (this.fingers[j] === bar['Finger'] && this.chordPositions[j] === this.chordPositions[i]) {
             bar['Length'] = j - i;
           }
         }
@@ -226,9 +224,9 @@ export class ChordImagePainter {
     }
 
     const totalFretWidth = this.fretWidth + this.lineWidth;
-    for (let b in bars) {
+    for (const b in bars) {
       if (bars.hasOwnProperty(b)) {
-        let bar = bars[b];
+        const bar = bars[b];
         const xStart = this.xStart + bar['Str'] * totalFretWidth;
         const xEnd = xStart + bar['Length'] * totalFretWidth;
         const y = this.yStart + (bar['Pos'] - this.baseFret + 1) * totalFretWidth - (totalFretWidth / 2);
@@ -247,21 +245,21 @@ export class ChordImagePainter {
 
       const xPos = this.xStart - (0.5 * this.fretWidth) + (0.5 * this.lineWidth) + (i * totalFretWidth);
       if (relativePos > 0) {
-        let yPos = relativePos * totalFretWidth + yOffset;
+        const yPos = relativePos * totalFretWidth + yOffset;
         graphics.fillCircle(FOREGROUND_BRUSH, xPos, yPos, this.dotWidth);
-      } else if (absolutePos == OPEN) {
-        let pen = new ChordImagePenStyle(FOREGROUND_BRUSH, this.lineWidth);
+      } else if (absolutePos === OPEN) {
+        const pen = new ChordImagePenStyle(FOREGROUND_BRUSH, this.lineWidth);
         let yPos = this.yStart - this.fretWidth;
-        let markerXPos = xPos + ((this.dotWidth - this.markerWidth) / 2);
-        if (this.baseFret == 1) {
+        const markerXPos = xPos + ((this.dotWidth - this.markerWidth) / 2);
+        if (this.baseFret === 1) {
           yPos -= this.nutHeight;
         }
         graphics.drawCircle(pen, markerXPos, yPos, this.markerWidth);
-      } else if (absolutePos == MUTED) {
-        let pen = new ChordImagePenStyle(FOREGROUND_BRUSH, this.lineWidth * 1.5);
+      } else if (absolutePos === MUTED) {
+        const pen = new ChordImagePenStyle(FOREGROUND_BRUSH, this.lineWidth * 1.5);
         let yPos = this.yStart - this.fretWidth;
-        let markerXPos = xPos + ((this.dotWidth - this.markerWidth) / 2);
-        if (this.baseFret == 1) {
+        const markerXPos = xPos + ((this.dotWidth - this.markerWidth) / 2);
+        if (this.baseFret === 1) {
           yPos -= this.nutHeight;
         }
         graphics.drawLine(pen, markerXPos, yPos, markerXPos + this.markerWidth, yPos + this.markerWidth);
@@ -277,7 +275,7 @@ export class ChordImagePainter {
     const fontStyle = new ChordImageFontStyle(FONT_NAME, this.fingerFontSize);
     for (let f = 0; f < this.fingers.length; f++) {
       const finger = this.fingers[f];
-      if (finger != NO_FINGER) {
+      if (finger !== NO_FINGER) {
         const charSize = graphics.measureString(finger.toString(), fontStyle);
         graphics.drawString(finger.toString(), fontStyle, FOREGROUND_BRUSH, xPos - (0.5 * charSize.width), yPos);
       }
@@ -288,9 +286,9 @@ export class ChordImagePainter {
   private drawName(graphics: ChordImageGraphics): void {
     const nameFontStyle = new ChordImageFontStyle(FONT_NAME, this.nameFontSize);
     const superFontStyle = new ChordImageFontStyle(FONT_NAME, this.superScriptFontSize);
-    let name;
-    let supers;
-    if (this.chordName.indexOf('_') == -1) {
+    let name: string;
+    let supers: string;
+    if (this.chordName.indexOf('_') === -1) {
       name = this.chordName;
       supers = '';
     } else {
@@ -305,7 +303,7 @@ export class ChordImagePainter {
       xTextStart = this.xStart + ((this.boxWidth - stringSize.width) / 2);
     }
     graphics.drawString(name, nameFontStyle, FOREGROUND_BRUSH, xTextStart, 0.2 * this.superScriptFontSize);
-    if (supers != '') {
+    if (supers !== '') {
       graphics.drawString(supers, superFontStyle, FOREGROUND_BRUSH, xTextStart + 0.8 * stringSize.width, 0);
     }
 
