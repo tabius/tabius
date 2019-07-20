@@ -3,6 +3,7 @@ import {DbService} from './db.service';
 import {Artist, ArtistType} from '@common/artist-model';
 import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
+import Hashids from 'hashids';
 
 interface ArtistRow {
   id: number;
@@ -38,11 +39,17 @@ export class ArtistDbi {
       throw `User already has valid artist id assigned: ${user.id}, artistId: ${user.artistId}`;
     }
     const con = this.db.pool.promise();
+    const artistMount = generateArtistMountForUser();
     await con.query('INSERT INTO artist(name, type, mount, listed) VALUES (?,?,?,?)',
-        [user.username, ArtistType.Person, user.id, 0]);
+        [user.username, ArtistType.Person, artistMount, 0]);
     return await con.query('SELECT LAST_INSERT_ID() as id')
         .then(([rows]) => rows[0]['id']);
   }
+}
+
+function generateArtistMountForUser(): string {
+  const hashIds = new Hashids('salt', 5);
+  return `u${hashIds.encode(Date.now())}`;
 }
 
 function rowToArtistListItem(row: ArtistRow): Artist {
