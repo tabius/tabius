@@ -18,6 +18,8 @@ export interface User {
   readonly picture: string;
   /** List of user groups. */
   readonly groups: UserGroup[];
+  /** Artist id associated with the user. */
+  readonly artistId: number;
 }
 
 
@@ -67,6 +69,7 @@ export function newDefaultUserSongSettings(songId: number): UserSongSettings {
 }
 
 export const DEFAULT_B4SI_FLAG = false;
+
 export function newDefaultUserSettings(): UserSettings {
   return {
     songs: {}

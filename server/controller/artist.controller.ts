@@ -12,10 +12,11 @@ export class ArtistController {
   constructor(private readonly artistDbi: ArtistDbi, private readonly crossDbi: CrossEntityDbi) {
   }
 
+  /** Returns list of all 'listed' artists. */
   @Get('/all')
   getAllArtists(): Promise<Artist[]> {
     this.logger.log('all');
-    return this.artistDbi.getAllArtists();
+    return this.artistDbi.getAllArtists(true);
   }
 
   @Get('/by-ids/:ids')

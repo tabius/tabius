@@ -7,23 +7,25 @@ export class UserDbi {
   constructor(private readonly db: DbService) {
   }
 
-  async updateOnLogin(user: User): Promise<void> {
-    const userExist = await this.hasUserWithId(user.id);
+  async createUser(user: User): Promise<void> {
     const now = new Date();
-    if (userExist) {
-      return this.db.pool.promise()
-          .query('UPDATE user SET login_date = ? WHERE id = ? ', [now, user.id]);
-    }
-    return this.db.pool.promise()
-        .query('INSERT INTO user(id, login_date, settings) VALUES (?,?,?) ON DUPLICATE KEY UPDATE login_date = ?',
-            [user.id, now, '{}', now]);
+    await this.db.pool.promise()
+        .query('INSERT INTO user(id, artist_id, login_date, settings) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE artist_id = ?',
+            [user.id, user.artistId, now, '{}', user.artistId]);
   }
 
-  private async hasUserWithId(userId: string): Promise<boolean> {
-    return await this.db.pool.promise()
-        .query('SELECT COUNT(id) AS n  FROM user WHERE id = ?', [userId])
-        .then(([rows]) => rows[0].n !== 0);
+  async updateOnLogin(user: User): Promise<void> {
+    const now = new Date();
+    await this.db.pool.promise()
+        .query('UPDATE user SET login_date = ? WHERE id = ? ', [now, user.id]);
   }
+
+  //
+  // async hasUserWithId(userId: string): Promise<boolean> {
+  //   return await this.db.pool.promise()
+  //       .query('SELECT COUNT(id) AS n  FROM user WHERE id = ?', [userId])
+  //       .then(([rows]) => rows[0].n !== 0);
+  // }
 
   updateSettings(userId: string, userSettings: UserSettings): Promise<void> {
     const settingsJson = JSON.stringify(userSettings);
@@ -40,5 +42,11 @@ export class UserDbi {
                 ? undefined
                 : {...newDefaultUserSettings(), ...JSON.parse(rows[0].settings)}
         );
+  }
+
+  getUserArtistId(userId: string): Promise<number|undefined> {
+    return this.db.pool.promise()
+        .query('SELECT artist_id FROM user WHERE id = ?', [userId])
+        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['artist_id']);
   }
 }

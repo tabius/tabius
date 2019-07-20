@@ -5,6 +5,9 @@ import {Response} from 'express';
 
 import {Db, MongoClient, MongoClientOptions} from 'mongodb';
 import {NODE_BB_COOKIE_DOMAIN, NODE_BB_SESSION_COOKIE, NODE_BB_URL} from '@common/constants';
+import {ArtistDbi} from '@server/db/artist-dbi.service';
+import {isValidId} from '@common/util/misc-utils';
+import {UserDbi} from '@server/db/user-dbi.service';
 import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';
@@ -21,6 +24,14 @@ interface SsoServiceConfig {
   }
 }
 
+interface NodeUser {
+  uid: string,
+  username: string,
+  email: string,
+  picture: string,
+  groupTitle: string[],
+}
+
 const ssoConfig: SsoServiceConfig = require('/opt/tabius/sso-config.json');
 
 @Injectable()
@@ -28,12 +39,14 @@ export class ServerSsoService implements NestInterceptor {
 
   private readonly logger = new Logger(ServerSsoService.name);
 
-  private db?: Db;
+  private nodeDb?: Db;
   private readonly sessionCookieSecret?: string;
   private readonly useTestUser: boolean;
   private readonly testUser?: User;
 
-  constructor() {
+  constructor(private readonly userDbi: UserDbi,
+              private readonly artistDbi: ArtistDbi,
+  ) {
     this.useTestUser = ssoConfig.useTestUser;
     this.sessionCookieSecret = ssoConfig.sessionCookieSecret;
     if (ssoConfig.useTestUser) {
@@ -52,7 +65,7 @@ export class ServerSsoService implements NestInterceptor {
       MongoClient.connect(mongo.url, options)
           .then(client => {
             this.logger.log('Successfully connected to MongoDB');
-            this.db = client.db(mongo.db);
+            this.nodeDb = client.db(mongo.db);
           })
           .catch(err => this.logger.error('Failed to initialize connection to MongoDB: ' + JSON.stringify(err)));
     }
@@ -95,7 +108,7 @@ export class ServerSsoService implements NestInterceptor {
   }
 
   private async getUserFromSsoSession(ssoSessionId: string): Promise<User|undefined> {
-    const sessions = this.db!.collection('sessions');
+    const sessions = this.nodeDb!.collection('sessions');
     const sessionRecord = await sessions.findOne({_id: ssoSessionId});
     if (!sessionRecord) {
       this.logger.debug(`No SSO session found: ${ssoSessionId}`);
@@ -112,28 +125,52 @@ export class ServerSsoService implements NestInterceptor {
       this.logger.debug(`SSO session has no passport: ${ssoSessionId}`);
       return;
     }
-    const objects = this.db!.collection('objects');
+    const objects = this.nodeDb!.collection('objects');
     const userKey = `user:${passport.user}`;
-    const user = await objects.findOne({_key: userKey});
-    if (!user) {
+    const nodeUser: NodeUser|undefined|null = await objects.findOne({_key: userKey});
+    if (!nodeUser) {
       this.logger.error(`User is not found for SSO session: ${JSON.stringify(session)}`);
       return;
     }
-    this.logger.debug(`Found valid user for SSO session: ${ssoSessionId}, user: ${user.username}/${user.email}`);
+    this.logger.debug(`Found valid user for SSO session: ${ssoSessionId}, user: ${nodeUser.username}/${nodeUser.email}`);
     const groups: UserGroup[] = [];
-    if (user.groupTitle.includes('Global Moderators') || user.uid === '1') {
+    if (nodeUser.groupTitle.includes('Global Moderators') || nodeUser.uid === '1') {
       groups.push(UserGroup.Moderator);
     }
-    return {
-      id: user.uid,
-      username: user.username,
-      email: user.email,
-      picture: NODE_BB_URL + user.picture,
+
+    let user: User = {
+      id: nodeUser.uid,
+      username: nodeUser.username,
+      email: nodeUser.email,
+      picture: NODE_BB_URL + nodeUser.picture,
       groups,
+      artistId: await this.getUserArtistId(nodeUser.uid) || -1,
     };
+
+    if (!isValidId(user.artistId)) {
+      const artistId = await this.artistDbi.createArtistForUser(user);
+      user = {...user, artistId};
+      await this.userDbi.createUser(user);
+    }
+    return user;
   }
 
   static logout(res: Response): void {
     res.clearCookie(NODE_BB_SESSION_COOKIE, {domain: NODE_BB_COOKIE_DOMAIN});
+  }
+
+  /** This mapping is immutable, so it is safe to cache */
+  private readonly userIdToArtistIdCache = new Map<string, number>();
+
+  private async getUserArtistId(userId: string): Promise<number|undefined> {
+    let artistId = this.userIdToArtistIdCache.get(userId);
+    if (isValidId(artistId)) {
+      return artistId;
+    }
+    artistId = await this.userDbi.getUserArtistId(userId);
+    if (isValidId(artistId)) {
+      this.userIdToArtistIdCache.set(userId, artistId);
+    }
+    return artistId;
   }
 }
