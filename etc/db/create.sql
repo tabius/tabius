@@ -6,13 +6,13 @@ CREATE TABLE artist (
     id      INT PRIMARY KEY AUTO_INCREMENT,
     name    VARCHAR(64),
     # 1 - person, 2 - band.
-    type    INT NOT NULL,
+    type    INT NOT NULL DEFAULT 1,
     mount   VARCHAR(40)   NOT NULL UNIQUE,
     # Comma separated band ids. If the artist is a person this field may link it to the related band artist ids.
     band_ids VARCHAR(1024) NOT NULL  DEFAULT '',
     version INT NOT NULL DEFAULT 0,
     forum_category_id INT NOT NULL DEFAULT 0,
-    listed INT(1) NOT NULL DEFAULT 1
+    listed INT(1) NOT NULL DEFAULT 0
 ) ENGINE InnoDB
   DEFAULT CHARSET = utf8mb4,
   COLLATE utf8mb4_unicode_ci;

@@ -29,7 +29,7 @@ interface NodeUser {
   username: string,
   email: string,
   picture: string,
-  groupTitle: string[],
+  groupTitle?: string[],
 }
 
 const ssoConfig: SsoServiceConfig = require('/opt/tabius/sso-config.json');
@@ -134,7 +134,8 @@ export class ServerSsoService implements NestInterceptor {
     }
     this.logger.debug(`Found valid user for SSO session: ${ssoSessionId}, user: ${nodeUser.username}/${nodeUser.email}`);
     const groups: UserGroup[] = [];
-    if (nodeUser.groupTitle.includes('Global Moderators') || nodeUser.uid === '1') {
+    const nodeGroups = nodeUser.groupTitle || [];
+    if (nodeGroups.includes('Global Moderators') || nodeUser.uid === '1') {
       groups.push(UserGroup.Moderator);
     }
 
