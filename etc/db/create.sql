@@ -12,7 +12,8 @@ CREATE TABLE artist (
     band_ids VARCHAR(1024) NOT NULL  DEFAULT '',
     version INT NOT NULL DEFAULT 0,
     forum_category_id INT NOT NULL DEFAULT 0,
-    listed INT(1) NOT NULL DEFAULT 0
+    listed INT(1) NOT NULL DEFAULT 0,
+    user_id VARCHAR(40) DEFAULT NULL
 ) ENGINE InnoDB
   DEFAULT CHARSET = utf8mb4,
   COLLATE utf8mb4_unicode_ci;
@@ -45,7 +46,7 @@ CREATE INDEX song_artist_id_index on song(artist_id);
 CREATE TABLE user (
     id         VARCHAR(40) PRIMARY KEY,
     # if null - user is not an ArtistDetails.
-    artist_id  INT DEFAULT NULL REFERENCES artist (id),
+    artist_id  INT NOT NULL REFERENCES artist (id),
     reg_date   DATETIME NOT NULL DEFAULT NOW(),
     login_date DATETIME     NOT NULL,
     settings TEXT

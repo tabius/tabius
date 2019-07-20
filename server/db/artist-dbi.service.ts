@@ -40,8 +40,8 @@ export class ArtistDbi {
     }
     const con = this.db.pool.promise();
     const artistMount = generateArtistMountForUser();
-    await con.query('INSERT INTO artist(name, type, mount, listed) VALUES (?,?,?,?)',
-        [user.username, ArtistType.Person, artistMount, 0]);
+    await con.query('INSERT INTO artist(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
+        [user.username, ArtistType.Person, artistMount, user.id, 0]);
     return await con.query('SELECT LAST_INSERT_ID() as id')
         .then(([rows]) => rows[0]['id']);
   }
