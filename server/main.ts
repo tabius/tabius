@@ -3,7 +3,6 @@ import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
-import {ServerSsoService} from '@server/service/server-sso.service';
 
 const cookieParser = require('cookie-parser');
 
@@ -11,8 +10,6 @@ enableProdMode();
 
 // @ts-ignore
 global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-
-const ssoService = new ServerSsoService();
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerMainModule);
@@ -24,7 +21,6 @@ async function bootstrap() {
     resave: false,
     saveUninitialized: true
   }));
-  app.useGlobalInterceptors(ssoService);
   await app.listen(4001);
 }
 
