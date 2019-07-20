@@ -64,10 +64,6 @@ export function isValidId(id?: number): id is number {
   return id !== undefined && id > 0;
 }
 
-export function isInvalidId(id?: number): id is undefined {
-  return !isValidId(id);
-}
-
 export function getNameFirstFormArtistName(artist: { type: ArtistType, name: string }): string {
   if (artist.type !== ArtistType.Person) {
     return artist.name;
