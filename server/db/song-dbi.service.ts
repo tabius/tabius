@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
 import {DbService} from './db.service';
+import {SongUpdateResponse} from '@common/ajax-model';
 
 interface SongRow {
   id: number;
@@ -45,15 +46,16 @@ export class SongDbi {
         .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
   }
 
-  async updateDetails(details: SongDetails): Promise<SongDetails> {
+  async update(title: string, details: SongDetails): Promise<SongUpdateResponse> {
     await this.db.pool.promise()
-        .query('UPDATE song SET content = ?, media_links = ?, version = version + 1 WHERE id = ?',
-            [details.content, details.mediaLinks.join('\n'), details.id]);
+        .query('UPDATE song SET title = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
+            [title, details.content, details.mediaLinks.join('\n'), details.id]);
+    const updatedSong = await this.getSongs([details.id]);
     const updatedDetails = await this.getSongsDetails([details.id]);
-    if (updatedDetails.length === 0) {
+    if (updatedSong.length === 0 || updatedDetails.length === 0) {
       throw `Song not found ${details.id}`;
     }
-    return updatedDetails[0];
+    return {song: updatedSong[0], details: updatedDetails[0]};
   }
 }
 

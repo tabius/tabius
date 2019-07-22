@@ -1,13 +1,14 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {takeUntil} from 'rxjs/operators';
-import {bound, countOccurrences, scrollToView} from '@common/util/misc-utils';
-import {SongDetails} from '@common/artist-model';
+import {bound, countOccurrences, isValidId, scrollToView} from '@common/util/misc-utils';
+import {Song, SongDetails} from '@common/artist-model';
 import {ToastService} from '@app/toast/toast.service';
 import {MOUNT_ARTISTS} from '@common/mounts';
 import {Router} from '@angular/router';
+import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 
 /** Embeddable song editor component. */
 @Component({
@@ -21,6 +22,9 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   /** Id of the edited song.*/
   @Input() songId!: number;
 
+  /** Must be provided for create mode only (when songId is not defined).*/
+  @Input() artistId!: number;
+
   /** If true, component will trigger scrolling edit area into the view. */
   @Input() scrollIntoView = false;
 
@@ -32,11 +36,16 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   loaded = false;
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   content = '';
+  title = '';
   mediaLinks = '';
-  details?: SongDetails;
+  createMode = false;
+
+  private song?: Song;
+  private details?: SongDetails;
   deleteConfirmationFlag = false;
 
-  @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef?: ElementRef;
+  @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef!: ElementRef;
+  @ViewChild('firstFormElement', {static: false, read: ElementRef}) private firstFormElementRef!: ElementRef;
 
   constructor(private readonly ads: ArtistDataService,
               private readonly toastService: ToastService,
@@ -45,37 +54,73 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    throttleIndicator(this);
-    this.ads.getSongDetailsById(this.songId)
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(details => {
-          this.details = details;
-          this.content = details ? details.content : '?';
-          this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
-          this.loaded = true;
-          if (this.scrollIntoView) {
-            setTimeout(() => {
-              if (this.contentRef && this.contentRef.nativeElement) {
-                const textArea: HTMLTextAreaElement = this.contentRef.nativeElement;
-                textArea.focus({preventScroll: true});
-                textArea.selectionEnd = 0;
-                scrollToView(textArea);
-              }
-            }, 200);
-          }
-        });
+    this.createMode = !isValidId(this.songId);
+    if (this.createMode) {
+      if (!isValidId(this.artistId)) {
+        throw 'Artist ID not provided!';
+      }
+      this.loaded = true;
+      this.updateUIOnLoadedState();
+    } else {
+      throttleIndicator(this);
+      combineLatest([this.ads.getSongById(this.songId), this.ads.getSongDetailsById(this.songId)])
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe(([song, details]) => {
+            if (song === undefined || details === undefined) {
+              return; // todo:
+            }
+            this.song = song;
+            this.details = details;
+            this.title = song.title;
+            this.content = details ? details.content : '?';
+            this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
+            this.loaded = true;
+            this.updateUIOnLoadedState();
+          });
+    }
+  }
+
+  private updateUIOnLoadedState(): void {
+    if (this.scrollIntoView) {
+      setTimeout(() => {
+        if (this.contentRef && this.contentRef.nativeElement) {
+          const textArea: HTMLTextAreaElement = this.contentRef.nativeElement;
+          textArea.focus({preventScroll: true});
+          textArea.selectionEnd = 0;
+          scrollToView(this.firstFormElementRef.nativeElement);
+        }
+      }, 200);
+    }
   }
 
   ngOnDestroy(): void {
     this.destroyed$.next();
   }
 
-  async save(): Promise<void> {
-    if (!this.details || (this.details.content === this.content && this.details.mediaLinks.join(' ') == this.mediaLinks)) {
+
+  async create(): Promise<void> {
+    if (!this.createMode || this.title.length === 0 || this.content === ' ') {
       return;
     }
     try {
-      await this.ads.updateSongDetails({...this.details, content: this.content, mediaLinks: this.mediaLinks.split(' ')});
+      const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, artistId: this.artistId, tid: INVALID_ID};
+      const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.mediaLinks.split(' ')};
+      await this.ads.createSong(createdSong, createdDetails);
+      this.close();
+    } catch (err) {
+      this.toastService.warning(`Ошибка: ${err}`);
+    }
+  }
+
+  async update(): Promise<void> {
+    if (this.createMode || !this.details || !this.song ||
+        (this.song.title === this.title && this.details.content === this.content && this.details.mediaLinks.join(' ') == this.mediaLinks)) {
+      return;
+    }
+    try {
+      const updatedSong: Song = {...this.song, title: this.title};
+      const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.mediaLinks.split(' ')};
+      await this.ads.updateSong(updatedSong, updatedDetails);
       this.close();
     } catch (err) {
       this.toastService.warning(`Ошибка: ${err}`);
@@ -83,7 +128,15 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   }
 
   getContentRowsCount(): number {
-    return bound(8, countOccurrences(this.content, '\n'), window.innerHeight / 20 - 10); // simple heuristic that works (can be improved later if needed).
+    // simple heuristic that works (can be improved later if needed).
+    const headerHeight = window.innerWidth >= MIN_DESKTOP_WIDTH ? DESKTOP_NAV_HEIGHT : MOBILE_NAV_HEIGHT;
+    const titleInputHeight = 28;
+    const linksRowHeight = 28;
+    const buttonsRowHeight = 28;
+    const textAreaLineHeight = 20;
+    const textAreaPadding = 7;
+    const availableHeight = window.innerHeight - (headerHeight + 10 + titleInputHeight + 10 + linksRowHeight + 10 + buttonsRowHeight + 10);
+    return bound(8, countOccurrences(this.content, '\n'), (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
   }
 
   close(): void {

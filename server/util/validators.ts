@@ -2,7 +2,7 @@ import {isValidId} from '@common/util/misc-utils';
 import {MAX_PLAYLIST_NAME_LENGTH, MIN_PLAYLIST_NAME_LENGTH, Playlist, UserSongSettings} from '@common/user-model';
 import {eachItem, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
 import {CreatePlaylistRequest} from '@common/ajax-model';
-import {SongDetails} from '@common/artist-model';
+import {MAX_SONG_TITLE_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/artist-model';
 
 /**
  * Converts strings with a comma-separated numbers to an array of numbers or throws error.
@@ -46,6 +46,15 @@ export const UserSongSettingsValidator: Validator<UserSongSettings> = {
   songId: isNumericId(),
   transpose: isNumber(),
   hideChords: isBoolean(),
+};
+
+export const SongValidator: Validator<Song> = {
+  id: isNumericId(),
+  version: isVersion(),
+  title: checkStringLength(MIN_SONG_TITLE_LENGTH, MAX_SONG_TITLE_LENGTH),
+  mount: isString(),
+  artistId: isNumericId(),
+  tid: isNumericId()
 };
 
 export const SongDetailsValidator: Validator<SongDetails> = {

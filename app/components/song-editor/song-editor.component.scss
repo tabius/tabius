@@ -5,10 +5,18 @@
   display: block;
 }
 
-textarea.content {
+.song-title {
+  width: 100%;
+  font-size: 18px;
+  font-family: $font-family-mono;
+}
+
+textarea.song-content {
+  margin-top: 10px;
   width: 100%;
   min-height: 50%;
   font-size: 18px;
+  line-height: 20px;
   font-family: $font-family-mono;
   padding: 7px;
 }

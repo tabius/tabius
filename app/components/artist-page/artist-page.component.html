@@ -26,6 +26,17 @@
             </div>
         </div>
 
+        <div *ngIf="hasEditRight" class="add-song-block">
+            <a href="javascript:" (click)="toggleEditor()">Добавить песню »</a>
+
+            <gt-song-editor *ngIf="editorIsOpen"
+                            (closeRequest)="toggleEditor()"
+                            [songId]="-1"
+                            [artistId]="artistViewModel.artist.id"
+                            [scrollIntoView]="true"
+            ></gt-song-editor>
+        </div>
+
         <div class="pg-search-block">
             <a href="https://priceguard.ru/search?g=digital&q={{artistViewModel.displayName}}"
                title="Поддержать исполнителя и купить его официальный диск."

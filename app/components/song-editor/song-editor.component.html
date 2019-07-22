@@ -5,16 +5,20 @@
 
 <div *ngIf="loaded">
     <div>
-        <textarea #textArea [(ngModel)]="content" class="content" rows="{{getContentRowsCount()}}"></textarea>
+        <input #firstFormElement type="text" [(ngModel)]="title" class="song-title" placeholder="Название песни">
+    </div>
+    <div>
+        <textarea #textArea [(ngModel)]="content" class="song-content" rows="{{getContentRowsCount()}}"></textarea>
     </div>
     <div class="media-links-block">
         <input [(ngModel)]="mediaLinks" type="text" placeholder="Ссылка на YouTube">
     </div>
     <div class="buttons-row">
-        <button class="btn btn-info save-button" (click)="save()">Сохранить</button>
+        <button *ngIf="createMode" class="btn btn-info create-button" (click)="create()">Создать</button>
+        <button *ngIf="!createMode" class="btn btn-info update-button" (click)="update()">Сохранить</button>
         <button class="btn close-button" (click)="close()">Закрыть</button>
 
-        <div class="delete-button-group">
+        <div *ngIf="!createMode" class="delete-button-group">
             <label class="checkbox">
                 <input type="checkbox"
                        [checked]="deleteConfirmationFlag"

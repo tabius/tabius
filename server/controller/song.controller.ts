@@ -1,12 +1,12 @@
 import {SongDbi} from '@server/db/song-dbi.service';
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Put, Session, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session, UseGuards} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
-import {SongDetailsValidator, stringToArrayOfNumericIds} from '@server/util/validators';
+import {SongDetailsValidator, SongValidator, stringToArrayOfNumericIds} from '@server/util/validators';
 import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
-import {ArtistDetailsResponse} from '@common/ajax-model';
+import {ArtistDetailsResponse, SongUpdateRequest, SongUpdateResponse} from '@common/ajax-model';
 import {CrossEntityDbi} from '@server/db/cross-entity-dbi.service';
 
 @Controller('/api/song')
@@ -33,20 +33,44 @@ export class SongController {
     return this.songDbi.getSongsDetails(ids);
   }
 
-  /** Updates song details playlist and returns updated details. */
-  @Put('/update-details')
+  /** Creates song and returns updated song & details. */
+  @Post()
   @UseGuards(ServerAuthGuard)
-  async update(@Session() session, @Body() songDetails: SongDetails): Promise<SongDetails> {
-    this.logger.log('/update-details');
+  async create(@Session() session, @Body() updateRequest: SongUpdateRequest): Promise<SongUpdateResponse> {
+    this.logger.log('/create-song');
     const user: User = ServerSsoService.getUserOrFail(session);
-    if (!user.groups.includes(UserGroup.Moderator)) {
+    if (!canEditArtist(user, updateRequest.song.artistId)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr = validate(songDetails, conformsTo(SongDetailsValidator));
-    if (!vr.success) {
-      throw vr.toString();
+    const vr1 = validate(updateRequest.song, conformsTo(SongValidator));
+    if (!vr1.success) {
+      throw vr1.toString();
     }
-    return await this.songDbi.updateDetails(songDetails);
+    const vr2 = validate(updateRequest.details, conformsTo(SongDetailsValidator));
+    if (!vr2.success) {
+      throw vr2.toString();
+    }
+    return await this.songDbi.update(updateRequest.song.title, updateRequest.details);
+  }
+
+  /** Updates song and returns updated song & details. */
+  @Put()
+  @UseGuards(ServerAuthGuard)
+  async update(@Session() session, @Body() updateRequest: SongUpdateRequest): Promise<SongUpdateResponse> {
+    this.logger.log('/update-song');
+    const user: User = ServerSsoService.getUserOrFail(session);
+    if (!canEditArtist(user, updateRequest.song.artistId)) {
+      throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
+    }
+    const vr1 = validate(updateRequest.song, conformsTo(SongValidator));
+    if (!vr1.success) {
+      throw vr1.toString();
+    }
+    const vr2 = validate(updateRequest.details, conformsTo(SongDetailsValidator));
+    if (!vr2.success) {
+      throw vr2.toString();
+    }
+    return await this.songDbi.update(updateRequest.song.title, updateRequest.details);
   }
 
   /** Deletes the song and returns updated artist details. */
@@ -68,3 +92,8 @@ export class SongController {
     return this.crossDbi.getArtistDetailsResponse(artistId);
   }
 }
+
+function canEditArtist(user: User, artistId: number): boolean {
+  return user.groups.includes(UserGroup.Moderator) || user.artistId === artistId;
+}
+

@@ -23,6 +23,9 @@ export interface ArtistDetails extends WithNumId, Versioned {
   readonly songIds: readonly number[];
 }
 
+export const MIN_SONG_TITLE_LENGTH = 1;
+export const MAX_SONG_TITLE_LENGTH = 200;
+
 export interface Song extends WithNumId, Versioned {
   /** Mount part of the song page. Unique for all songs per artist. */
   readonly mount: string;

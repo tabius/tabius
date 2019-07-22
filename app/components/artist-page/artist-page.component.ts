@@ -9,6 +9,8 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {defined, getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
+import {User, UserGroup} from '@common/user-model';
+import {UserDataService} from '@app/services/user-data.service';
 
 export class ArtistViewModel {
   readonly displayName: string;
@@ -34,11 +36,16 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
 
   artistViewModel?: ArtistViewModel;
 
+  user?: User;
+  hasEditRight = false;
+  editorIsOpen = false;
+
   get loaded(): boolean {
     return this.artistViewModel !== undefined;
   }
 
   constructor(private readonly ads: ArtistDataService,
+              private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
               private title: Title,
@@ -61,16 +68,22 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
         flatMap(artist => this.ads.getSongsByArtistId(artist ? artist.id : undefined)),
     ) as Observable<Song[]>;
 
-    combineLatest([artist$, bands$, songs$])
+    combineLatest([artist$, bands$, songs$, this.uds.getUser()])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([artist, bands, songs]) => {
+        .subscribe(([artist, bands, songs, user]) => {
           if (!artist || !bands || !songs) {
             return;
           }
           this.artistViewModel = new ArtistViewModel(artist, bands, songs);
+          this.user = user;
+          if (this.user) {
+            this.hasEditRight = this.user.groups.includes(UserGroup.Moderator) || this.user.artistId == artist.id;
+          } else {
+            this.hasEditRight = false;
+          }
           this.updateMeta();
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
@@ -98,4 +111,8 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
     return song.id;
   }
 
+  toggleEditor(): void {
+    this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
+    this.cd.detectChanges();
+  }
 }

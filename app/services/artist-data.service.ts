@@ -5,7 +5,7 @@ import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
 import {flatMap, map, take, tap} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {ArtistDetailsResponse} from '@common/ajax-model';
+import {ArtistDetailsResponse, SongUpdateRequest, SongUpdateResponse} from '@common/ajax-model';
 import {checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
 import {BrowserStore, DO_REFRESH} from '@app/store/browser-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -143,9 +143,18 @@ export class ArtistDataService {
         );
   }
 
-  async updateSongDetails(details: SongDetails): Promise<void> {
-    const updatedDetails = await this.httpClient.put<SongDetails>(`/api/song/update-details`, details).pipe(take(1)).toPromise();
-    await this.store.set(getSongDetailsKey(updatedDetails.id), updatedDetails, checkUpdateByVersion);
+  async createSong(song: Song, details: SongDetails): Promise<void> {
+    const request: SongUpdateRequest = {song, details};
+    const response = await this.httpClient.post<SongUpdateResponse>(`/api/song`, request).pipe(take(1)).toPromise();
+    await this.store.set(getSongKey(response.song.id), response.song, checkUpdateByVersion);
+    await this.store.set(getSongDetailsKey(response.details.id), response.details, checkUpdateByVersion);
+  }
+
+  async updateSong(song: Song, details: SongDetails): Promise<void> {
+    const request: SongUpdateRequest = {song, details};
+    const response = await this.httpClient.put<SongUpdateResponse>(`/api/song`, request).pipe(take(1)).toPromise();
+    await this.store.set(getSongKey(response.song.id), response.song, checkUpdateByVersion);
+    await this.store.set(getSongDetailsKey(response.details.id), response.details, checkUpdateByVersion);
   }
 
   async deleteSong(songId?: number): Promise<void> {

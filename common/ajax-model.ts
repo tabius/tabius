@@ -1,5 +1,5 @@
 import {Playlist, User, UserSettings} from '@common/user-model';
-import {Artist, Song} from '@common/artist-model';
+import {Artist, Song, SongDetails} from '@common/artist-model';
 
 export interface LoginResponse {
   readonly user?: User;
@@ -21,3 +21,14 @@ export interface CreatePlaylistRequest {
 export type CreatePlaylistResponse = Playlist[];
 export type UpdatePlaylistResponse = Playlist[];
 export type DeletePlaylistResponse = Playlist[];
+
+
+export interface SongUpdateRequest {
+  song: Song;
+  details: SongDetails;
+}
+
+export interface SongUpdateResponse {
+  song: Song;
+  details: SongDetails;
+}

@@ -25,3 +25,5 @@ export const DESKTOP_NAV_HEIGHT = 164;
 // Used as optimal mobile width in SSR rendering.
 export const SSR_MOBILE_WIDTH = 360;
 export const SSR_DESKTOP_WIDTH = 1920;
+
+export const INVALID_ID = -1;
