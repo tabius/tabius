@@ -11,7 +11,7 @@
             <div>
                 <h1>{{artistViewModel.displayName}}</h1>
                 <img src="{{artistViewModel.imgSrc}}" alt="{{artistViewModel.artist.name}}" title="{{artistViewModel.displayName}}">
-                <div *ngIf="artistViewModel.artist.bandIds.length > 0" class="bands-info">
+                <div *ngIf="artistViewModel.bands.length > 0" class="bands-info">
                     Группы:
                     <div *ngFor="let band of artistViewModel.bands">
                         <a routerLink="{{getArtistPageLink(band.mount)}}">{{band.name}}</a>
@@ -37,7 +37,7 @@
             ></gt-song-editor>
         </div>
 
-        <div class="pg-search-block">
+        <div *ngIf="artistViewModel.listed" class="pg-search-block">
             <a href="https://priceguard.ru/search?g=digital&q={{artistViewModel.displayName}}"
                title="Поддержать исполнителя и купить его официальный диск."
                target="_blank"

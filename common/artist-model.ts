@@ -14,13 +14,13 @@ export interface Artist extends WithNumId, Versioned {
   readonly mount: string;
   /** Type of the artist: Band or Person. */
   readonly type: ArtistType;
-  /** List of artist's band ids.*/
-  //todo: make optional or move to details?
-  readonly bandIds: readonly number[];
 }
 
 export interface ArtistDetails extends WithNumId, Versioned {
   readonly songIds: readonly number[];
+  /** List of artist's band ids.*/
+  readonly bandIds: readonly number[];
+  readonly listed: boolean;
 }
 
 export const MIN_SONG_TITLE_LENGTH = 1;

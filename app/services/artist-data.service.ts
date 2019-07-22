@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
 import {flatMap, map, take, tap} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
@@ -88,8 +88,10 @@ export class ArtistDataService {
     ]);
     return {
       id: response.artist.id,
-      songIds: response.songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
       version: response.artist.version,
+      songIds: response.songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
+      bandIds: response.bandIds,
+      listed: response.listed,
     };
   }
 
@@ -118,14 +120,6 @@ export class ArtistDataService {
     return song;
   }
 
-  getSongsByArtistId(artistId?: number): Observable<Song[]|undefined> {
-    return this.getArtistDetails(artistId)
-        .pipe(
-            flatMap(details => details === undefined ? of(undefined) : this.getSongsByIds(details.songIds)),
-            map(songs => songs === undefined ? undefined : songs.filter(defined))
-        );
-  }
-
   getSongDetailsById(songId: number|undefined): Observable<SongDetails|undefined> {
     return this.store.get<SongDetails>(
         getSongDetailsKey(songId),
@@ -138,8 +132,9 @@ export class ArtistDataService {
   getSongByMount(artistMount: string, songMount: string): Observable<Song|undefined> {
     return this.getArtistByMount(artistMount)
         .pipe(
-            flatMap(artist => this.getSongsByArtistId(artist ? artist.id : undefined)),
-            map(songs => songs === undefined ? undefined : songs.find(s => s.mount === songMount)),
+            flatMap(artist => this.getArtistDetails(artist ? artist.id : undefined)),
+            flatMap(details => this.getSongsByIds(details ? details.songIds : [])),
+            map(songs => songs.find(s => s !== undefined && s.mount === songMount)),
         );
   }
 

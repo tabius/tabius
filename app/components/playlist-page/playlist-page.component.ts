@@ -8,8 +8,8 @@ import {combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
 import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {Playlist, UserGroup} from '@common/user-model';
-import {defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
+import {Playlist, User} from '@common/user-model';
+import {canEditArtist, defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 
@@ -30,7 +30,8 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   playlist!: Playlist;
   songItems: PlaylistSongModel[] = [];
-  hasEditRight = false;
+
+  private user?: User;
 
   readonly mode = SongComponentMode.Playlist;
   readonly hasValidForumTopic = hasValidForumTopic;
@@ -64,10 +65,11 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
         flatMap(songs => this.ads.getArtistsByIds(songs.map(s => s.artistId)))
     );
 
-    combineLatest([playlist$, songs$, artists$]).pipe(
+    combineLatest([playlist$, songs$, artists$, this.uds.getUser()]).pipe(
         takeUntil(this.destroyed$),
         throttleTime(100, undefined, {leading: true, trailing: true}),
-    ).subscribe(([playlist, songs, artists]) => {
+    ).subscribe(([playlist, songs, artists, user]) => {
+      this.user = user;
       if (playlist === undefined) {
         this.songItems = []; //todo: redirect?
         return;
@@ -90,10 +92,6 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
       this.navHelper.restoreScrollPosition();
     });
-
-    this.uds.getUser()
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(user => this.hasEditRight = user ? user.groups.includes(UserGroup.Moderator) : false);
   }
 
   ngOnDestroy(): void {
@@ -120,6 +118,10 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       this.songsWithOpenEditors.add(songId);
     }
     this.cd.detectChanges();
+  }
+
+  hasEditRight(artistId: number): boolean {
+    return canEditArtist(this.user, artistId);
   }
 }
 

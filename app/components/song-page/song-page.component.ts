@@ -8,9 +8,8 @@ import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
-import {getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
+import {canEditArtist, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
-import {UserGroup} from '@common/user-model';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 
 @Component({
@@ -58,12 +57,12 @@ export class SongPageComponent implements OnInit, OnDestroy {
     const song$ = this.ads.getSongByMount(artistMount, songMount);
     const songDetails$ = song$.pipe(flatMap(song => this.ads.getSongDetailsById(song ? song.id : undefined)));
 
-    combineLatest([artist$, song$, songDetails$])
+    combineLatest([artist$, song$, songDetails$, this.uds.getUser()])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([artist, song, songDetails]) => {
+        .subscribe(([artist, song, songDetails, user]) => {
           if (artist === undefined || song === undefined || songDetails === undefined) {
             return; // reasons: not everything is loaded
           }
@@ -71,12 +70,10 @@ export class SongPageComponent implements OnInit, OnDestroy {
           this.songDetails = songDetails;
           this.artist = artist;
           this.updateMeta();
+          this.hasEditRight = canEditArtist(user, artist.id);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });
-    this.uds.getUser()
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(user => this.hasEditRight = user ? user.groups.includes(UserGroup.Moderator) : false);
   }
 
   ngOnDestroy(): void {

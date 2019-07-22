@@ -8,8 +8,10 @@ export interface LoginResponse {
 }
 
 export interface ArtistDetailsResponse {
-  readonly artist: Artist,
-  readonly songs: Song[]
+  readonly artist: Artist;
+  readonly songs: Song[];
+  readonly bandIds: number[];
+  readonly listed: boolean;
 }
 
 export interface CreatePlaylistRequest {

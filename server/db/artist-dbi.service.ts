@@ -12,9 +12,16 @@ interface ArtistRow {
   mount: string;
   band_ids: string;
   version: number;
+  listed: number;
 }
 
-const SELECT_ARTIST_SQL = 'SELECT id, name, type, mount, band_ids, version FROM artist';
+interface ArtistWithDetailsRow extends ArtistRow {
+  band_ids: string;
+  listed: number;
+}
+
+const SELECT_ARTIST_SQL = 'SELECT id, name, type, mount, version FROM artist';
+const SELECT_ARTIST_WITH_DETAILS_SQL = 'SELECT id, name, type, mount, version, band_ids, listed FROM artist';
 
 @Injectable()
 export class ArtistDbi {
@@ -25,13 +32,29 @@ export class ArtistDbi {
   getAllArtists(listedOnly: boolean): Promise<Artist[]> {
     return this.db.pool.promise()
         .query(SELECT_ARTIST_SQL + (listedOnly ? ' WHERE listed = 1' : ''))
-        .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtistListItem(row)));
+        .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtist(row)));
   }
 
   getArtistsByIds(artistIds: readonly number[]): Promise<(Artist)[]> {
     return this.db.pool.promise()
         .query(`${SELECT_ARTIST_SQL} WHERE id IN (${artistIds.join(',')})`)
-        .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtistListItem(row)));
+        .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtist(row)));
+  }
+
+  getArtistWithDetails(artistId: number): Promise<{ artist: Artist, listed: boolean, bandIds: number[] }|undefined> {
+    return this.db.pool.promise()
+        .query(`${SELECT_ARTIST_WITH_DETAILS_SQL} WHERE id  = ?`, [artistId])
+        .then(([rows]: [ArtistWithDetailsRow[]]) => {
+          if (rows.length === 0) {
+            return undefined;
+          }
+          const row = rows[0];
+          return {
+            artist: rowToArtist(row),
+            listed: row.listed === 1,
+            bandIds: toArrayOfInts(row.band_ids, ','),
+          };
+        });
   }
 
   async createArtistForUser(user: User): Promise<number> {
@@ -52,6 +75,6 @@ function generateArtistMountForUser(): string {
   return `u${hashIds.encode(Date.now())}`;
 }
 
-function rowToArtistListItem(row: ArtistRow): Artist {
-  return {id: row.id, name: row.name, type: row.type, mount: row.mount, bandIds: toArrayOfInts(row.band_ids, ','), version: row.version};
+function rowToArtist(row: ArtistRow): Artist {
+  return {id: row.id, name: row.name, type: row.type, mount: row.mount, version: row.version};
 }

@@ -8,6 +8,7 @@ import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {ArtistDetailsResponse, SongUpdateRequest, SongUpdateResponse} from '@common/ajax-model';
 import {CrossEntityDbi} from '@server/db/cross-entity-dbi.service';
+import {canEditArtist} from '@common/util/misc-utils';
 
 @Controller('/api/song')
 export class SongController {
@@ -92,8 +93,3 @@ export class SongController {
     return this.crossDbi.getArtistDetailsResponse(artistId);
   }
 }
-
-function canEditArtist(user: User, artistId: number): boolean {
-  return user.groups.includes(UserGroup.Moderator) || user.artistId === artistId;
-}
-

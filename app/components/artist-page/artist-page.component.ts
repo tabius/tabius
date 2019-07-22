@@ -1,22 +1,22 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {Artist, Song} from '@common/artist-model';
+import {Artist, ArtistDetails, Song} from '@common/artist-model';
 import {ActivatedRoute} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
-import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {throttleIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {defined, getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
+import {canEditArtist, defined, getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {User, UserGroup} from '@common/user-model';
+import {User} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
 
 export class ArtistViewModel {
   readonly displayName: string;
   readonly imgSrc: string;
 
-  constructor(readonly artist: Artist, readonly bands: Artist[], readonly songs: Song[]) {
+  constructor(readonly artist: Artist, readonly bands: Artist[], readonly songs: Song[], readonly listed: boolean) {
     this.displayName = getNameFirstFormArtistName(artist);
     this.imgSrc = getArtistImageUrl(artist.mount);
   }
@@ -58,32 +58,35 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
     throttleIndicator(this);
 
     const artistMount = this.route.snapshot.params['artistMount'];
+
     const artist$: Observable<Artist|undefined> = this.ads.getArtistByMount(artistMount);
-    const bands$ = artist$.pipe(
-        flatMap(artist => artist ? this.ads.getArtistsByIds(artist.bandIds) : of(undefined)),
-        map(bands => bands ? bands.filter(defined) : undefined),
-    ) as Observable<Artist[]>;
 
-    const songs$ = artist$.pipe(
-        flatMap(artist => this.ads.getSongsByArtistId(artist ? artist.id : undefined)),
-    ) as Observable<Song[]>;
+    const artistDetails$: Observable<ArtistDetails|undefined> = artist$.pipe(
+        flatMap(artist => this.ads.getArtistDetails(artist && artist.id))
+    );
 
-    combineLatest([artist$, bands$, songs$, this.uds.getUser()])
+    const bands$: Observable<Artist[]> = artistDetails$.pipe(
+        flatMap(details => this.ads.getArtistsByIds(details ? details.bandIds : [])),
+        map(bands => bands.filter(defined))
+    );
+
+    const songs$: Observable<Song[]> = artistDetails$.pipe(
+        flatMap(details => this.ads.getSongsByIds(details ? details.songIds : [])),
+        map(songs => songs.filter(defined))
+    );
+
+    combineLatest([artist$, artistDetails$, bands$, songs$, this.uds.getUser()])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([artist, bands, songs, user]) => {
-          if (!artist || !bands || !songs) {
+        .subscribe(([artist, artistDetails, bands, songs, user]) => {
+          if (!artist || !artistDetails || !bands || !songs) {
             return;
           }
-          this.artistViewModel = new ArtistViewModel(artist, bands, songs);
+          this.artistViewModel = new ArtistViewModel(artist, bands, songs, artistDetails.listed);
           this.user = user;
-          if (this.user) {
-            this.hasEditRight = this.user.groups.includes(UserGroup.Moderator) || this.user.artistId == artist.id;
-          } else {
-            this.hasEditRight = false;
-          }
+          this.hasEditRight = canEditArtist(this.user, artist.id);
           this.updateMeta();
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();

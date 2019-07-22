@@ -12,18 +12,16 @@ export class CrossEntityDbi {
   }
 
   getArtistDetailsResponse(artistId: number): Promise<ArtistDetailsResponse|undefined> {
-    const artists$$ = this.artistDbi.getArtistsByIds([artistId]);
+    const artistsWithDetails$$ = this.artistDbi.getArtistWithDetails(artistId);
     const songs$$ = this.songDbi.getSongsByArtistIds([artistId]);
-    return Promise.all([artists$$, songs$$])
-        .then(([artists, songs]) => {
-          const artist = artists[0];
-          return artist === undefined ? undefined : {artist, songs};
-        });
+    return Promise.all([artistsWithDetails$$, songs$$])
+        .then(([artistWithDetails, songs]) => artistWithDetails ? {...artistWithDetails, songs} : undefined);
   }
 
   async deleteSongAndUpdateArtistVersion(songId: number, artistId: number): Promise<void> {
-    await this.db.pool.promise().query('DELETE FROM song WHERE id = ?', [songId]);
-    await this.db.pool.promise().query('UPDATE artist SET version = version + 1 WHERE id = ?', [artistId]);
+    const con$$ = this.db.pool.promise();
+    await con$$.query('DELETE FROM song WHERE id = ?', [songId]);
+    await con$$.query('UPDATE artist SET version = version + 1 WHERE id = ?', [artistId]);
   }
 
 }

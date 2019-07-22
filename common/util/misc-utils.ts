@@ -1,9 +1,10 @@
 import {Versioned} from '@common/common-model';
 import {ArtistType, Song} from '@common/artist-model';
 import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {filter, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
+import {User, UserGroup} from '@common/user-model';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length == 0) {
@@ -113,9 +114,6 @@ export function defined<T>(v: T|undefined): v is T {
   return v !== undefined;
 }
 
-/** RxJS wrapper to keep only defined elements in the stream. */
-export const keepDefined = filter(defined);
-
 export function firstInArray<T>(v: T[]|undefined): T|undefined {
   return v && v.length > 0 ? v[0] : undefined;
 }
@@ -157,3 +155,8 @@ export function scrollToView(element?: HTMLElement): void {
   const headerHeight = window.innerWidth >= MIN_DESKTOP_WIDTH ? DESKTOP_NAV_HEIGHT + 10 : MOBILE_NAV_HEIGHT + 5;
   window.scroll({left: window.scrollX, top: element.offsetTop - headerHeight, behavior: 'smooth'});
 }
+
+export function canEditArtist(user: User|undefined, artistId: number): boolean {
+  return !!user && (user.groups.includes(UserGroup.Moderator) || user.artistId === artistId);
+}
+

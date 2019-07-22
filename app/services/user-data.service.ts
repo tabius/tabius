@@ -5,7 +5,7 @@ import {DEFAULT_B4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings,
 import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH, DO_REFRESH, skipUpdateCheck} from '@app/store/browser-store';
 import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId, keepDefined} from '@common/util/misc-utils';
+import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
@@ -149,7 +149,7 @@ export class UserDataService {
                         DO_NOT_REFRESH,
                         skipUpdateCheck
                     ));
-                    return combineLatest0(playlist$Array).pipe(keepDefined);
+                    return combineLatest0(playlist$Array).pipe(map(playlists => playlists.filter(defined)));
                   }
               ),
               map(array => array.filter(defined) as Playlist[]),
