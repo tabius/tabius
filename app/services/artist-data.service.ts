@@ -68,7 +68,7 @@ export class ArtistDataService {
             .pipe(
                 flatMap(response => fromPromise(this.registerArtistDetailsOnFetch(response))),
                 tap(details => { //todo: find a better place for this heuristic based pre-fetch.
-                  if (details) {
+                  if (details && this.bss.isBrowser) {
                     details.songIds.forEach(id => this.getSongDetailsById(id));
                   }
                 }),
