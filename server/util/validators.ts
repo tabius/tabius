@@ -1,8 +1,9 @@
 import {isValidId} from '@common/util/misc-utils';
 import {MAX_PLAYLIST_NAME_LENGTH, MIN_PLAYLIST_NAME_LENGTH, Playlist, UserSongSettings} from '@common/user-model';
-import {eachItem, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
+import {eachItem, equals, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
 import {CreatePlaylistRequest} from '@common/ajax-model';
-import {MAX_SONG_TITLE_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/artist-model';
+import {MAX_SONG_CONTENT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/artist-model';
+import {INVALID_ID} from '@common/constants';
 
 /**
  * Converts strings with a comma-separated numbers to an array of numbers or throws error.
@@ -57,9 +58,23 @@ export const SongValidator: Validator<Song> = {
   tid: isNumericId()
 };
 
+export const NewSongValidator: Validator<Song> = {
+  ...SongValidator,
+  id: equals(INVALID_ID),
+  version: equals(0),
+  mount: equals(''),
+  tid: equals(INVALID_ID),
+};
+
 export const SongDetailsValidator: Validator<SongDetails> = {
   id: isNumericId(),
   version: isVersion(),
-  content: checkStringLength(10, 10000),
+  content: checkStringLength(MIN_SONG_CONTENT_LENGTH, MAX_SONG_CONTENT_LENGTH),
   mediaLinks: isArray(eachItem(isString())),
+};
+
+export const NewSongDetailsValidator: Validator<SongDetails> = {
+  ...SongDetailsValidator,
+  id: equals(INVALID_ID),
+  version: equals(0),
 };

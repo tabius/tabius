@@ -1,7 +1,7 @@
 import {SongDbi} from '@server/db/song-dbi.service';
 import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session, UseGuards} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
-import {SongDetailsValidator, SongValidator, stringToArrayOfNumericIds} from '@server/util/validators';
+import {NewSongDetailsValidator, NewSongValidator, SongDetailsValidator, SongValidator, stringToArrayOfNumericIds} from '@server/util/validators';
 import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
@@ -38,20 +38,20 @@ export class SongController {
   @Post()
   @UseGuards(ServerAuthGuard)
   async create(@Session() session, @Body() updateRequest: SongUpdateRequest): Promise<SongUpdateResponse> {
-    this.logger.log('/create-song');
+    this.logger.log('/create-song'+ JSON.stringify(updateRequest));
     const user: User = ServerSsoService.getUserOrFail(session);
     if (!canEditArtist(user, updateRequest.song.artistId)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr1 = validate(updateRequest.song, conformsTo(SongValidator));
+    const vr1 = validate(updateRequest.song, conformsTo(NewSongValidator));
     if (!vr1.success) {
       throw vr1.toString();
     }
-    const vr2 = validate(updateRequest.details, conformsTo(SongDetailsValidator));
+    const vr2 = validate(updateRequest.details, conformsTo(NewSongDetailsValidator));
     if (!vr2.success) {
       throw vr2.toString();
     }
-    return await this.songDbi.update(updateRequest.song.title, updateRequest.details);
+    return await this.songDbi.create(updateRequest.song, updateRequest.details);
   }
 
   /** Updates song and returns updated song & details. */

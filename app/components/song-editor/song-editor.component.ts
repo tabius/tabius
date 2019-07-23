@@ -104,12 +104,16 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     }
     try {
       const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, artistId: this.artistId, tid: INVALID_ID};
-      const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.mediaLinks.split(' ')};
+      const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
       await this.ads.createSong(createdSong, createdDetails);
       this.close();
     } catch (err) {
       this.toastService.warning(`Ошибка: ${err}`);
     }
+  }
+
+  private getMediaLinksAsArray(): string[] {
+    return this.mediaLinks.split(' ').filter(l => l.length > 0);
   }
 
   async update(): Promise<void> {
@@ -119,7 +123,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     }
     try {
       const updatedSong: Song = {...this.song, title: this.title};
-      const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.mediaLinks.split(' ')};
+      const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
       await this.ads.updateSong(updatedSong, updatedDetails);
       this.close();
     } catch (err) {

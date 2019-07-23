@@ -37,6 +37,9 @@ export interface Song extends WithNumId, Versioned {
   readonly tid: number;
 }
 
+export const MIN_SONG_CONTENT_LENGTH = 10;
+export const MAX_SONG_CONTENT_LENGTH = 10000;
+
 export interface SongDetails extends WithNumId, Versioned {
   /** Text of the song with tabs & chords. */
   readonly content: string;

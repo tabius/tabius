@@ -61,11 +61,11 @@ export class ArtistDbi {
     if (isValidId(user.artistId)) {
       throw `User already has valid artist id assigned: ${user.id}, artistId: ${user.artistId}`;
     }
-    const con = this.db.pool.promise();
+    const con$$ = this.db.pool.promise();
     const artistMount = generateArtistMountForUser();
-    await con.query('INSERT INTO artist(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
+    await con$$.query('INSERT INTO artist(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
         [user.username, ArtistType.Person, artistMount, 0, user.id]);
-    return await con.query('SELECT LAST_INSERT_ID() as id')
+    return await con$$.query('SELECT LAST_INSERT_ID() as id')
         .then(([rows]) => rows[0]['id']);
   }
 }

@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
 import {DbService} from './db.service';
 import {SongUpdateResponse} from '@common/ajax-model';
+import {getTranslitLowerCase} from '@common/util/seo_translit';
 
 interface SongRow {
   id: number;
@@ -46,16 +47,32 @@ export class SongDbi {
         .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
   }
 
+  async create(song: Song, details: SongDetails): Promise<SongUpdateResponse> {
+    const con$$ = this.db.pool.promise();
+    const mount = await generateUniqueSongMount(song, con$$);
+    await con$$.query('INSERT INTO song(artist_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
+        [song.artistId, mount, song.title, details.content, packLinks(details.mediaLinks)]);
+
+    const id = await con$$.query('SELECT LAST_INSERT_ID() as id')
+        .then(([rows]) => rows[0]['id']);
+
+    const [songFromDb, detailsFromDb] = await Promise.all([this.getSongs([id]), this.getSongsDetails([id])]);
+    if (songFromDb.length === 0 || detailsFromDb.length === 0) {
+      throw `Failed to create song ${details.id}`;
+    }
+    return {song: songFromDb[0], details: detailsFromDb[0]};
+  }
+
   async update(title: string, details: SongDetails): Promise<SongUpdateResponse> {
     await this.db.pool.promise()
         .query('UPDATE song SET title = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
-            [title, details.content, details.mediaLinks.join('\n'), details.id]);
-    const updatedSong = await this.getSongs([details.id]);
-    const updatedDetails = await this.getSongsDetails([details.id]);
-    if (updatedSong.length === 0 || updatedDetails.length === 0) {
+            [title, details.content, packLinks(details.mediaLinks), details.id]);
+    const ids = [details.id];
+    const [songFromDb, detailsFromDb] = await Promise.all([this.getSongs(ids), this.getSongsDetails(ids)]);
+    if (songFromDb.length === 0 || detailsFromDb.length === 0) {
       throw `Song not found ${details.id}`;
     }
-    return {song: updatedSong[0], details: updatedDetails[0]};
+    return {song: songFromDb[0], details: detailsFromDb[0]};
   }
 }
 
@@ -75,7 +92,29 @@ function row2SongDetails(row: SongRow): SongDetails {
   return {
     id: row.id,
     content: row.content,
-    mediaLinks: row.media_links.split('\n'),
+    mediaLinks: unpackLinks(row.media_links),
     version: row.version,
   };
 }
+
+function packLinks(links: string[]): string {
+  return links.filter(l => l.length > 0).join('\n');
+}
+
+function unpackLinks(packedLinks: string): string[] {
+  return packedLinks.length === 0 ? [] : packedLinks.split('\n');
+}
+
+async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> {
+  const allMounts = await con$$.query('SELECT mount FROM song WHERE artist_id = ?', [song.artistId])
+      .then(([rows]) => rows.map(row => row.mount));
+  const allMountsSet = new Set<string>(allMounts);
+  const baseMount = getTranslitLowerCase(song.title);
+  for (let i = 0; ; i++) {
+    const mount = baseMount + (i == 0 ? '' : '_' + i);
+    if (!allMountsSet.has(mount)) {
+      return mount;
+    }
+  }
+}
+
