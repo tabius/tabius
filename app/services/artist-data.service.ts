@@ -2,12 +2,12 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
-import {flatMap, map, take, tap} from 'rxjs/operators';
+import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
-import {BrowserStore, DO_REFRESH} from '@app/store/browser-store';
+import {BrowserStore, DO_NOT_REFRESH, DO_REFRESH} from '@app/store/browser-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 const ARTIST_LIST_KEY = 'artist-list';
@@ -76,12 +76,7 @@ export class ArtistDataService {
         getArtistSongListKey(artistId),
         () => this.httpClient.get<Song[]>(`/api/song/by-artist/${artistId}`)
             .pipe(
-                flatMap(songs => fromPromise(this.updateArtistSongsOnFetch(artistId!, songs, false))),
-                tap(songs => { //todo: find a better place for this heuristic based pre-fetch.
-                  if (this.bss.isBrowser) {
-                    songs.forEach(id => this.getSongDetailsById(id));
-                  }
-                }),
+                flatMap(songs => fromPromise(this.updateArtistSongsOnFetch(artistId!, songs, false)))
             ),
         DO_REFRESH,
         checkUpdateByShallowArrayCompare
@@ -120,11 +115,11 @@ export class ArtistDataService {
     return combineLatest0(songIds.map(id => this.getSongById(id)));
   }
 
-  getSongDetailsById(songId: number|undefined): Observable<SongDetails|undefined> {
+  getSongDetailsById(songId: number|undefined, refreshCachedVersion = true): Observable<SongDetails|undefined> {
     return this.store.get<SongDetails>(
         getSongDetailsKey(songId),
         () => this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songId}`).pipe(mapToFirstInArray),
-        DO_REFRESH,
+        refreshCachedVersion ? DO_REFRESH : DO_NOT_REFRESH,
         checkUpdateByVersion
     );
   }

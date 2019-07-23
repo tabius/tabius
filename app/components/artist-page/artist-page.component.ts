@@ -11,6 +11,7 @@ import {canEditArtist, defined, getArtistImageUrl, getArtistPageLink, getNameFir
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 export class ArtistViewModel {
   readonly displayName: string;
@@ -39,6 +40,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
   user?: User;
   hasEditRight = false;
   editorIsOpen = false;
+  songDetailsPrefetched = false;
 
   get loaded(): boolean {
     return this.artistViewModel !== undefined;
@@ -46,6 +48,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
 
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
+              private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
               private title: Title,
@@ -91,6 +94,12 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
           this.updateMeta();
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
+
+          // heuristic: prefetch for song details.
+          if (!this.songDetailsPrefetched && this.bss.isBrowser) {
+            this.songDetailsPrefetched = true;
+            songs.forEach(s => this.ads.getSongDetailsById(s.id, false));
+          }
         });
   }
 

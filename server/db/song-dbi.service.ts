@@ -49,11 +49,10 @@ export class SongDbi {
   async create(song: Song, details: SongDetails): Promise<number> {
     const con$$ = this.db.pool.promise();
     const mount = await generateUniqueSongMount(song, con$$);
-    await con$$.query('INSERT INTO song(artist_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
-        [song.artistId, mount, song.title, details.content, packLinks(details.mediaLinks)]);
-
-    return await con$$.query('SELECT LAST_INSERT_ID() as id')
-        .then(([rows]) => rows[0]['id']);
+    return await con$$
+        .query('INSERT INTO song(artist_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
+            [song.artistId, mount, song.title, details.content, packLinks(details.mediaLinks)])
+        .then(([result]) => result.insertId);
   }
 
   async update(title: string, details: SongDetails): Promise<void> {
