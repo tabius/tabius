@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
 import {DbService} from './db.service';
-import {getTranslitLowerCase} from '@common/util/seo_translit';
+import {getTranslitLowerCase} from '@common/util/seo-translit';
 import Hashids from 'hashids';
 
 interface SongRow {

@@ -36,45 +36,39 @@ put('э', 'eh');
 put('ю', 'yu');
 put('я', 'ya');
 
-
-let MIN_RU = 'A'.charCodeAt(0);
-
 function put(lc: string, s: string): void {
   TR.set(lc, s);
-  const uc = lc.toUpperCase();
-  TR.set(uc, s.charAt(0).toUpperCase() + s.substring(1));
-  TR.set(uc, s);
-  MIN_RU = Math.min(Math.min(lc.charCodeAt(0), uc.charCodeAt(0)), MIN_RU);
+  TR.set(lc.toUpperCase(), s.charAt(0).toUpperCase() + s.substring(1));
 }
 
-
-export function getTranslitLowerCase(str: string): string {
+export function getTranslitLowerCase(str: string|undefined): string {
   return getTranslitAnyCase(str).toLowerCase();
 }
 
 const MASK_CHAR = '-';
 
-export function getTranslitAnyCase(str: string): string {
-  if (!str || str.length === 0) {
+export function getTranslitAnyCase(str: string|undefined): string {
+  if (str === undefined || str.length === 0) {
     return '';
 
   }
   let buf = '';
   for (let i = 0; i < str.length; i++) {
-    let c = str.charAt(i);
-    let translatedChar = c.charCodeAt(0) < MIN_RU ? null : TR.get(c);
-    if (translatedChar == null) {
-      translatedChar = c.match('/[a-z1-9]/i') ? translatedChar : MASK_CHAR;
+    const c = str.charAt(i);
+    let trC = TR.get(c);
+    if (trC === undefined) {
+      const m = c.match(/[a-z0-9]/i);
+      trC = m ? m[0] : MASK_CHAR;
     } else {
-      if ((translatedChar === 'h' || translatedChar === 'H') && buf.length > 0) { // special handing for h
+      if ((trC === 'h' || trC === 'H') && buf.length > 0) { // special handing for h
         const lastC = buf.charAt(buf.length - 1);
         if (lastC === 'k' || lastC === 'z' || lastC === 'c' || lastC === 's' || lastC === 'e' || lastC === 'h') {
-          translatedChar = translatedChar === 'h' ? 'kh' : 'Kh';
+          trC = trC === 'h' ? 'kh' : 'Kh';
         }
       }
     }
-    if (translatedChar !== MASK_CHAR || (buf.length > 0 && buf.charAt(buf.length - 1) != MASK_CHAR)) {
-      buf += translatedChar;
+    if (trC !== MASK_CHAR || (buf.length > 0 && buf.charAt(buf.length - 1) !== MASK_CHAR)) {
+      buf += trC;
     }
   }
   if (buf.length > 0 && buf.charAt(buf.length - 1) === MASK_CHAR) {
