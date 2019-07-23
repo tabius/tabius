@@ -95,7 +95,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
 
-          // heuristic: prefetch for song details.
+          // heuristic: prefetch song details.
           if (!this.songDetailsPrefetched && this.bss.isBrowser) {
             this.songDetailsPrefetched = true;
             songs.forEach(s => this.ads.getSongDetailsById(s.id, false));
