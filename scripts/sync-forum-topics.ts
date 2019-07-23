@@ -53,9 +53,8 @@ async function main() {
   const connection = await mysql.createConnection(readDbConfig());
   try {
     // check that all artists have valid category
-    // const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist LIMIT 1') as ArtistCategoryRow[][];
-    const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist') as ArtistCategoryRow[][];
-    console.info('Read ' + artistRows.length + ' artists from DB');
+    const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist where listed = 1') as ArtistCategoryRow[][];
+    console.info(`Read ${artistRows.length} artists from DB`);
     const artistById = new Map<number, ArtistCategoryRow>();
     for (const artist of artistRows) {
       await syncArtistCategory(artist, connection);
