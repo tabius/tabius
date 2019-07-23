@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
 import {DbService} from './db.service';
-import {SongUpdateResponse} from '@common/ajax-model';
 import {getTranslitLowerCase} from '@common/util/seo_translit';
+import Hashids from 'hashids';
 
 interface SongRow {
   id: number;
@@ -42,39 +42,30 @@ export class SongDbi {
 
   getSongsByArtistId(artistId: number): Promise<Song[]> {
     return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL} WHERE artist_id = ?`, [artistId])
+        .query(`${SELECT_SONG_SQL} WHERE s.artist_id = ?`, [artistId])
         .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
   }
 
-  async create(song: Song, details: SongDetails): Promise<SongUpdateResponse> {
+  async create(song: Song, details: SongDetails): Promise<number> {
     const con$$ = this.db.pool.promise();
     const mount = await generateUniqueSongMount(song, con$$);
     await con$$.query('INSERT INTO song(artist_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
         [song.artistId, mount, song.title, details.content, packLinks(details.mediaLinks)]);
 
-    const id = await con$$.query('SELECT LAST_INSERT_ID() as id')
+    return await con$$.query('SELECT LAST_INSERT_ID() as id')
         .then(([rows]) => rows[0]['id']);
-
-    const [songFromDb, detailsFromDb] = await Promise.all([this.getSongs([id]), this.getSongsDetails([id])]);
-    if (songFromDb.length === 0 || detailsFromDb.length === 0) {
-      throw `Failed to create song ${details.id}`;
-    }
-    return {song: songFromDb[0], details: detailsFromDb[0]};
   }
 
-  async update(title: string, details: SongDetails): Promise<SongUpdateResponse> {
+  async update(title: string, details: SongDetails): Promise<void> {
     await this.db.pool.promise()
         .query('UPDATE song SET title = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
             [title, details.content, packLinks(details.mediaLinks), details.id]);
-    const ids = [details.id];
-    const [songFromDb, detailsFromDb] = await Promise.all([this.getSongs(ids), this.getSongsDetails(ids)]);
-    if (songFromDb.length === 0 || detailsFromDb.length === 0) {
-      throw `Song not found ${details.id}`;
-    }
-    return {song: songFromDb[0], details: detailsFromDb[0]};
+  }
+
+  async delete(songId: number): Promise<void> {
+    await this.db.pool.promise().query('DELETE FROM song WHERE id = ?', [songId]);
   }
 }
-
 
 function row2Song(row: SongRow): Song {
   return {
@@ -108,7 +99,10 @@ async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> 
   const allMounts = await con$$.query('SELECT mount FROM song WHERE artist_id = ?', [song.artistId])
       .then(([rows]) => rows.map(row => row.mount));
   const allMountsSet = new Set<string>(allMounts);
-  const baseMount = getTranslitLowerCase(song.title);
+  let baseMount = getTranslitLowerCase(song.title);
+  if (baseMount.length === 0) {
+    baseMount = generateRandomSongMount();
+  }
   for (let i = 0; ; i++) {
     const mount = baseMount + (i == 0 ? '' : '_' + i);
     if (!allMountsSet.has(mount)) {
@@ -117,3 +111,7 @@ async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> 
   }
 }
 
+function generateRandomSongMount(): string {
+  const hashIds = new Hashids('salt', 5);
+  return hashIds.encode(Date.now());
+}

@@ -70,8 +70,9 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
         map(bands => bands.filter(defined))
     );
 
-    const songs$: Observable<Song[]> = artistDetails$.pipe(
-        flatMap(details => this.ads.getSongsByIds(details ? details.songIds : [])),
+    const songs$: Observable<Song[]> = artist$.pipe(
+        flatMap(artist => this.ads.getArtistSongList(artist && artist.id)),
+        flatMap(songIds => this.ads.getSongsByIds(songIds || [])),
         map(songs => songs.filter(defined))
     );
 

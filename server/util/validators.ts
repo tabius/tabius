@@ -5,6 +5,14 @@ import {CreatePlaylistRequest} from '@common/ajax-model';
 import {MAX_SONG_CONTENT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/artist-model';
 import {INVALID_ID} from '@common/constants';
 
+export function stringToId(value: string): number {
+  const id = +value;
+  if (!isValidId(id)) {
+    throw Error(`Invalid id: ${value}`);
+  }
+  return id;
+}
+
 /**
  * Converts strings with a comma-separated numbers to an array of numbers or throws error.
  * The returned array will have length > 0.
@@ -15,10 +23,7 @@ export function stringToArrayOfNumericIds(text: unknown): number[] {
   }
   const result: number[] = [];
   for (const token of text.split(',')) {
-    const id = +token;
-    if (!isValidId(id)) {
-      throw Error(`Invalid id: ${token}`);
-    }
+    const id = stringToId(token);
     result.push(id);
   }
   return result;

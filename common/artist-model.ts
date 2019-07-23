@@ -17,7 +17,6 @@ export interface Artist extends WithNumId, Versioned {
 }
 
 export interface ArtistDetails extends WithNumId, Versioned {
-  readonly songIds: readonly number[];
   /** List of artist's band ids.*/
   readonly bandIds: readonly number[];
   readonly listed: boolean;

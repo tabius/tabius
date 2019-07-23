@@ -37,7 +37,7 @@ export class UserDataService {
   }
 
   async setUserDeviceSettings(userDeviceSettings: UserDeviceSettings): Promise<void> {
-    await this.store.set(DEVICE_SETTINGS_KEY, userDeviceSettings, checkUpdateByStringify);
+    await this.store.set<UserDeviceSettings>(DEVICE_SETTINGS_KEY, userDeviceSettings, checkUpdateByStringify);
   }
 
   getUserSongSettings(songId: number|undefined): Observable<UserSongSettings> {
@@ -68,7 +68,7 @@ export class UserDataService {
 
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
     const key = getUserSongSettingsKey(songSettings.songId);
-    await this.store.set(key, songSettings, checkUpdateByStringify);
+    await this.store.set<UserSongSettings>(key, songSettings, checkUpdateByStringify);
     const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).pipe(take(1)).toPromise();
     await this.updateUserSettingsOnFetch(settings);
   }
@@ -90,7 +90,7 @@ export class UserDataService {
   }
 
   async setB4SiFlag(b4SiFlag: boolean): Promise<void> {
-    await this.store.set(B4SI_FLAG_KEY, b4SiFlag, skipUpdateCheck);
+    await this.store.set<boolean>(B4SI_FLAG_KEY, b4SiFlag, skipUpdateCheck);
     const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).pipe(take(1)).toPromise();
     await this.updateUserSettingsOnFetch(settings);
   }
@@ -106,23 +106,23 @@ export class UserDataService {
     const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
 
     const allOps: Promise<void>[] = [];
-    allOps.push(this.store.set(USER_SETTINGS_FETCH_DATE_KEY, Date.now(), skipUpdateCheck));
+    allOps.push(this.store.set<number>(USER_SETTINGS_FETCH_DATE_KEY, Date.now(), skipUpdateCheck));
     const updatedKeys = new Set<string>();
     for (const songId in userSettings.songs) {
       const songSettings = userSettings.songs[songId];
       const key = getUserSongSettingsKey(songSettings.songId);
       updatedKeys.add(key);
-      allOps.push(this.store.set(key, songSettings, checkUpdateByStringify));
+      allOps.push(this.store.set<UserSongSettings>(key, songSettings, checkUpdateByStringify));
     }
 
     // delete missed settings.
     for (const oldSettingsEntry of oldSongSettings) {
       if (!updatedKeys.has(oldSettingsEntry.key)) {
-        allOps.push(this.store.set(oldSettingsEntry.key, undefined, skipUpdateCheck));
+        allOps.push(this.store.set<UserSongSettings>(oldSettingsEntry.key, undefined, skipUpdateCheck));
       }
     }
 
-    allOps.push(this.store.set(B4SI_FLAG_KEY, userSettings.b4Si || undefined, checkUpdateByReference));
+    allOps.push(this.store.set<boolean>(B4SI_FLAG_KEY, userSettings.b4Si || undefined, checkUpdateByReference));
     await Promise.all(allOps);
   }
 
@@ -175,9 +175,9 @@ export class UserDataService {
   /** Caches playlists in browser store. */
   async cachePlaylists(playlists: readonly Playlist[]): Promise<void> {
     const allOps: Promise<void>[] = [];
-    allOps.push(this.store.set(USER_PLAYLISTS_KEY, playlists.map(p => p.id), checkUpdateByShallowArrayCompare));
+    allOps.push(this.store.set<string[]>(USER_PLAYLISTS_KEY, playlists.map(p => p.id), checkUpdateByShallowArrayCompare));
     for (const playlist of playlists) {
-      allOps.push(this.store.set(getPlaylistKey(playlist.id)!, playlist, checkUpdateByVersion));
+      allOps.push(this.store.set<Playlist>(getPlaylistKey(playlist.id)!, playlist, checkUpdateByVersion));
     }
     await Promise.all(allOps);
   }
@@ -205,7 +205,7 @@ export class UserDataService {
       // await this.store.clear();
       // }
     }
-    await this.store.set(USER_KEY, user, checkUpdateByStringify);
+    await this.store.set<User>(USER_KEY, user, checkUpdateByStringify);
   }
 }
 

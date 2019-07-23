@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
-import {Artist, ArtistType} from '@common/artist-model';
+import {Artist, ArtistDetails, ArtistType} from '@common/artist-model';
 import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
 import Hashids from 'hashids';
@@ -21,7 +21,7 @@ interface ArtistWithDetailsRow extends ArtistRow {
 }
 
 const SELECT_ARTIST_SQL = 'SELECT id, name, type, mount, version FROM artist';
-const SELECT_ARTIST_WITH_DETAILS_SQL = 'SELECT id, name, type, mount, version, band_ids, listed FROM artist';
+const SELECT_ARTIST_DETAILS_SQL = 'SELECT id, version, band_ids, listed FROM artist';
 
 @Injectable()
 export class ArtistDbi {
@@ -41,19 +41,14 @@ export class ArtistDbi {
         .then(([rows]: [ArtistRow[]]) => rows.map(row => rowToArtist(row)));
   }
 
-  getArtistWithDetails(artistId: number): Promise<{ artist: Artist, listed: boolean, bandIds: number[] }|undefined> {
+  getArtistDetails(artistId: number): Promise<ArtistDetails|undefined> {
     return this.db.pool.promise()
-        .query(`${SELECT_ARTIST_WITH_DETAILS_SQL} WHERE id  = ?`, [artistId])
+        .query(`${SELECT_ARTIST_DETAILS_SQL} WHERE id  = ?`, [artistId])
         .then(([rows]: [ArtistWithDetailsRow[]]) => {
           if (rows.length === 0) {
             return undefined;
           }
-          const row = rows[0];
-          return {
-            artist: rowToArtist(row),
-            listed: row.listed === 1,
-            bandIds: toArrayOfInts(row.band_ids, ','),
-          };
+          return rowToArtistDetails(rows[0]);
         });
   }
 
@@ -77,4 +72,13 @@ function generateArtistMountForUser(): string {
 
 function rowToArtist(row: ArtistRow): Artist {
   return {id: row.id, name: row.name, type: row.type, mount: row.mount, version: row.version};
+}
+
+function rowToArtistDetails(row: ArtistRow): ArtistDetails {
+  return {
+    id: row.id,
+    version: row.version,
+    bandIds: toArrayOfInts(row.band_ids, ','),
+    listed: row.listed === 1,
+  };
 }

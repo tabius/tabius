@@ -1,17 +1,10 @@
 import {Playlist, User, UserSettings} from '@common/user-model';
-import {Artist, Song, SongDetails} from '@common/artist-model';
+import {Song, SongDetails} from '@common/artist-model';
 
 export interface LoginResponse {
   readonly user?: User;
   readonly settings: UserSettings;
   readonly playlists: Playlist[];
-}
-
-export interface ArtistDetailsResponse {
-  readonly artist: Artist;
-  readonly songs: Song[];
-  readonly bandIds: number[];
-  readonly listed: boolean;
 }
 
 export interface CreatePlaylistRequest {
@@ -25,12 +18,20 @@ export type UpdatePlaylistResponse = Playlist[];
 export type DeletePlaylistResponse = Playlist[];
 
 
-export interface SongUpdateRequest {
+export interface UpdateSongRequest {
   song: Song;
   details: SongDetails;
 }
 
-export interface SongUpdateResponse {
+export interface UpdateSongResponse {
   song: Song;
   details: SongDetails;
+  /** All artist songs.*/
+  songs: Song[];
 }
+
+export interface DeleteSongResponse {
+  artistId: number;
+  songs: Song[];
+}
+

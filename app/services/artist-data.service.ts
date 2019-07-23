@@ -1,11 +1,11 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
 import {flatMap, map, take, tap} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {ArtistDetailsResponse, SongUpdateRequest, SongUpdateResponse} from '@common/ajax-model';
+import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
 import {BrowserStore, DO_REFRESH} from '@app/store/browser-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -13,6 +13,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 const ARTIST_LIST_KEY = 'artist-list';
 const ARTIST_KEY_PREFIX = 'artist-';
 const ARTIST_DETAILS_KEY_PREFIX = 'artist-d-';
+const ARTIST_SONG_LIST_KEY_PREFIX = 'artist-songs-';
 const SONG_KEY_PREFIX = 'song-';
 const SONG_DETAIL_KEY_PREFIX = 'song-d-';
 
@@ -31,7 +32,7 @@ export class ArtistDataService {
         ARTIST_LIST_KEY,
         () => this.httpClient.get<Artist[]>('/api/artist/all')
             .pipe(
-                flatMap(artists => combineLatest0(artists.map(a => fromPromise(this.registerArtistOnFetch(a))))),
+                flatMap(artists => combineLatest0(artists.map(a => fromPromise(this.updateArtistOnFetch(a))))),
                 map(artists => artists.map(a => a.id))
             ),
         DO_REFRESH,
@@ -56,53 +57,57 @@ export class ArtistDataService {
     return combineLatest0(artistIds.map(id => this.getArtistById(id)));
   }
 
-  private async registerArtistOnFetch(artist: Artist): Promise<Artist> {
-    await this.store.set(getArtistKey(artist.id), artist, checkUpdateByVersion);
+  private async updateArtistOnFetch(artist: Artist): Promise<Artist> {
+    await this.store.set<Artist>(getArtistKey(artist.id), artist, checkUpdateByVersion);
     return artist;
   }
 
   getArtistDetails(artistId: number|undefined): Observable<ArtistDetails|undefined> {
     return this.store.get<ArtistDetails>(
         getArtistDetailsKey(artistId),
-        () => this.httpClient.get<ArtistDetailsResponse|undefined>(`/api/artist/details-by-id/${artistId}`)
-            .pipe(
-                flatMap(response => fromPromise(this.registerArtistDetailsOnFetch(response))),
-                tap(details => { //todo: find a better place for this heuristic based pre-fetch.
-                  if (details && this.bss.isBrowser) {
-                    details.songIds.forEach(id => this.getSongDetailsById(id));
-                  }
-                }),
-            ),
+        () => this.httpClient.get<ArtistDetails|undefined>(`/api/artist/details-by-id/${artistId}`),
         DO_REFRESH,
         checkUpdateByVersion
     );
   }
 
-  private async registerArtistDetailsOnFetch(response: ArtistDetailsResponse|undefined): Promise<ArtistDetails|undefined> {
-    if (!response) {
-      return undefined;
-    }
+  getArtistSongList(artistId: number|undefined): Observable<number[]|undefined> {
+    return this.store.get<number[]>(
+        getArtistSongListKey(artistId),
+        () => this.httpClient.get<Song[]>(`/api/song/by-artist/${artistId}`)
+            .pipe(
+                flatMap(songs => fromPromise(this.updateArtistSongsOnFetch(artistId!, songs, false))),
+                tap(songs => { //todo: find a better place for this heuristic based pre-fetch.
+                  if (this.bss.isBrowser) {
+                    songs.forEach(id => this.getSongDetailsById(id));
+                  }
+                }),
+            ),
+        DO_REFRESH,
+        checkUpdateByShallowArrayCompare
+    );
+  }
+
+  private async updateArtistSongsOnFetch(artistId: number, songs: Song[], updateArtistSongList: boolean): Promise<number[]> {
+    const songUpdatesArray$$ = songs.map(song => this.store.set<Song>(getSongKey(song.id), song, checkUpdateByVersion));
+    const songIds = songs.map(s => s.id);
+    const listingUpdate$$ = updateArtistSongList
+        ? this.store.set<number[]>(getArtistSongListKey(artistId), songIds, checkUpdateByShallowArrayCompare)
+        : Promise.resolve();
+
     await Promise.all([
-      this.registerArtistOnFetch(response.artist),
-      response.songs.map(s => this.registerSongOnFetch(s))
+      ...songUpdatesArray$$,
+      listingUpdate$$,
     ]);
-    return {
-      id: response.artist.id,
-      version: response.artist.version,
-      songIds: response.songs.sort((s1, s2) => s1.title.localeCompare(s2.title)).map(s => s.id),
-      bandIds: response.bandIds,
-      listed: response.listed,
-    };
+    return songIds;
   }
 
   getArtistByMount(artistMount: string): Observable<Artist|undefined> {
     return this.getAllArtists()
-        .pipe(
-            map(artists => artists.find(a => a.mount === artistMount)),
-        );
+        .pipe(map(artists => artists.find(a => a.mount === artistMount)));
   }
 
-  getSongById(songId?: number): Observable<(Song|undefined)> {
+  getSongById(songId: number|undefined): Observable<(Song|undefined)> {
     return this.store.get<Song>(
         getSongKey(songId),
         () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
@@ -111,13 +116,8 @@ export class ArtistDataService {
     );
   }
 
-  getSongsByIds(songIds: readonly number[]): Observable<(Song|undefined)[]> {
+  getSongsByIds(songIds: readonly (number|undefined)[]): Observable<(Song|undefined)[]> {
     return combineLatest0(songIds.map(id => this.getSongById(id)));
-  }
-
-  private async registerSongOnFetch(song: Song): Promise<Song> {
-    await this.store.set(getSongKey(song.id), song, checkUpdateByVersion);
-    return song;
   }
 
   getSongDetailsById(songId: number|undefined): Observable<SongDetails|undefined> {
@@ -132,41 +132,51 @@ export class ArtistDataService {
   getSongByMount(artistMount: string, songMount: string): Observable<Song|undefined> {
     return this.getArtistByMount(artistMount)
         .pipe(
-            flatMap(artist => this.getArtistDetails(artist ? artist.id : undefined)),
-            flatMap(details => this.getSongsByIds(details ? details.songIds : [])),
-            map(songs => songs.find(s => s !== undefined && s.mount === songMount)),
+            flatMap(artist => this.getArtistSongList(artist && artist.id)),
+            flatMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
+            map(songsIds => songsIds.find(s => s !== undefined && s.mount === songMount)),
         );
   }
 
   async createSong(song: Song, details: SongDetails): Promise<void> {
-    const request: SongUpdateRequest = {song, details};
-    const response = await this.httpClient.post<SongUpdateResponse>(`/api/song`, request).pipe(take(1)).toPromise();
-    await this.store.set(getSongKey(response.song.id), response.song, checkUpdateByVersion);
-    await this.store.set(getSongDetailsKey(response.details.id), response.details, checkUpdateByVersion);
+    const request: UpdateSongRequest = {song, details};
+    const response = await this.httpClient.post<UpdateSongResponse>('/api/song', request).pipe(take(1)).toPromise();
+    await this.processSongUpdateResponse(response);
   }
 
   async updateSong(song: Song, details: SongDetails): Promise<void> {
-    const request: SongUpdateRequest = {song, details};
-    const response = await this.httpClient.put<SongUpdateResponse>(`/api/song`, request).pipe(take(1)).toPromise();
-    await this.store.set(getSongKey(response.song.id), response.song, checkUpdateByVersion);
-    await this.store.set(getSongDetailsKey(response.details.id), response.details, checkUpdateByVersion);
+    const request: UpdateSongRequest = {song, details};
+    const response = await this.httpClient.put<UpdateSongResponse>('/api/song', request).pipe(take(1)).toPromise();
+    await this.processSongUpdateResponse(response);
   }
 
-  async deleteSong(songId?: number): Promise<void> {
+  private async processSongUpdateResponse(response: UpdateSongResponse): Promise<void> {
+    await Promise.all([
+      this.store.set<Song>(getSongKey(response.song.id), response.song, checkUpdateByVersion),
+      this.store.set<SongDetails>(getSongDetailsKey(response.details.id), response.details, checkUpdateByVersion),
+      this.updateArtistSongsOnFetch(response.song.artistId, response.songs, true),
+    ]);
+  }
+
+  async deleteSong(songId: number|undefined): Promise<void> {
     if (!isValidId(songId)) {
       return;
     }
-    const details = await this.httpClient.delete<ArtistDetailsResponse>('/api/song/' + songId).pipe(take(1)).toPromise();
-    await this.registerArtistDetailsOnFetch(details);
+    const {artistId, songs} = await this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`).pipe(take(1)).toPromise();
+    await this.updateArtistSongsOnFetch(artistId, songs, true);
   }
+}
+
+function getArtistKey(artistId: number|undefined): string|undefined {
+  return isValidId(artistId) ? ARTIST_KEY_PREFIX + artistId : undefined;
 }
 
 function getArtistDetailsKey(artistId: number|undefined): string|undefined {
   return isValidId(artistId) ? ARTIST_DETAILS_KEY_PREFIX + artistId : undefined;
 }
 
-function getArtistKey(artistId: number|undefined): string|undefined {
-  return isValidId(artistId) ? ARTIST_KEY_PREFIX + artistId : undefined;
+function getArtistSongListKey(artistId: number|undefined): string|undefined {
+  return isValidId(artistId) ? ARTIST_SONG_LIST_KEY_PREFIX + artistId : undefined;
 }
 
 function getSongKey(songId: number|undefined): string|undefined {
