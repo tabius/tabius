@@ -13,7 +13,7 @@ export class CrossEntityDbi {
 
   getArtistDetailsResponse(artistId: number): Promise<ArtistDetailsResponse|undefined> {
     const artistsWithDetails$$ = this.artistDbi.getArtistWithDetails(artistId);
-    const songs$$ = this.songDbi.getSongsByArtistIds([artistId]);
+    const songs$$ = this.songDbi.getSongsByArtistId(artistId);
     return Promise.all([artistsWithDetails$$, songs$$])
         .then(([artistWithDetails, songs]) => artistWithDetails ? {...artistWithDetails, songs} : undefined);
   }

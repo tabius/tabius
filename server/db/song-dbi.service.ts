@@ -40,10 +40,9 @@ export class SongDbi {
         .then(([rows]: [SongRow[]]) => rows.map(row => (row2SongDetails(row))));
   }
 
-  getSongsByArtistIds(artistIds: readonly number[]): Promise<Song[]> {
-    const idList = artistIds.join(',');
+  getSongsByArtistId(artistId: number): Promise<Song[]> {
     return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL}, artist a WHERE s.artist_id = a.id AND a.id IN ( ${idList} )`)
+        .query(`${SELECT_SONG_SQL} WHERE artist_id = ?`, [artistId])
         .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
   }
 
