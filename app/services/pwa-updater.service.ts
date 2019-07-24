@@ -2,7 +2,7 @@ import {ApplicationRef, Inject, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {first, take} from 'rxjs/operators';
 import {APP_BROWSER_STORE_TOKEN} from '@common/constants';
-import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH, skipUpdateCheck} from '@app/store/browser-store';
+import {DO_NOT_PREFETCH, DO_NOT_REFRESH, ObservableStore, skipUpdateCheck} from '@app/store/observable-store';
 
 const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';
 
@@ -13,7 +13,7 @@ export class PwaUpdaterService {
 
   constructor(appRef: ApplicationRef,
               updates: SwUpdate,
-              @Inject(APP_BROWSER_STORE_TOKEN) appStore: BrowserStore) {
+              @Inject(APP_BROWSER_STORE_TOKEN) appStore: ObservableStore) {
     if (!updates.isEnabled) {
       return;
     }

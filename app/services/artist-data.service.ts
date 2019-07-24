@@ -7,7 +7,7 @@ import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
-import {BrowserStore, DO_NOT_REFRESH, DO_REFRESH} from '@app/store/browser-store';
+import {DO_NOT_REFRESH, DO_REFRESH, ObservableStore, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 const ARTIST_LIST_KEY = 'artist-list';
@@ -24,7 +24,7 @@ export class ArtistDataService {
 
   constructor(private readonly httpClient: HttpClient,
               private readonly bss: BrowserStateService,
-              @Inject(TABIUS_ARTISTS_BROWSER_STORE_TOKEN) private readonly store: BrowserStore) {
+              @Inject(TABIUS_ARTISTS_BROWSER_STORE_TOKEN) private readonly store: ObservableStore) {
   }
 
   getAllArtists(): Observable<Artist[]> {
@@ -86,13 +86,23 @@ export class ArtistDataService {
   private async updateArtistSongsOnFetch(artistId: number, songs: Song[], updateArtistSongList: boolean): Promise<number[]> {
     const songUpdatesArray$$ = songs.map(song => this.store.set<Song>(getSongKey(song.id), song, checkUpdateByVersion));
     const songIds = songs.map(s => s.id);
+    const songIdsSet = new Set<number>(songIds);
+
+    const songListKey = getArtistSongListKey(artistId);
+    const oldSongIds = await this.store.get<number[]>(songListKey, undefined, DO_NOT_REFRESH, skipUpdateCheck).pipe(take(1)).toPromise();
+    const oldSongIdsToRemove = oldSongIds ? oldSongIds.filter(songId => !songIdsSet.has(songId)) : [];
+    const songsToRemove$$ = oldSongIdsToRemove.map(id => this.store.remove(getSongKey(id)));
+    const songDetailsToRemove$$ = oldSongIdsToRemove.map(id => this.store.remove(getSongDetailsKey(id)));
+
     const listingUpdate$$ = updateArtistSongList
-        ? this.store.set<number[]>(getArtistSongListKey(artistId), songIds, checkUpdateByShallowArrayCompare)
+        ? this.store.set<number[]>(songListKey, songIds, checkUpdateByShallowArrayCompare)
         : Promise.resolve();
 
     await Promise.all([
-      ...songUpdatesArray$$,
       listingUpdate$$,
+      ...songUpdatesArray$$,
+      ...songsToRemove$$,
+      ...songDetailsToRemove$$,
     ]);
     return songIds;
   }
@@ -158,6 +168,10 @@ export class ArtistDataService {
       return;
     }
     const {artistId, songs} = await this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`).pipe(take(1)).toPromise();
+    await Promise.all([
+      this.store.remove<Song>(getSongDetailsKey(songId)),
+      this.store.remove<SongDetails>(getSongDetailsKey(songId))
+    ]);
     await this.updateArtistSongsOnFetch(artistId, songs, true);
   }
 }

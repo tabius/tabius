@@ -22,7 +22,7 @@ export const DO_NOT_PREFETCH = undefined;
 export const DO_NOT_REFRESH = false;
 export const DO_REFRESH = true;
 
-export interface BrowserStore {
+export interface ObservableStore {
   get<T>(key: string|undefined,
          fetchFn: (() => Observable<T|undefined>)|undefined,
          refresh: boolean,
@@ -31,6 +31,8 @@ export interface BrowserStore {
 
   /** Sets value. 'undefined' value will trigger entry removal. 'undefined' key will result to no-op. */
   set<T>(key: string|undefined, value: T|undefined, needUpdateFn: NeedUpdateFn<T>): Promise<void>;
+
+  remove<T>(key: string|undefined): Promise<void>;
 
   /** Lists all values by key prefix. */
   list<T>(keyPrefix: string): Promise<KV<T>[]>;
@@ -41,7 +43,7 @@ export interface BrowserStore {
 }
 
 /** Low level key->value storage. */
-class BrowserStoreImpl implements BrowserStore {
+class ObservableStoreImpl implements ObservableStore {
   private markAsInitialized?: () => void;
   readonly initialized$$ = new Promise<void>(resolve => this.markAsInitialized = resolve);
 
@@ -151,6 +153,14 @@ class BrowserStoreImpl implements BrowserStore {
     }
   }
 
+  async remove<T>(key: string|undefined): Promise<void> {
+    if (!key) {
+      return;
+    }
+    const store = await this.storeAdapter$$;
+    await store.set(key, undefined);
+  }
+
   async list<T>(keyPrefix: string): Promise<KV<T>[]> {
     const store = await this.storeAdapter$$;
     return store.list(keyPrefix);
@@ -189,21 +199,21 @@ function mapToObject(map: Map<string, any>): { [key: string]: any } {
 }
 
 /** Store for user's personal settings and playlists. */
-export class UserBrowserStore extends BrowserStoreImpl {
+export class UserBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(USER_STORE_NAME, isPlatformBrowser(platformId), serverState, USERS_STORE_SCHEMA_VERSION);
   }
 }
 
 /** Store with artist & songs. */
-export class ArtistsBrowserStore extends BrowserStoreImpl {
+export class ArtistsBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(ARTISTS_STORE_NAME, isPlatformBrowser(platformId), serverState, ARTISTS_STORE_SCHEMA_VERSION);
   }
 }
 
 /** Technical application specific data that must persist in the current browser between sessions. */
-export class AppBrowserStore extends BrowserStoreImpl {
+export class AppBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(APP_STORE_NAME, isPlatformBrowser(platformId), serverState, 1, true);
   }

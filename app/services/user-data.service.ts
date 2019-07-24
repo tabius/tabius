@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {DEFAULT_B4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
-import {BrowserStore, DO_NOT_PREFETCH, DO_NOT_REFRESH, DO_REFRESH, skipUpdateCheck} from '@app/store/browser-store';
+import {DO_NOT_PREFETCH, DO_NOT_REFRESH, DO_REFRESH, ObservableStore, skipUpdateCheck} from '@app/store/observable-store';
 import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId} from '@common/util/misc-utils';
@@ -23,7 +23,7 @@ const USER_KEY = 'user';
 export class UserDataService {
 
   constructor(private readonly httpClient: HttpClient,
-              @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: BrowserStore,
+              @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: ObservableStore,
   ) {
   }
 

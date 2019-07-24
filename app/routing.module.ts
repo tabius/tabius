@@ -11,14 +11,14 @@ import {MOUNT_ARTIST, MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT
 import {PlaylistListPageComponent} from '@app/components/playlist-list-page/playlist-list-page.component';
 import {PlaylistPageComponent, PlaylistPageResolver} from '@app/components/playlist-page/playlist-page.component';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {BrowserStore} from '@app/store/browser-store';
+import {ObservableStore} from '@app/store/observable-store';
 
 //TODO: move to a separate file. Use for the most routes?
 @Injectable({providedIn: 'root'})
 export class BrowserStoreStateResolver implements Resolve<any> {
 
-  constructor(@Inject(TABIUS_ARTISTS_BROWSER_STORE_TOKEN) private readonly artistStore: BrowserStore,
-              @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly userStore: BrowserStore) {
+  constructor(@Inject(TABIUS_ARTISTS_BROWSER_STORE_TOKEN) private readonly artistStore: ObservableStore,
+              @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly userStore: ObservableStore) {
   }
 
   resolve(): Promise<any> {

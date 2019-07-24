@@ -24,7 +24,7 @@ import {ArtistBreadcrumbComponent} from './components/artist-breadcrumb/artist-b
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
 import {InlineSongSettingsComponent} from './components/inline-song-settings/inline-song-settings.component';
 import {UserSettingsPageComponent} from './components/user-settings-page/user-settings-page.component';
-import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/browser-store';
+import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/observable-store';
 import {APP_BROWSER_STORE_TOKEN, TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-song-to-playlist.component';
