@@ -7,7 +7,7 @@ import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
-import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
+import {ObservableStore, RefreshMode} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 const ARTIST_LIST_KEY = 'artist-list';
@@ -83,26 +83,18 @@ export class ArtistDataService {
     );
   }
 
+  // TODO: cleanup songs that are not in the list anymore? Schedule GC by time?
   private async updateArtistSongsOnFetch(artistId: number, songs: Song[], updateArtistSongList: boolean): Promise<number[]> {
     const songUpdatesArray$$ = songs.map(song => this.store.set<Song>(getSongKey(song.id), song, checkUpdateByVersion));
     const songIds = songs.map(s => s.id);
-    const songIdsSet = new Set<number>(songIds);
-
-    const songListKey = getArtistSongListKey(artistId);
-    const oldSongIds = await this.store.get<number[]>(songListKey, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
-    const oldSongIdsToRemove = oldSongIds ? oldSongIds.filter(songId => !songIdsSet.has(songId)) : [];
-    const songsToRemove$$ = oldSongIdsToRemove.map(id => this.store.remove(getSongKey(id)));
-    const songDetailsToRemove$$ = oldSongIdsToRemove.map(id => this.store.remove(getSongDetailsKey(id)));
 
     const listingUpdate$$ = updateArtistSongList
-        ? this.store.set<number[]>(songListKey, songIds, checkUpdateByShallowArrayCompare)
+        ? this.store.set<number[]>(getArtistSongListKey(artistId), songIds, checkUpdateByShallowArrayCompare)
         : Promise.resolve();
 
     await Promise.all([
-      listingUpdate$$,
       ...songUpdatesArray$$,
-      ...songsToRemove$$,
-      ...songDetailsToRemove$$,
+      listingUpdate$$,
     ]);
     return songIds;
   }

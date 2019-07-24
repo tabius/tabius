@@ -169,7 +169,12 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       this.toastService.warning('Необходимо подтвердить действие!');
       return;
     }
-    await this.ads.deleteSong(this.songId);
+    try {
+      await this.ads.deleteSong(this.songId);
+    } catch (err) {
+      this.toastService.warning('Ошибка при удалении песни!');
+      return;
+    }
     this.close();
     this.toastService.info('Песня удалена!');
   }
