@@ -23,7 +23,6 @@
                 <gt-song-editor *ngIf="isEditorOpen(item.song.id)"
                                 (closeRequest)="toggleEditor(item.song.id)"
                                 [songId]="item.song.id"
-                                [scrollIntoView]="true"
                 ></gt-song-editor>
 
                 <hr *ngIf="!item.last">

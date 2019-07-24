@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Artist, Song, SongDetails} from '@common/artist-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
@@ -11,6 +11,7 @@ import {UserDataService} from '@app/services/user-data.service';
 import {canEditArtist, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
+import {MOUNT_ARTIST_PREFIX} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-page',
@@ -39,11 +40,13 @@ export class SongPageComponent implements OnInit, OnDestroy {
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
+              private readonly router: Router,
               private readonly route: ActivatedRoute,
               private readonly title: Title,
               private readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
   ) {
+    this.onSongDeletedInEditor.bind(this);
   }
 
   ngOnInit() {
@@ -63,6 +66,10 @@ export class SongPageComponent implements OnInit, OnDestroy {
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
         .subscribe(([artist, song, songDetails, user]) => {
+          if (this.song !== undefined && song === undefined) { // song was removed -> return to the artist page.
+            this.router.navigate([MOUNT_ARTIST_PREFIX + artistMount]).catch(err => console.log(err));
+            return;
+          }
           if (artist === undefined || song === undefined || songDetails === undefined) {
             return; // reasons: not everything is loaded
           }
@@ -94,6 +101,16 @@ export class SongPageComponent implements OnInit, OnDestroy {
   toggleEditor(): void {
     this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
     this.cd.detectChanges();
+  }
+
+  onSongDeletedInEditor(): Promise<boolean> {
+    console.log('this', this);
+    const params = this.route.snapshot.params;
+    const artistMount = params['artistMount'];
+    if (!artistMount || artistMount.length === 0) {
+      return Promise.resolve(false);
+    }
+    return this.router.navigate([MOUNT_ARTIST_PREFIX + '/' + artistMount]).then(() => true);
   }
 
 }

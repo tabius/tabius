@@ -6,8 +6,6 @@ import {takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/artist-model';
 import {ToastService} from '@app/toast/toast.service';
-import {MOUNT_ARTISTS} from '@common/mounts';
-import {Router} from '@angular/router';
 import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
@@ -28,7 +26,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   @Input() artistId!: number;
 
   /** If true, component will trigger scrolling edit area into the view. */
-  @Input() scrollIntoView = false;
+  @Input() scrollIntoView = true;
 
   @Input() fullWidth = true;
 
@@ -55,7 +53,6 @@ export class SongEditorComponent implements OnInit, OnDestroy {
 
   constructor(private readonly ads: ArtistDataService,
               private readonly toastService: ToastService,
-              private readonly router: Router,
   ) {
   }
 
@@ -175,6 +172,5 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     await this.ads.deleteSong(this.songId);
     this.close();
     this.toastService.info('Песня удалена!');
-    await this.router.navigate([MOUNT_ARTISTS]);
   }
 }
