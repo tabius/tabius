@@ -100,6 +100,7 @@ export class SongController {
 
 
   /** Deletes the song and returns updated artist details. */
+  //TODO: update playlists!
   @Delete(':songId')
   @UseGuards(ServerAuthGuard)
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {

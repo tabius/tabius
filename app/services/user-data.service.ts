@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {DEFAULT_B4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
-import {DO_NOT_PREFETCH, DO_NOT_REFRESH, DO_REFRESH, ObservableStore, skipUpdateCheck} from '@app/store/observable-store';
+import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId} from '@common/util/misc-utils';
@@ -31,7 +31,7 @@ export class UserDataService {
     return this.store.get<UserDeviceSettings>(
         DEVICE_SETTINGS_KEY,
         DO_NOT_PREFETCH,
-        DO_NOT_REFRESH,
+        RefreshMode.DoNotRefresh,
         skipUpdateCheck
     ).pipe(map(s => s || newDefaultUserDeviceSettings()));
   }
@@ -52,7 +52,7 @@ export class UserDataService {
           return this.store.get<UserSongSettings>(
               getUserSongSettingsKey(songId),
               () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])),
-              DO_NOT_REFRESH, // refreshed on every login as a part of login response
+              RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response
               checkUpdateByStringify
           ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
         }));
@@ -82,7 +82,7 @@ export class UserDataService {
           return this.store.get<boolean>(
               B4SI_FLAG_KEY,
               () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.b4Si)),
-              DO_REFRESH,
+              RefreshMode.RefreshOncePerSession,
               checkUpdateByReference
           ).pipe(map(flag => flag === undefined ? false : flag));
         })
@@ -139,14 +139,14 @@ export class UserDataService {
                       tap(playlists => this.cachePlaylists(playlists)),
                       map(playlists => playlists ? playlists.map(p => p.id) : []),
                   ),
-              DO_REFRESH,
+              RefreshMode.RefreshOncePerSession,
               checkUpdateByStringify
           ).pipe(
               flatMap(ids => {
                     const playlist$Array = (ids || []).map(m => this.store.get<Playlist>(
                         getPlaylistKey(m),
                         DO_NOT_PREFETCH,
-                        DO_NOT_REFRESH,
+                        RefreshMode.DoNotRefresh,
                         skipUpdateCheck
                     ));
                     return combineLatest0(playlist$Array).pipe(map(playlists => playlists.filter(defined)));
@@ -182,18 +182,18 @@ export class UserDataService {
     await Promise.all(allOps);
   }
 
-  getPlaylist(playlistId?: string): Observable<Playlist|undefined> {
+  getPlaylist(playlistId: string|undefined, refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<Playlist|undefined> {
     const playlistKey = getPlaylistKey(playlistId);
     return this.store.get<Playlist>(
         playlistKey,
         () => this.httpClient.get<Playlist|undefined>(`/api/playlist/by-id/${playlistId}`),
-        DO_REFRESH,
+        refreshMode,
         checkUpdateByVersion
     );
   }
 
   getUser(): Observable<User|undefined> {
-    return this.store.get<User>(USER_KEY, DO_NOT_PREFETCH, DO_NOT_REFRESH, skipUpdateCheck);
+    return this.store.get<User>(USER_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck);
   }
 
   async setUser(user?: User): Promise<void> {

@@ -7,7 +7,7 @@ import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
-import {DO_NOT_REFRESH, DO_REFRESH, ObservableStore, skipUpdateCheck} from '@app/store/observable-store';
+import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 const ARTIST_LIST_KEY = 'artist-list';
@@ -35,7 +35,7 @@ export class ArtistDataService {
                 flatMap(artists => combineLatest0(artists.map(a => fromPromise(this.updateArtistOnFetch(a))))),
                 map(artists => artists.map(a => a.id))
             ),
-        DO_REFRESH,
+        RefreshMode.RefreshOncePerSession,
         checkUpdateByShallowArrayCompare,
     )
         .pipe(
@@ -48,7 +48,7 @@ export class ArtistDataService {
     return this.store.get<Artist>(
         getArtistKey(artistId),
         () => this.httpClient.get<Artist[]>(`/api/artist/by-ids/${artistId}`).pipe(mapToFirstInArray),
-        DO_REFRESH,
+        RefreshMode.RefreshOncePerSession,
         checkUpdateByVersion,
     );
   }
@@ -66,7 +66,7 @@ export class ArtistDataService {
     return this.store.get<ArtistDetails>(
         getArtistDetailsKey(artistId),
         () => this.httpClient.get<ArtistDetails|undefined>(`/api/artist/details-by-id/${artistId}`),
-        DO_REFRESH,
+        RefreshMode.RefreshOncePerSession,
         checkUpdateByVersion
     );
   }
@@ -78,7 +78,7 @@ export class ArtistDataService {
             .pipe(
                 flatMap(songs => fromPromise(this.updateArtistSongsOnFetch(artistId!, songs, false)))
             ),
-        DO_REFRESH,
+        RefreshMode.RefreshOncePerSession,
         checkUpdateByShallowArrayCompare
     );
   }
@@ -89,7 +89,7 @@ export class ArtistDataService {
     const songIdsSet = new Set<number>(songIds);
 
     const songListKey = getArtistSongListKey(artistId);
-    const oldSongIds = await this.store.get<number[]>(songListKey, undefined, DO_NOT_REFRESH, skipUpdateCheck).pipe(take(1)).toPromise();
+    const oldSongIds = await this.store.get<number[]>(songListKey, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
     const oldSongIdsToRemove = oldSongIds ? oldSongIds.filter(songId => !songIdsSet.has(songId)) : [];
     const songsToRemove$$ = oldSongIdsToRemove.map(id => this.store.remove(getSongKey(id)));
     const songDetailsToRemove$$ = oldSongIdsToRemove.map(id => this.store.remove(getSongDetailsKey(id)));
@@ -116,7 +116,7 @@ export class ArtistDataService {
     return this.store.get<Song>(
         getSongKey(songId),
         () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
-        DO_REFRESH,
+        RefreshMode.RefreshOncePerSession,
         checkUpdateByVersion,
     );
   }
@@ -129,7 +129,7 @@ export class ArtistDataService {
     return this.store.get<SongDetails>(
         getSongDetailsKey(songId),
         () => this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songId}`).pipe(mapToFirstInArray),
-        refreshCachedVersion ? DO_REFRESH : DO_NOT_REFRESH,
+        refreshCachedVersion ? RefreshMode.RefreshOncePerSession : RefreshMode.DoNotRefresh,
         checkUpdateByVersion
     );
   }

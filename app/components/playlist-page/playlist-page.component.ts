@@ -12,6 +12,7 @@ import {Playlist, User} from '@common/user-model';
 import {canEditArtist, defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
+import {RefreshMode} from '@app/store/observable-store';
 
 interface PlaylistSongModel {
   song: Song;
@@ -55,7 +56,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
     const pageInput = this.route.data['value'].input as PlaylistPageInput;
     this.playlist = pageInput.playlist;
 
-    const playlist$ = this.uds.getPlaylist(this.playlist.id);
+    const playlist$ = this.uds.getPlaylist(this.playlist.id, RefreshMode.Refresh);
 
     const songs$: Observable<Song[]> = playlist$.pipe(
         flatMap(playlist => playlist === undefined ? of([]) : this.ads.getSongsByIds(playlist.songIds)),

@@ -17,15 +17,20 @@ const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
 
 /** Returns true if old value is different from new. */
 export type NeedUpdateFn<T> = (oldValue?: T, newValue?: T) => boolean;
+export type FetchFn<T> = () => Observable<T|undefined>;
 
 export const DO_NOT_PREFETCH = undefined;
-export const DO_NOT_REFRESH = false;
-export const DO_REFRESH = true;
+
+export enum RefreshMode {
+  DoNotRefresh = 1,
+  RefreshOncePerSession = 2,
+  Refresh = 3
+}
 
 export interface ObservableStore {
   get<T>(key: string|undefined,
-         fetchFn: (() => Observable<T|undefined>)|undefined,
-         refresh: boolean,
+         fetchFn: FetchFn<T>|undefined,
+         refresh: RefreshMode,
          needUpdateFn: NeedUpdateFn<T>,
   ): Observable<T|undefined>;
 
@@ -86,8 +91,8 @@ class ObservableStoreImpl implements ObservableStore {
   }
 
   get<T>(key: string|undefined,
-         fetchFn: (() => Observable<T|undefined>)|undefined,
-         refresh: boolean,
+         fetchFn: FetchFn<T>|undefined,
+         refresh: RefreshMode,
          needUpdateFn: NeedUpdateFn<T>,
   ): Observable<T|undefined> {
     if (!key) {
@@ -95,6 +100,9 @@ class ObservableStoreImpl implements ObservableStore {
     }
     let rs$ = this.dataMap.get(key);
     if (rs$) {
+      if (fetchFn && refresh === RefreshMode.Refresh) {
+        this.refresh(fetchFn, key, needUpdateFn);
+      }
       return rs$;
     }
     rs$ = this.newReplaySubject(key);
@@ -103,10 +111,11 @@ class ObservableStoreImpl implements ObservableStore {
     return combineLatest([fetch$, rs$]).pipe(map(([, rs]) => rs));
   }
 
+  /** Note: This method is called only on the first access to the value. */
   private async triggerFetchIfNotCached<T>(key: string,
                                            rs$: ReplaySubject<T|undefined>,
-                                           fetchFn: (() => Observable<T|undefined>)|undefined,
-                                           refresh: boolean|undefined,
+                                           fetchFn: FetchFn<T>|undefined,
+                                           refresh: RefreshMode,
                                            needUpdateFn: NeedUpdateFn<T>): Promise<void> {
     const store = await this.storeAdapter$$;
     let value = await store.get<T>(key);
@@ -115,15 +124,19 @@ class ObservableStoreImpl implements ObservableStore {
         value = await fetchAndFallbackToUnresolved(fetchFn);
         await store.set(key, value);
       }
-    } else if (fetchFn && refresh) { // this is first access to the cached value. Check if asked to refresh it.
-      // refresh action is performed async (non-blocking).
-      fetchAndFallbackToUnresolved(fetchFn).then(value => {
-        if (value !== undefined) {
-          this.set(key, value, needUpdateFn).catch(err => console.error(err));
-        }
-      }); // fetch and refresh it asynchronously.
+    } else if (fetchFn && refresh !== RefreshMode.DoNotRefresh) { // this is first access to the cached value. Check if asked to refresh it.
+      this.refresh(fetchFn, key, needUpdateFn);
     }
     rs$.next(this.freezeFn(value));
+  }
+
+  private refresh<T>(fetchFn: FetchFn<T>, key: string, needUpdateFn: NeedUpdateFn<T>) {
+// refresh action is performed async (non-blocking).
+    fetchAndFallbackToUnresolved(fetchFn).then(value => {
+      if (value !== undefined) {
+        this.set(key, value, needUpdateFn).catch(err => console.error(err));
+      }
+    }); // fetch and refresh it asynchronously.
   }
 
   private newReplaySubject<T>(key: string, initValue?: T): ReplaySubject<T|undefined> {

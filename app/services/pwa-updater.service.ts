@@ -2,7 +2,7 @@ import {ApplicationRef, Inject, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {first, take} from 'rxjs/operators';
 import {APP_BROWSER_STORE_TOKEN} from '@common/constants';
-import {DO_NOT_PREFETCH, DO_NOT_REFRESH, ObservableStore, skipUpdateCheck} from '@app/store/observable-store';
+import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 
 const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';
 
@@ -28,7 +28,7 @@ export class PwaUpdaterService {
     updates.available.subscribe(event => {
       console.debug('Found new app update!', event);
       // ensure we have no reload loop for whatever reason it may happen
-      appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, DO_NOT_REFRESH, skipUpdateCheck)
+      appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck)
           .pipe(take(1))
           .subscribe(lastForcedUpdateTime => {
             const now = Date.now();
