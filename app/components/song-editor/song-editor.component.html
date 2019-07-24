@@ -3,7 +3,7 @@
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
-<div *ngIf="loaded">
+<div *ngIf="loaded" [class.full-width]="fullWidth">
     <div>
         <input #firstFormElement type="text" [(ngModel)]="title" class="song-title" placeholder="Название песни">
     </div>

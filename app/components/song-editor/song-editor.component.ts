@@ -28,6 +28,8 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   /** If true, component will trigger scrolling edit area into the view. */
   @Input() scrollIntoView = false;
 
+  @Input() fullWidth = true;
+
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
