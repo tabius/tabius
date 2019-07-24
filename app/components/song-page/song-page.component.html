@@ -16,7 +16,7 @@
         </div>
 
         <div *ngIf="hasEditRight" class="edit-song-block">
-            <a href="javascript:" (click)="toggleEditor()">Исправить подбор »</a>
+            <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Исправить подбор »</a>
 
             <gt-song-editor *ngIf="editorIsOpen"
                             (closeRequest)="toggleEditor()"

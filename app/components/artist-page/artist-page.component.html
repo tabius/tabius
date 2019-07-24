@@ -27,13 +27,14 @@
         </div>
 
         <div *ngIf="hasEditRight" class="add-song-block">
-            <a href="javascript:" (click)="toggleEditor()">Добавить песню »</a>
+            <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Добавить песню »</a>
 
             <gt-song-editor *ngIf="editorIsOpen"
                             (closeRequest)="toggleEditor()"
                             [songId]="-1"
                             [artistId]="artistViewModel.artist.id"
                             [scrollIntoView]="true"
+                            [initialFocusMode]="'title'"
             ></gt-song-editor>
         </div>
 

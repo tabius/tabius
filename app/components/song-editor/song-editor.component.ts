@@ -10,6 +10,8 @@ import {MOUNT_ARTISTS} from '@common/mounts';
 import {Router} from '@angular/router';
 import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 
+export type SongEditorInitialFocusMode = 'title'|'text'|'none';
+
 /** Embeddable song editor component. */
 @Component({
   selector: 'gt-song-editor',
@@ -30,6 +32,8 @@ export class SongEditorComponent implements OnInit, OnDestroy {
 
   @Input() fullWidth = true;
 
+  @Input() initialFocusMode: SongEditorInitialFocusMode = 'text';
+
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
@@ -47,7 +51,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   deleteConfirmationFlag = false;
 
   @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef!: ElementRef;
-  @ViewChild('firstFormElement', {static: false, read: ElementRef}) private firstFormElementRef!: ElementRef;
+  @ViewChild('firstFormElement', {static: false, read: ElementRef}) private titleElementRef!: ElementRef;
 
   constructor(private readonly ads: ArtistDataService,
               private readonly toastService: ToastService,
@@ -86,10 +90,14 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     if (this.scrollIntoView) {
       setTimeout(() => {
         if (this.contentRef && this.contentRef.nativeElement) {
-          const textArea: HTMLTextAreaElement = this.contentRef.nativeElement;
-          textArea.focus({preventScroll: true});
-          textArea.selectionEnd = 0;
-          scrollToView(this.firstFormElementRef.nativeElement);
+          if (this.initialFocusMode === 'text') {
+            const textArea: HTMLTextAreaElement = this.contentRef.nativeElement;
+            textArea.focus({preventScroll: true});
+            textArea.selectionEnd = 0;
+          } else if (this.initialFocusMode === 'title') {
+            this.titleElementRef.nativeElement.focus({preventScroll: true});
+          }
+          scrollToView(this.titleElementRef.nativeElement);
         }
       }, 200);
     }
