@@ -12,10 +12,10 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 
 const ARTIST_LIST_KEY = 'artist-list';
 const ARTIST_KEY_PREFIX = 'artist-';
-const ARTIST_DETAILS_KEY_PREFIX = 'artist-d-';
+const ARTIST_DETAILS_KEY_PREFIX = 'artist-details-';
 const ARTIST_SONG_LIST_KEY_PREFIX = 'artist-songs-';
 const SONG_KEY_PREFIX = 'song-';
-const SONG_DETAIL_KEY_PREFIX = 'song-d-';
+const SONG_DETAIL_KEY_PREFIX = 'song-details-';
 
 @Injectable({
   providedIn: 'root'

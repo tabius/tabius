@@ -16,10 +16,12 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 export class ArtistViewModel {
   readonly displayName: string;
   readonly imgSrc: string;
+  readonly songs: Song[];
 
-  constructor(readonly artist: Artist, readonly bands: Artist[], readonly songs: Song[], readonly listed: boolean) {
+  constructor(readonly artist: Artist, readonly bands: Artist[], songs: Song[], readonly listed: boolean) {
     this.displayName = getNameFirstFormArtistName(artist);
     this.imgSrc = getArtistImageUrl(artist.mount);
+    this.songs = songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
   }
 }
 

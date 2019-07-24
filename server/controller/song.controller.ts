@@ -30,8 +30,7 @@ export class SongController {
   async getSongsByArtist(@Param('artistId') artistIdParam: string): Promise<Song[]> {
     this.logger.log(`by-artist: ${artistIdParam}`);
     const artistId = stringToId(artistIdParam);
-    const songs = await this.songDbi.getSongsByArtistId(artistId);
-    return songs && songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
+    return await this.songDbi.getSongsByArtistId(artistId);
   }
 
   /** Returns found song details by ids. The order of results is not specified. */
