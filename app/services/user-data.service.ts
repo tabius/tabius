@@ -111,14 +111,16 @@ export class UserDataService {
     for (const songId in userSettings.songs) {
       const songSettings = userSettings.songs[songId];
       const key = getUserSongSettingsKey(songSettings.songId);
-      updatedKeys.add(key);
-      allOps.push(this.store.set<UserSongSettings>(key, songSettings, checkUpdateByStringify));
+      if (key) {
+        updatedKeys.add(key);
+        allOps.push(this.store.set<UserSongSettings>(key, songSettings, checkUpdateByStringify));
+      }
     }
 
     // delete missed settings.
     for (const oldSettingsEntry of oldSongSettings) {
       if (!updatedKeys.has(oldSettingsEntry.key)) {
-        allOps.push(this.store.set<UserSongSettings>(oldSettingsEntry.key, undefined, skipUpdateCheck));
+        allOps.push(this.store.remove(oldSettingsEntry.key));
       }
     }
 
@@ -132,7 +134,7 @@ export class UserDataService {
           if (!user) {
             return of([]);
           }
-          return this.store.get<string[]>(
+          return this.store.get<number[]>(
               USER_PLAYLISTS_KEY,
               () => this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`)
                   .pipe(
@@ -167,7 +169,7 @@ export class UserDataService {
     await this.cachePlaylists(response);
   }
 
-  async deleteUserPlaylist(playlistId: string): Promise<void> {
+  async deleteUserPlaylist(playlistId: number): Promise<void> {
     const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).pipe(take(1)).toPromise();
     await this.cachePlaylists(response);
   }
@@ -175,14 +177,14 @@ export class UserDataService {
   /** Caches playlists in browser store. */
   async cachePlaylists(playlists: readonly Playlist[]): Promise<void> {
     const allOps: Promise<void>[] = [];
-    allOps.push(this.store.set<string[]>(USER_PLAYLISTS_KEY, playlists.map(p => p.id), checkUpdateByShallowArrayCompare));
+    allOps.push(this.store.set<number[]>(USER_PLAYLISTS_KEY, playlists.map(p => p.id), checkUpdateByShallowArrayCompare));
     for (const playlist of playlists) {
       allOps.push(this.store.set<Playlist>(getPlaylistKey(playlist.id)!, playlist, checkUpdateByVersion));
     }
     await Promise.all(allOps);
   }
 
-  getPlaylist(playlistId: string|undefined, refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<Playlist|undefined> {
+  getPlaylist(playlistId: number|undefined, refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<Playlist|undefined> {
     const playlistKey = getPlaylistKey(playlistId);
     return this.store.get<Playlist>(
         playlistKey,
@@ -209,14 +211,10 @@ export class UserDataService {
   }
 }
 
-function getUserSongSettingsKey(songId: number|string): string {
-  return SONG_SETTINGS_KEY_PREFIX + songId;
+function getUserSongSettingsKey(songId: number|undefined): string|undefined {
+  return isValidId(songId) ? SONG_SETTINGS_KEY_PREFIX + songId : undefined;
 }
 
-function getPlaylistKey(playlistId?: string): string|undefined {
-  return isValidPlaylistId(playlistId) ? PLAYLIST_PREFIX_KEY + playlistId : undefined;
-}
-
-function isValidPlaylistId(playlistId?: unknown): playlistId is string {
-  return typeof playlistId === 'string' && playlistId.length >= 6;
+function getPlaylistKey(playlistId: number|undefined): string|undefined {
+  return isValidId(playlistId) ? PLAYLIST_PREFIX_KEY + playlistId : undefined;
 }

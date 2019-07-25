@@ -1,4 +1,4 @@
-import {Versioned, WithStringId} from '@common/common-model';
+import {Versioned, WithId} from '@common/common-model';
 import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/constants';
 
 export const USERS_STORE_SCHEMA_VERSION = 3;
@@ -93,7 +93,7 @@ export function getDefaultUserSongFontSize(): number {
 export const MIN_PLAYLIST_NAME_LENGTH = 1;
 export const MAX_PLAYLIST_NAME_LENGTH = 100;
 
-export interface Playlist extends WithStringId, Versioned {
+export interface Playlist extends WithId, Versioned {
   readonly userId: string,
   readonly name: string;
   readonly songIds: readonly number[];

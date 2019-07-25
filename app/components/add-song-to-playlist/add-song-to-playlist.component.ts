@@ -4,9 +4,9 @@ import {UserDataService} from '@app/services/user-data.service';
 import {AuthService} from '@app/services/auth.service';
 import {takeUntil} from 'rxjs/operators';
 import {Playlist} from '@common/user-model';
-import {MOUNT_PLAYLIST_PREFIX} from '@common/mounts';
 import {ToastService} from '@app/toast/toast.service';
 import {MGS_PLAYLIST_NOT_FOUND, MSG_NETWORK_ERROR} from '@common/messages';
+import {getPlaylistPageLink} from '@common/util/misc-utils';
 
 @Component({
   selector: 'gt-add-song-to-playlist',
@@ -20,7 +20,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
 
   playlists: Playlist[] = [];
 
-  readonly playlistLinkPrefix = `/${MOUNT_PLAYLIST_PREFIX}`;
+  readonly getPlaylistPageLink = getPlaylistPageLink;
 
   readonly favPlaylistName = 'Избранное';
 
@@ -46,12 +46,12 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
   }
 
-  trackById(idx: number, playlist: Playlist): string {
+  trackById(idx: number, playlist: Playlist): number {
     return playlist.id;
   }
 
   /** Returns true if current song is in the playlist. */
-  isInPlaylist(p: Playlist|string): boolean {
+  isInPlaylist(p: Playlist|number): boolean {
     if (typeof p === 'object') {
       return p.songIds.includes(this.songId);
     }
@@ -59,10 +59,10 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     return playlist !== undefined && playlist.songIds.includes(this.songId);
   }
 
-  async togglePlaylist(playlistMount: string, checkboxElement: any = {}) {
+  async togglePlaylist(playlistId: number, checkboxElement: any = {}) {
     try {
       //todo: await this.authService.askUserToSignInOrFail();
-      const playlist = this.playlists.find(p => p.id === playlistMount);
+      const playlist = this.playlists.find(p => p.id === playlistId);
       if (!playlist) {
         this.toastService.warning(MGS_PLAYLIST_NOT_FOUND);
         return;
@@ -77,7 +77,7 @@ export class AddSongToPlaylistComponent implements OnInit, OnDestroy {
     } catch (err) {
       console.error(err);
       this.toastService.warning(err, MSG_NETWORK_ERROR);
-      checkboxElement.checked = this.isInPlaylist(playlistMount); // enforce checkbox state.
+      checkboxElement.checked = this.isInPlaylist(playlistId); // enforce checkbox state.
     }
   }
 

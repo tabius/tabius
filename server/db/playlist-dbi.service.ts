@@ -1,12 +1,11 @@
 import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
 import {toArrayOfInts} from '@common/util/misc-utils';
-import Hashids from 'hashids';
 import {Playlist} from '@common/user-model';
 import {CreatePlaylistRequest} from '@common/ajax-model';
 
 interface PlaylistRow {
-  id: string;
+  id: number;
   user_id: string;
   name: string;
   shared: boolean;
@@ -29,10 +28,9 @@ export class PlaylistDbi {
   }
 
   create(userId: string, playlist: CreatePlaylistRequest): Promise<void> {
-    const id = generateRandomPlaylistId();
     return this.db.pool.promise()
-        .query('INSERT INTO playlist(id, user_id, name, shared, song_ids) VALUES (?, ?, ?, ?, ?)',
-            [id, userId, playlist.name, playlist.shared ? 1 : 0, playlist.songIds.join(',')]);
+        .query('INSERT INTO playlist(user_id, name, shared, song_ids) VALUES (?, ?, ?, ?)',
+            [userId, playlist.name, playlist.shared ? 1 : 0, playlist.songIds.join(',')]);
   }
 
   update(userId: string, playlist: Playlist): Promise<void> {
@@ -41,21 +39,16 @@ export class PlaylistDbi {
             [playlist.name, playlist.songIds.join(','), playlist.id, userId]);
   }
 
-  delete(userId: string, playlistId: string): Promise<void> {
+  delete(userId: string, playlistId: number): Promise<void> {
     return this.db.pool.promise() // Note: it is important to pass user-id too to avoid non-authorized updates.
         .query('DELETE FROM playlist WHERE id = ? AND user_id = ?', [playlistId, userId]);
   }
 
-  getPlaylistById(id: string, userId: string|undefined): Promise<Playlist|undefined> {
+  getPlaylistById(userId: string|undefined, playlistId: number): Promise<Playlist|undefined> {
     return this.db.pool.promise()
-        .query(`${SELECT_FROM_PLAYLIST_SQL} WHERE id = ? AND (user_id = ? OR shared = 1)`, [id, userId || -1])
+        .query(`${SELECT_FROM_PLAYLIST_SQL} WHERE id = ? AND (user_id = ? OR shared = 1)`, [playlistId, userId || -1])
         .then(([rows]: [PlaylistRow[]]) => rows.length === 0 ? undefined : row2Playlist(rows[0]));
   }
-}
-
-function generateRandomPlaylistId(): string {
-  const hashIds = new Hashids('salt', 5);
-  return hashIds.encode(Date.now());
 }
 
 function row2Playlist(row: PlaylistRow): Playlist {

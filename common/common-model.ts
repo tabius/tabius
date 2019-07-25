@@ -1,9 +1,5 @@
-export interface WithNumId {
+export interface WithId {
   readonly id: number;
-}
-
-export interface WithStringId {
-  readonly id: string;
 }
 
 export interface Versioned {

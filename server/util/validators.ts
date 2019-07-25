@@ -35,7 +35,7 @@ export const checkStringLength = (minLen: number, maxLen: number) => isString(mi
 export const isUserId = () => checkStringLength(1, 40);
 
 export const PlaylistValidator: Validator<Playlist> = {
-  id: checkStringLength(1, 16),
+  id: isNumericId(),
   version: isVersion(),
   userId: isUserId(),
   name: checkStringLength(MIN_PLAYLIST_NAME_LENGTH, MAX_PLAYLIST_NAME_LENGTH),

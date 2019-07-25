@@ -5,6 +5,7 @@ import {map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
+import Hashids from 'hashids';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length == 0) {
@@ -96,8 +97,8 @@ export function getSongPageLink(artistMount: string, songMount: string): string 
   return `/${MOUNT_SONG_PREFIX}${artistMount}/${songMount}`;
 }
 
-export function getPlaylistPageLink(playlistId: string): string {
-  return `/${MOUNT_PLAYLIST_PREFIX}${playlistId}`;
+export function getPlaylistPageLink(playlistId: number): string {
+  return `/${MOUNT_PLAYLIST_PREFIX}${playlistIdToMount(playlistId)}`;
 }
 
 /**
@@ -160,3 +161,13 @@ export function canEditArtist(user: User|undefined, artistId: number): boolean {
   return !!user && (user.groups.includes(UserGroup.Moderator) || user.artistId === artistId);
 }
 
+const playlistHashIds = new Hashids('salt', 5);
+
+export function playlistIdToMount(playlistId: number): string {
+  return playlistHashIds.encode(playlistId);
+}
+
+export function playlistMountToId(mount: string): number|undefined {
+  const ids = playlistHashIds.decode(mount);
+  return ids && ids.length == 1 ? ids[0] : undefined;
+}

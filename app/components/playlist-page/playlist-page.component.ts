@@ -9,7 +9,7 @@ import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist, User} from '@common/user-model';
-import {canEditArtist, defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic} from '@common/util/misc-utils';
+import {canEditArtist, defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic, playlistMountToId} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {RefreshMode} from '@app/store/observable-store';
@@ -140,7 +140,8 @@ export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
 
   async resolve(route: ActivatedRouteSnapshot): Promise<PlaylistPageInput> {
     const mount = route.paramMap.get('playlistMount')!;
-    const playlist = await this.uds.getPlaylist(mount).pipe(take(1)).toPromise();
+    const playlistId = playlistMountToId(mount);
+    const playlist = await this.uds.getPlaylist(playlistId).pipe(take(1)).toPromise();
     if (playlist) {
       return {playlist};
     }
