@@ -49,7 +49,7 @@ export class SongDbi {
   async create(song: Song, details: SongDetails): Promise<number> {
     const con$$ = this.db.pool.promise();
     const mount = await generateUniqueSongMount(song, con$$);
-    return await con$$
+    return con$$
         .query('INSERT INTO song(artist_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
             [song.artistId, mount, song.title, details.content, packLinks(details.mediaLinks)])
         .then(([result]) => result.insertId);

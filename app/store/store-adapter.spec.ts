@@ -141,7 +141,7 @@ async function testClear(adapter: StoreAdapter) {
   const keyPrefix = 'clear';
   const key1 = `${keyPrefix}1`;
   const key2 = `${keyPrefix}2`;
-  Promise.all([await adapter.set(key1, {x: 'value'}), await adapter.set(key2, {x: 'value2'})]);
+  await Promise.all([adapter.set(key1, {x: 'value'}), adapter.set(key2, {x: 'value2'})]);
 
   const list1 = await adapter.list<any>(keyPrefix);
   expect(list1).toBeDefined();

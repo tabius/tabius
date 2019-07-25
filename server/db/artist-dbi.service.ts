@@ -57,7 +57,7 @@ export class ArtistDbi {
       throw `User already has valid artist id assigned: ${user.id}, artistId: ${user.artistId}`;
     }
     const artistMount = generateArtistMountForUser();
-    return await this.db.pool.promise()
+    return this.db.pool.promise()
         .query('INSERT INTO artist(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
             [user.username, ArtistType.Person, artistMount, 0, user.id])
         .then(([result]) => result.insertId);

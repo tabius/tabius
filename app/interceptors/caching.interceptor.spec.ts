@@ -1,6 +1,6 @@
 import {getTestBed, TestBed} from '@angular/core/testing';
 import {HttpClientTestingModule,} from '@angular/common/http/testing';
-import {HTTP_INTERCEPTORS, HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpEvent, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {delay} from 'rxjs/operators';
@@ -17,7 +17,7 @@ export class FakeResponseInterceptor implements HttpInterceptor {
     return this.requests.length;
   };
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<any>): Observable<HttpEvent<any>> {
     this.requests.push(req.urlWithParams);
     const response = this.response || new HttpResponse({body: `Response body ${this.count}`});
     return of(response).pipe(delay(this.responseDelayMillis));
@@ -97,8 +97,8 @@ describe(`CachingInterceptor`, () => {
     responseInterceptor.response = new HttpResponse({body: 'result2 response'});
     const results2: any[] = [];
     await Promise.all([
-      http.get('/callA').toPromise().then(r => results2.push(r)),
-      http.get('/callA').toPromise().then(r => results2.push(r))
+      http.get('/callB').toPromise().then(r => results2.push(r)),
+      http.get('/callB').toPromise().then(r => results2.push(r))
     ]);
     expect(responseInterceptor.count).toBe(1);
     expect(results2.length).toBe(2);
