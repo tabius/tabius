@@ -7,7 +7,6 @@ import {UserController} from './controller/user.controller';
 import {SongController} from './controller/song.controller';
 import {ArtistController} from './controller/artist.controller';
 import {PlaylistController} from './controller/playlist.controller';
-import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {APP_INTERCEPTOR} from '@nestjs/core';
 import {ServerSsoService} from '@server/service/server-sso.service';
 
@@ -24,7 +23,6 @@ applyDomino(global, join(BROWSER_DIR, 'index.html'));
   ],
   providers: [
     Logger,
-    ServerAuthGuard,
     {provide: APP_INTERCEPTOR, useClass: ServerSsoService},
   ],
   controllers: [

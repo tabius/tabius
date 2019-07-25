@@ -1,8 +1,7 @@
 import {SongDbi} from '@server/db/song-dbi.service';
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
 import {NewSongDetailsValidator, NewSongValidator, SongDetailsValidator, SongValidator, stringToArrayOfNumericIds, stringToId} from '@server/util/validators';
-import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
@@ -44,7 +43,6 @@ export class SongController {
 
   /** Creates song and returns updated song & details. */
   @Post()
-  @UseGuards(ServerAuthGuard)
   async create(@Session() session, @Body() updateRequest: UpdateSongRequest): Promise<UpdateSongResponse> {
     this.logger.log('/create-song' + JSON.stringify(updateRequest));
     const user: User = ServerSsoService.getUserOrFail(session);
@@ -68,7 +66,6 @@ export class SongController {
 
   /** Updates song and returns updated song & details. */
   @Put()
-  @UseGuards(ServerAuthGuard)
   async update(@Session() session, @Body() updateRequest: UpdateSongRequest): Promise<UpdateSongResponse> {
     this.logger.log('/update-song');
     const user: User = ServerSsoService.getUserOrFail(session);
@@ -102,7 +99,6 @@ export class SongController {
 
   /** Deletes the song and returns updated artist details. */
   @Delete(':songId')
-  @UseGuards(ServerAuthGuard)
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {
     this.logger.log(`/delete song ${idParam}`);
     const user: User = ServerSsoService.getUserOrFail(session);

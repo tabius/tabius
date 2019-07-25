@@ -1,6 +1,5 @@
-import {Body, Controller, Get, HttpStatus, Logger, Put, Res, Session, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, HttpStatus, Logger, Put, Res, Session} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
-import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
 import {LoginResponse} from '@common/ajax-model';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
@@ -10,7 +9,6 @@ import {ServerSsoService} from '@server/service/server-sso.service';
 import {Response} from 'express';
 import {checkUpdateByStringify} from '@common/util/misc-utils';
 
-@UseGuards(ServerAuthGuard)
 @Controller('/api/user')
 export class UserController {
 

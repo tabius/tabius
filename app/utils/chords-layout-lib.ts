@@ -364,11 +364,11 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   // 'G#': '',
 }));
 
-type StringMap = { [chord: string]: string };
+type StringMap = Record<string, string>;
 
 /** Adds barre to the some chords. This changes the rendering. */
 function withAutoAssignedFingers(chordsMap: StringMap): StringMap {
-  for (const name in chordsMap) {
+  for (const name of Object.keys(chordsMap)) {
     const layout = chordsMap[name];
     if (layout.includes('&')) {
       continue;
@@ -388,7 +388,7 @@ function withAutoAssignedFingers(chordsMap: StringMap): StringMap {
 /** Adds flats to the existing mapping using sharps mappings. */
 function withFlatsFromSharps(chordsMap: StringMap): StringMap {
   const res: StringMap = {};
-  for (const name in chordsMap) {
+  for (const name of Object.keys(chordsMap)) {
     const layout = chordsMap[name];
     res[name] = layout;
     if (name.length >= 2 && name.charAt(1) == '#') {

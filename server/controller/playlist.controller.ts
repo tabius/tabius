@@ -1,6 +1,5 @@
-import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Session, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Session} from '@nestjs/common';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
-import {ServerAuthGuard} from '@server/util/server-auth.guard';
 import {Playlist, User} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {CreatePlaylistRequestValidator, PlaylistValidator, stringToId} from '@server/util/validators';
@@ -15,7 +14,6 @@ export class PlaylistController {
   }
 
   /** Returns all current user's playlists.*/
-  @UseGuards(ServerAuthGuard)
   @Get('/by-current-user')
   async getByCurrentUser(@Session() session): Promise<Playlist[]> {
     const user: User = ServerSsoService.getUserOrFail(session);
@@ -24,7 +22,6 @@ export class PlaylistController {
   }
 
   /** Creates new empty playlist and returns list of all user playlists. */
-  @UseGuards(ServerAuthGuard)
   @Post('/create')
   async create(@Session() session, @Body() createPlaylistRequest: CreatePlaylistRequest): Promise<CreatePlaylistResponse> {
     const vr = validate(createPlaylistRequest, conformsTo(CreatePlaylistRequestValidator));
@@ -39,7 +36,6 @@ export class PlaylistController {
 
   /** Updates user playlist and returns list of all user playlists. */
   @Put('/update')
-  @UseGuards(ServerAuthGuard)
   async update(@Session() session, @Body() playlist: Playlist): Promise<UpdatePlaylistResponse> {
     const vr = validate(playlist, conformsTo(PlaylistValidator));
     if (!vr.success) {
@@ -53,7 +49,6 @@ export class PlaylistController {
 
   /** Removes user playlist and returns list of all user playlists. */
   @Delete('/delete/:id')
-  @UseGuards(ServerAuthGuard)
   async delete(@Session() session, @Param('id') playlistIdParam: string): Promise<DeletePlaylistResponse> {
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`delete: ${playlistIdParam}, user: ${user.email}`);
