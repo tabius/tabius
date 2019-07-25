@@ -30,7 +30,7 @@ export enum RefreshMode {
 export interface ObservableStore {
   get<T>(key: string|undefined,
          fetchFn: FetchFn<T>|undefined,
-         refresh: RefreshMode,
+         refreshMode: RefreshMode,
          needUpdateFn: NeedUpdateFn<T>,
   ): Observable<T|undefined>;
 
@@ -53,6 +53,8 @@ class ObservableStoreImpl implements ObservableStore {
   readonly initialized$$ = new Promise<void>(resolve => this.markAsInitialized = resolve);
 
   private readonly dataMap = new Map<string, ReplaySubject<any>>();
+  /** Set of refreshed during current session ids. */
+  private readonly refreshSet = new Set<string>();
   private readonly serverStateKey: StateKey<any>;
   private readonly storeAdapter$$: Promise<StoreAdapter>;
 
@@ -92,7 +94,7 @@ class ObservableStoreImpl implements ObservableStore {
 
   get<T>(key: string|undefined,
          fetchFn: FetchFn<T>|undefined,
-         refresh: RefreshMode,
+         refreshMode: RefreshMode,
          needUpdateFn: NeedUpdateFn<T>,
   ): Observable<T|undefined> {
     if (!key) {
@@ -100,13 +102,11 @@ class ObservableStoreImpl implements ObservableStore {
     }
     let rs$ = this.dataMap.get(key);
     if (rs$) {
-      if (fetchFn && refresh === RefreshMode.Refresh) {
-        this.refresh(fetchFn, key, needUpdateFn);
-      }
+      this.refresh(key, fetchFn, refreshMode, needUpdateFn);
       return rs$;
     }
     rs$ = this.newReplaySubject(key);
-    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refresh, needUpdateFn);
+    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refreshMode, needUpdateFn);
     const fetch$: Observable<void> = fromPromise(fetch$$);
     return combineLatest([fetch$, rs$]).pipe(map(([, rs]) => rs));
   }
@@ -115,7 +115,7 @@ class ObservableStoreImpl implements ObservableStore {
   private async triggerFetchIfNotCached<T>(key: string,
                                            rs$: ReplaySubject<T|undefined>,
                                            fetchFn: FetchFn<T>|undefined,
-                                           refresh: RefreshMode,
+                                           refreshMode: RefreshMode,
                                            needUpdateFn: NeedUpdateFn<T>): Promise<void> {
     const store = await this.storeAdapter$$;
     let value = await store.get<T>(key);
@@ -124,14 +124,17 @@ class ObservableStoreImpl implements ObservableStore {
         value = await fetchAndFallbackToUnresolved(fetchFn);
         await store.set(key, value);
       }
-    } else if (fetchFn && refresh !== RefreshMode.DoNotRefresh) { // this is first access to the cached value. Check if asked to refresh it.
-      this.refresh(fetchFn, key, needUpdateFn);
+    } else { // this is first access to the cached value. Check if asked to refresh it.
+      this.refresh(key, fetchFn, refreshMode, needUpdateFn);
     }
     rs$.next(this.freezeFn(value));
   }
 
-  private refresh<T>(fetchFn: FetchFn<T>, key: string, needUpdateFn: NeedUpdateFn<T>) {
-// refresh action is performed async (non-blocking).
+  // refresh action is performed async (non-blocking).
+  private refresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): void {
+    if (!fetchFn || refreshMode === RefreshMode.DoNotRefresh || (refreshMode === RefreshMode.RefreshOncePerSession && this.refreshSet.has(key))) {
+      return;
+    }
     fetchAndFallbackToUnresolved(fetchFn).then(value => {
       if (value !== undefined) {
         this.set(key, value, needUpdateFn).catch(err => console.error(err));
@@ -152,6 +155,7 @@ class ObservableStoreImpl implements ObservableStore {
     if (!key) {
       return;
     }
+    this.refreshSet.add(key);
     const store = await this.storeAdapter$$;
     if (needUpdateFn !== skipUpdateCheck) {
       const oldValue = await store.get<T>(key);
@@ -199,6 +203,7 @@ class ObservableStoreImpl implements ObservableStore {
     await adapter.setAll(serverState);
     for (const [key, value] of Object.entries(serverState)) { // instantiate subjects -> they will be needed on browser re-render.
       this.newReplaySubject(key, value);
+      this.refreshSet.add(key);
     }
   }
 }
