@@ -67,7 +67,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
         )
         .subscribe(([artist, song, songDetails, user]) => {
           if (this.song !== undefined && song === undefined) { // song was removed -> return to the artist page.
-            this.router.navigate([MOUNT_ARTIST_PREFIX + artistMount]).catch(err => console.log(err));
+            this.router.navigate([MOUNT_ARTIST_PREFIX + artistMount]).catch(err => console.error(err));
             return;
           }
           if (artist === undefined || song === undefined || songDetails === undefined) {
@@ -104,7 +104,6 @@ export class SongPageComponent implements OnInit, OnDestroy {
   }
 
   onSongDeletedInEditor(): Promise<boolean> {
-    console.log('this', this);
     const params = this.route.snapshot.params;
     const artistMount = params['artistMount'];
     if (!artistMount || artistMount.length === 0) {

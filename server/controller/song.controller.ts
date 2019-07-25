@@ -8,13 +8,14 @@ import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {canEditArtist, isValidId} from '@common/util/misc-utils';
+import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 
 @Controller('/api/song')
 export class SongController {
 
   private readonly logger = new Logger(SongController.name);
 
-  constructor(private readonly songDbi: SongDbi) {
+  constructor(private readonly songDbi: SongDbi, private playlistDbi: PlaylistDbi) {
   }
 
   /** Returns found songs  by ids. The order of results is not specified. */
@@ -100,7 +101,6 @@ export class SongController {
 
 
   /** Deletes the song and returns updated artist details. */
-  //TODO: update playlists!
   @Delete(':songId')
   @UseGuards(ServerAuthGuard)
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {
@@ -115,6 +115,7 @@ export class SongController {
       throw new HttpException(`Song is not found ${idParam}`, HttpStatus.NOT_FOUND);
     }
     const artistId = songsArray[0].artistId;
+    await this.playlistDbi.deleteSongFromAllPlaylists(songId);
     await this.songDbi.delete(songId);
     const songs = await this.songDbi.getSongsByArtistId(artistId);
     return {
