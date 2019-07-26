@@ -49,14 +49,13 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
 
     const song$ = this.ads.getSongById(this.songId);
     const songDetails$ = this.ads.getSongDetailsById(this.songId);
-    const artist$ = song$.pipe(flatMap(song => this.ads.getArtistById(song ? song.artistId : undefined)));
-    const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song ? song.id : undefined)));
-
+    const artist$ = song$.pipe(flatMap(song => this.ads.getArtistById(song && song.artistId)));
+    const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song && song.id)));
     this.songSubscription = combineLatest([song$, songDetails$, artist$, songSettings$])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(([song, songDetails, artist, songSettings]) => {
           if (!song || !songDetails || !artist || !songSettings) {
-            return; // reasons: not everything is loaded
+            return; // TODO: not found? 404?
           }
           this.song = song;
           this.songDetails = songDetails;

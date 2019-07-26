@@ -7,6 +7,7 @@ import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId} from '@common/util/misc-utils';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
+import {fromPromise} from 'rxjs/internal-compatibility';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
@@ -51,19 +52,22 @@ export class UserDataService {
           }
           return this.store.get<UserSongSettings>(
               getUserSongSettingsKey(songId),
-              () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])),
+              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])),
               RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response
               checkUpdateByStringify
           ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
         }));
   }
 
-  private fetchAndProcessUserSettings(user: User|undefined): Observable<UserSettings> {
+  private fetchAndUpdateUserSettings(user: User|undefined): Observable<UserSettings> {
     if (!user) {
       return of(newDefaultUserSettings());
     }
     return this.httpClient.get<UserSettings>(`/api/user/settings`)
-        .pipe(tap(userSettings => this.updateUserSettingsOnFetch(userSettings)));
+        .pipe(
+            flatMap(userSettings => fromPromise(this.updateUserSettingsOnFetch(userSettings))
+                .pipe(map(() => userSettings)))
+        );
   }
 
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
@@ -81,7 +85,7 @@ export class UserDataService {
           }
           return this.store.get<boolean>(
               B4SI_FLAG_KEY,
-              () => this.fetchAndProcessUserSettings(user).pipe(map(userSettings => userSettings.b4Si)),
+              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.b4Si)),
               RefreshMode.RefreshOncePerSession,
               checkUpdateByReference
           ).pipe(map(flag => flag === undefined ? false : flag));

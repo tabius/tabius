@@ -139,10 +139,12 @@ export class ArtistDataService {
     );
   }
 
-  getSongByMount(artistMount: string, songMount: string): Observable<Song|undefined> {
-    return this.getArtistIdByMount(artistMount)
+  getSongByMount(artistId: number|undefined, songMount: string|undefined): Observable<Song|undefined> {
+    if (!isValidId(artistId) || !songMount) {
+      return of(undefined);
+    }
+    return this.getArtistSongList(artistId)
         .pipe(
-            flatMap(artistId => this.getArtistSongList(artistId)),
             flatMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
             map(songsIds => songsIds.find(s => s !== undefined && s.mount === songMount)),
         );

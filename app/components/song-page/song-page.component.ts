@@ -56,8 +56,9 @@ export class SongPageComponent implements OnInit, OnDestroy {
     const artistMount = params['artistMount'];
     const songMount = params['songMount'];
 
-    const artist$ = this.ads.getArtistIdByMount(artistMount).pipe(flatMap(id => this.ads.getArtistById(id)));
-    const song$ = this.ads.getSongByMount(artistMount, songMount);
+    const artistId$ = this.ads.getArtistIdByMount(artistMount);
+    const artist$ = artistId$.pipe(flatMap(id => this.ads.getArtistById(id)));
+    const song$ = artistId$.pipe(flatMap(artistId => this.ads.getSongByMount(artistId, songMount)));
     const songDetails$ = song$.pipe(flatMap(song => this.ads.getSongDetailsById(song ? song.id : undefined)));
 
     combineLatest([artist$, song$, songDetails$, this.uds.getUser()])
