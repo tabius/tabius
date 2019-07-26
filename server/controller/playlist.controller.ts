@@ -2,7 +2,7 @@ import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Session} from '
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {Playlist, User} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
-import {CreatePlaylistRequestValidator, PlaylistValidator, stringToId} from '@server/util/validators';
+import {CreatePlaylistRequestValidator, paramToId, PlaylistValidator} from '@server/util/validators';
 import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
 import {ServerSsoService} from '@server/service/server-sso.service';
 
@@ -52,7 +52,7 @@ export class PlaylistController {
   async delete(@Session() session, @Param('id') playlistIdParam: string): Promise<DeletePlaylistResponse> {
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`delete: ${playlistIdParam}, user: ${user.email}`);
-    await this.playlistDbi.delete(user.id, stringToId(playlistIdParam));
+    await this.playlistDbi.delete(user.id, paramToId(playlistIdParam));
     return this.playlistDbi.getPlaylists(user.id);
   }
 
@@ -60,7 +60,7 @@ export class PlaylistController {
   byId(@Session() session, @Param('id') playlistIdParam: string): Promise<Playlist|undefined> {
     this.logger.log('by-id');
     const user = ServerSsoService.getUserOrUndefined(session);
-    return this.playlistDbi.getPlaylistById(user ? user.id : undefined, stringToId(playlistIdParam));
+    return this.playlistDbi.getPlaylistById(user ? user.id : undefined, paramToId(playlistIdParam));
   }
 
 }

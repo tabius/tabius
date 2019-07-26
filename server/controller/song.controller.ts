@@ -1,7 +1,7 @@
 import {SongDbi} from '@server/db/song-dbi.service';
 import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
 import {Song, SongDetails} from '@common/artist-model';
-import {NewSongDetailsValidator, NewSongValidator, SongDetailsValidator, SongValidator, stringToArrayOfNumericIds, stringToId} from '@server/util/validators';
+import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
@@ -21,7 +21,7 @@ export class SongController {
   @Get('/by-ids/:ids')
   getSongs(@Param('ids') idsParam: string): Promise<Song[]> {
     this.logger.log(`by-ids: ${idsParam}`);
-    const ids = stringToArrayOfNumericIds(idsParam);
+    const ids = paramToArrayOfNumericIds(idsParam);
     return this.songDbi.getSongs(ids);
   }
 
@@ -29,7 +29,7 @@ export class SongController {
   @Get('/by-artist/:artistId')
   async getSongsByArtist(@Param('artistId') artistIdParam: string): Promise<Song[]> {
     this.logger.log(`by-artist: ${artistIdParam}`);
-    const artistId = stringToId(artistIdParam);
+    const artistId = paramToId(artistIdParam);
     return await this.songDbi.getSongsByArtistId(artistId);
   }
 
@@ -37,7 +37,7 @@ export class SongController {
   @Get('/details-by-ids/:ids')
   getSongDetails(@Param('ids') idsParam: string): Promise<SongDetails[]> {
     this.logger.log(`details-by-ids: ${idsParam}`);
-    const ids = stringToArrayOfNumericIds(idsParam);
+    const ids = paramToArrayOfNumericIds(idsParam);
     return this.songDbi.getSongsDetails(ids);
   }
 

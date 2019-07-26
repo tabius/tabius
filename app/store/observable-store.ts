@@ -122,28 +122,28 @@ class ObservableStoreImpl implements ObservableStore {
       return rs$;
     }
     rs$ = this.newReplaySubject(key);
-    const fetch$$ = this.triggerFetchIfNotCached(key, rs$, fetchFn, refreshMode, needUpdateFn);
-    const fetch$: Observable<void> = fromPromise(fetch$$);
-    return combineLatest([fetch$, rs$]).pipe(map(([, rs]) => rs));
+    const firstGetOp$$ = this.handleFirstGet(key, rs$, fetchFn, refreshMode, needUpdateFn);
+    const firstGetOp$: Observable<void> = fromPromise(firstGetOp$$);
+    return combineLatest([firstGetOp$, rs$]).pipe(map(([, rs]) => rs));
   }
 
-  /** Note: This method is called only on the first access to the value. */
-  private async triggerFetchIfNotCached<T>(key: string,
-                                           rs$: ReplaySubject<T|undefined>,
-                                           fetchFn: FetchFn<T>|undefined,
-                                           refreshMode: RefreshMode,
-                                           needUpdateFn: NeedUpdateFn<T>): Promise<void> {
+  /** Note: This method is called only on the first access to the value during the app session. */
+  private async handleFirstGet<T>(key: string,
+                                  rs$: ReplaySubject<T|undefined>,
+                                  fetchFn: FetchFn<T>|undefined,
+                                  refreshMode: RefreshMode,
+                                  needUpdateFn: NeedUpdateFn<T>): Promise<void> {
     const store = await this.storeAdapter$$;
     let value = await store.get<T>(key);
-    if (!value) {
-      if (fetchFn) {
-        value = await fetchAndFallbackToUnresolved(fetchFn);
-        await store.set(key, value);
-      }
-    } else { // this is first access to the cached value. Check if asked to refresh it.
+    if (value) {
+      rs$.next(this.freezeFn(value));
       this.refresh(key, fetchFn, refreshMode, needUpdateFn);
+      return;
     }
-    rs$.next(this.freezeFn(value));
+    if (fetchFn) {
+      value = await fetchAndFallbackToUnresolved(fetchFn);
+    }
+    await this.set(key, value, needUpdateFn);
   }
 
   // refresh action is performed async (non-blocking).
@@ -187,11 +187,7 @@ class ObservableStoreImpl implements ObservableStore {
   }
 
   async remove<T>(key: string|undefined): Promise<void> {
-    if (!key) {
-      return;
-    }
-    const store = await this.storeAdapter$$;
-    await store.set(key, undefined);
+    this.set(key, undefined, skipUpdateCheck);
   }
 
   async list<T>(keyPrefix: string): Promise<KV<T>[]> {

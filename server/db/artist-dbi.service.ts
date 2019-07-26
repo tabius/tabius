@@ -44,12 +44,7 @@ export class ArtistDbi {
   getArtistDetails(artistId: number): Promise<ArtistDetails|undefined> {
     return this.db.pool.promise()
         .query(`${SELECT_ARTIST_DETAILS_SQL} WHERE id  = ?`, [artistId])
-        .then(([rows]: [ArtistWithDetailsRow[]]) => {
-          if (rows.length === 0) {
-            return undefined;
-          }
-          return rowToArtistDetails(rows[0]);
-        });
+        .then(([rows]: [ArtistWithDetailsRow[]]) => rows.length === 0 ? undefined : rowToArtistDetails(rows[0]));
   }
 
   async createArtistForUser(user: User): Promise<number> {
@@ -61,6 +56,13 @@ export class ArtistDbi {
         .query('INSERT INTO artist(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
             [user.username, ArtistType.Person, artistMount, 0, user.id])
         .then(([result]) => result.insertId);
+  }
+
+  async getByMount(mount: string): Promise<Artist|undefined> {
+    return this.db.pool.promise()
+        .query(`${SELECT_ARTIST_SQL} WHERE mount = ?`, mount)
+        .then(([rows]: [ArtistRow[]]) => rows.length === 0 ? undefined : rowToArtist(rows[0]));
+
   }
 }
 

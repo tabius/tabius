@@ -15,12 +15,12 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 
 export class ArtistViewModel {
   readonly displayName: string;
-  readonly imgSrc: string;
+  readonly imgSrc: string|undefined;
   readonly songs: Song[];
 
   constructor(readonly artist: Artist, readonly bands: Artist[], songs: Song[], readonly listed: boolean) {
     this.displayName = getNameFirstFormArtistName(artist);
-    this.imgSrc = getArtistImageUrl(artist.mount);
+    this.imgSrc = listed ? getArtistImageUrl(artist.mount) : undefined;
     this.songs = songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
   }
 }
@@ -63,13 +63,9 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
     throttleIndicator(this);
 
     const artistMount = this.route.snapshot.params['artistMount'];
-
-    const artist$: Observable<Artist|undefined> = this.ads.getArtistByMount(artistMount);
-
-    const artistDetails$: Observable<ArtistDetails|undefined> = artist$.pipe(
-        flatMap(artist => this.ads.getArtistDetails(artist && artist.id))
-    );
-
+    const artistId$: Observable<number|undefined> = this.ads.getArtistIdByMount(artistMount);
+    const artist$: Observable<Artist|undefined> = artistId$.pipe(flatMap(id => this.ads.getArtistById(id)));
+    const artistDetails$: Observable<ArtistDetails|undefined> = artistId$.pipe(flatMap(id => this.ads.getArtistDetails(id)));
     const bands$: Observable<Artist[]> = artistDetails$.pipe(
         flatMap(details => this.ads.getArtistsByIds(details ? details.bandIds : [])),
         map(bands => bands.filter(defined))

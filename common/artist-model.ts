@@ -7,6 +7,9 @@ export enum ArtistType {
   Band = 2
 }
 
+export const MIN_ARTIST_MOUNT_LENGTH = 1;
+export const MAX_ARTIST_MOUNT_LENGTH = 40;
+
 export interface Artist extends WithId, Versioned {
   /** Name of the artist. For person it is <Last Name> <First Name>. */
   readonly name: string;
@@ -24,6 +27,9 @@ export interface ArtistDetails extends WithId, Versioned {
 
 export const MIN_SONG_TITLE_LENGTH = 1;
 export const MAX_SONG_TITLE_LENGTH = 200;
+
+export const MIN_SONG_MOUNT_LENGTH = 1;
+export const MAX_SONG_MOUNT_LENGTH = 64;
 
 export interface Song extends WithId, Versioned {
   /** Mount part of the song page. Unique for all songs per artist. */

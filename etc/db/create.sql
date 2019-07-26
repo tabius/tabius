@@ -18,8 +18,11 @@ CREATE TABLE artist (
   DEFAULT CHARSET = utf8mb4,
   COLLATE utf8mb4_unicode_ci;
 
-create index artist_listed_index
-	on artist (listed);
+CREATE INDEX artist_listed_index
+	ON artist (listed);
+	
+CREATE INDEX artist_mount_index
+	ON artist (mount);
 
 CREATE TABLE song (
     id                   INT PRIMARY KEY AUTO_INCREMENT,

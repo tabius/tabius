@@ -10,7 +10,12 @@
         <div class="artist-root">
             <div>
                 <h1>{{artistViewModel.displayName}}</h1>
-                <img src="{{artistViewModel.imgSrc}}" alt="{{artistViewModel.artist.name}}" title="{{artistViewModel.displayName}}">
+
+                <img *ngIf="!!artistViewModel.imgSrc"
+                     src="{{artistViewModel.imgSrc}}"
+                     alt="{{artistViewModel.artist.name}}"
+                     title="{{artistViewModel.displayName}}">
+
                 <div *ngIf="artistViewModel.bands.length > 0" class="bands-info">
                     Группы:
                     <div *ngFor="let band of artistViewModel.bands">

@@ -2,17 +2,18 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
-import {flatMap, map, take} from 'rxjs/operators';
+import {flatMap, map, take, tap} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
+import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 const ARTIST_LIST_KEY = 'artist-list';
 const ARTIST_KEY_PREFIX = 'artist-';
 const ARTIST_DETAILS_KEY_PREFIX = 'artist-details-';
+const ARTIST_MOUNT_KEY_PREFIX = 'artist-mount-';
 const ARTIST_SONG_LIST_KEY_PREFIX = 'artist-songs-';
 const SONG_KEY_PREFIX = 'song-';
 const SONG_DETAIL_KEY_PREFIX = 'song-details-';
@@ -27,10 +28,10 @@ export class ArtistDataService {
               @Inject(TABIUS_ARTISTS_BROWSER_STORE_TOKEN) private readonly store: ObservableStore) {
   }
 
-  getAllArtists(): Observable<Artist[]> {
+  getArtistList(): Observable<Artist[]> {
     return this.store.get<number[]>(
         ARTIST_LIST_KEY,
-        () => this.httpClient.get<Artist[]>('/api/artist/all')
+        () => this.httpClient.get<Artist[]>('/api/artist/listings')
             .pipe(
                 flatMap(artists => combineLatest0(artists.map(a => fromPromise(this.updateArtistOnFetch(a))))),
                 map(artists => artists.map(a => a.id))
@@ -58,7 +59,10 @@ export class ArtistDataService {
   }
 
   private async updateArtistOnFetch(artist: Artist): Promise<Artist> {
-    await this.store.set<Artist>(getArtistKey(artist.id), artist, checkUpdateByVersion);
+    await Promise.all([
+      this.store.set<Artist>(getArtistKey(artist.id), artist, checkUpdateByVersion),
+      this.store.set<number>(getArtistIdByMountKey(artist.mount), artist.id, checkUpdateByReference)
+    ]);
     return artist;
   }
 
@@ -88,6 +92,7 @@ export class ArtistDataService {
     const songUpdatesArray$$ = songs.map(song => this.store.set<Song>(getSongKey(song.id), song, checkUpdateByVersion));
     const songIds = songs.map(s => s.id);
 
+    // noinspection ES6MissingAwait
     const listingUpdate$$ = updateArtistSongList
         ? this.store.set<number[]>(getArtistSongListKey(artistId), songIds, checkUpdateByShallowArrayCompare)
         : Promise.resolve();
@@ -99,9 +104,17 @@ export class ArtistDataService {
     return songIds;
   }
 
-  getArtistByMount(artistMount: string): Observable<Artist|undefined> {
-    return this.getAllArtists()
-        .pipe(map(artists => artists.find(a => a.mount === artistMount)));
+  getArtistIdByMount(artistMount: string|undefined): Observable<number|undefined> {
+    return this.store.get<number>(
+        getArtistIdByMountKey(artistMount),
+        () => this.httpClient.get<Artist|undefined>(`/api/artist/by-mount/${artistMount}`)
+            .pipe(
+                tap(a => a && this.updateArtistOnFetch(a)),
+                map(a => a && a.id)
+            ),
+        RefreshMode.RefreshOncePerSession,
+        checkUpdateByReference,
+    );
   }
 
   getSongById(songId: number|undefined): Observable<(Song|undefined)> {
@@ -127,9 +140,9 @@ export class ArtistDataService {
   }
 
   getSongByMount(artistMount: string, songMount: string): Observable<Song|undefined> {
-    return this.getArtistByMount(artistMount)
+    return this.getArtistIdByMount(artistMount)
         .pipe(
-            flatMap(artist => this.getArtistSongList(artist && artist.id)),
+            flatMap(artistId => this.getArtistSongList(artistId)),
             flatMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
             map(songsIds => songsIds.find(s => s !== undefined && s.mount === songMount)),
         );
@@ -174,6 +187,10 @@ function getArtistKey(artistId: number|undefined): string|undefined {
 
 function getArtistDetailsKey(artistId: number|undefined): string|undefined {
   return isValidId(artistId) ? ARTIST_DETAILS_KEY_PREFIX + artistId : undefined;
+}
+
+function getArtistIdByMountKey(artistMount: string|undefined): string|undefined {
+  return artistMount && artistMount.length > 0 ? ARTIST_MOUNT_KEY_PREFIX + artistMount : undefined;
 }
 
 function getArtistSongListKey(artistId: number|undefined): string|undefined {

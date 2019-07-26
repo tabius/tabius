@@ -58,7 +58,7 @@ export class ArtistListPageComponent implements OnInit {
         )
         .subscribe(newValue => this.updateArtistFilter(newValue));
 
-    this.ads.getAllArtists()
+    this.ads.getArtistList()
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
