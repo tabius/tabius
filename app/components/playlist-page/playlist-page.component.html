@@ -1,35 +1,44 @@
 <div class="content">
-    <h1>
-        «{{playlist.name}}»
-        <span class="sub-header">плейлист</span>
-    </h1>
 
-    <div class="playlist-root">
-        <div class="songs-list">
-            <div *ngFor="let item of songItems" class="song-list-item">
-
-                <gt-song [songId]="item.song.id" [mode]="mode"></gt-song>
-
-                <div class="links-block">
-                    <a href="{{getSongForumTopicLink(item.song)}}" *ngIf="hasValidForumTopic(item.song)" title="Обсудить подбор на форуме">Форум »</a>
-                    <a routerLink="{{getArtistPageLink(item.artist.mount)}}">Артист »</a>
-                    <a routerLink="{{getSongPageLink(item.artist.mount, item.song.mount)}}">Песня »</a>
-                    <a *ngIf="hasEditRight(item.song.artistId) && !isEditorOpen(item.song.id)" href="javascript:" (click)="toggleEditor(item.song.id)">
-                        Правка »
-                    </a>
-                    <div *ngIf="!hasEditRight(item.song.artistId)" class="links-spacer"></div>
-                </div>
-
-                <gt-song-editor *ngIf="isEditorOpen(item.song.id)"
-                                (closeRequest)="toggleEditor(item.song.id)"
-                                [songId]="item.song.id"
-                ></gt-song-editor>
-
-                <hr *ngIf="!item.last">
-
-            </div>
-        </div>
+    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+        <div class="message">Загружаем плейлист…</div>
+        <gt-loading-indicator></gt-loading-indicator>
     </div>
 
-    <a routerLink="{{playlistsLink}}" class="back-to-playlists-link">Назад к плейлистам »</a>
+    <div *ngIf="loaded">
+        <h1>
+            «{{playlist.name}}»
+            <span class="sub-header">плейлист</span>
+        </h1>
+
+        <div class="playlist-root">
+            <div class="songs-list">
+                <div *ngFor="let item of songItems" class="song-list-item">
+
+                    <gt-song [songId]="item.song.id" [mode]="mode"></gt-song>
+
+                    <div class="links-block">
+                        <a href="{{getSongForumTopicLink(item.song)}}" *ngIf="hasValidForumTopic(item.song)" title="Обсудить подбор на форуме">Форум »</a>
+                        <a routerLink="{{getArtistPageLink(item.artist.mount)}}">Артист »</a>
+                        <a routerLink="{{getSongPageLink(item.artist.mount, item.song.mount)}}">Песня »</a>
+                        <a *ngIf="hasEditRight(item.song.artistId) && !isEditorOpen(item.song.id)" href="javascript:" (click)="toggleEditor(item.song.id)">
+                            Правка »
+                        </a>
+                        <div *ngIf="!hasEditRight(item.song.artistId)" class="links-spacer"></div>
+                    </div>
+
+                    <gt-song-editor *ngIf="isEditorOpen(item.song.id)"
+                                    (closeRequest)="toggleEditor(item.song.id)"
+                                    [songId]="item.song.id"
+                    ></gt-song-editor>
+
+                    <hr *ngIf="!item.last">
+
+                </div>
+            </div>
+        </div>
+
+        <a routerLink="{{playlistsLink}}" class="back-to-playlists-link">Назад к плейлистам »</a>
+    </div>
+
 </div>

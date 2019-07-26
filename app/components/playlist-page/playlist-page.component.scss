@@ -1,3 +1,5 @@
+@import "~app/styles/dimensions";
+
 :host {
   display: flex;
   justify-content: center;
@@ -52,6 +54,21 @@
 
     .back-to-playlists-link {
       margin-top: 40px;
+    }
+  }
+
+  @media only screen and (min-width: $min-desktop-width) {
+    .content {
+      .playlist-root {
+        .songs-list {
+          .song-list-item {
+            .links-block {
+              min-width: 400px;
+              max-width: 400px;
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -9,7 +9,7 @@ import {SongPageComponent} from '@app/components/song-page/song-page.component';
 import {UserSettingsPageComponent} from '@app/components/user-settings-page/user-settings-page.component';
 import {MOUNT_ARTIST, MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_TUNER, MOUNT_USER_HOME, MOUNT_USER_PLAYLISTS, MOUNT_USER_SETTINGS} from '@common/mounts';
 import {PlaylistListPageComponent} from '@app/components/playlist-list-page/playlist-list-page.component';
-import {PlaylistPageComponent, PlaylistPageResolver} from '@app/components/playlist-page/playlist-page.component';
+import {PlaylistPageComponent} from '@app/components/playlist-page/playlist-page.component';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {ObservableStore} from '@app/store/observable-store';
 
@@ -35,7 +35,7 @@ const routes: Routes = [
   {path: MOUNT_USER_HOME, redirectTo: MOUNT_USER_SETTINGS},
   {path: MOUNT_USER_SETTINGS, component: UserSettingsPageComponent},
   {path: MOUNT_USER_PLAYLISTS, component: PlaylistListPageComponent,},
-  {path: MOUNT_PLAYLIST, component: PlaylistPageComponent, resolve: {input: PlaylistPageResolver}},
+  {path: MOUNT_PLAYLIST, component: PlaylistPageComponent},
   {path: MOUNT_PAGE_NOT_FOUND, component: Page404Component},
   {path: '**', redirectTo: `/${MOUNT_PAGE_NOT_FOUND}`}
 ];

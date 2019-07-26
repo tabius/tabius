@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injectable, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {Meta, Title} from '@angular/platform-browser';
 import {Artist, Song} from '@common/artist-model';
-import {flatMap, map, take, takeUntil, throttleTime} from 'rxjs/operators';
+import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
-import {combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
-import {MOUNT_PAGE_NOT_FOUND, MOUNT_USER_PLAYLISTS} from '@common/mounts';
+import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
+import {MOUNT_USER_PLAYLISTS} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist, User} from '@common/user-model';
@@ -13,6 +13,7 @@ import {canEditArtist, defined, getArtistPageLink, getNameFirstFormArtistName, g
 import {SongComponentMode} from '@app/components/song/song.component';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {RefreshMode} from '@app/store/observable-store';
+import {throttleIndicator} from '@app/utils/component-utils';
 
 interface PlaylistSongModel {
   song: Song;
@@ -40,27 +41,33 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   readonly playlistsLink = `/${MOUNT_USER_PLAYLISTS}`;
   readonly getArtistPageLink = getArtistPageLink;
   readonly getSongPageLink = getSongPageLink;
+  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+
   private readonly songsWithOpenEditors = new Set<number>();
+
+  get loaded(): boolean {
+    return this.playlist !== undefined;
+  }
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
               private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
-              private title: Title,
+              private readonly title: Title,
               private readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
   ) {
   }
 
   ngOnInit() {
-    const pageInput = this.route.data['value'].input as PlaylistPageInput;
-    this.playlist = pageInput.playlist;
+    throttleIndicator(this);
 
-    const playlist$ = this.uds.getPlaylist(this.playlist.id, RefreshMode.Refresh);
-
+    const playlistMount = this.route.snapshot.params['playlistMount'];
+    const playlistId = playlistMountToId(playlistMount);
+    const playlist$ = this.uds.getPlaylist(playlistId, RefreshMode.Refresh);
     const songs$: Observable<Song[]> = playlist$.pipe(
-        flatMap(playlist => playlist === undefined ? of([]) : this.ads.getSongsByIds(playlist.songIds)),
-        map(songs => songs.filter(defined) as Song[]),
+        flatMap(playlist => this.ads.getSongsByIds(playlist ? playlist.songIds : [])),
+        map(songs => songs.filter(defined)),
     );
     const artists$: Observable<(Artist|undefined)[]> = songs$.pipe(
         flatMap(songs => this.ads.getArtistsByIds(songs.map(s => s.artistId)))
@@ -72,7 +79,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
     ).subscribe(([playlist, songs, artists, user]) => {
       this.user = user;
       if (playlist === undefined) {
-        this.songItems = []; //todo: redirect?
+        this.songItems = []; //todo: redirect to the "not found page"?
         return;
       }
       this.playlist = playlist;
@@ -123,29 +130,5 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
 
   hasEditRight(artistId: number): boolean {
     return canEditArtist(this.user, artistId);
-  }
-}
-
-interface PlaylistPageInput {
-  playlist: Playlist;
-}
-
-@Injectable({providedIn: 'root'})
-export class PlaylistPageResolver implements Resolve<PlaylistPageInput> {
-
-  constructor(private readonly uds: UserDataService,
-              private readonly router: Router,
-  ) {
-  }
-
-  async resolve(route: ActivatedRouteSnapshot): Promise<PlaylistPageInput> {
-    const mount = route.paramMap.get('playlistMount')!;
-    const playlistId = playlistMountToId(mount);
-    const playlist = await this.uds.getPlaylist(playlistId).pipe(take(1)).toPromise();
-    if (playlist) {
-      return {playlist};
-    }
-    await this.router.navigate([MOUNT_PAGE_NOT_FOUND]);
-    return EMPTY.toPromise();
   }
 }
