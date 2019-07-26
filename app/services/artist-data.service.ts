@@ -31,7 +31,7 @@ export class ArtistDataService {
   getArtistList(): Observable<Artist[]> {
     return this.store.get<number[]>(
         ARTIST_LIST_KEY,
-        () => this.httpClient.get<Artist[]>('/api/artist/listings')
+        () => this.httpClient.get<Artist[]>('/api/artist/all-listed')
             .pipe(
                 flatMap(artists => combineLatest0(artists.map(a => fromPromise(this.updateArtistOnFetch(a))))),
                 map(artists => artists.map(a => a.id))

@@ -11,9 +11,9 @@ export class ArtistController {
   }
 
   /** Returns list of all 'listed' artists. */
-  @Get('/listing')
+  @Get('/all-listed')
   getAllArtists(): Promise<Artist[]> {
-    this.logger.log('all');
+    this.logger.log('all-listed');
     return this.artistDbi.getAllArtists(true);
   }
 
