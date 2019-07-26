@@ -90,7 +90,7 @@ export class ServerSsoService implements NestInterceptor {
     return session[USER_SESSION_KEY];
   }
 
-  private async processSessionCookie(session: Express.SessionData, ssoCookie?: string): Promise<void> {
+  private async processSessionCookie(session: Express.Session, ssoCookie?: string): Promise<void> {
     let user: User|undefined;
     if (this.useTestUser) {
       user = this.testUser;
@@ -103,6 +103,16 @@ export class ServerSsoService implements NestInterceptor {
     if (!user) {
       delete session[USER_SESSION_KEY];
     } else {
+      const userInSession = session[USER_SESSION_KEY];
+      if (userInSession && userInSession.id === user.id) {
+        user = {...user, artistId: userInSession.artistId};
+      } else {
+        user = {...user, artistId: await this.getUserArtistId(user.id) || -1};
+      }
+      if (!isValidId(user.artistId)) {
+        user = {...user, artistId: await this.artistDbi.createArtistForUser(user)};
+        await this.userDbi.createUser(user);
+      }
       session[USER_SESSION_KEY] = user;
     }
   }
@@ -139,21 +149,14 @@ export class ServerSsoService implements NestInterceptor {
       groups.push(UserGroup.Moderator);
     }
 
-    let user: User = {
+    return {
       id: nodeUser.uid,
       username: nodeUser.username,
       email: nodeUser.email,
       picture: NODE_BB_URL + nodeUser.picture,
       groups,
-      artistId: await this.getUserArtistId(nodeUser.uid) || -1,
+      artistId: -1,
     };
-
-    if (!isValidId(user.artistId)) {
-      const artistId = await this.artistDbi.createArtistForUser(user);
-      user = {...user, artistId};
-      await this.userDbi.createUser(user);
-    }
-    return user;
   }
 
   static logout(res: Response): void {
