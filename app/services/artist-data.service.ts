@@ -1,8 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
-import {flatMap, map, take, tap} from 'rxjs/operators';
+import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
@@ -33,8 +33,10 @@ export class ArtistDataService {
         ARTIST_LIST_KEY,
         () => this.httpClient.get<Artist[]>('/api/artist/all-listed')
             .pipe(
-                flatMap(artists => combineLatest0(artists.map(a => fromPromise(this.updateArtistOnFetch(a))))),
-                map(artists => artists.map(a => a.id))
+                // Perform blocking update here for all artists first.
+                // Reason: this caching prevents a lot of parallel getArtist() HTTP requests usually started immediately after the listing is received.
+                flatMap(artists => waitForAllPromisesAndReturnFirstArg(artists, artists.map(a => this.updateArtistOnFetch(a)))),
+                map(artists => artists.map(a => a.id)),
             ),
         RefreshMode.RefreshOncePerSession,
         checkUpdateByShallowArrayCompare,
@@ -58,12 +60,14 @@ export class ArtistDataService {
     return combineLatest0(artistIds.map(id => this.getArtistById(id)));
   }
 
-  private async updateArtistOnFetch(artist: Artist): Promise<Artist> {
-    await Promise.all([
+  private updateArtistOnFetch(artist: Artist|undefined): Promise<unknown> {
+    if (!artist) {
+      return Promise.resolve();
+    }
+    return Promise.all([
       this.store.set<Artist>(getArtistKey(artist.id), artist, checkUpdateByVersion),
       this.store.set<number>(getArtistIdByMountKey(artist.mount), artist.id, checkUpdateByReference)
     ]);
-    return artist;
   }
 
   getArtistDetails(artistId: number|undefined): Observable<ArtistDetails|undefined> {
@@ -108,8 +112,8 @@ export class ArtistDataService {
     return this.store.get<number>(
         getArtistIdByMountKey(artistMount),
         () => this.httpClient.get<Artist|undefined>(`/api/artist/by-mount/${artistMount}`)
-            .pipe(
-                tap(a => a && this.updateArtistOnFetch(a)),
+            .pipe( // wait for update before continue.
+                flatMap(a => waitForAllPromisesAndReturnFirstArg(a, [this.updateArtistOnFetch(a)])),
                 map(a => a && a.id)
             ),
         RefreshMode.RefreshOncePerSession,
@@ -206,3 +210,13 @@ function getSongKey(songId: number|undefined): string|undefined {
 function getSongDetailsKey(songId: number|undefined): string|undefined {
   return isValidId(songId) ? SONG_DETAIL_KEY_PREFIX + songId : undefined;
 }
+
+function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promise<unknown>[]): Observable<T> {
+  const first$ = of(first);
+  if (promises.length == 0) {
+    return first$;
+  }
+  return combineLatest([first$, ...promises.map(p => fromPromise(p))])
+      .pipe(map(arr => arr[0] as T));
+}
+

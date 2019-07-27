@@ -62,7 +62,7 @@ export function shallowArraysEquals(a1?: readonly any[], a2?: readonly any[]): b
   return true;
 }
 
-export function isValidId(id?: number): id is number {
+export function isValidId(id: number|undefined): id is number {
   return id !== undefined && id > 0;
 }
 

@@ -171,20 +171,22 @@ class ObservableStoreImpl implements ObservableStore {
     if (!key) {
       return;
     }
-    const firstUpdate = !this.refreshSet.has(key);
+    const inRefreshSet = this.refreshSet.has(key);
     const store = await this.storeAdapter$$;
     if (needUpdateFn !== skipUpdateCheck) {
       const oldValue = await store.get<T>(key);
       if (!needUpdateFn(oldValue, value)) {
+        const firstUpdate = !inRefreshSet;
         const forceUpdate = firstUpdate && value === undefined && oldValue === undefined;
         if (!forceUpdate) {
           return;
         }
       }
     }
+    if (!inRefreshSet) {
+      this.refreshSet.add(key);
+    }
     await store.set(key, value);
-    this.refreshSet.add(key);
-
     const rs$ = this.dataMap.get(key);
     if (rs$) {
       rs$.next(this.freezeFn(value));
