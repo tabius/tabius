@@ -96,7 +96,6 @@ export class SongController {
     return {song: songFromDb[0], details: detailsFromDb[0], songs};
   }
 
-
   /** Deletes the song and returns updated artist details. */
   @Delete(':songId')
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {

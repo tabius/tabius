@@ -141,7 +141,7 @@ class ObservableStoreImpl implements ObservableStore {
       return;
     }
     if (fetchFn) {
-      value = await fetchAndFallbackToUnresolved(fetchFn);
+      value = await fetchAndFallbackToUndefined(fetchFn);
     }
     await this.set(key, value, needUpdateFn);
   }
@@ -151,7 +151,7 @@ class ObservableStoreImpl implements ObservableStore {
     if (!fetchFn || refreshMode === RefreshMode.DoNotRefresh || (refreshMode === RefreshMode.RefreshOncePerSession && this.refreshSet.has(key))) {
       return;
     }
-    fetchAndFallbackToUnresolved(fetchFn).then(value => {
+    fetchAndFallbackToUndefined(fetchFn).then(value => {
       if (value !== undefined) {
         this.set(key, value, needUpdateFn).catch(err => console.error(err));
       }
@@ -275,7 +275,7 @@ export function deepFreeze<T>(obj: T|undefined): T|undefined {
   return obj;
 }
 
-function fetchAndFallbackToUnresolved<T>(fetchFn: (() => Observable<T|undefined>)): Promise<T|undefined> {
+function fetchAndFallbackToUndefined<T>(fetchFn: (() => Observable<T|undefined>)): Promise<T|undefined> {
   return fetchFn().pipe(
       take(1),
       catchError(() => of(undefined)),
@@ -283,6 +283,6 @@ function fetchAndFallbackToUnresolved<T>(fetchFn: (() => Observable<T|undefined>
 }
 
 export function skipUpdateCheck(): boolean {
-  throw 'This function should never be called!';
+  throw 'This is a marker function that must never be called!';
 }
 

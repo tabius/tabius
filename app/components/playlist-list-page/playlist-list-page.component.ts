@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {throttleIndicator} from '@app/utils/component-utils';
+import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {UserDataService} from '@app/services/user-data.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
@@ -34,7 +34,7 @@ export class PlaylistListPageComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    throttleIndicator(this);
+    enableLoadingIndicator(this);
     this.uds.getUserPlaylists()
         .pipe(
             takeUntil(this.destroyed$),

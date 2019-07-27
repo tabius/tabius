@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
-import {throttleIndicator} from '@app/utils/component-utils';
+import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/artist-model';
@@ -65,7 +65,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       this.loaded = true;
       this.updateUIOnLoadedState();
     } else {
-      throttleIndicator(this);
+      enableLoadingIndicator(this);
       combineLatest([this.ads.getSongById(this.songId), this.ads.getSongDetailsById(this.songId)])
           .pipe(takeUntil(this.destroyed$))
           .subscribe(([song, details]) => {

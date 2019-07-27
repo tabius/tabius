@@ -1,10 +1,15 @@
 <div class="content">
+    <!-- Loading indicator -->
     <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
         <div class="message">Загружаем список песен…</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
-    <div *ngIf="loaded">
+    <!-- Not found block -->
+    <gt-resource-not-found *ngIf="notFound" message="Артист не найден"></gt-resource-not-found>
+
+    <!-- Main content block -->
+    <div *ngIf="loaded && artistViewModel">
         <gt-artist-breadcrumb [artist]="artistViewModel ? artistViewModel.artist : null" [showArtistLink]="false"></gt-artist-breadcrumb>
 
         <div class="artist-root">

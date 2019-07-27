@@ -4,7 +4,7 @@ import {ArtistDataService} from '@app/services/artist-data.service';
 import {FormControl} from '@angular/forms';
 import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, Subject, timer} from 'rxjs';
-import {throttleIndicator} from '@app/utils/component-utils';
+import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {getArtistPageLink} from '@common/util/misc-utils';
@@ -50,7 +50,7 @@ export class ArtistListPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    throttleIndicator(this);
+    enableLoadingIndicator(this);
     this.artistFilterControl.valueChanges
         .pipe(
             debounce(() => timer(300)),

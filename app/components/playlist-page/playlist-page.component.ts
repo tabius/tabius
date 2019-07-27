@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Optional} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Meta, Title} from '@angular/platform-browser';
 import {Artist, Song} from '@common/artist-model';
@@ -13,7 +13,8 @@ import {canEditArtist, defined, getArtistPageLink, getNameFirstFormArtistName, g
 import {SongComponentMode} from '@app/components/song/song.component';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {RefreshMode} from '@app/store/observable-store';
-import {throttleIndicator} from '@app/utils/component-utils';
+import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
+import {RESPONSE} from '@nguniversal/express-engine/tokens';
 
 interface PlaylistSongModel {
   song: Song;
@@ -45,22 +46,22 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
 
   private readonly songsWithOpenEditors = new Set<number>();
 
-  get loaded(): boolean {
-    return this.playlist !== undefined;
-  }
+  loaded = false;
+  notFound = false;
 
-  constructor(private readonly cd: ChangeDetectorRef,
+  constructor(readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
               private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
-              private readonly title: Title,
-              private readonly meta: Meta,
+              readonly title: Title,
+              readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
+              @Optional() @Inject(RESPONSE) readonly response: any,
   ) {
   }
 
   ngOnInit() {
-    throttleIndicator(this);
+    enableLoadingIndicator(this);
 
     const playlistMount = this.route.snapshot.params['playlistMount'];
     const playlistId = playlistMountToId(playlistMount);
@@ -77,11 +78,12 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
         takeUntil(this.destroyed$),
         throttleTime(100, undefined, {leading: true, trailing: true}),
     ).subscribe(([playlist, songs, artists, user]) => {
-      this.user = user;
-      if (playlist === undefined) {
-        this.songItems = []; //todo: redirect to the "not found page"?
+      this.loaded = true;
+      if (!playlist) {
+        switchToNotFoundMode(this);
         return;
       }
+      this.user = user;
       this.playlist = playlist;
       this.songItems = [];
       for (let i = 0; i < songs.length; i++) {

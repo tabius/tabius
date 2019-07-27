@@ -1,11 +1,16 @@
 <div class="content">
 
+    <!-- Loading indicator -->
     <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
         <div class="message">Загружаем плейлист…</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
-    <div *ngIf="loaded">
+    <!-- Not found block -->
+    <gt-resource-not-found *ngIf="notFound" message="Плейлист не найден"></gt-resource-not-found>
+
+    <!-- Main content -->
+    <div *ngIf="playlist">
         <h1>
             «{{playlist.name}}»
             <span class="sub-header">плейлист</span>

@@ -42,6 +42,7 @@ import {SongEditorComponent} from './components/song-editor/song-editor.componen
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
 import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
+import {ResourceNotFoundComponent} from './components/resource-not-found/resource-not-found.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
     SongHeaderComponent,
     SongVideoComponent,
     SongEditorComponent,
+    ResourceNotFoundComponent,
   ],
   imports: [
     BrowserAnimationsModule,

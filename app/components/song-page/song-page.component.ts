@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Optional} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Artist, Song, SongDetails} from '@common/artist-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
-import {throttleIndicator} from '@app/utils/component-utils';
+import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
@@ -12,6 +12,7 @@ import {canEditArtist, getSongForumTopicLink, hasValidForumTopic} from '@common/
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_ARTIST_PREFIX} from '@common/mounts';
+import {RESPONSE} from '@nguniversal/express-engine/tokens';
 
 @Component({
   selector: 'gt-song-page',
@@ -33,24 +34,23 @@ export class SongPageComponent implements OnInit, OnDestroy {
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
 
-  get loaded(): boolean {
-    return this.song !== undefined;
-  };
+  loaded = false;
+  notFound = false;
 
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
               private readonly router: Router,
               private readonly route: ActivatedRoute,
-              private readonly title: Title,
-              private readonly meta: Meta,
+              readonly title: Title,
+              readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
+              @Optional() @Inject(RESPONSE) readonly response: any,
   ) {
-    this.onSongDeletedInEditor.bind(this);
   }
 
   ngOnInit() {
-    throttleIndicator(this);
+    enableLoadingIndicator(this);
 
     const params = this.route.snapshot.params;
     const artistMount = params['artistMount'];
@@ -67,12 +67,14 @@ export class SongPageComponent implements OnInit, OnDestroy {
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
         .subscribe(([artist, song, songDetails, user]) => {
-          if (this.song !== undefined && song === undefined) { // song was removed -> return to the artist page.
+          this.loaded = true;
+          if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the artist page.
             this.router.navigate([MOUNT_ARTIST_PREFIX + artistMount]).catch(err => console.error(err));
             return;
           }
           if (artist === undefined || song === undefined || songDetails === undefined) {
-            return; // reasons: not everything is loaded
+            switchToNotFoundMode(this);
+            return;
           }
           this.song = song;
           this.songDetails = songDetails;
@@ -103,16 +105,6 @@ export class SongPageComponent implements OnInit, OnDestroy {
     this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
     this.cd.detectChanges();
   }
-
-  onSongDeletedInEditor(): Promise<boolean> {
-    const params = this.route.snapshot.params;
-    const artistMount = params['artistMount'];
-    if (!artistMount || artistMount.length === 0) {
-      return Promise.resolve(false);
-    }
-    return this.router.navigate([MOUNT_ARTIST_PREFIX + '/' + artistMount]).then(() => true);
-  }
-
 }
 
 function isServiceLineChar(c: string): boolean {

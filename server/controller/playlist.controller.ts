@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Session} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {Playlist, User} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
@@ -57,10 +57,13 @@ export class PlaylistController {
   }
 
   @Get('/by-id/:id')
-  byId(@Session() session, @Param('id') playlistIdParam: string): Promise<Playlist|undefined> {
+  async byId(@Session() session, @Param('id') idParam: string): Promise<Playlist> {
     this.logger.log('by-id');
     const user = ServerSsoService.getUserOrUndefined(session);
-    return this.playlistDbi.getPlaylistById(user ? user.id : undefined, paramToId(playlistIdParam));
+    const playlist = await this.playlistDbi.getPlaylistById(user ? user.id : undefined, paramToId(idParam));
+    if (!playlist) {
+      throw new HttpException(`Playlist is not found ${idParam}`, HttpStatus.NOT_FOUND);
+    }
+    return playlist;
   }
-
 }

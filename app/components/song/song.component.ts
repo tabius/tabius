@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
-import {throttleIndicator} from '@app/utils/component-utils';
+import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Artist, Song, SongDetails} from '@common/artist-model';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {flatMap, takeUntil} from 'rxjs/operators';
@@ -66,7 +66,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
-    throttleIndicator(this);
+    enableLoadingIndicator(this);
   }
 
   ngOnDestroy(): void {

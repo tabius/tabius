@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Optional} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Artist, ArtistDetails, Song} from '@common/artist-model';
 import {ActivatedRoute} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
-import {throttleIndicator} from '@app/utils/component-utils';
+import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canEditArtist, defined, getArtistImageUrl, getArtistPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
@@ -12,6 +12,7 @@ import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.s
 import {User} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {RESPONSE} from '@nguniversal/express-engine/tokens';
 
 export class ArtistViewModel {
   readonly displayName: string;
@@ -43,24 +44,23 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
   hasEditRight = false;
   editorIsOpen = false;
   songDetailsPrefetched = false;
-
-  get loaded(): boolean {
-    return this.artistViewModel !== undefined;
-  }
+  loaded = false;
+  notFound = false;
 
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
-              private title: Title,
-              private readonly meta: Meta,
+              readonly title: Title,
+              readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
+              @Optional() @Inject(RESPONSE) readonly response: any,
   ) {
   }
 
   ngOnInit() {
-    throttleIndicator(this);
+    enableLoadingIndicator(this);
 
     const artistMount = this.route.snapshot.params['artistMount'];
     const artistId$: Observable<number|undefined> = this.ads.getArtistIdByMount(artistMount);
@@ -83,7 +83,9 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
         .subscribe(([artist, artistDetails, bands, songs, user]) => {
+          this.loaded = true;
           if (!artist || !artistDetails || !bands || !songs) {
+            switchToNotFoundMode(this);
             return;
           }
           this.artistViewModel = new ArtistViewModel(artist, bands, songs, artistDetails.listed);

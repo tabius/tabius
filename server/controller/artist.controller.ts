@@ -1,4 +1,4 @@
-import {Controller, Get, Logger, Param} from '@nestjs/common';
+import {Controller, Get, HttpException, HttpStatus, Logger, Param} from '@nestjs/common';
 import {Artist, ArtistDetails} from '@common/artist-model';
 import {ArtistDbi} from '@server/db/artist-dbi.service';
 import {isArtistMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
@@ -19,13 +19,17 @@ export class ArtistController {
 
   /** Returns artist by mount. */
   @Get('/by-mount/:mount')
-  getByMount(@Param('mount') mountParam: string): Promise<Artist|undefined> {
+  async getByMount(@Param('mount') mountParam: string): Promise<Artist> {
     this.logger.log(`by-mount: ${mountParam}`);
     const vr = isArtistMount()(mountParam);
     if (!vr.success) {
       throw vr.toString();
     }
-    return this.artistDbi.getByMount(mountParam);
+    const artist = await this.artistDbi.getByMount(mountParam);
+    if (!artist) {
+      throw new HttpException(`Artist is not found ${mountParam}`, HttpStatus.NOT_FOUND);
+    }
+    return artist;
   }
 
   @Get('/by-ids/:ids')
@@ -36,10 +40,14 @@ export class ArtistController {
   }
 
   @Get('/details-by-id/:id')
-  getArtistDetailsById(@Param('id') id: string): Promise<ArtistDetails|undefined> {
-    this.logger.log(`details-by-id: ${id}`);
-    const artistId = paramToId(id);
-    return this.artistDbi.getArtistDetails(artistId);
+  async getArtistDetailsById(@Param('id') idParam: string): Promise<ArtistDetails> {
+    this.logger.log(`details-by-id: ${idParam}`);
+    const artistId = paramToId(idParam);
+    const details = await this.artistDbi.getArtistDetails(artistId);
+    if (!details) {
+      throw new HttpException(`Artist is not found ${idParam}`, HttpStatus.NOT_FOUND);
+    }
+    return details;
   }
 }
 
