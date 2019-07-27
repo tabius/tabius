@@ -20,7 +20,7 @@ export class ArtistController {
   /** Returns artist by mount. */
   @Get('/by-mount/:mount')
   getByMount(@Param('mount') mountParam: string): Promise<Artist|undefined> {
-    this.logger.log('all');
+    this.logger.log(`by-mount: ${mountParam}`);
     const vr = isArtistMount()(mountParam);
     if (!vr.success) {
       throw vr.toString();
