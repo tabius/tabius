@@ -59,7 +59,7 @@ export const SongValidator: Validator<Song> = {
   title: checkStringLength(MIN_SONG_TITLE_LENGTH, MAX_SONG_TITLE_LENGTH),
   mount: isSongMount(),
   artistId: isNumericId(),
-  tid: isNumericId()
+  tid: min(INVALID_ID), // song may have no valid topic ID.
 };
 
 export const NewSongValidator: Validator<Song> = {

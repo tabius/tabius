@@ -20,7 +20,7 @@ CREATE TABLE artist (
 
 CREATE INDEX artist_listed_index
 	ON artist (listed);
-	
+
 CREATE INDEX artist_mount_index
 	ON artist (mount);
 
@@ -30,9 +30,7 @@ CREATE TABLE song (
     artist_id            INT  NOT NULL REFERENCES artist (id),
     mount                VARCHAR(64)  NOT NULL,
     title                VARCHAR(200) NOT NULL,
-    # SongDetails content format. 0 -> pre-formatted text
-    format               INT          NOT NULL,
-    # SongDetails text. Format is defined by 'format' field.
+    # Song text with chords.
     content              TEXT         NOT NULL,
     # More artists related to the song.
     secondary_artist_ids VARCHAR(128) NOT NULL DEFAULT '',
