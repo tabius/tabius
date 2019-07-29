@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
 import {SongDetails} from '@common/artist-model';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
 
 @Component({
   selector: 'gt-song-video',
@@ -12,7 +13,7 @@ export class SongVideoComponent implements OnChanges {
 
   @Input() songDetails?: SongDetails;
   onLine = true;
-  youtubeLink?: string;
+  youtubeId?: string;
 
   constructor(private readonly bss: BrowserStateService) {
   }
@@ -20,7 +21,7 @@ export class SongVideoComponent implements OnChanges {
   ngOnChanges(): void {
     this.onLine = this.bss.isOnline();
     if (this.songDetails) {
-      this.youtubeLink = this.songDetails.mediaLinks ? this.songDetails.mediaLinks.find(link => link.startsWith('https://www.youtube.com/embed/')) : undefined;
+      this.youtubeId = getFirstYoutubeVideoIdFromLinks(this.songDetails.mediaLinks);
     }
   }
 
