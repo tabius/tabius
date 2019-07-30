@@ -35,3 +35,20 @@ export interface DeleteSongResponse {
   songs: Song[];
 }
 
+
+export interface FullTextSongSearchRequest {
+  text: string;
+}
+
+export interface FullTextSongSearchResponse {
+  results: FullTextSongSearchResult[];
+}
+
+export interface FullTextSongSearchResult {
+  songId: number;
+  title: string;
+  artistMount: string;
+  songMount: string;
+  snippet: string;
+  resultIsTitle: boolean;
+}

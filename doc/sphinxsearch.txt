@@ -13,3 +13,9 @@ Update start command in /etc/init.d/sphinxsearch to use '-c /opt/tabius/sphinx/s
 5.
 Restart Sphinx
 sudo /etc/init.d/sphinxsearch start
+
+6.
+Test with curl:
+curl -d "query=SELECT id FROM song_index WHERE MATCH('@title утро') LIMIT 1" -X POST http://localhost:9307/sql
+curl -d "query=SELECT id, SNIPPET(content, '') AS snippet FROM song_index WHERE MATCH('@content утро') LIMIT 1" -X POST http://localhost:9307/sql
+curl -d "query=SELECT id, SNIPPET(content, 'небо') AS snippet, title, artist_mount, song_mount FROM song_index WHERE MATCH('@content небо') LIMIT 1" -X POST http://localhost:9307/sql

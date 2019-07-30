@@ -5,16 +5,20 @@ import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, par
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
-import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {canEditArtist, isValidId} from '@common/util/misc-utils';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
+import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 
 @Controller('/api/song')
 export class SongController {
 
   private readonly logger = new Logger(SongController.name);
 
-  constructor(private readonly songDbi: SongDbi, private playlistDbi: PlaylistDbi) {
+  constructor(private readonly songDbi: SongDbi,
+              private readonly playlistDbi: PlaylistDbi,
+              private readonly fullTextSearchDbi: FullTextSearchDbi,
+  ) {
   }
 
   /** Returns found songs  by ids. The order of results is not specified. */
@@ -39,6 +43,16 @@ export class SongController {
     this.logger.log(`details-by-ids: ${idsParam}`);
     const ids = paramToArrayOfNumericIds(idsParam);
     return this.songDbi.getSongsDetails(ids);
+  }
+
+  /** Returns found songs  by ids. The order of results is not specified. */
+  @Post('/by-text')
+  async searchSongsByText(@Body() searchRequest: FullTextSongSearchRequest): Promise<FullTextSongSearchResponse> {
+    this.logger.log(`by-text:` + searchRequest.text);
+    const results = await this.fullTextSearchDbi.searchForSongsByText(searchRequest.text);
+    return {
+      results
+    };
   }
 
   /** Creates song and returns updated song & details. */

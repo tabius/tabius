@@ -1,0 +1,11 @@
+<div *ngIf="loading">
+    Поиск в тексте песен...
+</div>
+
+<div *ngIf="titleResults.length> 0">
+    В имени песен: {{titleResults.length}}
+</div>
+
+<div *ngIf="contentResults.length">
+    В тексте песен: {{contentResults.length}}
+</div>

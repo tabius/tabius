@@ -43,6 +43,7 @@ import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
 import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 import {ResourceNotFoundComponent} from './components/resource-not-found/resource-not-found.component';
+import { SongFullTextSearchResultsPanelComponent } from './components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import {ResourceNotFoundComponent} from './components/resource-not-found/resourc
     SongVideoComponent,
     SongEditorComponent,
     ResourceNotFoundComponent,
+    SongFullTextSearchResultsPanelComponent,
   ],
   imports: [
     BrowserAnimationsModule,

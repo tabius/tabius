@@ -9,6 +9,7 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {getArtistPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
+import {FullTextSongSearchRequest, FullTextSongSearchResponse} from '@common/ajax-model';
 
 interface LetterBlock {
   letter: string,
@@ -111,6 +112,8 @@ export class ArtistListPageComponent implements OnInit {
   updateArtistFilter(value: string) {
     if (this.artistFilter != value) {
       this.artistFilter = value;
+
+      //todo?
       this.cd.markForCheck();
     }
   }
