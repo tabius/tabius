@@ -38,7 +38,7 @@ export class ArtistListPageComponent implements OnInit {
 
   loaded = false;
   letterBlocks: LetterBlock[] = [];
-  artistFilter = '';
+  artistFilter: string = '';
   artistFilterControl = new FormControl();
 
   constructor(private readonly ads: ArtistDataService,

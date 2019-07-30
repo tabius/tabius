@@ -6,29 +6,35 @@
 </div>
 
 <div *ngIf="loaded">
-    <div class="letters-navigator-root">
-        <div class="letters-navigator">
-            <div *ngFor="let letterBlock of letterBlocks; trackBy: trackByLetter"
-                 class="letter-link-block"
-                 [class.selected]="isLetterSelected(letterBlock.letter)"
-                 (click)="activateLetter(letterBlock.letter)"
-            >
-                <a class="letter-link">{{letterBlock.letter}}</a>
+
+    <div style="display: flex; justify-content: center;">
+        <div style="display: inline-block">
+            <div class="search-input-block">
+                <input type="text"
+                       [value]="artistFilter"
+                       [formControl]="artistFilterControl"
+                       accesskey="/"
+                       placeholder="поиск по имени"
+                       (keyup.esc)="updateArtistFilter('')"
+                >
+                <button (click)="activateLetter(null)" class="btn" title="Очистить фильтр">Очистить</button>
             </div>
-            <div class="letter-link-block">
-                <a (click)="activateLetter(null)" class="letter-link" title="Показать всех артистов">ВСЕ</a>
+
+            <div class="letters-navigator-root">
+                <div class="letters-navigator">
+                    <div *ngFor="let letterBlock of letterBlocks; trackBy: trackByLetter"
+                         class="letter-link-block"
+                         [class.selected]="isLetterSelected(letterBlock.letter)"
+                         (click)="activateLetter(letterBlock.letter)"
+                    >
+                        <a class="letter-link">{{letterBlock.letter}}</a>
+                    </div>
+                    <div class="letter-link-block">
+                        <a (click)="activateLetter(null)" class="letter-link" title="Показать всех артистов">ВСЕ</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="search_input_block">
-        <input type="text"
-               [value]="artistFilter"
-               [formControl]="artistFilterControl"
-               accesskey="/"
-               placeholder="фильтр по имени артиста"
-               (keyup.esc)="updateArtistFilter('')">
-        <button (click)="activateLetter(null)" title="Очистить фильтр">Очистить</button>
     </div>
 
     <div class="artist-list">
