@@ -1,0 +1,15 @@
+1.
+sudo apt install default-libmysqlclient-dev
+
+2.
+mkdir /opt/tabius/sphinx/data
+
+3.
+indexer --rotate song_index -c /opt/tabius/sphinx/sphinx.conf
+
+4.
+Update start command in /etc/init.d/sphinxsearch to use '-c /opt/tabius/sphinx/sphinx.conf'
+
+5.
+Restart Sphinx
+sudo /etc/init.d/sphinxsearch start
