@@ -1,5 +1,5 @@
 import {HttpService, Injectable, Logger} from '@nestjs/common';
-import {FullTextSongSearchResult} from '@common/ajax-model';
+import {FullTextSongSearchResult, FullTextSongSearchResultMatchType} from '@common/ajax-model';
 import {take} from 'rxjs/operators';
 import {AxiosResponse} from 'axios';
 
@@ -20,17 +20,17 @@ export class FullTextSearchDbi {
     if (safeSearchText.length === 0) {
       return [];
     }
-    const titleQuery = this.buildSphinxQuery('content', safeSearchText);
-    const contentQuery = this.buildSphinxQuery('title', safeSearchText);
+    const titleQuery = this.buildSphinxQuery('title', safeSearchText);
+    const contentQuery = this.buildSphinxQuery('content', safeSearchText);
     const [titleResults, contentResults]: SphinxSearchResult[] = await Promise.all([this.query(titleQuery), this.query(contentQuery)]);
     const result = [];
-    addResults(titleResults.matches, result, true);
-    addResults(contentResults.matches, result, false);
+    addResults(titleResults.matches, result, 'title');
+    addResults(contentResults.matches, result, 'content');
     return result;
   }
 
   private buildSphinxQuery(fieldName: string, text: string): string {
-    return `SELECT id, SNIPPET(${fieldName}, '${text}'), title, artist_mount, song_mount FROM song_index WHERE MATCH('@${fieldName} ${text}') LIMIT ${this.maxResults}`;
+    return `SELECT id, SNIPPET(${fieldName}, '${text}'), title, artist_name, artist_mount, song_mount FROM song_index WHERE MATCH('@${fieldName} ${text}') LIMIT ${this.maxResults}`;
   }
 
   private async query(query: string): Promise<SphinxSearchResult> {
@@ -58,21 +58,22 @@ interface SphinxSearchResult {
   readonly meta?: any;
 }
 
-type SphinxMatch = [number, string, string, string, string]; // id, snippet, title, artist mount, song mount
+type SphinxMatch = [number, string, string, string, string, string]; // id, snippet, song title, artist name, artist mount, song mount
 
 function toSafeSearchText(text: string): string {
   return text.replace('\'', '').replace('"', '');
 }
 
-function addResults(sphinxMatches: SphinxMatch[], result: FullTextSongSearchResult[], resultIsTitle: boolean): void {
+function addResults(sphinxMatches: SphinxMatch[], result: FullTextSongSearchResult[], matchType: FullTextSongSearchResultMatchType): void {
   for (const match of sphinxMatches) {
     result.push({
       songId: match[0],
       snippet: match[1],
-      title: match[2],
-      songMount: match[3],
+      songTitle: match[2],
+      artistName: match[3],
       artistMount: match[4],
-      resultIsTitle,
+      songMount: match[5],
+      matchType,
     });
   }
 }

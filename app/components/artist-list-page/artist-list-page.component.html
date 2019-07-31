@@ -11,10 +11,10 @@
         <div style="display: inline-block">
             <div class="search-input-block">
                 <input type="text"
-                       [value]="artistFilter"
+                       [value]="searchValue"
                        [formControl]="artistFilterControl"
                        accesskey="/"
-                       placeholder="поиск по имени"
+                       placeholder="поиск по имени и тексту"
                        (keyup.esc)="updateArtistFilter('')"
                 >
                 <button (click)="activateLetter(null)" class="btn" title="Очистить фильтр">Очистить</button>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="artist-list">
-        <div *ngIf="artistFilter.length === 0">
+        <div *ngIf="searchValue.length === 0">
             <div *ngFor="let letterBlock of getVisibleLetterBlocks(); trackBy: trackByLetter" class="letter-block">
                 <div class="letter">{{letterBlock.letter}}</div>
                 <div>
@@ -48,15 +48,24 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="artistFilter.length > 0" class="filtered-artists-block">
-            <div *ngFor="let artist of getFilteredArtists(); trackBy: trackByArtistId">
+        <div *ngIf="searchValue.length > 0" class="filtered-artists-block">
+
+            <div class="search-results-message">Результаты поиска для «<span class="search-text">{{searchValue}}</span>»:</div>
+
+            <h2>Артисты</h2>
+
+            <div *ngIf="filteredArtists.length === 0" class="artists-not-found-message">
+                Артисты не найдены
+            </div>
+
+            <div *ngFor="let artist of filteredArtists; trackBy: trackByArtistId">
                 <a routerLink="{{getArtistPageLink(artist.mount)}}">{{artist.name}}</a>
             </div>
+
+            <h2>Песни</h2>
+            <gt-song-full-text-search-results-panel [searchText]="searchValue"></gt-song-full-text-search-results-panel>
         </div>
     </div>
 
-    <div>
-        <!--        <gt-song-full-text-search-results-panel [searchText]="artistFilter"></gt-song-full-text-search-results-panel>-->
-    </div>
 
 </div>

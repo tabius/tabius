@@ -111,8 +111,9 @@ function isServiceLineChar(c: string): boolean {
   return c === '{' || c === '}' || c === '(' || c === ')' || c === '[' || c === ']';
 }
 
+//TODO: move to utils
 /** Returns first 'lineCount' lines of the song. */
-function getSongTextWithNoChords(text: string, linesCount: number): string {
+export function getSongTextWithNoChords(text: string, linesCount: number): string {
   let result = '';
   let linesFound = 0;
   let position = 0;

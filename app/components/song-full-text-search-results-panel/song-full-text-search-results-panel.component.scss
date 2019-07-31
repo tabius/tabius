@@ -1,0 +1,27 @@
+.no-results-message {
+  color: #999;
+}
+
+.top-results-message {
+  color: #999;
+  font-size: 16px;
+}
+
+.content-result-block {
+  margin-top: 10px;
+}
+
+.content-result-item {
+  margin-bottom: 10px;
+
+  .content-result-text-block {
+    padding: 5px;
+    background-color: #fafafa;
+
+    .content-result-text {
+      white-space: pre-line;
+      color: #333;
+      text-decoration: none;
+    }
+  }
+}

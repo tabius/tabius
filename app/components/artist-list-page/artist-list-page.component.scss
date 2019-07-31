@@ -102,6 +102,23 @@ h1 {
 .filtered-artists-block {
   padding-top: 20px;
   line-height: 1.7em;
+
+  .search-results-message {
+    color: #777;
+
+    .search-text {
+      font-weight: bold;
+    }
+  }
+
+  h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .artists-not-found-message {
+    color: #999;
+  }
 }
 
 @media only screen and (min-width: $min-desktop-width) {

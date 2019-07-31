@@ -9,7 +9,6 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {getArtistPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {FullTextSongSearchRequest, FullTextSongSearchResponse} from '@common/ajax-model';
 
 interface LetterBlock {
   letter: string,
@@ -39,8 +38,10 @@ export class ArtistListPageComponent implements OnInit {
 
   loaded = false;
   letterBlocks: LetterBlock[] = [];
-  artistFilter: string = '';
+  searchValue: string = '';
   artistFilterControl = new FormControl();
+
+  filteredArtists:Artist[] = [];
 
   constructor(private readonly ads: ArtistDataService,
               readonly cd: ChangeDetectorRef,
@@ -110,20 +111,19 @@ export class ArtistListPageComponent implements OnInit {
   }
 
   updateArtistFilter(value: string) {
-    if (this.artistFilter != value) {
-      this.artistFilter = value;
-
-      //todo?
+    if (this.searchValue != value) {
+      this.searchValue = value;
+      this.filteredArtists = this.getFilteredArtists();
       this.cd.markForCheck();
     }
   }
 
-  getFilteredArtists(): Artist[] {
+  private getFilteredArtists(): Artist[] {
     const result: Artist[] = [];
-    const filterLc = this.artistFilter.toLocaleLowerCase();
-    this.letterBlocks.forEach(b => {
-      b.artists.filter(a => a.lcName.includes(filterLc)).forEach(a => result.push(a));
-    });
+    const filterLc = this.searchValue.toLocaleLowerCase();
+    for (const letterBlock of this.letterBlocks) {
+      letterBlock.artists.filter(a => a.lcName.includes(filterLc)).forEach(a => result.push(a));
+    }
     return result;
   }
 }

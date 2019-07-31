@@ -44,11 +44,14 @@ export interface FullTextSongSearchResponse {
   results: FullTextSongSearchResult[];
 }
 
+export type FullTextSongSearchResultMatchType = 'title'|'content';
+
 export interface FullTextSongSearchResult {
   songId: number;
-  title: string;
+  songTitle: string;
+  artistName: string;
   artistMount: string;
   songMount: string;
   snippet: string;
-  resultIsTitle: boolean;
+  matchType: FullTextSongSearchResultMatchType;
 }

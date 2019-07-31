@@ -1,14 +1,21 @@
 1.
-sudo apt install default-libmysqlclient-dev
+Install sphinx search.
+ - wget http://sphinxsearch.com/files/sphinxsearch_2.3.2-beta-1~xenial_amd64.deb
+ - sudo apt install libmysqlclient20 libpq5 libodbc1 libltdl7 libmysqlclient-dev
+ - sudo dpkg -i sphinxsearch_2.3.2-beta-1~xenial_amd64.deb
+ - download latest version: http://sphinxsearch.com/downloads/current/
+ - unpack it and replace all binaries in /usr/bin/ to the newer version (sphinx /bin folder)
 
 2.
-mkdir /opt/tabius/sphinx/data
+mkdir -p /opt/tabius/sphinx/data
+sudo mkdir -p /usr/local/var/data/
 
 3.
-indexer --rotate song_index -c /opt/tabius/sphinx/sphinx.conf
+sudo indexer --rotate song_index -c /opt/tabius/sphinx/sphinx.conf
 
 4.
 Update start command in /etc/init.d/sphinxsearch to use '-c /opt/tabius/sphinx/sphinx.conf'
+start-stop-daemon --start --pidfile $PIDFILE --exec ${DAEMON} -- -c /opt/tabius/sphinx/sphinx.conf
 
 5.
 Restart Sphinx

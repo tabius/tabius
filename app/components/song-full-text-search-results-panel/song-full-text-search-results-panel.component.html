@@ -2,10 +2,42 @@
     Поиск в тексте песен...
 </div>
 
-<div *ngIf="titleResults.length> 0">
-    В имени песен: {{titleResults.length}}
-</div>
+<div *ngIf="!loading">
 
-<div *ngIf="contentResults.length">
-    В тексте песен: {{contentResults.length}}
+    <div class="title-result-block">
+        <h3>
+            В имени:
+            <span *ngIf="titleResults.length === 10" class="top-results-message">
+                / первые 10
+            </span>
+        </h3>
+        <div *ngIf="titleResults.length === 0" class="no-results-message">
+            нет результатов
+        </div>
+        <div *ngFor="let searchResult of titleResults">
+            <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}} / {{searchResult.artistName}}</a>
+        </div>
+    </div>
+
+    <div class="content-result-block">
+        <h3>
+            В тексте:
+            <span *ngIf="contentResults.length === 10" class="top-results-message">
+                / первые 10
+            </span>
+        </h3>
+        <div *ngIf="contentResults.length === 0" class="no-results-message">
+            нет результатов
+        </div>
+        <div *ngFor="let searchResult of contentResults" class="content-result-item">
+            <div>
+                <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}} / {{searchResult.artistName}}</a>
+            </div>
+            <div class="content-result-text-block">
+                <a routerLink="{{getSongLink(searchResult)}}">
+                    <div [innerHTML]="formatResultSnippet(searchResult.snippet) | safeHtml" class="content-result-text"></div>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
