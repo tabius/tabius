@@ -7,31 +7,38 @@
     <div class="title-result-block">
         <h3>
             В имени:
-            <span *ngIf="titleResults.length === 10" class="top-results-message">
-                / первые 10
+            <span class="top-results-message">
+                <ng-container *ngIf="titleResults.length === maxTitleResults">/ первые {{maxTitleResults}}</ng-container>
+                <ng-container *ngIf="titleResults.length !== maxTitleResults">/ всего {{titleResults.length}}</ng-container>
             </span>
         </h3>
         <div *ngIf="titleResults.length === 0" class="no-results-message">
             нет результатов
         </div>
         <div *ngFor="let searchResult of titleResults">
-            <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}} / {{searchResult.artistName}}</a>
+            <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}}
+                <span class="artist-name">({{searchResult.artistName}})</span>
+            </a>
         </div>
     </div>
 
     <div class="content-result-block">
         <h3>
             В тексте:
-            <span *ngIf="contentResults.length === 10" class="top-results-message">
-                / первые 10
+            <span class="top-results-message">
+                <ng-container *ngIf="contentResults.length === maxContentResults">/ первые {{maxContentResults}}</ng-container>
+                <ng-container *ngIf="contentResults.length !== maxContentResults">/ всего {{contentResults.length}}</ng-container>
             </span>
         </h3>
+
         <div *ngIf="contentResults.length === 0" class="no-results-message">
             нет результатов
         </div>
         <div *ngFor="let searchResult of contentResults" class="content-result-item">
             <div>
-                <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}} / {{searchResult.artistName}}</a>
+                <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}}
+                    <span class="artist-name">({{searchResult.artistName}})</span>
+                </a>
             </div>
             <div class="content-result-text-block">
                 <a routerLink="{{getSongLink(searchResult)}}">

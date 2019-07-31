@@ -8,15 +8,22 @@
 }
 
 .content-result-block {
-  margin-top: 10px;
+  margin-top: 20px;
+}
+
+.artist-name {
+  font-size: 95%;
+  color: #555;
 }
 
 .content-result-item {
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
 
   .content-result-text-block {
-    padding: 5px;
+    padding: 10px;
     background-color: #fafafa;
+    border: 1px solid #f0f0f0;
 
     .content-result-text {
       white-space: pre-line;

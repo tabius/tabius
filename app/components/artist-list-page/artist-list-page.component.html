@@ -62,8 +62,10 @@
                 <a routerLink="{{getArtistPageLink(artist.mount)}}">{{artist.name}}</a>
             </div>
 
-            <h2>Песни</h2>
-            <gt-song-full-text-search-results-panel [searchText]="searchValue"></gt-song-full-text-search-results-panel>
+            <ng-container *ngIf="useFullTextSearch()" class="filtered-artists-block">
+                <h2>Песни</h2>
+                <gt-song-full-text-search-results-panel [searchText]="searchValue"></gt-song-full-text-search-results-panel>
+            </ng-container>
         </div>
     </div>
 

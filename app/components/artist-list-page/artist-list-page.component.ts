@@ -9,6 +9,7 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {getArtistPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
+import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 
 interface LetterBlock {
   letter: string,
@@ -41,7 +42,7 @@ export class ArtistListPageComponent implements OnInit {
   searchValue: string = '';
   artistFilterControl = new FormControl();
 
-  filteredArtists:Artist[] = [];
+  filteredArtists: Artist[] = [];
 
   constructor(private readonly ads: ArtistDataService,
               readonly cd: ChangeDetectorRef,
@@ -125,6 +126,11 @@ export class ArtistListPageComponent implements OnInit {
       letterBlock.artists.filter(a => a.lcName.includes(filterLc)).forEach(a => result.push(a));
     }
     return result;
+  }
+
+  private useFullTextSearch(): boolean {
+    return this.searchValue.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH
+        && this.searchValue.replace(' ', '').length >= MIN_LEN_FOR_FULL_TEXT_SEARCH;
   }
 }
 

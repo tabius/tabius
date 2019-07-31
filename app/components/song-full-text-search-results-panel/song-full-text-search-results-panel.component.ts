@@ -1,8 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {FullTextSongSearchRequest, FullTextSongSearchResponse, FullTextSongSearchResult} from '@common/ajax-model';
+import {FullTextSongSearchRequest, FullTextSongSearchResponse, FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
 import {getSongPageLink} from '@common/util/misc-utils';
 import {getSongTextWithNoChords} from '@app/components/song-page/song-page.component';
+
+export const MIN_LEN_FOR_FULL_TEXT_SEARCH = 4;
+
+// TODO unify listing styles with other components.
 
 @Component({
   selector: 'gt-song-full-text-search-results-panel',
@@ -13,6 +17,9 @@ import {getSongTextWithNoChords} from '@app/components/song-page/song-page.compo
 export class SongFullTextSearchResultsPanelComponent implements OnChanges {
 
   @Input() searchText!: string;
+
+  readonly maxTitleResults = MAX_FULL_TEXT_SEARCH_TITLE_RESULTS;
+  readonly maxContentResults = MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS;
 
   titleResults: FullTextSongSearchResult[] = [];
   contentResults: FullTextSongSearchResult[] = [];
@@ -27,7 +34,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.titleResults = [];
     this.contentResults = [];
-    if (this.searchText.length > 3) {
+    if (this.searchText.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH) {
       const fullTextSearchRequest: FullTextSongSearchRequest = {text: this.searchText};
       this.loading = true;
       //todo: handle concurrent requests
@@ -40,9 +47,9 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
                 this.contentResults.push(result);
               }
             }
-            this.titleResults.sort((r1, r2) => r1.songTitle.localeCompare(r2.songTitle));
             //todo: sort by score?
-            this.contentResults.sort((r1, r2) => r1.songTitle.localeCompare(r2.songTitle));
+            // this.titleResults.sort((r1, r2) => r1.songTitle.localeCompare(r2.songTitle));
+            // this.contentResults.sort((r1, r2) => r1.songTitle.localeCompare(r2.songTitle));
             this.loading = false;
             this.cd.detectChanges();
           });
@@ -54,7 +61,20 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   }
 
   formatResultSnippet(snippet: string): string {
-    return getSongTextWithNoChords(snippet, 5);
+    const lines = getSongTextWithNoChords(snippet, 5, false).split('\n');
+    if (lines.length == 1) {
+      return lines[0];
+    }
+    const linesSet = new Set<string>();
+    const uniqueLines: string[] = [];
+    for (const line of lines) {
+      if (line.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH && !linesSet.has(line)) {
+        uniqueLines.push(line);
+        linesSet.add(line);
+      }
+    }
+    return uniqueLines.join('\n');
   }
+
 }
 

@@ -96,7 +96,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
     }
     updatePageMetadata(this.title, this.meta, {
       title: `${this.song.title}. ${this.artist.name}. Аккорды`,
-      description: getSongTextWithNoChords(this.songDetails.content, 4),
+      description: getSongTextWithNoChords(this.songDetails.content, 4, true),
       keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
   }
@@ -113,7 +113,7 @@ function isServiceLineChar(c: string): boolean {
 
 //TODO: move to utils
 /** Returns first 'lineCount' lines of the song. */
-export function getSongTextWithNoChords(text: string, linesCount: number): string {
+export function getSongTextWithNoChords(text: string, linesCount: number, mergeLines: boolean): string {
   let result = '';
   let linesFound = 0;
   let position = 0;
@@ -132,6 +132,9 @@ export function getSongTextWithNoChords(text: string, linesCount: number): strin
       }
       if (!serviceLine) {
         linesFound++;
+        if (!mergeLines && result.length > 0) {
+          result += '\n';
+        }
         result += (linesFound > 1 ? ' ' : '') + text.substring(position, newPosition);
       }
     }
