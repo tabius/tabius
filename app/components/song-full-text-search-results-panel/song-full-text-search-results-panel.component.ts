@@ -47,9 +47,6 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
                 this.contentResults.push(result);
               }
             }
-            //todo: sort by score?
-            // this.titleResults.sort((r1, r2) => r1.songTitle.localeCompare(r2.songTitle));
-            // this.contentResults.sort((r1, r2) => r1.songTitle.localeCompare(r2.songTitle));
             this.loading = false;
             this.cd.detectChanges();
           });
@@ -61,15 +58,16 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   }
 
   formatResultSnippet(snippet: string): string {
-    const lines = getSongTextWithNoChords(snippet, 5, false).split('\n');
+    const multilineSnippet = snippet.replace(/\.\.\./g, '\n');
+    const lines = getSongTextWithNoChords(multilineSnippet, 6, false).split('\n');
     if (lines.length == 1) {
-      return lines[0];
+      return lines[0].trim();
     }
     const linesSet = new Set<string>();
     const uniqueLines: string[] = [];
     for (const line of lines) {
       if (line.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH && !linesSet.has(line)) {
-        uniqueLines.push(line);
+        uniqueLines.push(line.trim());
         linesSet.add(line);
       }
     }

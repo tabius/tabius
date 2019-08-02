@@ -61,7 +61,7 @@ interface SphinxSearchResult {
 type SphinxMatch = [number, string, string, string, string, string]; // id, snippet, song title, artist name, artist mount, song mount
 
 function toSafeSearchText(text: string): string {
-  return text.replace('\'', '').replace('"', '');
+  return text.replace(/'/g, '').replace('"', '');
 }
 
 function addResults(sphinxMatches: SphinxMatch[], result: FullTextSongSearchResult[], matchType: FullTextSongSearchResultMatchType): void {
