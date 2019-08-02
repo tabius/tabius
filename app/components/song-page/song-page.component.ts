@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Optional} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Artist, Song, SongDetails} from '@common/artist-model';
@@ -12,7 +12,6 @@ import {canEditArtist, getSongForumTopicLink, hasValidForumTopic} from '@common/
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_ARTIST_PREFIX} from '@common/mounts';
-import {RESPONSE} from '@nguniversal/express-engine/tokens';
 
 @Component({
   selector: 'gt-song-page',
@@ -45,7 +44,6 @@ export class SongPageComponent implements OnInit, OnDestroy {
               readonly title: Title,
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
-              @Optional() @Inject(RESPONSE) readonly response: any,
   ) {
   }
 

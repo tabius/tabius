@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Optional} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Artist, ArtistDetails, Song} from '@common/artist-model';
 import {ActivatedRoute} from '@angular/router';
@@ -12,7 +12,6 @@ import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.s
 import {User} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {RESPONSE} from '@nguniversal/express-engine/tokens';
 
 export class ArtistViewModel {
   readonly displayName: string;
@@ -43,7 +42,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
   user?: User;
   hasEditRight = false;
   editorIsOpen = false;
-  songDetailsPrefetched = false;
+  private songDetailsPrefetched = false;
   loaded = false;
   notFound = false;
 
@@ -55,7 +54,6 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
               readonly title: Title,
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
-              @Optional() @Inject(RESPONSE) readonly response: any,
   ) {
   }
 

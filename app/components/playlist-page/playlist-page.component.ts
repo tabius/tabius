@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Optional} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Meta, Title} from '@angular/platform-browser';
 import {Artist, Song} from '@common/artist-model';
@@ -14,7 +14,6 @@ import {SongComponentMode} from '@app/components/song/song.component';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {RefreshMode} from '@app/store/observable-store';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
-import {RESPONSE} from '@nguniversal/express-engine/tokens';
 
 interface PlaylistSongModel {
   song: Song;
@@ -56,7 +55,6 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
               readonly title: Title,
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
-              @Optional() @Inject(RESPONSE) readonly response: any,
   ) {
   }
 
