@@ -5,7 +5,7 @@ import {Artist, Song} from '@common/artist-model';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
-import {MOUNT_USER_PLAYLISTS} from '@common/mounts';
+import {MOUNT_USER_STUDIO} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {Playlist, User} from '@common/user-model';
@@ -38,7 +38,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   readonly mode = SongComponentMode.Playlist;
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
-  readonly playlistsLink = `/${MOUNT_USER_PLAYLISTS}`;
+  readonly playlistsLink = `/${MOUNT_USER_STUDIO}`;
   readonly getArtistPageLink = getArtistPageLink;
   readonly getSongPageLink = getSongPageLink;
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);

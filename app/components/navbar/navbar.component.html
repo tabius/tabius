@@ -21,11 +21,11 @@
                 <div class="title">АРТИСТЫ</div>
             </a>
         </div>
-        <div class="item playlist" [class.active]="getActiveSection()=== NavSection.Playlists">
-            <a routerLink="{{playlistsLink}}">
+        <div class="item studio" [class.active]="getActiveSection()=== NavSection.Studio">
+            <a routerLink="{{studioLink}}">
                 <div class="indicator-block"></div>
-                <gt-svg-icon icon="playlist"></gt-svg-icon>
-                <div class="title">ПЛЕЙЛИСТЫ</div>
+                <gt-svg-icon icon="studio"></gt-svg-icon>
+                <div class="title">СТУДИЯ</div>
             </a>
         </div>
         <div class="item tuner" [class.active]="getActiveSection() === NavSection.Tuner">
@@ -90,10 +90,10 @@
                 <div class="title">АРТИСТЫ</div>
             </a>
         </div>
-        <div class="item playlist">
-            <a routerLink="{{playlistsLink}}" (click)="close()">
-                <gt-svg-icon icon="playlist"></gt-svg-icon>
-                <div class="title">ПЛЕЙЛИСТЫ</div>
+        <div class="item studio">
+            <a routerLink="{{studioLink}}" (click)="close()">
+                <gt-svg-icon icon="studio"></gt-svg-icon>
+                <div class="title">СТУДИЯ</div>
             </a>
         </div>
         <div class="item tuner">

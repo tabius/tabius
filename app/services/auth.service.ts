@@ -19,7 +19,7 @@ export class AuthService {
 
 
   async updateSignInState(): Promise<void> {
-    if (!this.bss.isBrowser || !this.bss.isOnline()) {
+    if (!this.bss.isBrowser) {
       return;
     }
     try {

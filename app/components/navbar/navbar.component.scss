@@ -105,15 +105,15 @@ a {
         }
       }
 
-      &.playlist {
+      &.studio {
         &.active {
           .indicator-block:before {
-            background: $color-nav-playlist;
+            background: $color-nav-studio;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-playlist;
+          fill: $color-nav-studio;
         }
       }
 
@@ -286,8 +286,8 @@ a {
         fill: $color-nav-artists;
       }
 
-      &.playlist gt-svg-icon {
-        fill: $color-nav-playlist;
+      &.studio gt-svg-icon {
+        fill: $color-nav-studio;
       }
 
       &.tuner gt-svg-icon {
