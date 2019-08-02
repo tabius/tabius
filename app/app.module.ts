@@ -28,7 +28,6 @@ import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store
 import {APP_BROWSER_STORE_TOKEN, TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-song-to-playlist.component';
-import {PlaylistListPageComponent} from './components/playlist-list-page/playlist-list-page.component';
 import {SigninSignoutButtonComponent} from './components/signin-signout-button/signin-signout-button.component';
 import {PwaUpdaterService} from '@app/services/pwa-updater.service';
 import {ChordImageComponent} from './components/chord-image/chord-image.component';
@@ -44,6 +43,7 @@ import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
 import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 import {ResourceNotFoundComponent} from './components/resource-not-found/resource-not-found.component';
 import { SongFullTextSearchResultsPanelComponent } from './components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
+import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +68,7 @@ import { SongFullTextSearchResultsPanelComponent } from './components/song-full-
     InlineSongSettingsComponent,
     UserSettingsPageComponent,
     AddSongToPlaylistComponent,
-    PlaylistListPageComponent,
+    StudioPageComponent,
     SigninSignoutButtonComponent,
     ChordImageComponent,
     SongChordsComponent,

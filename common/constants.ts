@@ -13,6 +13,8 @@ export const APP_BROWSER_STORE_TOKEN = 'tabius';
 export const NODE_BB_SESSION_COOKIE = 'express.sid';
 export const NODE_BB_COOKIE_DOMAIN = '.tabius.ru';
 export const NODE_BB_URL = 'https://forum.tabius.ru';
+export const NODE_BB_LOGIN_URL = `${NODE_BB_URL}/login`;
+export const NODE_BB_REGISTRATION_URL = `${NODE_BB_URL}/login`; //todo:
 
 // the values below should be in sync with 'dimensions.scss'
 // export const MAX_MOBILE_WIDTH = 899;

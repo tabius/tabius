@@ -101,6 +101,7 @@ export function getPlaylistPageLink(playlistId: number): string {
   return `/${MOUNT_PLAYLIST_PREFIX}${playlistIdToMount(playlistId)}`;
 }
 
+
 /**
  *  Returns true if userAgent is a known mobile (small screen) device user agent.
  *  Used in server side rendering to select correct layout (when needed) to avoid flickering on re-render on the client.

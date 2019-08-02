@@ -8,10 +8,10 @@ import {ArtistPageComponent} from '@app/components/artist-page/artist-page.compo
 import {SongPageComponent} from '@app/components/song-page/song-page.component';
 import {UserSettingsPageComponent} from '@app/components/user-settings-page/user-settings-page.component';
 import {MOUNT_ARTIST, MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
-import {PlaylistListPageComponent} from '@app/components/playlist-list-page/playlist-list-page.component';
 import {PlaylistPageComponent} from '@app/components/playlist-page/playlist-page.component';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {ObservableStore} from '@app/store/observable-store';
+import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 
 //TODO: move to a separate file. Use for the most routes?
 @Injectable({providedIn: 'root'})
@@ -33,7 +33,7 @@ const routes: Routes = [
   {path: MOUNT_ARTIST, component: ArtistPageComponent},
   {path: MOUNT_SONG, component: SongPageComponent},
   {path: MOUNT_USER_SETTINGS, component: UserSettingsPageComponent},
-  {path: MOUNT_USER_STUDIO, component: PlaylistListPageComponent,},
+  {path: MOUNT_USER_STUDIO, component: StudioPageComponent,},
   {path: MOUNT_PLAYLIST, component: PlaylistPageComponent},
   {path: MOUNT_PAGE_NOT_FOUND, component: Page404Component},
   {path: '**', redirectTo: `/${MOUNT_PAGE_NOT_FOUND}`}

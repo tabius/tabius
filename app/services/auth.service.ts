@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {LoginResponse} from '@common/ajax-model';
 import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {NODE_BB_URL} from '@common/constants';
+import {NODE_BB_LOGIN_URL} from '@common/constants';
 import {take} from 'rxjs/operators';
 
 @Injectable({
@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   static signIn(): void {
-    window.location.href = `${NODE_BB_URL}/login`;
+    window.location.href = NODE_BB_LOGIN_URL;
   }
 
   async signOut(): Promise<void> {
