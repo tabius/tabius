@@ -21,7 +21,7 @@ export class ArtistViewModel {
   constructor(readonly artist: Artist, readonly bands: Artist[], songs: Song[], readonly listed: boolean) {
     this.displayName = getNameFirstFormArtistName(artist);
     this.imgSrc = listed ? getArtistImageUrl(artist.mount) : undefined;
-    this.songs = songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
+    this.songs = sortSongsAlphabetically(songs);
   }
 }
 
@@ -127,3 +127,8 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 }
+
+export function sortSongsAlphabetically(songs: Song[]): Song[] {
+  return songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
+}
+

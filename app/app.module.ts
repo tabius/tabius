@@ -44,6 +44,7 @@ import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 import {ResourceNotFoundComponent} from './components/resource-not-found/resource-not-found.component';
 import { SongFullTextSearchResultsPanelComponent } from './components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
+import { SongPrevNextNavigatorComponent } from './components/song-prev-next-navigator/song-prev-next-navigator.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import {StudioPageComponent} from '@app/components/studio-page/studio-page.compo
     SongEditorComponent,
     ResourceNotFoundComponent,
     SongFullTextSearchResultsPanelComponent,
+    SongPrevNextNavigatorComponent,
   ],
   imports: [
     BrowserAnimationsModule,

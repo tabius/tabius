@@ -42,7 +42,7 @@ export class SongDbi {
 
   getSongsByArtistId(artistId: number): Promise<Song[]> {
     return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL} WHERE s.artist_id = ?`, [artistId])
+        .query(`${SELECT_SONG_SQL} WHERE s.artist_id = ? ORDER BY s.id`, [artistId])
         .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
   }
 

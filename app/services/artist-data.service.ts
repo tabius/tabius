@@ -79,6 +79,7 @@ export class ArtistDataService {
     );
   }
 
+  /** Returns list of all artist song ids. The songs in the list are always sorted by id. */
   getArtistSongList(artistId: number|undefined): Observable<number[]|undefined> {
     return this.store.get<number[]>(
         getArtistSongListKey(artistId),
