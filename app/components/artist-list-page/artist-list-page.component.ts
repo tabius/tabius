@@ -78,8 +78,8 @@ export class ArtistListPageComponent implements OnInit {
   updateMeta() {
     updatePageMetadata(this.title, this.meta, {
       title: 'Список артистов',
-      description: 'Список всех исполнителей для которых на Tabius есть подборы аккордов.',
-      keywords: ['табы', 'аккорды', 'гитара', 'список артистов'],
+      description: 'Список всех исполнителей на Tabius и поиск песни по тексту.',
+      keywords: ['табы', 'аккорды', 'гитара', 'список артистов', 'поиск песни по тексту'],
     });
   }
 
