@@ -59,7 +59,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
 
   formatResultSnippet(snippet: string): string {
     const multilineSnippet = snippet.replace(/\.\.\./g, '\n');
-    const lines = getSongTextWithNoChords(multilineSnippet, 6, false).split('\n');
+    const lines = getSongTextWithNoChords(multilineSnippet, 6, false).split('\n').map(line => line.trim()).filter(line => line.length > 0);
     if (lines.length == 1) {
       return lines[0].trim();
     }
@@ -67,7 +67,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
     const uniqueLines: string[] = [];
     for (const line of lines) {
       if (line.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH && !linesSet.has(line)) {
-        uniqueLines.push(line.trim());
+        uniqueLines.push(line);
         linesSet.add(line);
       }
     }
