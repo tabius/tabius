@@ -2,44 +2,42 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {UserDataService} from '@app/services/user-data.service';
 import {getDefaultUserSongFontSize, User, UserDeviceSettings} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
-import {Observable, Subject} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SongDetails} from '@common/artist-model';
+import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@common/constants';
 
 @Component({
-  selector: 'gt-user-settings-page',
-  templateUrl: './user-settings-page.component.html',
-  styleUrls: ['./user-settings-page.component.scss'],
+  selector: 'gt-settings-page',
+  templateUrl: './settings-page.component.html',
+  styleUrls: ['./settings-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserSettingsPageComponent implements OnInit, OnDestroy {
+export class SettingsPageComponent implements OnInit, OnDestroy {
 
   deviceSettings!: UserDeviceSettings;
+  user?: User;
   b4Si!: boolean;
+
+  readonly loginLink = NODE_BB_LOGIN_URL;
+  readonly registrationLink = NODE_BB_REGISTRATION_URL;
 
   readonly destroyed$ = new Subject();
   readonly defaultFontSize = getDefaultUserSongFontSize();
   readonly settingsDemoSong = SETTINGS_DEMO_SONG;
-  readonly user$: Observable<User|undefined>;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService,
   ) {
-    this.user$ = uds.getUser();
   }
 
   ngOnInit() {
-    this.uds.getUserDeviceSettings()
+    combineLatest([this.uds.getUser(), this.uds.getUserDeviceSettings(), this.uds.getB4SiFlag()])
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(settings => {
+        .subscribe(([user, settings, b4si]) => {
+          this.user = user;
           this.deviceSettings = settings;
-          this.cd.detectChanges();
-        });
-
-    this.uds.getB4SiFlag()
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(b4Si => {
-          this.b4Si = b4Si;
+          this.b4Si = b4si;
           this.cd.detectChanges();
         });
   }

@@ -23,7 +23,7 @@ import {LoadingIndicatorComponent} from './components/loading-indicator/loading-
 import {ArtistBreadcrumbComponent} from './components/artist-breadcrumb/artist-breadcrumb.component';
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
 import {InlineSongSettingsComponent} from './components/inline-song-settings/inline-song-settings.component';
-import {UserSettingsPageComponent} from './components/user-settings-page/user-settings-page.component';
+import {SettingsPageComponent} from './components/settings-page/settings-page.component';
 import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/observable-store';
 import {APP_BROWSER_STORE_TOKEN, TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -42,9 +42,9 @@ import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
 import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
 import {ResourceNotFoundComponent} from './components/resource-not-found/resource-not-found.component';
-import { SongFullTextSearchResultsPanelComponent } from './components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
+import {SongFullTextSearchResultsPanelComponent} from './components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
-import { SongPrevNextNavigatorComponent } from './components/song-prev-next-navigator/song-prev-next-navigator.component';
+import {SongPrevNextNavigatorComponent} from './components/song-prev-next-navigator/song-prev-next-navigator.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +67,7 @@ import { SongPrevNextNavigatorComponent } from './components/song-prev-next-navi
     SafeResourceUrlPipe,
     SafeHtmlPipe,
     InlineSongSettingsComponent,
-    UserSettingsPageComponent,
+    SettingsPageComponent,
     AddSongToPlaylistComponent,
     StudioPageComponent,
     SigninSignoutButtonComponent,

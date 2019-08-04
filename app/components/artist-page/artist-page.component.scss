@@ -1,4 +1,5 @@
 @import "~app/styles/dimensions";
+@import "~app/styles/colors";
 
 :host {
   display: flex;
@@ -38,7 +39,7 @@
   margin-top: 20px;
 
   a {
-    color: #704a00;
+    color: $color-golden-link;
   }
 }
 

@@ -1,12 +1,14 @@
 <div class="artist-block">
     <h1>Подборы песен</h1>
 
-    <div *ngIf="!artist" class="register-prompt-block">
-        <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a> чтобы добавлять свои подборы.
-    </div>
+    <div class="artist-block-content">
+        <div *ngIf="!user" class="register-prompt-block">
+            <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
+        </div>
 
-    <div *ngIf="artist" class="artist-link-block">
-        <a routerLink="{{getUserArtistPageLink()}}">Перейти к своим подборам</a>
+        <div *ngIf="artist" class="artist-link-block">
+            <a routerLink="{{getUserArtistPageLink()}}">Перейти к своим подборам</a>
+        </div>
     </div>
 </div>
 
@@ -18,7 +20,7 @@
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
-    <div *ngIf="loaded" class="playlist-list">
+    <div *ngIf="loaded" class="playlist-block-content">
 
         <div *ngIf="playlists.length > 0">
             <div *ngFor="let playlist of playlists" class="playlist-item">
@@ -28,13 +30,17 @@
                 </a>
             </div>
 
-            <div class="related-links-block">
+            <div class="playlists-bottom-links-block">
                 <a routerLink="{{settingsLink}}">Управление плейлистами »</a>
             </div>
 
         </div>
 
-        <div *ngIf="playlists.length === 0" class="no-playlists-block">
+        <div *ngIf="!user" class="no-playlists-block">
+            Только <a href="{{loginLink}}">зарегистрированные</a> пользователи могут создавать плейлисты.
+        </div>
+
+        <div *ngIf="user && playlists.length === 0" class="no-playlists-block">
             <p>
                 Вы ещё не создали ни один плейлист :(
             </p>

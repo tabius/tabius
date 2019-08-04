@@ -1,6 +1,12 @@
+@import "~app/styles/colors";
+
 :host {
   display: flex;
   justify-content: center;
+
+  h2 {
+    color: $color-alt-header;
+  }
 
   .song-settings-block {
     margin-top: 20px;
@@ -51,6 +57,13 @@
     .playlist-editor-content-block {
       margin-top: 15px;
       padding-left: 20px;
+    }
+  }
+
+  .signin-sign-out-block {
+    margin-top: 40px;
+    .register-prompt-block {
+      line-height: 2em;
     }
   }
 }
