@@ -153,7 +153,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     const buttons2BottomMargin = 10;
     const availableHeight = window.innerHeight - (headerHeight + header2TitleMargin + titleInputHeight + title2ContentMargin +
         content2LinksMargin + linksRowHeight + links2ButtonsMargin + buttonsRowHeight + buttons2BottomMargin);
-    return bound(8, countOccurrences(this.content, '\n'), (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
+    return bound(8, countOccurrences(this.content, '\n') + 1, (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
   }
 
   close(): void {
