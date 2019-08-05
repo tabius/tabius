@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {DbService} from './db.service';
 import {Artist, ArtistDetails, ArtistType} from '@common/artist-model';
 import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
@@ -26,6 +26,8 @@ const SELECT_ARTIST_DETAILS_SQL = 'SELECT id, version, band_ids, listed FROM art
 @Injectable()
 export class ArtistDbi {
 
+  private readonly logger = new Logger(ArtistDbi.name);
+
   constructor(private readonly db: DbService) {
   }
 
@@ -51,11 +53,26 @@ export class ArtistDbi {
     if (isValidId(user.artistId)) {
       throw `User already has valid artist id assigned: ${user.id}, artistId: ${user.artistId}`;
     }
+    this.logger.debug('Creating artist record for user: ' + user.email);
+
     const artistMount = generateArtistMountForUser();
-    return this.db.pool.promise()
-        .query('INSERT INTO artist(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
+    const result = await this.db.pool.promise()
+        .query('INSERT IGNORE INTO artist(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
             [user.username, ArtistType.Person, artistMount, 0, user.id])
-        .then(([result]) => result.insertId);
+        .then(([result]) => result);
+
+    let artistId = result.insertId;
+    if (artistId > 0) {
+      this.logger.debug(`Artist record successfully created: ${user.email}, artist-id: ${artistId}`);
+      return result.insertId;
+    }
+
+    artistId = await this.db.pool.promise()
+        .query(`${SELECT_ARTIST_DETAILS_SQL} WHERE user_id  = ?`, [user.id])
+        .then(([rows]: [ArtistWithDetailsRow[]]) => rows.length === 0 ? undefined : rows[0].id);
+
+    this.logger.debug(`Reusing existing artist record: ${user.email}, artist-id: ${artistId}`);
+    return artistId;
   }
 
   async getByMount(mount: string): Promise<Artist|undefined> {

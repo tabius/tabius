@@ -120,14 +120,9 @@ export class ServerSsoService implements NestInterceptor {
         user = {...user, artistId: await this.getUserArtistId(user.id) || -1};
       }
       if (!isValidId(user.artistId)) {
-        this.logger.log('Creating artist record for user: ' + user.email);
         const artistId = await this.artistDbi.createArtistForUser(user);
-        this.logger.log(`Artist record successfully created: ${user.email}, artist id: ${artistId}`);
-
         user = {...user, artistId};
-        this.logger.log('Creating new user record: ' + user.email);
         await this.userDbi.createUser(user);
-        this.logger.log(`User record successfully created: ${user.email}`);
       }
       session[USER_SESSION_KEY] = user;
     }

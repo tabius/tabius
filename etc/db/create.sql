@@ -13,7 +13,7 @@ CREATE TABLE artist (
     version INT NOT NULL DEFAULT 0,
     forum_category_id INT NOT NULL DEFAULT 0,
     listed INT(1) NOT NULL DEFAULT 0,
-    user_id VARCHAR(40) DEFAULT NULL
+    user_id VARCHAR(40) DEFAULT NULL UNIQUE
 ) ENGINE InnoDB
   DEFAULT CHARSET = utf8mb4,
   COLLATE utf8mb4_unicode_ci;

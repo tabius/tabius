@@ -1,17 +1,24 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {DbService} from './db.service';
 import {newDefaultUserSettings, User, UserSettings} from '@common/user-model';
 
 @Injectable()
 export class UserDbi {
+
+  private readonly logger = new Logger(UserDbi.name);
+
   constructor(private readonly db: DbService) {
   }
 
   async createUser(user: User): Promise<void> {
+    this.logger.debug('Creating/updating user record: ' + user.email);
+
     const now = new Date();
     await this.db.pool.promise()
         .query('INSERT INTO user(id, artist_id, login_date, settings) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE artist_id = ?',
             [user.id, user.artistId, now, '{}', user.artistId]);
+
+    this.logger.debug(`User record successfully created/updated: ${user.email}`);
   }
 
   async updateOnLogin(user: User): Promise<void> {
