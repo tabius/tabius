@@ -4,7 +4,7 @@ import {Meta, Title} from '@angular/platform-browser';
 import {UserDataService} from '@app/services/user-data.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {Playlist, User} from '@common/user-model';
-import {BehaviorSubject, combineLatest, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {getArtistPageLink, getPlaylistPageLink} from '@common/util/misc-utils';
 import {MOUNT_USER_SETTINGS} from '@common/mounts';
@@ -46,22 +46,17 @@ export class StudioPageComponent implements OnInit, OnDestroy {
     enableLoadingIndicator(this);
     this.uds.syncSessionStateAsync();
 
-    this.uds.getUserPlaylists(RefreshMode.Refresh)
+    const playlists$ = this.uds.getUserPlaylists(RefreshMode.Refresh);
+    const user$ = this.uds.getUser();
+    const artist$ = user$.pipe(flatMap(user => this.ads.getArtistById(user && user.artistId)));
+    combineLatest([playlists$, user$, artist$])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(playlists => {
+        .subscribe(([playlists, user, artist]) => {
           this.loaded = true;
           this.playlists = playlists;
-          this.cd.detectChanges();
-        });
-    this.uds.getUser()
-        .pipe(
-            takeUntil(this.destroyed$),
-            flatMap(user => combineLatest([of(user), this.ads.getArtistById(user && user.artistId)])),
-        )
-        .subscribe(([user, artist]) => {
           this.user = user;
           this.artist = artist;
           this.cd.detectChanges();

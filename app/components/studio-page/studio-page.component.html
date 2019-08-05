@@ -1,52 +1,54 @@
-<div class="playlist-block">
-    <h1> Плейлисты </h1>
-
-    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
-        <div class="message">Загружаем плейлисты …</div>
-        <gt-loading-indicator></gt-loading-indicator>
-    </div>
-
-    <div *ngIf="loaded" class="playlist-block-content">
-
-        <div *ngIf="playlists.length > 0">
-            <div *ngFor="let playlist of playlists" class="playlist-item">
-                <a routerLink="{{getPlaylistPageLink(playlist.id)}}" title="Перейти к плейлисту «{{playlist.name}}»">
-                    {{playlist.name}}
-                    <span class="song-count" title="Число песен в плейлисте">[<span>{{playlist.songIds.length}}</span>]</span>
-                </a>
-            </div>
-
-            <div class="playlists-bottom-links-block">
-                <a routerLink="{{settingsLink}}">Управление плейлистами »</a>
-            </div>
-
-        </div>
-
-        <div *ngIf="!user" class="no-playlists-block">
-            Только <a href="{{loginLink}}">зарегистрированные</a> пользователи могут создавать плейлисты.
-        </div>
-
-        <div *ngIf="user && playlists.length === 0" class="no-playlists-block">
-            <p>
-                Вы ещё не создали ни один плейлист :(
-            </p>
-            <p style="margin-top: 20px;">
-                Чтобы начать пользоваться плейлистами перейдите на страницу любой песни и добавьте её в новый плейлист.
-            </p>
-        </div>
-    </div>
+<div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+    <div class="message">Загружаем песни и плейлисты …</div>
+    <gt-loading-indicator></gt-loading-indicator>
 </div>
 
-<div class="artist-block">
-    <h1>Песни</h1>
+<div *ngIf="loaded">
 
-    <div class="artist-block-content">
-        <div *ngIf="!user" class="register-prompt-block">
-            <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
-        </div>
+    <div class="playlist-block">
+        <h1> Плейлисты </h1>
 
-        <div *ngIf="artist" class="artist-link-block">
-            <a routerLink="{{getUserArtistPageLink()}}">Перейти к своим подборам</a>
+        <div *ngIf="loaded" class="playlist-block-content">
+
+            <div *ngIf="playlists.length > 0">
+                <div *ngFor="let playlist of playlists" class="playlist-item">
+                    <a routerLink="{{getPlaylistPageLink(playlist.id)}}" title="Перейти к плейлисту «{{playlist.name}}»">
+                        {{playlist.name}}
+                        <span class="song-count" title="Число песен в плейлисте">[<span>{{playlist.songIds.length}}</span>]</span>
+                    </a>
+                </div>
+
+                <div class="playlists-bottom-links-block">
+                    <a routerLink="{{settingsLink}}">Управление плейлистами »</a>
+                </div>
+
+            </div>
+
+            <div *ngIf="!user" class="no-playlists-block">
+                Только <a href="{{loginLink}}">зарегистрированные</a> пользователи могут создавать плейлисты.
+            </div>
+
+            <div *ngIf="user && playlists.length === 0">
+                <div class="no-playlists-block"> Вы ещё не создали ни один плейлист.</div>
+                <div class="playlists-bottom-links-block">
+                    <a routerLink="{{settingsLink}}">Управление плейлистами »</a>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="artist-block">
+        <h1>Песни</h1>
+
+        <div class="artist-block-content">
+            <div *ngIf="!user" class="register-prompt-block">
+                <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
+            </div>
+
+            <div *ngIf="artist" class="artist-link-block">
+                <a routerLink="{{getUserArtistPageLink()}}">Перейти к своим подборам</a>
+            </div>
+        </div>
+    </div>
+
 </div>

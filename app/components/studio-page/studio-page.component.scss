@@ -21,7 +21,6 @@ h1 {
       text-align: center;
       line-height: 1.5em;
       padding: 20px;
-      margin-top: 10px;
       margin-bottom: 20px;
       border: solid 1px #ccc;
       background-color: #fefbf7;
@@ -54,6 +53,7 @@ h1 {
     }
 
     .no-playlists-block {
+      text-align: center;
       line-height: 1.5em;
       padding: 20px;
       margin-top: 10px;
@@ -63,6 +63,7 @@ h1 {
     }
 
     .playlists-bottom-links-block {
+      text-align: center;
       margin-top: 50px;
     }
   }
