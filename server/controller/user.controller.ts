@@ -1,7 +1,7 @@
 import {Body, Controller, Get, HttpStatus, Logger, Put, Res, Session} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
-import {LoginResponse} from '@common/ajax-model';
+import {LoginResponse, TabiusAjaxResponse} from '@common/ajax-model';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {conformsTo, validate} from 'typed-validation';
 import {UserSongSettingsValidator} from '@server/util/validators';
@@ -90,5 +90,10 @@ export class UserController {
       throw `Settings not found! User: ${user.email}, id: ${user.id}`;
     }
     return settings == null ? newDefaultUserSettings() : settings;
+  }
+
+  @Get('/sync')
+  async sync(): Promise<TabiusAjaxResponse> {
+    return {}; // sso interceptor will append session info to this response.
   }
 }

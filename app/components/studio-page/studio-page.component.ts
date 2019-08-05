@@ -44,6 +44,8 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     enableLoadingIndicator(this);
+    this.uds.syncSessionStateAsync();
+
     this.uds.getUserPlaylists(RefreshMode.Refresh)
         .pipe(
             takeUntil(this.destroyed$),

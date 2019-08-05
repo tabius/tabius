@@ -10,6 +10,7 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {getArtistPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
+import {UserDataService} from '@app/services/user-data.service';
 
 interface LetterBlock {
   letter: string,
@@ -45,6 +46,7 @@ export class ArtistListPageComponent implements OnInit {
   filteredArtists: Artist[] = [];
 
   constructor(private readonly ads: ArtistDataService,
+              private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,
@@ -54,6 +56,8 @@ export class ArtistListPageComponent implements OnInit {
 
   ngOnInit() {
     enableLoadingIndicator(this);
+    this.uds.syncSessionStateAsync();
+
     this.artistFilterControl.valueChanges
         .pipe(
             debounce(() => timer(300)),

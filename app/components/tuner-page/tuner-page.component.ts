@@ -39,6 +39,8 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.uds.syncSessionStateAsync();
+
     this.uds.getUserDeviceSettings()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(deviceSettings => {

@@ -33,6 +33,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.uds.syncSessionStateAsync();
+
     combineLatest([
       this.uds.getUser(),
       this.uds.getUserDeviceSettings(),

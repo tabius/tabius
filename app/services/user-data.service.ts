@@ -213,6 +213,14 @@ export class UserDataService {
     }
     await this.store.set<User>(USER_KEY, user, checkUpdateByStringify);
   }
+
+  syncSessionStateAsync(): void {
+    this.syncSessionState().catch(err => console.log(err));
+  }
+
+  async syncSessionState(): Promise<void> {
+    await this.httpClient.get('/api/user/sync').pipe(take(1)).toPromise();
+  }
 }
 
 function getUserSongSettingsKey(songId: number|undefined): string|undefined {

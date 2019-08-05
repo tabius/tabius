@@ -49,6 +49,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     enableLoadingIndicator(this);
+    this.uds.syncSessionStateAsync();
 
     const params = this.route.snapshot.params;
     const artistMount = params['artistMount'];

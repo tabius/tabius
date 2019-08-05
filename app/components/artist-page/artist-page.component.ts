@@ -59,6 +59,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     enableLoadingIndicator(this);
+    this.uds.syncSessionStateAsync();
 
     const artistMount = this.route.snapshot.params['artistMount'];
     const artistId$: Observable<number|undefined> = this.ads.getArtistIdByMount(artistMount);
