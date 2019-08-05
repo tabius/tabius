@@ -19,7 +19,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
   deviceSettings!: UserDeviceSettings;
   user?: User;
-  b4Si!: boolean;
+  h4Si!: boolean;
 
   readonly loginLink = NODE_BB_LOGIN_URL;
   readonly registrationLink = NODE_BB_REGISTRATION_URL;
@@ -43,14 +43,14 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     combineLatest([
       this.uds.getUser(),
       this.uds.getUserDeviceSettings(),
-      this.uds.getB4SiFlag(RefreshMode.Refresh),
+      this.uds.getH4SiFlag(RefreshMode.Refresh),
     ])
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(([user, settings, b4si]) => {
+        .subscribe(([user, settings, h4si]) => {
           this.loaded = true;
           this.user = user;
           this.deviceSettings = settings;
-          this.b4Si = b4si;
+          this.h4Si = h4si;
           this.cd.detectChanges();
         });
   }
@@ -77,8 +77,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  useB4Si(b4SiFlag: boolean): void {
-    this.uds.setB4SiFlag(b4SiFlag);
+  useH4Si(h4SiFlag: boolean): void {
+    this.uds.setH4SiFlag(h4SiFlag);
   }
 }
 

@@ -35,7 +35,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   readonly isBrowser: boolean;
 
   private songSettings = newDefaultUserSongSettings(0);
-  private b4Si?: boolean;
+  private h4Si?: boolean;
   private songFontSize?: number;
   private availableWidth = 0;
 
@@ -80,14 +80,14 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
               this.resetSongView();
             }));
 
-    const b4Si$ = this.uds.getB4SiFlag()
+    const h4Si$ = this.uds.getH4SiFlag()
         .pipe(
-            tap(b4Si => {
-              this.b4Si = b4Si;
+            tap(h4Si => {
+              this.h4Si = h4Si;
               this.resetSongView();
             }));
 
-    combineLatest([style$, settings$, b4Si$])
+    combineLatest([style$, settings$, h4Si$])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(() => this.cd.detectChanges());
   }
@@ -105,7 +105,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   getSongHtml(): string {
     if (this.songHtml === '') {
       const {transpose, hideChords} = this.songSettings;
-      this.songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: !this.b4Si}) : '';
+      this.songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: this.h4Si}) : '';
     }
     return this.songHtml;
   }

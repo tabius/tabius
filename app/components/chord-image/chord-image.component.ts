@@ -13,7 +13,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
 
   @Input() layout!: ChordLayout;
   @Input() size = 2.3;
-  @Input() b4Si = true;
+  @Input() h4Si = false;
 
   width = 70;
   height = 90;
@@ -32,7 +32,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
       return;
     }
     const {chord} = this.layout;
-    const visualChordName = this.getToneWithB4SiFix(chord.tone) + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type);
+    const visualChordName = this.getToneWithH4SiFix(chord.tone) + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type);
     this.painter = new ChordImagePainter(visualChordName, this.layout.positions, this.layout.fingers, this.size);
     this.width = this.painter.imageWidth;
     this.height = this.painter.imageHeight;
@@ -48,10 +48,10 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
 
   getChordTextForTitle(): string {
     const {chord} = this.layout;
-    return this.getToneWithB4SiFix(chord.tone) + chord.type;
+    return this.getToneWithH4SiFix(chord.tone) + chord.type;
   }
 
-  private getToneWithB4SiFix(tone: ChordTone): string {
-    return !this.b4Si && tone.charAt(0) == 'B' ? `H${tone.substring(1)}` : tone;
+  private getToneWithH4SiFix(tone: ChordTone): string {
+    return this.h4Si && tone.charAt(0) == 'B' ? `H${tone.substring(1)}` : tone;
   }
 }

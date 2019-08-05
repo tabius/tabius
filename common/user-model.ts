@@ -49,8 +49,8 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 /** User settings stored on the server. */
 export interface UserSettings {
   readonly songs: { readonly [songId: number]: UserSongSettings },
-  /** If true => B will be rendered instead of H for the tone Si. */
-  readonly b4Si?: boolean,
+  /** If true => 'B' will be rendered as 'H' for the tone Si. */
+  readonly h4Si?: boolean,
 }
 
 /** Per song settings. */
@@ -68,7 +68,7 @@ export function newDefaultUserSongSettings(songId: number): UserSongSettings {
   };
 }
 
-export const DEFAULT_B4SI_FLAG = false;
+export const DEFAULT_H4SI_FLAG = false;
 
 export function newDefaultUserSettings(): UserSettings {
   return {

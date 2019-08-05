@@ -23,7 +23,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
   chordLayouts: ChordLayout[] = [];
 
   private transpose = 0;
-  private b4Si?: boolean;
+  private h4Si?: boolean;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService) {
@@ -38,10 +38,10 @@ export class SongChordsComponent implements OnInit, OnDestroy {
           this.cd.detectChanges();
         });
 
-    this.uds.getB4SiFlag()
+    this.uds.getH4SiFlag()
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(b4Si => {
-          this.b4Si = b4Si;
+        .subscribe(h4Si => {
+          this.h4Si = h4Si;
           this.updateChordsList();
           this.cd.detectChanges();
         });
@@ -53,7 +53,7 @@ export class SongChordsComponent implements OnInit, OnDestroy {
 
   private updateChordsList() {
     const chordLocations = parseChords(this.songDetails.content);
-    const options: ChordRenderingOptions = {useH: !this.b4Si, transpose: this.transpose};
+    const options: ChordRenderingOptions = {useH: this.h4Si, transpose: this.transpose};
     const orderedChordNames: string[] = [];
     const chordsSet = new Set<string>();
     for (const location of chordLocations) {

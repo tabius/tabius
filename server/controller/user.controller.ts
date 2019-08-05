@@ -73,12 +73,12 @@ export class UserController {
     return updatedSettings;
   }
 
-  @Put('/settings/b4Si')
-  async setB4Si(@Session() session, @Body() {b4SiFlag}: { b4SiFlag: boolean|undefined }): Promise<UserSettings> {
+  @Put('/settings/h4Si')
+  async setH4Si(@Session() session, @Body() {h4SiFlag}: { h4SiFlag: boolean|undefined }): Promise<UserSettings> {
     const user: User = ServerSsoService.getUserOrFail(session);
-    this.logger.log(`set b4Si: ${user.email}: ${b4SiFlag}`);
+    this.logger.log(`set h4Si: ${user.email}: ${h4SiFlag}`);
     const settings = await this._getSettings(user);
-    const updatedSettings = {...settings, b4Si: !!b4SiFlag};
+    const updatedSettings = {...settings, h4Si: !!h4SiFlag};
     await this.userDbi.updateSettings(user.id, updatedSettings);
     return updatedSettings;
   }

@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {DEFAULT_B4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
@@ -14,7 +14,7 @@ const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
 const SONG_SETTINGS_KEY_PREFIX = 'ss-';
 const USER_PLAYLISTS_KEY = 'playlists';
 const PLAYLIST_PREFIX_KEY = 'playlist-';
-const B4SI_FLAG_KEY = 'b4Si';
+const H4SI_FLAG_KEY = 'h4Si';
 const USER_KEY = 'user';
 
 /** Data that belongs to the active user. */
@@ -77,15 +77,15 @@ export class UserDataService {
     await this.updateUserSettingsOnFetch(settings);
   }
 
-  getB4SiFlag(refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<boolean> {
+  getH4SiFlag(refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<boolean> {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
-            return of(DEFAULT_B4SI_FLAG);
+            return of(DEFAULT_H4SI_FLAG);
           }
           return this.store.get<boolean>(
-              B4SI_FLAG_KEY,
-              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.b4Si)),
+              H4SI_FLAG_KEY,
+              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.h4Si)),
               refreshMode,
               checkUpdateByReference
           ).pipe(map(flag => flag === undefined ? false : flag));
@@ -93,9 +93,9 @@ export class UserDataService {
     );
   }
 
-  async setB4SiFlag(b4SiFlag: boolean): Promise<void> {
-    await this.store.set<boolean>(B4SI_FLAG_KEY, b4SiFlag, skipUpdateCheck);
-    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/b4si`, {b4SiFlag: b4SiFlag}).pipe(take(1)).toPromise();
+  async setH4SiFlag(h4SiFlag: boolean): Promise<void> {
+    await this.store.set<boolean>(H4SI_FLAG_KEY, h4SiFlag, skipUpdateCheck);
+    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}).pipe(take(1)).toPromise();
     await this.updateUserSettingsOnFetch(settings);
   }
 
@@ -128,7 +128,7 @@ export class UserDataService {
       }
     }
 
-    allOps.push(this.store.set<boolean>(B4SI_FLAG_KEY, userSettings.b4Si || undefined, checkUpdateByReference));
+    allOps.push(this.store.set<boolean>(H4SI_FLAG_KEY, userSettings.h4Si || undefined, checkUpdateByReference));
     await Promise.all(allOps);
   }
 
