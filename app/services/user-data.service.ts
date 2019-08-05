@@ -215,7 +215,7 @@ export class UserDataService {
   }
 
   syncSessionStateAsync(): void {
-    this.syncSessionState().catch(err => console.log(err));
+    this.syncSessionState().catch(err => console.error(err));
   }
 
   async syncSessionState(): Promise<void> {
