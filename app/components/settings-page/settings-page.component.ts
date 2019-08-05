@@ -72,9 +72,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   }
 
   private updateSongFontSize(songFontSize: number) {
-    const deviceSettings = {...this.deviceSettings, songFontSize};
-    this.uds.setUserDeviceSettings(deviceSettings);
-    this.cd.detectChanges();
+    this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize});
   }
 
   useH4Si(h4SiFlag: boolean): void {

@@ -68,7 +68,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
                 this.songFontSize = settings.songFontSize;
                 this.resetCachedSongStats();
               }
-              return style;
+              this.userSongStyle = style;
             }));
 
     //todo: handle song text update too
