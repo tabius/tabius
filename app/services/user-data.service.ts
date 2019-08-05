@@ -88,7 +88,7 @@ export class UserDataService {
               () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.h4Si)),
               refreshMode,
               checkUpdateByReference
-          ).pipe(map(flag => flag === undefined ? false : flag));
+          ).pipe(map(flag => !!flag));
         })
     );
   }
