@@ -31,8 +31,8 @@ export class SessionStateInterceptor implements HttpInterceptor {
               if (event instanceof HttpResponse) {
                 const session: AjaxSessionInfo|undefined = (event.body || {}).session;
                 if (session && this.userId !== session.userId) {
-                  const authPromise$$ = session.userId ? this.authService.updateSignInState() : this.authService.signOut();
                   console.info(`Enforcing session info update. Old user: ${this.userId} new user: ${session.userId}`);
+                  const authPromise$$ = session.userId ? this.authService.updateSignInState() : this.authService.signOut();
                   return waitForAllPromisesAndReturnFirstArg(event, [authPromise$$]);
                 }
               }
