@@ -2,11 +2,12 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {UserDataService} from '@app/services/user-data.service';
 import {getDefaultUserSongFontSize, User, UserDeviceSettings} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
-import {combineLatest, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SongDetails} from '@common/artist-model';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@common/constants';
 import {RefreshMode} from '@app/store/observable-store';
+import {enableLoadingIndicator} from '@app/utils/component-utils';
 
 @Component({
   selector: 'gt-settings-page',
@@ -27,12 +28,16 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   readonly defaultFontSize = getDefaultUserSongFontSize();
   readonly settingsDemoSong = SETTINGS_DEMO_SONG;
 
-  constructor(private readonly cd: ChangeDetectorRef,
+  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+  loaded = false;
+
+  constructor(readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService,
   ) {
   }
 
   ngOnInit() {
+    enableLoadingIndicator(this);
     this.uds.syncSessionStateAsync();
 
     combineLatest([
@@ -42,6 +47,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     ])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(([user, settings, b4si]) => {
+          this.loaded = true;
           this.user = user;
           this.deviceSettings = settings;
           this.b4Si = b4si;

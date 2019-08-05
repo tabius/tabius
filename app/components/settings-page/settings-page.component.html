@@ -1,55 +1,63 @@
 <div>
     <h1>Персональные настройки</h1>
-    <div *ngIf="deviceSettings" class="song-settings-block">
-        <h2>Отображение песен</h2>
-        <div class="song-settings-controls-block">
-            <table>
-                <tr>
-                    <td>
-                        Размер шрифта:
-                        <span class="font-size"
-                              (click)="resetFontSize()"
-                              [class.default-font-size]="defaultFontSize === deviceSettings.songFontSize">{{deviceSettings.songFontSize}}
-                        </span>
-                    </td>
-                    <td>
-                        <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
-                        <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Отображать Си как</td>
-                    <td>
-                        <button (click)="useB4Si(false)" class="btn mono f16px" [class.btn-info]='!b4Si'>H</button>
-                        <button (click)="useB4Si(true)" class="btn mono f16px" [class.btn-info]='b4Si'>B</button>
-                    </td>
-                </tr>
-            </table>
 
-            <div class="song-preview-title">Пример:</div>
-            <div class="song-preview-block">
-                <gt-song-text [song]="settingsDemoSong" multiColumnMode="false"></gt-song-text>
+    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+        <div class="message">Загружаем настройки …</div>
+        <gt-loading-indicator></gt-loading-indicator>
+    </div>
+
+    <div *ngIf="loaded">
+        <div *ngIf="deviceSettings" class="song-settings-block">
+            <h2>Отображение песен</h2>
+            <div class="song-settings-controls-block">
+                <table>
+                    <tr>
+                        <td>
+                            Размер шрифта:
+                            <span class="font-size"
+                                  (click)="resetFontSize()"
+                                  [class.default-font-size]="defaultFontSize === deviceSettings.songFontSize">{{deviceSettings.songFontSize}}
+                        </span>
+                        </td>
+                        <td>
+                            <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
+                            <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Отображать Си как</td>
+                        <td>
+                            <button (click)="useB4Si(false)" class="btn mono f16px" [class.btn-info]='!b4Si'>H</button>
+                            <button (click)="useB4Si(true)" class="btn mono f16px" [class.btn-info]='b4Si'>B</button>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="song-preview-title">Пример:</div>
+                <div class="song-preview-block">
+                    <gt-song-text [song]="settingsDemoSong" multiColumnMode="false"></gt-song-text>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="playlist-editor-block" *ngIf="user">
-        <h2>Плейлисты</h2>
-        <div class="playlist-editor-content-block">
-            <gt-playlist-editor></gt-playlist-editor>
-        </div>
-    </div>
-
-    <div class="signin-sign-out-block">
-
-        <div *ngIf="!user" class="register-prompt-block">
-            <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы получить доступ к расширенным настройкам.
+        <div class="playlist-editor-block" *ngIf="user">
+            <h2>Плейлисты</h2>
+            <div class="playlist-editor-content-block">
+                <gt-playlist-editor></gt-playlist-editor>
+            </div>
         </div>
 
-        <div *ngIf="user">
-            <gt-signin-signout-button></gt-signin-signout-button>
+        <div class="signin-sign-out-block">
+
+            <div *ngIf="!user" class="register-prompt-block">
+                <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы получить доступ к расширенным настройкам.
+            </div>
+
+            <div *ngIf="user">
+                <gt-signin-signout-button></gt-signin-signout-button>
+            </div>
+
         </div>
 
     </div>
-
 </div>
