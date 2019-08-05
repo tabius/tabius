@@ -6,6 +6,7 @@ import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import Hashids from 'hashids';
+import {fromPromise} from 'rxjs/internal-compatibility';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length == 0) {
@@ -172,3 +173,13 @@ export function playlistMountToId(mount: string): number|undefined {
   const ids = playlistHashIds.decode(mount);
   return ids && ids.length == 1 ? ids[0] : undefined;
 }
+
+export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promise<unknown>[]): Observable<T> {
+  const first$ = of(first);
+  if (promises.length == 0) {
+    return first$;
+  }
+  return combineLatest([first$, ...promises.map(p => fromPromise(p))])
+      .pipe(map(arr => arr[0] as T));
+}
+

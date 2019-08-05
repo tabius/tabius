@@ -8,6 +8,7 @@ import {NODE_BB_COOKIE_DOMAIN, NODE_BB_SESSION_COOKIE, NODE_BB_URL} from '@commo
 import {ArtistDbi} from '@server/db/artist-dbi.service';
 import {isValidId} from '@common/util/misc-utils';
 import {UserDbi} from '@server/db/user-dbi.service';
+import {map} from 'rxjs/operators';
 import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';
@@ -75,7 +76,16 @@ export class ServerSsoService implements NestInterceptor {
     const req = context.switchToHttp().getRequest();
     const ssoSessionCookie = req.cookies[NODE_BB_SESSION_COOKIE];
     await this.processSessionCookie(req.session, ssoSessionCookie); //todo: handle errors correctly.
-    return next.handle();
+    // process request and append user session info to it.
+    return next.handle().pipe(
+        map(response => {
+          if (Array.isArray(response)) { //todo: remove all array responses.
+            return response;
+          }
+          const user = ServerSsoService.getUserOrUndefined(req.session);
+          return {...response, session: {userId: user && user.id}};
+        })
+    );
   }
 
   static getUserOrFail(session: Express.Session): User {

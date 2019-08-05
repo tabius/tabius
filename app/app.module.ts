@@ -45,6 +45,7 @@ import {ResourceNotFoundComponent} from './components/resource-not-found/resourc
 import {SongFullTextSearchResultsPanelComponent} from './components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 import {SongPrevNextNavigatorComponent} from './components/song-prev-next-navigator/song-prev-next-navigator.component';
+import {SessionStateInterceptor} from '@app/interceptors/session-state-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import {SongPrevNextNavigatorComponent} from './components/song-prev-next-naviga
     {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: SessionStateInterceptor, multi: true},
     {provide: TABIUS_BASE_API_URL, useValue: environment.apiUrl},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_ARTISTS_BROWSER_STORE_TOKEN, useClass: ArtistsBrowserStore},

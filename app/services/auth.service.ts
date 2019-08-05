@@ -6,6 +6,8 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 import {NODE_BB_LOGIN_URL} from '@common/constants';
 import {take} from 'rxjs/operators';
 
+export const UPDATE_SIGN_IN_STATE_URL = '/api/user/login';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,7 +25,7 @@ export class AuthService {
       return;
     }
     try {
-      const {user, settings, playlists} = await this.httpClient.get<LoginResponse>('/api/user/login').pipe(take(1)).toPromise();
+      const {user, settings, playlists} = await this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL).pipe(take(1)).toPromise();
       await Promise.all([
         this.uds.setUser(user),
         this.uds.updateUserSettingsOnFetch(settings),

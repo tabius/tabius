@@ -1,12 +1,12 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {combineLatest, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
 import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray} from '@common/util/misc-utils';
+import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
@@ -210,14 +210,5 @@ function getSongKey(songId: number|undefined): string|undefined {
 
 function getSongDetailsKey(songId: number|undefined): string|undefined {
   return isValidId(songId) ? SONG_DETAIL_KEY_PREFIX + songId : undefined;
-}
-
-function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promise<unknown>[]): Observable<T> {
-  const first$ = of(first);
-  if (promises.length == 0) {
-    return first$;
-  }
-  return combineLatest([first$, ...promises.map(p => fromPromise(p))])
-      .pipe(map(arr => arr[0] as T));
 }
 
