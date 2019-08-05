@@ -6,6 +6,8 @@ h1 {
 
 .artist-block {
 
+  margin-top: 20px;
+
   h1 {
     margin-bottom: 20px;
   }
@@ -32,8 +34,6 @@ h1 {
 }
 
 .playlist-block {
-
-  margin-top: 10px;
 
   .playlist-block-content {
     display: flex;
@@ -70,6 +70,8 @@ h1 {
 
 @media only screen and (min-width: $min-desktop-width) {
   .artist-block {
+    margin-top: 40px;
+
     .artist-block-content {
       .register-prompt-block {
         min-width: 700px;
@@ -78,7 +80,6 @@ h1 {
   }
 
   .playlist-block {
-    margin-top: 40px;
 
     .playlist-block-content {
 
