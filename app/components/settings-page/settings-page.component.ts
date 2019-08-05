@@ -6,6 +6,7 @@ import {combineLatest, Subject} from 'rxjs';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SongDetails} from '@common/artist-model';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@common/constants';
+import {RefreshMode} from '@app/store/observable-store';
 
 @Component({
   selector: 'gt-settings-page',
@@ -32,7 +33,11 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest([this.uds.getUser(), this.uds.getUserDeviceSettings(), this.uds.getB4SiFlag()])
+    combineLatest([
+      this.uds.getUser(),
+      this.uds.getUserDeviceSettings(),
+      this.uds.getB4SiFlag(RefreshMode.Refresh),
+    ])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(([user, settings, b4si]) => {
           this.user = user;

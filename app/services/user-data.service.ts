@@ -77,7 +77,7 @@ export class UserDataService {
     await this.updateUserSettingsOnFetch(settings);
   }
 
-  getB4SiFlag(): Observable<boolean> {
+  getB4SiFlag(refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<boolean> {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
@@ -86,7 +86,7 @@ export class UserDataService {
           return this.store.get<boolean>(
               B4SI_FLAG_KEY,
               () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.b4Si)),
-              RefreshMode.RefreshOncePerSession,
+              refreshMode,
               checkUpdateByReference
           ).pipe(map(flag => flag === undefined ? false : flag));
         })
