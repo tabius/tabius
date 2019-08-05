@@ -132,7 +132,7 @@ export class UserDataService {
     await Promise.all(allOps);
   }
 
-  getUserPlaylists(): Observable<Playlist[]> {
+  getUserPlaylists(refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<Playlist[]> {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
@@ -145,7 +145,7 @@ export class UserDataService {
                       tap(playlists => this.cachePlaylists(playlists)),
                       map(playlists => playlists ? playlists.map(p => p.id) : []),
                   ),
-              RefreshMode.RefreshOncePerSession,
+              refreshMode,
               checkUpdateByStringify
           ).pipe(
               flatMap(ids => {

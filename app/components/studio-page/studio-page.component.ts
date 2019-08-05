@@ -11,6 +11,7 @@ import {MOUNT_USER_SETTINGS} from '@common/mounts';
 import {Artist} from '@common/artist-model';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@common/constants';
+import {RefreshMode} from '@app/store/observable-store';
 
 @Component({
   selector: 'gt-studio-page',
@@ -43,7 +44,7 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     enableLoadingIndicator(this);
-    this.uds.getUserPlaylists()
+    this.uds.getUserPlaylists(RefreshMode.Refresh)
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
