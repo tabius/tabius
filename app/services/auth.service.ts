@@ -44,7 +44,7 @@ export class AuthService {
   async signOut(): Promise<void> {
     await this.httpClient.get<void>(LOGOUT_URL).pipe(take(1)).toPromise();
     await this.uds.setUser(undefined);
-    setTimeout(() => window.location.href = '/', 500);
+    setTimeout(() => window.location.href = NODE_BB_LOGIN_URL, 500);
   }
 }
 
