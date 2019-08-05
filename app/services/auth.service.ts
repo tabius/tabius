@@ -7,6 +7,7 @@ import {NODE_BB_LOGIN_URL} from '@common/constants';
 import {take} from 'rxjs/operators';
 
 export const UPDATE_SIGN_IN_STATE_URL = '/api/user/login';
+export const LOGOUT_URL = '/api/user/logout';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,7 @@ export class AuthService {
   }
 
   async signOut(): Promise<void> {
-    await this.httpClient.get<void>('/api/user/logout').pipe(take(1)).toPromise();
+    await this.httpClient.get<void>(LOGOUT_URL).pipe(take(1)).toPromise();
     await this.uds.setUser(undefined);
     setTimeout(() => window.location.href = '/', 500);
   }

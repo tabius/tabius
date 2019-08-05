@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {flatMap} from 'rxjs/operators';
 import {AjaxSessionInfo} from '@common/ajax-model';
-import {AuthService, UPDATE_SIGN_IN_STATE_URL} from '@app/services/auth.service';
+import {AuthService, LOGOUT_URL, UPDATE_SIGN_IN_STATE_URL} from '@app/services/auth.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -22,14 +22,14 @@ export class SessionStateInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (this.bss.isServer || isUpdateSignInStateRequest(req)) {
+    if (this.bss.isServer || isSessionStateManagementRequest(req)) {
       return next.handle(req);
     }
     return next.handle(req)
         .pipe(
             flatMap(event => {
               if (event instanceof HttpResponse) {
-                const session: AjaxSessionInfo|undefined = event.body.session;
+                const session: AjaxSessionInfo|undefined = (event.body || {}).session;
                 if (session && this.userId !== session.userId) {
                   const authActionPromise = session.userId ? this.authService.updateSignInState() : this.authService.signOut();
                   return waitForAllPromisesAndReturnFirstArg(event, [authActionPromise]);
@@ -41,6 +41,7 @@ export class SessionStateInterceptor implements HttpInterceptor {
   }
 }
 
-function isUpdateSignInStateRequest(req: HttpRequest<any>): boolean {
-  return !!req.url && req.url.endsWith(UPDATE_SIGN_IN_STATE_URL);
+function isSessionStateManagementRequest(req: HttpRequest<any>): boolean {
+  const url = req.url;
+  return !!url && (url.endsWith(UPDATE_SIGN_IN_STATE_URL) || url.endsWith(LOGOUT_URL));
 }
