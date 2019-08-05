@@ -45,6 +45,7 @@ a {
       a {
         display: flex;
         flex-direction: column;
+        outline: none;
 
         .title {
           margin-top: 15px;
@@ -262,6 +263,7 @@ a {
         justify-content: center;
         text-align: center;
         padding: 10px;
+        outline: none;
 
         gt-svg-icon {
           margin: 0 auto;
