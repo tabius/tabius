@@ -1,9 +1,13 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
-import {combineLatest0, defined, getSongPageLink} from '@common/util/misc-utils';
+import {combineLatest0, defined, getSongPageLink, isTouchEventsSupportAvailable} from '@common/util/misc-utils';
 import {sortSongsAlphabetically} from '@app/components/artist-page/artist-page.component';
+import {BrowserStateService} from '@app/services/browser-state.service';
+import {Router} from '@angular/router';
+
+const Hammer: HammerStatic = require('hammerjs');
 
 @Component({
   selector: 'gt-song-prev-next-navigator',
@@ -11,7 +15,7 @@ import {sortSongsAlphabetically} from '@app/components/artist-page/artist-page.c
   styleUrls: ['./song-prev-next-navigator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongPrevNextNavigatorComponent implements OnInit, OnDestroy {
+export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
 
@@ -20,8 +24,12 @@ export class SongPrevNextNavigatorComponent implements OnInit, OnDestroy {
   prevLink?: string;
   nextLink?: string;
 
+  private hammer?: HammerManager;
+
   constructor(private readonly ads: ArtistDataService,
               protected readonly cd: ChangeDetectorRef,
+              protected readonly bss: BrowserStateService,
+              private readonly router: Router,
   ) {
   }
 
@@ -59,8 +67,30 @@ export class SongPrevNextNavigatorComponent implements OnInit, OnDestroy {
         });
   }
 
-  ngOnDestroy(): void {
-    this.destroyed$.next();
+  ngAfterViewInit(): void {
+    if (this.bss.isBrowser && isTouchEventsSupportAvailable()) {
+      delete Hammer.defaults.cssProps.userSelect; // to allow selection
+      this.hammer = new Hammer(window.document.body, {
+        touchAction: 'auto',
+        inputClass: Hammer['SUPPORT_POINTER_EVENTS'] ? Hammer.PointerEventInput : Hammer.TouchMouseInput,
+        recognizers: [[Hammer.Swipe, {direction: Hammer.DIRECTION_HORIZONTAL}]],
+      });
+      this.hammer.on('swiperight', () => this.navigate(this.nextLink));
+      this.hammer.on('swipeleft', () => this.navigate(this.prevLink));
+    }
   }
 
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    if (this.hammer) {
+      this.hammer.destroy();
+      delete this.hammer;
+    }
+  }
+
+  private navigate(link: string|undefined): void {
+    if (link) {
+      this.router.navigate([link]).catch(err => console.error(err));
+    }
+  }
 }
