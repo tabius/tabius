@@ -47,7 +47,7 @@ describe('Chords parser, parseChord', () => {
   it('should recognize chords with raw type variation chars', () => {
     expect(parseChord('A♯')).toEqual({chord: c('A', 'aug'), startIdx: 0, endIdx: 2});
     expect(parseChord('AΔ')).toEqual({chord: c('A', 'maj'), startIdx: 0, endIdx: 2});
-    expect(parseChord('Ao')).toEqual({chord: c('A', 'dim'), startIdx: 0, endIdx: 2});
+    expect(parseChord('A°')).toEqual({chord: c('A', 'dim'), startIdx: 0, endIdx: 2});
   });
 
   it('does not false predict A-- as Am', () => {
@@ -77,7 +77,7 @@ describe('Chords parser, parseChordsLine', () => {
     expect(parseChordsLine('One More A Little Snail')).toEqual([]);
     expect(parseChordsLine('On The Go')).toEqual([]);
     expect(parseChordsLine('Go Go Go')).toEqual([]);
-    expect(parseChordsLine('Go Am')).toEqual([
+    expect(parseChordsLine('G° Am')).toEqual([
       {chord: {tone: 'G', type: 'dim'}, startIdx: 0, endIdx: 2},
       {chord: {tone: 'A', type: 'min'}, startIdx: 3, endIdx: 5},
     ]);

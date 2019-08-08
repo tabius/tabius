@@ -157,7 +157,6 @@ function getRawTypeVariations(originalVariant: string): string[] {
   }
 
   if (originalVariant.includes('dim')) {
-    derivedVariants.push(originalVariant.replace('dim', 'o'));
     derivedVariants.push(originalVariant.replace('dim', '°'));
   }
 
