@@ -1,7 +1,51 @@
-.navigator {
+@import "~app/styles/dimensions";
+
+.prev-next-links-block {
   margin-top: 20px;
+
+  .prev-link {
+    margin-right: 20px;
+  }
+
 }
 
-.prev-link {
-  margin-right: 20px;
+$sticky-sidebar-width: 75px;
+
+.sticky-sidebar {
+  .left-bar, .right-bar {
+    position: fixed;
+    width: $sticky-sidebar-width;
+    top: 40px;
+    height: 100vh;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border: 1px solid transparent;
+
+    gt-svg-icon {
+      fill: #999;
+      opacity: 0.33;
+      width: $sticky-sidebar-width;
+    }
+
+    &:hover, &:focus {
+      border: 1px solid #f3f3f3;
+
+      gt-svg-icon {
+        opacity: 1;
+      }
+
+    }
+  }
+
+  .left-bar {
+    left: 0;
+  }
+
+  .right-bar {
+    right: 0;
+  }
+
 }

@@ -1,7 +1,18 @@
-<div *ngIf="prevLink && nextLink" class="navigator">
+<div *ngIf="prevLink && nextLink">
 
-    <a routerLink="{{prevLink}}" class="prev-link">« Пред. песня</a>
+    <div class="prev-next-links-block" *ngIf="!showStickySideBars">
+        <a routerLink="{{prevLink}}" class="prev-link">« Пред. песня</a>
+        <a routerLink="{{nextLink}}" class="next-link">След. песня »</a>
+    </div>
 
-    <a routerLink="{{nextLink}}" class="next-link">След. песня »</a>
+    <div *ngIf="showStickySideBars" class="sticky-sidebar">
+        <div class="left-bar" (click)="navigate(prevLink)" title="Перейти к предыдущей песне">
+            <gt-svg-icon icon="prev"></gt-svg-icon>
+        </div>
+
+        <div class="right-bar" (click)="navigate(nextLink)" title="Перейти к следующей песне">
+            <gt-svg-icon icon="next"></gt-svg-icon>
+        </div>
+    </div>
 
 </div>

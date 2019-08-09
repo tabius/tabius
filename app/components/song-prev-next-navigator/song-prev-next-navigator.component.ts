@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
@@ -6,6 +6,7 @@ import {combineLatest0, defined, getSongPageLink, isTouchEventsSupportAvailable}
 import {sortSongsAlphabetically} from '@app/components/artist-page/artist-page.component';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
+import {MIN_DESKTOP_WIDTH} from '@common/constants';
 
 const Hammer: HammerStatic = require('hammerjs');
 
@@ -24,11 +25,13 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   prevLink?: string;
   nextLink?: string;
 
+  showStickySideBars = true;
+
   private hammer?: HammerManager;
 
   constructor(private readonly ads: ArtistDataService,
-              protected readonly cd: ChangeDetectorRef,
-              protected readonly bss: BrowserStateService,
+              private readonly cd: ChangeDetectorRef,
+              private readonly bss: BrowserStateService,
               private readonly router: Router,
   ) {
   }
@@ -88,7 +91,16 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     }
   }
 
-  private navigate(link: string|undefined): void {
+  @HostListener('window:resize', [])
+  onWindowResize() {
+    const showStickySideBars = window.innerWidth > MIN_DESKTOP_WIDTH;
+    if (this.showStickySideBars !== showStickySideBars) {
+      this.showStickySideBars = showStickySideBars;
+      this.cd.detectChanges();
+    }
+  }
+
+  navigate(link: string|undefined): void {
     if (link) {
       this.router.navigate([link]).catch(err => console.error(err));
     }
