@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
@@ -105,36 +105,69 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   }
 
 
-  async create(): Promise<void> {
-    if (!this.createMode || this.title.length === 0 || this.content === ' ') {
+  create(): void {
+    if (!this.createMode) {
       return;
     }
-    try {
-      const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, artistId: this.artistId, tid: INVALID_ID};
-      const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
-      await this.ads.createSong(createdSong, createdDetails);
-      this.close();
-    } catch (err) {
-      this.toastService.warning(`Ошибка: ${err}`);
+    if (this.title.length === 0) {
+      this.toastService.warning('Необходимо указать название песни');
+      return;
     }
+    if (this.content.length == 0) {
+      this.toastService.warning('Текст песни не может быть пуст');
+      return;
+    }
+    this.createImpl().catch(err => {
+      this.toastService.warning(`Ошибка: ${err}`);
+    });
+  }
+
+  private async createImpl(): Promise<void> {
+    const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, artistId: this.artistId, tid: INVALID_ID};
+    const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
+    await this.ads.createSong(createdSong, createdDetails);
+    this.close();
   }
 
   private getMediaLinksAsArray(): string[] {
     return this.mediaLinks.split(' ').filter(l => l.length > 0);
   }
 
-  async update(): Promise<void> {
-    if (this.createMode || !this.details || !this.song ||
-        (this.song.title === this.title && this.details.content === this.content && this.details.mediaLinks.join(' ') == this.mediaLinks)) {
-      return;
+  update(): void {
+    this.updateImpl()
+        .then(changedAndSaved => {
+          if (changedAndSaved) {
+            this.toastService.info('Изменения сохранены');
+          }
+        })
+        .catch(err => {
+          this.toastService.warning(`Ошибка: ${err}`);
+        });
+  }
+
+  /** Returns true if there were changes to the song and saving was successful. */
+  private async updateImpl(): Promise<boolean> {
+    if (this.createMode || !this.song || !this.details) {
+      return false;
     }
-    try {
+    const changed = this.song.title !== this.title || this.details.content !== this.content || this.details.mediaLinks.join(' ') !== this.mediaLinks;
+    if (changed) {
       const updatedSong: Song = {...this.song, title: this.title};
       const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
       await this.ads.updateSong(updatedSong, updatedDetails);
-      this.close();
-    } catch (err) {
-      this.toastService.warning(`Ошибка: ${err}`);
+    }
+    this.close();
+    return changed;
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Enter' && event.ctrlKey) {
+      if (this.createMode) {
+        this.create();
+      } else {
+        this.update();
+      }
     }
   }
 

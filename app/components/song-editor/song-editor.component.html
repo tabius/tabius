@@ -8,7 +8,7 @@
         <input #firstFormElement type="text" [(ngModel)]="title" class="song-title" placeholder="Название песни">
     </div>
     <div>
-        <textarea #textArea [(ngModel)]="content" class="song-content" rows="{{getContentRowsCount()}}"></textarea>
+        <textarea #textArea [(ngModel)]="content" class="song-content" rows="{{getContentRowsCount()}}" placeholder="Текст песни с аккордами"></textarea>
     </div>
     <div class="media-links-block">
         <input [(ngModel)]="mediaLinks" type="text" placeholder="Ссылка на YouTube">
