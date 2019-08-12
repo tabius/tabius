@@ -19,7 +19,9 @@
                 <img *ngIf="!!artistViewModel.imgSrc"
                      src="{{artistViewModel.imgSrc}}"
                      alt="{{artistViewModel.artist.name}}"
-                     title="{{artistViewModel.displayName}}">
+                     title="{{artistViewModel.displayName}}"
+                     class="artist-image"
+                />
 
                 <div *ngIf="artistViewModel.bands.length > 0" class="bands-info">
                     Группы:
