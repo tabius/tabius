@@ -1,3 +1,5 @@
+@import "~app/styles/colors";
+
 .no-results-message {
   color: #999;
 }
@@ -13,7 +15,7 @@
 
 .artist-name {
   font-size: 95%;
-  color: #555;
+  color: $color-golden-link;
 }
 
 .content-result-item {
