@@ -11,6 +11,8 @@ import {getArtistPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {UserDataService} from '@app/services/user-data.service';
+import {BrowserStateService} from '@app/services/browser-state.service';
+import {MIN_DESKTOP_WIDTH} from '@common/constants';
 
 interface LetterBlock {
   letter: string,
@@ -49,6 +51,7 @@ export class ArtistListPageComponent implements OnInit {
 
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
+              private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,
@@ -75,19 +78,21 @@ export class ArtistListPageComponent implements OnInit {
         .subscribe(artists => {
           this.letterBlocks = toLetterBlocks(artists);
           this.loaded = true;
-          this.bringFocusToTheSearchField();
           this.cd.detectChanges();
+          this.bringFocusToTheSearchField();
           this.navHelper.restoreScrollPosition();
         });
     this.updateMeta();
   }
 
   private bringFocusToTheSearchField(): void {
-    setTimeout(() => {
-      if (this.searchField && this.searchField.nativeElement) {
-        this.searchField.nativeElement.focus();
-      }
-    }, 200);
+    if (this.bss.isBrowser && window.innerWidth >= MIN_DESKTOP_WIDTH) { // do not focus on the touch device to avoid virtual keyboard to be opened.
+      setTimeout(() => {
+        if (this.searchField && this.searchField.nativeElement) {
+          this.searchField.nativeElement.focus();
+        }
+      }, 200);
+    }
   }
 
   updateMeta() {
