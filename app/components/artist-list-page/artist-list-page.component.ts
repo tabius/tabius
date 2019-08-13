@@ -86,7 +86,8 @@ export class ArtistListPageComponent implements OnInit {
   }
 
   private bringFocusToTheSearchField(): void {
-    if (this.bss.isBrowser && window.innerWidth >= MIN_DESKTOP_WIDTH) { // do not focus on the touch device to avoid virtual keyboard to be opened.
+    // do not focus: 1) During SSR, 2) On touch device to avoid virtual keyboard to be opened, 3) On non-default scrolling position to avoid re-scroll.
+    if (this.bss.isBrowser && window.innerWidth >= MIN_DESKTOP_WIDTH && window.pageYOffset === 0) {
       setTimeout(() => {
         if (this.searchField && this.searchField.nativeElement) {
           this.searchField.nativeElement.focus();
