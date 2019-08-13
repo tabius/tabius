@@ -59,7 +59,11 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
 
   formatResultSnippet(snippet: string): string {
     const multilineSnippet = snippet.replace(/\.\.\./g, '\n');
-    const lines = getSongTextWithNoChords(multilineSnippet, 6, false).split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const lines = getSongTextWithNoChords(multilineSnippet, 10, false)
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+
     if (lines.length == 1) {
       return lines[0].trim();
     }
