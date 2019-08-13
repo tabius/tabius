@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Artist} from '@common/artist-model';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {FormControl} from '@angular/forms';
@@ -38,6 +38,8 @@ export class ArtistListPageComponent implements OnInit {
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   readonly getArtistPageLink = getArtistPageLink;
 
+  @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
+
   loaded = false;
   letterBlocks: LetterBlock[] = [];
   searchValue: string = '';
@@ -73,10 +75,19 @@ export class ArtistListPageComponent implements OnInit {
         .subscribe(artists => {
           this.letterBlocks = toLetterBlocks(artists);
           this.loaded = true;
+          this.bringFocusToTheSearchField();
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });
     this.updateMeta();
+  }
+
+  private bringFocusToTheSearchField(): void {
+    setTimeout(() => {
+      if (this.searchField && this.searchField.nativeElement) {
+        this.searchField.nativeElement.focus();
+      }
+    }, 200);
   }
 
   updateMeta() {
