@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Artist, Song, SongDetails} from '@common/artist-model';
@@ -98,6 +98,13 @@ export class SongPageComponent implements OnInit, OnDestroy {
       description: getSongTextWithNoChords(this.songDetails.content, 4, true),
       keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: any): void {
+    if (this.hasEditRight && !this.editorIsOpen && event.shiftKey && event.code === 'KeyE') {
+      this.toggleEditor();
+    }
   }
 
   toggleEditor(): void {
