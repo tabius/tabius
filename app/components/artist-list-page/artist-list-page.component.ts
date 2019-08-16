@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Artist} from '@common/artist-model';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {FormControl} from '@angular/forms';
@@ -96,6 +96,21 @@ export class ArtistListPageComponent implements OnInit {
     }
   }
 
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent): void {
+    switch (event.code) {
+      case 'Slash':
+        if (document.activeElement !== this.searchField.nativeElement) {
+          this.searchField.nativeElement.focus();
+          event.preventDefault();
+        }
+        break;
+      case 'Escape':
+        this.activateLetter(null);
+        break;
+    }
+  }
+
   updateMeta() {
     updatePageMetadata(this.title, this.meta, {
       title: 'Список артистов',
@@ -112,9 +127,9 @@ export class ArtistListPageComponent implements OnInit {
     return artist.id;
   }
 
-  activateLetter(letter: string|null) {
+  activateLetter(letter: string|null): void {
     this.updateArtistFilter('');
-    if (letter == null) {
+    if (letter == null || letter.length === 0) {
       letterBlockFilters = [];
     } else {
       letterBlockFilters = [letter];
