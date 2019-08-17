@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="item artists" [class.active]="getActiveSection() === NavSection.Artists">
-            <a routerLink="{{artistsLink}}">
+            <a routerLink="{{artistsLink}}" (click)="resetArtistsPageScroll()">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="artist"></gt-svg-icon>
                 <div class="title">АРТИСТЫ</div>

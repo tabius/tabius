@@ -7,6 +7,7 @@ import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_ARTISTS, MOUNT_PLAYLIST_PREFIX, M
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {ToastService} from '@app/toast/toast.service';
+import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 
 enum NavSection {
   Home = 1,
@@ -28,11 +29,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user?: User;
   opened = false;
 
-  readonly forumLink = FORUM_LINK;
-  readonly artistsLink = MOUNT_ARTISTS;
-  readonly studioLink = MOUNT_USER_STUDIO;
-  readonly tunerLink = MOUNT_TUNER;
-  readonly settingsLink = MOUNT_USER_SETTINGS;
+  readonly forumLink = `/${FORUM_LINK}`;
+  readonly artistsLink = `/${MOUNT_ARTISTS}`;
+  readonly studioLink = `/${MOUNT_USER_STUDIO}`;
+  readonly tunerLink = `/${MOUNT_TUNER}`;
+  readonly settingsLink = `/${MOUNT_USER_SETTINGS}`;
 
   readonly NavSection = NavSection;
   readonly noSleepMode$: Observable<boolean>;
@@ -41,6 +42,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               private readonly router: Router,
               private readonly bss: BrowserStateService,
               private readonly toast: ToastService,
+              private readonly navHelper: RoutingNavigationHelper,
               private readonly cd: ChangeDetectorRef,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
@@ -107,6 +109,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.toast.info(`Аккаунт: ${this.user.username}, ${this.user.email}`);
     } else {
       this.toast.info('Вы не вошли в систему');
+    }
+  }
+
+  resetArtistsPageScroll(): void {
+    this.navHelper.resetSavedScrollPosition(this.artistsLink);
+    if (this.router.url === this.artistsLink) {
+      window.scroll({top: 0, left: 0, behavior: 'smooth'});
     }
   }
 }

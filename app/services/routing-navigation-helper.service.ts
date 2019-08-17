@@ -34,4 +34,8 @@ export class RoutingNavigationHelper {
       window.scroll({left: window.scrollX, top: offsetY,});
     }
   }
+
+  resetSavedScrollPosition(url: string): void {
+    this.pageOffsetYPerRoute.delete(url);
+  }
 }
