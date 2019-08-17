@@ -1,4 +1,4 @@
-import {isTabsLikeLine, parseChord, parseChords, parseChordsLine} from '@app/utils/chords-parser';
+import {isTabsLine, parseChord, parseChords, parseChordsLine} from '@app/utils/chords-parser';
 import {Chord, ChordTone, ChordType} from '@app/utils/chords-parser-lib';
 
 const c = (tone: ChordTone, type: ChordType): Chord => ({tone, type});
@@ -74,9 +74,14 @@ describe('Chords parser, parseChordsLine', () => {
 
   it('should correctly process lines with non-chords text', () => {
     expect(parseChordsLine('A little snail')).toEqual([]);
-    expect(parseChordsLine('One More A Little Snail')).toEqual([]);
+    expect(parseChordsLine('A Little Snail, A little Snail')).toEqual([]);
     expect(parseChordsLine('On The Go')).toEqual([]);
     expect(parseChordsLine('Go Go Go')).toEqual([]);
+    expect(parseChordsLine('Gо Gо, Jонnnу B. Gооdе')).toEqual([]);
+    expect(parseChordsLine('G, Am } 3 times')).toEqual([
+      {chord: {tone: 'G', type: 'maj'}, startIdx: 0, endIdx: 1},
+      {chord: {tone: 'A', type: 'min'}, startIdx: 3, endIdx: 5},
+    ]);
     expect(parseChordsLine('G° Am')).toEqual([
       {chord: {tone: 'G', type: 'dim'}, startIdx: 0, endIdx: 2},
       {chord: {tone: 'A', type: 'min'}, startIdx: 3, endIdx: 5},
@@ -98,7 +103,8 @@ describe('Chords parser, parseChordsLine', () => {
   });
 
   it('should correctly detect tabs-like lines', () => {
-    expect(isTabsLikeLine('H  ||--------1----------1h3p-0--|-----1-------------------||')).toBeTruthy();
+    const text = 'H  ||--------1----------1h3p-0--|-----1-------------------||';
+    expect(isTabsLine(text, 0, text.length)).toBeTruthy();
   });
 
 });

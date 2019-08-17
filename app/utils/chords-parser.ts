@@ -39,6 +39,11 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
   } else {
     maxIdx = Math.min(maxIdx, text.length);
   }
+
+  if (isTabsLine(text, minIdx, maxIdx)) {
+    return [];
+  }
+
   while (idx < maxIdx) {
     const c = text.charAt(idx);
     const alpha = isAlpha(c);
@@ -54,21 +59,50 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     chordLocations.push(chordLocation);
     idx += chordLocation.endIdx - chordLocation.startIdx;
   }
-
-  if (chordLocations.length > 0 && !hasChordsNotLikeWords(chordLocations, text)) {
-    if ((chordLocations.length > 1 && allChordsAreTheSame(chordLocations)) || !isTheOnlyAlphaInText(chordLocations[0], text, minIdx, maxIdx)) {
-      return [];
-    }
-  }
-
-  // strings-like lines heuristics: A|--1-2-3--x-
-  if (chordLocations.length === 1 && chordLocations[0].endIdx - chordLocations[0].startIdx <= 2) { // <=2: A or A- (minor)
-    const textWithoutChord = text.substring(minIdx, maxIdx).replace(chordLocations[0].chord.tone, '');
-    if (isTabsLikeLine(textWithoutChord)) {
-      return [];
-    }
+  if (isMostlyNonChordsTextLine(chordLocations, text, minIdx, maxIdx)) {
+    return [];
   }
   return chordLocations;
+}
+
+/** Returns 'true' if the line looks like a normal (non-cords) line. */
+export function isMostlyNonChordsTextLine(chordLocations: ChordLocation[], text: string, startIdx: number, endIdx: number): boolean {
+  if (chordLocations.length === 0) {
+    return true;
+  }
+  let alphaLen = 0;
+  for (let i = startIdx; i < endIdx; i++) {
+    const c = text.charAt(i);
+    if (isAlpha(c)) {
+      alphaLen++;
+    }
+  }
+  let nonChordsAlphaLen = 0;
+  for (let i = -1; i < chordLocations.length; i++) {
+    const from = i === -1 ? startIdx : chordLocations[i].endIdx;
+    const to = i + 1 < chordLocations.length ? chordLocations[i + 1].startIdx : endIdx;
+    for (let j = from; j < to; j++) {
+      const c = text.charAt(j);
+      if (isAlpha(c)) {
+        nonChordsAlphaLen++;
+      }
+    }
+  }
+  // Return 'true' if % of alpha chars outside of chords is too large.
+  return nonChordsAlphaLen >= alphaLen * 2 / 3;
+}
+
+/** Returns 'true' if the line looks like tabs: A|--1-2-3--x- */
+export function isTabsLine(text: string, startIdx: number, endIdx: number): boolean {
+  let tabCharsCount = 0;
+  for (let idx = startIdx; idx < endIdx; idx++) {
+    const c = text.charAt(idx);
+    if (c === '-' || c === '|') {
+      tabCharsCount++;
+    }
+  }
+  const textLen = endIdx - startIdx;
+  return tabCharsCount >= textLen / 2;
 }
 
 /** All possible chord letters (including H). */
@@ -128,18 +162,6 @@ function findPrefixToken(text: string, idx: number, tokens: readonly string[]): 
   return undefined;
 }
 
-export function isTabsLikeLine(text: string): boolean {
-  let dashCount = 0;
-  for (let idx = 0; idx < text.length; idx++) {
-    const c = text.charAt(idx);
-    if (c === '-') {
-      dashCount++;
-    }
-  }
-  return dashCount > text.length / 2;
-}
-
-
 /** Returns true if the char at the given position is a text start. Chord parsing must start in this case. */
 function isKnownTypeAndTextConflict(c: string, text: string, idx: number): boolean {
   return (c === '-' || c === '−') && (idx < text.length - 1 && !isWhitespaceOrChordExtender(text.charAt(idx + 1)));
@@ -149,52 +171,3 @@ function isKnownTypeAndTextConflict(c: string, text: string, idx: number): boole
 function isWhitespaceOrChordExtender(c: string): boolean {
   return c === ' ' || c === '\n' || c === '/' || c === '(';
 }
-
-const CHORDS_LIKE_WORDS_LC = new Set<string>(['a', 'go']);
-
-function hasChordsNotLikeWords(locations: ChordLocation[], text: string): boolean {
-  for (const l of locations) {
-    const chordText = text.substring(l.startIdx, l.endIdx).toLocaleLowerCase();
-    if (!CHORDS_LIKE_WORDS_LC.has(chordText)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function allChordsAreTheSame(chordLocations: ChordLocation[]): boolean {
-  if (chordLocations.length === 0) {
-    return true;
-  }
-  const chord0 = chordLocations[0];
-  for (let i = 1; i < chordLocations.length; i++) {
-    const chordI = chordLocations[i];
-    if (chord0.chord.tone !== chordI.chord.tone || chord0.chord.type !== chordI.chord.type) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function isTheOnlyAlphaInText(chordLocation: ChordLocation, text: string, minIdx: number, maxIdx: number): boolean {
-  if (chordLocation.startIdx > minIdx && !containsNonAlphaCharsOnly(text.substring(minIdx, chordLocation.startIdx))) {
-    return false;
-  }
-  // noinspection RedundantIfStatementJS
-  if (chordLocation.endIdx < maxIdx - 1 && !containsNonAlphaCharsOnly(text.substring(chordLocation.endIdx, maxIdx))) {
-    return false;
-  }
-  return true;
-}
-
-export function containsNonAlphaCharsOnly(text: string): boolean {
-  for (let i = 0; i < text.length; i++) {
-    if (isAlpha(text.charAt(i))) {
-      return false;
-    }
-  }
-  return true;
-}
-
-
-
