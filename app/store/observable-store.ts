@@ -63,6 +63,8 @@ export interface ObservableStore {
   initialized$$: Promise<void>;
 }
 
+const DEDUP_CACHE_CLEANUP_PERIOD_MILLIS = 30_000;
+
 /** Low level key->value storage. */
 class ObservableStoreImpl implements ObservableStore {
   private markAsInitialized?: () => void;
@@ -73,6 +75,10 @@ class ObservableStoreImpl implements ObservableStore {
   private readonly refreshSet = new Set<string>();
   private readonly serverStateKey: StateKey<any>;
   private readonly storeAdapter$$: Promise<StoreAdapter>;
+
+  /** Set() op is async in time and this cache is used to provide synchronous checks for the last set values.*/
+  private readonly dedupSetOpsCache = new Map<string, DedupUpdate>();
+  private nextDedupCleanTime = 0;
 
   constructor(storeName: string,
               browser: boolean,
@@ -174,7 +180,11 @@ class ObservableStoreImpl implements ObservableStore {
     const inRefreshSet = this.refreshSet.has(key);
     const store = await this.storeAdapter$$;
     if (needUpdateFn !== skipUpdateCheck) {
-      const oldValue = await store.get<T>(key);
+      const dedupValue = this.dedupSetOpsCache.get(key);
+      let oldValue = dedupValue && dedupValue.value;
+      if (!oldValue) {
+        oldValue = await store.get<T>(key);
+      }
       if (!needUpdateFn(oldValue, value)) {
         const firstUpdate = !inRefreshSet;
         const forceUpdate = firstUpdate && value === undefined && oldValue === undefined;
@@ -185,11 +195,22 @@ class ObservableStoreImpl implements ObservableStore {
     }
     if (!inRefreshSet) {
       this.refreshSet.add(key);
+    } else {
+      const dedupValue = this.dedupSetOpsCache.get(key);
+      const sameWithLastValue = dedupValue && needUpdateFn !== skipUpdateCheck && !needUpdateFn(dedupValue.value, value);
+      if (sameWithLastValue) {
+        return;
+      }
     }
+    const time = Date.now();
+    this.dedupSetOpsCache.set(key, {time, value});
     await store.set(key, value);
     const rs$ = this.dataMap.get(key);
     if (rs$) {
       rs$.next(this.freezeFn(value));
+    }
+    if (time >= this.nextDedupCleanTime) {
+      this.cleanupDedupCache();
     }
   }
 
@@ -224,6 +245,18 @@ class ObservableStoreImpl implements ObservableStore {
       this.newReplaySubject(key, value);
       this.refreshSet.add(key);
     }
+  }
+
+  private cleanupDedupCache(): void {
+    const keys = [...this.dedupSetOpsCache.keys()];
+    const now = Date.now();
+    for (const key of keys) {
+      const entry = this.dedupSetOpsCache.get(key)!;
+      if (entry.time + DEDUP_CACHE_CLEANUP_PERIOD_MILLIS < now) {
+        this.dedupSetOpsCache.delete(key);
+      }
+    }
+    this.nextDedupCleanTime = now + DEDUP_CACHE_CLEANUP_PERIOD_MILLIS;
   }
 }
 
@@ -286,3 +319,8 @@ export function skipUpdateCheck(): boolean {
   throw 'This is a marker function that must never be called!';
 }
 
+
+interface DedupUpdate {
+  time: number;
+  value: any;
+}
