@@ -25,7 +25,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   prevLink?: string;
   nextLink?: string;
 
-  showStickySideBars = false;
+  showStickySideBars: 'initializing'|'yes'|'no' = 'initializing';
 
   private hammer?: HammerManager;
 
@@ -98,7 +98,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   }
 
   private updateStickySideBarsVisibility(): void {
-    const showStickySideBars = window.innerWidth > MIN_DESKTOP_WIDTH;
+    const showStickySideBars = window.innerWidth > MIN_DESKTOP_WIDTH ? 'yes' : 'no';
     if (this.showStickySideBars !== showStickySideBars) {
       this.showStickySideBars = showStickySideBars;
       this.cd.detectChanges();
