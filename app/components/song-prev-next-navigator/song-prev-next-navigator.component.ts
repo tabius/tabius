@@ -25,7 +25,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   prevLink?: string;
   nextLink?: string;
 
-  showStickySideBars = true;
+  showStickySideBars = false;
 
   private hammer?: HammerManager;
 
@@ -81,6 +81,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
       this.hammer.on('swiperight', () => this.navigate(this.nextLink));
       this.hammer.on('swipeleft', () => this.navigate(this.prevLink));
     }
+    setTimeout(() => this.updateStickySideBarsVisibility(), 100);
   }
 
   ngOnDestroy(): void {
@@ -93,6 +94,10 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   @HostListener('window:resize', [])
   onWindowResize() {
+    this.updateStickySideBarsVisibility();
+  }
+
+  private updateStickySideBarsVisibility(): void {
     const showStickySideBars = window.innerWidth > MIN_DESKTOP_WIDTH;
     if (this.showStickySideBars !== showStickySideBars) {
       this.showStickySideBars = showStickySideBars;
