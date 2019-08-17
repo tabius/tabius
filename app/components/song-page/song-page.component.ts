@@ -58,7 +58,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
     const artistId$ = this.ads.getArtistIdByMount(artistMount);
     const artist$ = artistId$.pipe(flatMap(id => this.ads.getArtistById(id)));
     const song$ = artistId$.pipe(flatMap(artistId => this.ads.getSongByMount(artistId, songMount)));
-    const songDetails$ = song$.pipe(flatMap(song => this.ads.getSongDetailsById(song ? song.id : undefined)));
+    const songDetails$ = song$.pipe(flatMap(song => this.ads.getSongDetailsById(song && song.id)));
 
     combineLatest([artist$, song$, songDetails$, this.uds.getUser()])
         .pipe(
@@ -94,8 +94,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
       return;
     }
     updatePageMetadata(this.title, this.meta, {
-      title: `${this.song.title}. ${this.artist.name}. Аккорды`,
-      description: getSongTextWithNoChords(this.songDetails.content, 4, true),
+      title: `${this.song.title}, ${this.artist.name} — текст песни и аккорды`,
+      description: getSongTextWithNoChords(this.songDetails.content, 5, true),
       keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
   }

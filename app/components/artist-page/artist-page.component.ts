@@ -90,7 +90,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
           this.artistViewModel = new ArtistViewModel(artist, bands, songs, artistDetails.listed);
           this.user = user;
           this.hasEditRight = canEditArtist(this.user, artist.id);
-          this.updateMeta();
+          this.updateMeta(songs);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
 
@@ -106,16 +106,17 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
   }
 
-  updateMeta() {
-    if (!this.artistViewModel) {
+  updateMeta(songs: Song[]): void {
+    const {artistViewModel} = this;
+    if (!artistViewModel) {
       return;
     }
-    const name = this.artistViewModel.displayName;
+    const name = artistViewModel.displayName;
     updatePageMetadata(this.title, this.meta, {
-      title: `${name}. Список песен. Табы и аккорды для гитары`,
-      description: `${name}. Список всех песен, табы и подбор аккордов для гитары.`,
-      keywords: [`${name} табы для гитары`, `аккорды ${name}`, `подбор ${name}`],
-      image: this.artistViewModel!.imgSrc
+      title: `${name} — текст песен и аккорды для гитары`,
+      description: `${name} — полная коллекция всех песен и аккордов для гитары.${getFirstSongsNames(songs)}`,
+      keywords: [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `тексты ${name}`, `песни ${name}`],
+      image: artistViewModel.imgSrc,
     });
   }
 
@@ -131,5 +132,17 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
 
 export function sortSongsAlphabetically(songs: Song[]): Song[] {
   return songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
+}
+
+function getFirstSongsNames(songs: Song[]): string {
+  if (songs.length === 0) {
+    return '';
+  }
+  let res = '';
+  for (let i = 0, n = Math.min(10, songs.length); i < n; i++) {
+    const song = songs[i];
+    res += ` ${song.title}.`;
+  }
+  return res;
 }
 
