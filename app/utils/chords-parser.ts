@@ -70,6 +70,9 @@ export function isMostlyNonChordsTextLine(chordLocations: ChordLocation[], text:
   if (chordLocations.length === 0) {
     return true;
   }
+  if (chordLocations.length >= 3) { // 3 chords in the line - mark this line as a chords line.
+    return false;
+  }
   let alphaLen = 0;
   for (let i = startIdx; i < endIdx; i++) {
     const c = text.charAt(i);
