@@ -147,8 +147,8 @@ export class ArtistListPageComponent implements OnInit {
     return letterBlockFilters.some(l => l === letter);
   }
 
-  updateArtistFilter(value: string) {
-    if (this.searchValue != value) {
+  updateArtistFilter(value: string): void {
+    if (this.searchValue !== value) {
       this.searchValue = value;
       this.filteredArtists = this.getFilteredArtists();
       this.cd.markForCheck();
