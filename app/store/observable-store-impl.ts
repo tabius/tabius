@@ -18,7 +18,7 @@ export class ObservableStoreImpl implements ObservableStore {
   private readonly storeAdapter$$: Promise<StoreAdapter>;
 
   /** Queue to make 'set' opts sequential (synchronized).*/
-  private readonly setOpsQueue = new Map<string, SetOp<any>[]>();
+  readonly setOpsQueue = new Map<string, SetOp<any>[]>();
 
   constructor(storeName: string,
               browser: boolean,
