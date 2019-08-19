@@ -44,12 +44,13 @@ export class ObservableStoreImpl implements ObservableStore {
             this.markAsInitialized();
           });
         } else {
-          adapter.list().then(kvPairs => {
+          serverState.onSerialize(serverStateKey, () => {
+            const kvPairs = adapter.snapshot();
             kvPairs.push({key: SERVER_STATE_TIMESTAMP_KEY, value: new Date().toUTCString()});
-            serverState.onSerialize(serverStateKey, () => pairsToObject(kvPairs));
-            resolve(adapter);
-            this.markAsInitialized();
+            return pairsToObject(kvPairs);
           });
+          resolve(adapter);
+          this.markAsInitialized();
         }
       });
     });
@@ -207,7 +208,7 @@ export class ObservableStoreImpl implements ObservableStore {
   }
 }
 
-function pairsToObject(pairs: KV<any>[]): { [key: string]: any } {
+function pairsToObject(pairs: KV<unknown>[]): { [key: string]: any } {
   const res: any = {};
   for (const {key, value} of pairs) {
     res[key] = value;

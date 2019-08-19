@@ -139,6 +139,10 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
     return Promise.resolve();
   }
 
+  snapshot(): KV<unknown>[] {
+    throw Error('Not supported');
+  }
+
   execute(dbOp: (db: IDBDatabase) => void): void {
     const request: IDBOpenDBRequest = window.indexedDB.open(this.indexDbName, INDEX_DB_SCHEMA_VERSION);
     request.onerror = err => console.error(err);

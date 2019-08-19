@@ -104,4 +104,9 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
     }
     return Promise.resolve();
   }
+
+  snapshot(): KV<unknown>[] {
+    throw Error('Not supported');
+  }
+
 }

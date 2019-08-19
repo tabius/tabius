@@ -26,4 +26,7 @@ export interface StoreAdapter {
 
   /** TODO: provide an upgrade function as a parameter. */
   init(schemaVersion: number): Promise<void>;
+
+  /** Returns current storage snapshot. Optional method. */
+  snapshot(): KV<unknown>[];
 }

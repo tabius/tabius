@@ -66,5 +66,14 @@ export class InMemoryStoreAdapter implements StoreAdapter {
     }
     return Promise.resolve();
   }
+
+  snapshot(): KV<unknown>[] {
+    const result: KV<unknown>[] = [];
+    for (const key of this.map.keys()) {
+      const value = this.map.get(key);
+      result.push({key, value});
+    }
+    return result;
+  }
 }
 
