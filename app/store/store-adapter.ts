@@ -19,7 +19,7 @@ export interface StoreAdapter {
   setAll(map: { [key: string]: any }): Promise<void>;
 
   /** Returns all objects with a given key prefix. */
-  list<T>(keyPrefix: string): Promise<KV<T>[]>;
+  list<T>(keyPrefix?: string): Promise<KV<T>[]>;
 
   /** Removes all data in the store. */
   clear(): Promise<void>;

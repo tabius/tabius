@@ -99,11 +99,12 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   }
 
 
-  list<T>(keyPrefix: string): Promise<KV<T>[]> {
+  list<T>(keyPrefix?: string): Promise<KV<T>[]> {
     const storeName = this.storeName;
     return new Promise<KV<T>[]>((resolve, reject) => {
       this.execute(db => {
-        const query: IDBKeyRange = IDBKeyRange.bound(keyPrefix, keyPrefix + MAX_KEY_CHAR);
+        const safeKeyPrefix = keyPrefix || '';
+        const query: IDBKeyRange = IDBKeyRange.bound(safeKeyPrefix, safeKeyPrefix + MAX_KEY_CHAR);
         const request = db.transaction(storeName).objectStore(storeName).getAll(query);
         request.onerror = err => {
           console.error(`IndexDb.list error in ${storeName}!`, err);

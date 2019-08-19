@@ -38,11 +38,11 @@ export class InMemoryStoreAdapter implements StoreAdapter {
     });
   }
 
-  list<T>(keyPrefix: string): Promise<KV<T>[]> {
+  list<T>(keyPrefix?: string): Promise<KV<T>[]> {
     return new Promise<KV<T>[]>(resolve => {
       const result: KV<T>[] = [];
       for (const key of this.map.keys()) {
-        if (key.startsWith(keyPrefix)) {
+        if (!keyPrefix || keyPrefix === '' || key.startsWith(keyPrefix)) {
           const value = this.map.get(key);
           result.push({key, value});
         }

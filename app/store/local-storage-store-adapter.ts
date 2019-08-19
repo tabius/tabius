@@ -58,9 +58,9 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
     }
   }
 
-  list<T>(keyPrefix: string): Promise<KV<T>[]> {
+  list<T>(keyPrefix?: string): Promise<KV<T>[]> {
     return new Promise<KV<T>[]>(resolve => {
-      const storeKeyPrefix = this.getStoreKey(keyPrefix);
+      const storeKeyPrefix = this.getStoreKey(keyPrefix || '');
       const result: KV<T>[] = [];
       const storePrefixLen = this.getStoreKey('').length;
       for (let i = 0; i < window.localStorage.length; i++) {

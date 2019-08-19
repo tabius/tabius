@@ -24,7 +24,6 @@ import {ArtistBreadcrumbComponent} from './components/artist-breadcrumb/artist-b
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
 import {InlineSongSettingsComponent} from './components/inline-song-settings/inline-song-settings.component';
 import {SettingsPageComponent} from './components/settings-page/settings-page.component';
-import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/observable-store';
 import {APP_BROWSER_STORE_TOKEN, TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-song-to-playlist.component';
@@ -46,6 +45,7 @@ import {SongFullTextSearchResultsPanelComponent} from './components/song-full-te
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 import {SongPrevNextNavigatorComponent} from './components/song-prev-next-navigator/song-prev-next-navigator.component';
 import {SessionStateInterceptor} from '@app/interceptors/session-state-interceptor.service';
+import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/stores';
 
 @NgModule({
   declarations: [
