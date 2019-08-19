@@ -150,7 +150,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     if (this.createMode || !this.song || !this.details) {
       return false;
     }
-    const changed = this.song.title !== this.title || this.details.content !== this.content || this.details.mediaLinks.join(' ') !== this.mediaLinks;
+    const changed = this.isChanged();
     if (changed) {
       const updatedSong: Song = {...this.song, title: this.title};
       const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
@@ -160,6 +160,16 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     return changed;
   }
 
+  private isChanged(): boolean {
+    if (this.createMode) {
+      return this.title !== '' || this.content !== '' || this.mediaLinks !== '';
+    }
+    if (!this.song || !this.details) {
+      return false;
+    }
+    return this.song.title !== this.title || this.details.content !== this.content || this.details.mediaLinks.join(' ') !== this.mediaLinks;
+  }
+
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === 'Enter' && event.ctrlKey) {
@@ -167,6 +177,10 @@ export class SongEditorComponent implements OnInit, OnDestroy {
         this.create();
       } else {
         this.update();
+      }
+    } else if (event.key === 'Escape') {
+      if (!this.isChanged()) {
+        this.close();
       }
     }
   }

@@ -5,13 +5,23 @@
 
 <div *ngIf="loaded" [class.full-width]="fullWidth">
     <div>
-        <input #firstFormElement type="text" [(ngModel)]="title" class="song-title" placeholder="Название песни">
+        <input #firstFormElement type="text" [(ngModel)]="title"
+               (keydown)="handleKeyboardEvent($event)"
+               class="song-title"
+               placeholder="Название песни">
     </div>
     <div>
-        <textarea #textArea [(ngModel)]="content" class="song-content" rows="{{getContentRowsCount()}}" placeholder="Текст песни с аккордами"></textarea>
+        <textarea #textArea [(ngModel)]="content"
+                  (keydown)="handleKeyboardEvent($event)"
+                  class="song-content"
+                  rows="{{getContentRowsCount()}}"
+                  placeholder="Текст песни с аккордами"></textarea>
     </div>
     <div class="media-links-block">
-        <input [(ngModel)]="mediaLinks" type="text" placeholder="Ссылка на YouTube">
+        <input [(ngModel)]="mediaLinks"
+               (keydown)="handleKeyboardEvent($event)"
+               type="text"
+               placeholder="Ссылка на YouTube">
     </div>
     <div class="buttons-row">
         <button *ngIf="createMode" class="btn btn-info create-button" (click)="create()">Создать</button>
