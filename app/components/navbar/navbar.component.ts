@@ -29,7 +29,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user?: User;
   opened = false;
 
-  readonly forumLink = `/${FORUM_LINK}`;
+  readonly forumLink = `${FORUM_LINK}`;
   readonly artistsLink = `/${MOUNT_ARTISTS}`;
   readonly studioLink = `/${MOUNT_USER_STUDIO}`;
   readonly tunerLink = `/${MOUNT_TUNER}`;
