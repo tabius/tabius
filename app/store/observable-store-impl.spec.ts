@@ -115,7 +115,7 @@ describe('ObservableStore', () => {
 
     class StoreAdapter extends NoOpStoreAdapter {
       set<T>(key: string, value: T|undefined): Promise<void> {
-        setKey += key; // this way we check that we 'set' only once.
+        setKey += key; // the way to check in this test that 'set' was called only once.
         setValue = value;
         return Promise.resolve();
       }
@@ -126,8 +126,7 @@ describe('ObservableStore', () => {
 
     const getKey = 'key';
     const fetchedValue = 'fetched';
-    const get$$ = store.get<string>(getKey, () => of(fetchedValue), RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
-    const returnValue = await get$$;
+    const returnValue = await store.get<string>(getKey, () => of(fetchedValue), RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
 
     expect(returnValue).toBe(fetchedValue);
     expect(setKey).toBe(getKey);
