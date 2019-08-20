@@ -27,11 +27,15 @@ export class AuthService {
     }
     try {
       const {user, settings, playlists} = await this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL).pipe(take(1)).toPromise();
-      await Promise.all([
-        this.uds.setUser(user),
-        this.uds.updateUserSettingsOnFetch(settings),
-        this.uds.cachePlaylists(playlists)]
-      );
+      if (user) {
+        await this.uds.setUserOnSignIn(user);
+        await Promise.all([
+          this.uds.updateUserSettings(settings),
+          this.uds.updatePlaylists(playlists)]
+        );
+      } else {
+        await this.uds.resetStoreStateOnSignOut();
+      }
     } catch (e) {
       console.warn(e);
     }
@@ -43,7 +47,7 @@ export class AuthService {
 
   async signOut(): Promise<void> {
     await this.httpClient.get<void>(LOGOUT_URL).pipe(take(1)).toPromise();
-    await this.uds.setUser(undefined);
+    await this.uds.resetStoreStateOnSignOut();
     setTimeout(() => window.location.href = NODE_BB_LOGIN_URL, 500);
   }
 }

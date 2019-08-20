@@ -66,7 +66,7 @@ export class UserDataService {
     }
     return this.httpClient.get<UserSettings>(`/api/user/settings`)
         .pipe(
-            flatMap(userSettings => fromPromise(this.updateUserSettingsOnFetch(userSettings))
+            flatMap(userSettings => fromPromise(this.updateUserSettings(userSettings))
                 .pipe(map(() => userSettings)))
         );
   }
@@ -77,7 +77,7 @@ export class UserDataService {
     // update settings on the server only if we have valid user session.
     const update$$ = this.getUser().pipe(
         flatMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).pipe(take(1)) : of(undefined)),
-        flatMap(settings => settings ? fromPromise(this.updateUserSettingsOnFetch(settings)) : of()),
+        flatMap(settings => settings ? fromPromise(this.updateUserSettings(settings)) : of()),
         take(1)
     ).toPromise();
     await update$$;
@@ -102,18 +102,18 @@ export class UserDataService {
   async setH4SiFlag(h4SiFlag: boolean): Promise<void> {
     await this.store.set<boolean>(H4SI_FLAG_KEY, h4SiFlag, skipUpdateCheck);
     const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}).pipe(take(1)).toPromise();
-    await this.updateUserSettingsOnFetch(settings);
+    await this.updateUserSettings(settings);
   }
 
   /** Used to dedup updates triggered by the same de-multiplexed fetch call.*/
   private lastUpdatedSettings?: UserSettings;
 
-  async updateUserSettingsOnFetch(userSettings: UserSettings): Promise<void> {
+  async updateUserSettings(userSettings: UserSettings): Promise<void> {
     if (this.lastUpdatedSettings === userSettings) {
       return;
     }
     this.lastUpdatedSettings = userSettings;
-    // const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
+    const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
 
     const allOps: Promise<void>[] = [];
     allOps.push(this.store.set<number>(USER_SETTINGS_FETCH_DATE_KEY, Date.now(), skipUpdateCheck));
@@ -127,13 +127,12 @@ export class UserDataService {
       }
     }
 
-    // TODO: do not delete old settings if user is undefined and user in the store is undefined.
     // delete missed settings.
-    // for (const oldSettingsEntry of oldSongSettings) {
-    //   if (!updatedKeys.has(oldSettingsEntry.key)) {
-    //     allOps.push(this.store.remove(oldSettingsEntry.key));
-    //   }
-    // }
+    for (const oldSettingsEntry of oldSongSettings) {
+      if (!updatedKeys.has(oldSettingsEntry.key)) {
+        allOps.push(this.store.remove(oldSettingsEntry.key));
+      }
+    }
 
     allOps.push(this.store.set<boolean>(H4SI_FLAG_KEY, userSettings.h4Si || undefined, checkUpdateByReference));
     await Promise.all(allOps);
@@ -149,7 +148,7 @@ export class UserDataService {
               USER_PLAYLISTS_KEY,
               () => this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`)
                   .pipe(
-                      tap(playlists => this.cachePlaylists(playlists)),
+                      tap(playlists => this.updatePlaylists(playlists)),
                       map(playlists => playlists ? playlists.map(p => p.id) : []),
                   ),
               refreshMode,
@@ -172,26 +171,27 @@ export class UserDataService {
 
   async createPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
     const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).pipe(take(1)).toPromise();
-    await this.cachePlaylists(response);
+    await this.updatePlaylists(response);
   }
 
   async updatePlaylist(playlist: Playlist): Promise<void> {
     const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).pipe(take(1)).toPromise();
-    await this.cachePlaylists(response);
+    await this.updatePlaylists(response);
   }
 
   async deleteUserPlaylist(playlistId: number): Promise<void> {
     const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).pipe(take(1)).toPromise();
-    await this.cachePlaylists(response);
+    await this.updatePlaylists(response);
   }
 
   /** Caches playlists in browser store. */
-  async cachePlaylists(playlists: readonly Playlist[]): Promise<void> {
+  async updatePlaylists(playlists: readonly Playlist[]): Promise<void> {
     const allOps: Promise<void>[] = [];
     allOps.push(this.store.set<number[]>(USER_PLAYLISTS_KEY, playlists.map(p => p.id), checkUpdateByShallowArrayCompare));
     for (const playlist of playlists) {
       allOps.push(this.store.set<Playlist>(getPlaylistKey(playlist.id)!, playlist, checkUpdateByVersion));
     }
+    //todo: remove all missed playlists
     await Promise.all(allOps);
   }
 
@@ -209,24 +209,31 @@ export class UserDataService {
     return this.store.get<User>(USER_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck);
   }
 
-  async setUser(user?: User): Promise<void> {
-    if (!user) {
-      // await this.store.clear(); -> do not clear if there was no user before
-    } else {
-      // const currentUser = await this.store.get<User>(USER_KEY).pipe(take(1)).toPromise();
-      // if (currentUser && currentUser.id !== user.id) {
-      // await this.store.clear();
-      // }
-    }
-    await this.store.set<User>(USER_KEY, user, checkUpdateByStringify);
-  }
-
   syncSessionStateAsync(): void {
     this.syncSessionState().catch(err => console.error(err));
   }
 
   async syncSessionState(): Promise<void> {
     await this.httpClient.get('/api/user/sync').pipe(take(1)).toPromise();
+  }
+
+  async setUserOnSignIn(user: User): Promise<void> {
+    const oldUser = await this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    if (oldUser && oldUser.id !== user.id) {
+      await this.resetStoreStateOnSignOut();
+    }
+    await this.store.set<User>(USER_KEY, user, checkUpdateByStringify);
+  }
+
+  async resetStoreStateOnSignOut(): Promise<void> {
+    const user = await this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    if (!user) { // already signed out
+      return;
+    }
+    console.debug('Cleaning up user data on sign-out: ', user);
+    await this.store.remove(USER_KEY);
+    await this.updateUserSettings(newDefaultUserSettings());
+    await this.updatePlaylists([]);
   }
 }
 
