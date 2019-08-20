@@ -3,6 +3,7 @@ import {defined} from '@common/util/misc-utils';
 
 const ALPHA_EN = /^[A-Z]+$/i;
 const ALPHA_RU = /^[А-ЯЁ]+$/i;
+const DIGIT = /^\d$/;
 
 export function isAlpha(char: string): boolean {
   return ALPHA_EN.test(char) || ALPHA_RU.test(char);
@@ -10,6 +11,10 @@ export function isAlpha(char: string): boolean {
 
 export function isWordChar(char: string): boolean {
   return isAlpha(char) || char == '’';
+}
+
+export function isDigit(char: string): boolean {
+  return DIGIT.test(char);
 }
 
 export function parseChords(text: string): ChordLocation[] {
@@ -44,13 +49,17 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     return [];
   }
 
+  let prevIsChordSep = true;
   while (idx < maxIdx) {
     const c = text.charAt(idx);
     const alpha = isAlpha(c);
-    if (!alpha) {
+    const isChordSep = !alpha && !isDigit(c);
+    if (!alpha || !prevIsChordSep) {
       idx++;
+      prevIsChordSep = isChordSep;
       continue;
     }
+    prevIsChordSep = isChordSep;
     const chordLocation = parseChord(text, idx, maxIdx);
     if (chordLocation === undefined) {
       idx++;

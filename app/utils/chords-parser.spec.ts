@@ -107,6 +107,11 @@ describe('Chords parser, parseChordsLine', () => {
     expect(isTabsLine(text, 0, text.length)).toBeTruthy();
   });
 
+  it('should not find chords inside  other words', () => {
+    expect(parseChordsLine('123Am ABCEm')).toEqual([]);
+    expect(parseChordsLine('THE DOG')).toEqual([]); // do not mark E and G as chords
+  });
+
 });
 
 
