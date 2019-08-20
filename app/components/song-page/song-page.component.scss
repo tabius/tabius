@@ -28,3 +28,10 @@
     }
   }
 }
+
+@media only screen and (min-width: $min-desktop-width) {
+  :host {
+    padding-left: $sticky-sidebar-width;
+    padding-right: $sticky-sidebar-width;
+  }
+}
