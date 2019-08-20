@@ -132,7 +132,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   async init(schemaVersion: number): Promise<void> {
     //todo: support upgrade logic
     const myVersion: number|undefined = await this.get('version');
-    if (myVersion != schemaVersion) {
+    if (myVersion !== schemaVersion) {
       await this.clear();
       await this.set('version', schemaVersion);
     }

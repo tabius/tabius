@@ -46,17 +46,18 @@ export class UserDataService {
       return of(newDefaultUserSongSettings(0));
     }
     return this.getUser().pipe(
-        switchMap(user => {
-          if (!user) {
-            return of(newDefaultUserSongSettings(songId));
-          }
-          return this.store.get<UserSongSettings>(
-              getUserSongSettingsKey(songId),
-              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.songs[songId])),
-              RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response
-              checkUpdateByStringify
-          ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)));
-        }));
+        switchMap(user => this.store.get<UserSongSettings>(
+            getUserSongSettingsKey(songId),
+            () => {
+              if (user) {
+                return this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.songs[songId]));
+              } else {
+                return of(newDefaultUserSongSettings(songId));
+              }
+            },
+            RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response
+            checkUpdateByStringify
+        ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)))));
   }
 
   private fetchAndUpdateUserSettings(user: User|undefined): Observable<UserSettings> {
@@ -73,8 +74,13 @@ export class UserDataService {
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
     const key = getUserSongSettingsKey(songSettings.songId);
     await this.store.set<UserSongSettings>(key, songSettings, checkUpdateByStringify);
-    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).pipe(take(1)).toPromise();
-    await this.updateUserSettingsOnFetch(settings);
+    // update settings on the server only if we have valid user session.
+    const update$$ = this.getUser().pipe(
+        flatMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).pipe(take(1)) : of(undefined)),
+        flatMap(settings => settings ? fromPromise(this.updateUserSettingsOnFetch(settings)) : of()),
+        take(1)
+    ).toPromise();
+    await update$$;
   }
 
   getH4SiFlag(refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<boolean> {
@@ -107,7 +113,7 @@ export class UserDataService {
       return;
     }
     this.lastUpdatedSettings = userSettings;
-    const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
+    // const oldSongSettings = await this.store.list<UserSongSettings>(SONG_SETTINGS_KEY_PREFIX);
 
     const allOps: Promise<void>[] = [];
     allOps.push(this.store.set<number>(USER_SETTINGS_FETCH_DATE_KEY, Date.now(), skipUpdateCheck));
@@ -121,12 +127,13 @@ export class UserDataService {
       }
     }
 
+    // TODO: do not delete old settings if user is undefined and user in the store is undefined.
     // delete missed settings.
-    for (const oldSettingsEntry of oldSongSettings) {
-      if (!updatedKeys.has(oldSettingsEntry.key)) {
-        allOps.push(this.store.remove(oldSettingsEntry.key));
-      }
-    }
+    // for (const oldSettingsEntry of oldSongSettings) {
+    //   if (!updatedKeys.has(oldSettingsEntry.key)) {
+    //     allOps.push(this.store.remove(oldSettingsEntry.key));
+    //   }
+    // }
 
     allOps.push(this.store.set<boolean>(H4SI_FLAG_KEY, userSettings.h4Si || undefined, checkUpdateByReference));
     await Promise.all(allOps);
@@ -204,7 +211,7 @@ export class UserDataService {
 
   async setUser(user?: User): Promise<void> {
     if (!user) {
-      // await this.store.clear();
+      // await this.store.clear(); -> do not clear if there was no user before
     } else {
       // const currentUser = await this.store.get<User>(USER_KEY).pipe(take(1)).toPromise();
       // if (currentUser && currentUser.id !== user.id) {
