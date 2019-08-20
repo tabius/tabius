@@ -218,7 +218,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Ddom9': 'x5455x',
   'D#dom9': 'xx1021',
   'Edom9': '020102',
-  'Fdom9': '131213',
+  'Fdom9': '101011',
   'F#dom9': '242324',
   'Gdom9': '353435',
   'G#dom9': '464546',
