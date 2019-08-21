@@ -223,6 +223,20 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Gdom9': '353435',
   'G#dom9': '464546',
 
+  //  Major 9th
+  'Amaj9': '546454',
+  'A#maj9': 'x10211',
+  'Bmaj9': 'x2132x',
+  'Cmaj9': 'x3243x',
+  'C#maj9': 'x4354x',
+  'Dmaj9': 'x5465x',
+  'D#maj9': 'xx1031',
+  'Emaj9': '021102',
+  'Fmaj9': '102010',
+  'F#maj9': '213121',
+  'Gmaj9': '320202',
+  'G#maj9': '435343',
+
   // Major Add 9th
   'Aadd9': '54242x',
   'A#add9': 'x10311',
