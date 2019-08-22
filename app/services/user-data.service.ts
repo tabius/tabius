@@ -184,14 +184,27 @@ export class UserDataService {
     await this.updatePlaylists(response);
   }
 
-  /** Caches playlists in browser store. */
+  /** Update playlists in browser's store. */
   async updatePlaylists(playlists: readonly Playlist[]): Promise<void> {
+
+    const oldPlaylistEntries = await this.store.list<Playlist>(PLAYLIST_PREFIX_KEY);
+
     const allOps: Promise<void>[] = [];
     allOps.push(this.store.set<number[]>(USER_PLAYLISTS_KEY, playlists.map(p => p.id), checkUpdateByShallowArrayCompare));
+    const updatedKeys = new Set<string>();
     for (const playlist of playlists) {
-      allOps.push(this.store.set<Playlist>(getPlaylistKey(playlist.id)!, playlist, checkUpdateByVersion));
+      const playlistKey = getPlaylistKey(playlist.id)!;
+      updatedKeys.add(playlistKey);
+      allOps.push(this.store.set<Playlist>(playlistKey, playlist, checkUpdateByVersion));
     }
-    //todo: remove all missed playlists
+
+    // delete missing playlists.
+    for (const oldPlaylistEntry of oldPlaylistEntries) {
+      if (!updatedKeys.has(oldPlaylistEntry.key)) {
+        allOps.push(this.store.remove(oldPlaylistEntry.key));
+      }
+    }
+
     await Promise.all(allOps);
   }
 
