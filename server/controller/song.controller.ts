@@ -9,6 +9,7 @@ import {DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchRespons
 import {canEditArtist, isValidId} from '@common/util/misc-utils';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
+import {NodeBBService} from '@server/db/node-bb.service';
 
 @Controller('/api/song')
 export class SongController {
@@ -18,6 +19,7 @@ export class SongController {
   constructor(private readonly songDbi: SongDbi,
               private readonly playlistDbi: PlaylistDbi,
               private readonly fullTextSearchDbi: FullTextSearchDbi,
+              private readonly nodeBBService: NodeBBService,
   ) {
   }
 
@@ -123,7 +125,15 @@ export class SongController {
     if (songsArray.length === 0) {
       throw new HttpException(`Song is not found ${idParam}`, HttpStatus.NOT_FOUND);
     }
-    const artistId = songsArray[0].artistId;
+    const song = songsArray[0];
+    const artistId = song.artistId;
+
+    try {
+      await this.nodeBBService.deleteTopic(song.tid);
+    } catch (e) {
+      this.logger.error(e);
+    }
+
     await this.playlistDbi.deleteSongFromAllPlaylists(songId);
     await this.songDbi.delete(songId);
     const songs = await this.songDbi.getSongsByArtistId(artistId);
@@ -132,4 +142,5 @@ export class SongController {
       songs,
     };
   }
+
 }

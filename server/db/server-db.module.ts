@@ -5,6 +5,7 @@ import {DbService} from './db.service';
 import {ArtistDbi} from './artist-dbi.service';
 import {PlaylistDbi} from './playlist-dbi.service';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
+import {NodeBBService} from '@server/db/node-bb.service';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
     ArtistDbi,
     DbService,
     FullTextSearchDbi,
+    NodeBBService,
     PlaylistDbi,
     SongDbi,
     UserDbi,
@@ -21,6 +23,7 @@ import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
   exports: [
     ArtistDbi,
     FullTextSearchDbi,
+    NodeBBService,
     PlaylistDbi,
     SongDbi,
     UserDbi,
