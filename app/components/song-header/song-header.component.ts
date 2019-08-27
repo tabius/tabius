@@ -1,6 +1,5 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {Artist, Song} from '@common/artist-model';
-import {BehaviorSubject} from 'rxjs';
 import {getNameFirstFormArtistName} from '@common/util/misc-utils';
 
 @Component({
@@ -17,13 +16,23 @@ export class SongHeaderComponent {
   /** Optional Artist parameter. If present the artist name is appended to the header. */
   @Input() artist?: Artist;
 
-  readonly settingsVisible$ = new BehaviorSubject(false);
+  settingsVisible = false;
+
+  constructor(private readonly cd: ChangeDetectorRef) {
+  }
 
   toggleSettings() {
-    this.settingsVisible$.next(!this.settingsVisible$.getValue());
+    this.settingsVisible = !this.settingsVisible;
   }
 
   getTitle(): string {
     return this.song.title + (this.artist ? ` - ${getNameFirstFormArtistName(this.artist)}` : '');
+  }
+
+  closeSettings(): void {
+    if (this.settingsVisible) {
+      this.settingsVisible = false;
+      this.cd.detectChanges();
+    }
   }
 }

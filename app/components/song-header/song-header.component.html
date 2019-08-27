@@ -4,4 +4,7 @@
     <gt-svg-icon icon="song-setting"></gt-svg-icon>
 </div>
 
-<gt-inline-song-settings *ngIf="settingsVisible$|async" [songId]="song.id"></gt-inline-song-settings>
+<gt-inline-song-settings *ngIf="settingsVisible"
+                         [songId]="song.id"
+                         (closeCallback)="this.closeSettings()">
+</gt-inline-song-settings>

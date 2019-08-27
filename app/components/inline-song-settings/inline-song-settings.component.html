@@ -1,7 +1,11 @@
+<div (click)="close()" class="floating-close-icon" title="Закрыть настройки">
+    <gt-svg-icon icon="close"></gt-svg-icon>
+</div>
+
+
 <div class="settings-title">НАСТРОЙКИ</div>
 
 <div class="settings-block" *ngIf="songSettings && deviceSettings">
-
     <table>
         <tr>
             <td>размер шрифта:</td>
@@ -34,7 +38,10 @@
             </td>
             <td></td>
         </tr>
-
     </table>
+</div>
+
+<div class="bottom-buttons-block">
+    <button (click)="close()" class="btn btn-small btn-flat-white" title="Закрыть настройки">ЗАКРЫТЬ</button>
 </div>
 

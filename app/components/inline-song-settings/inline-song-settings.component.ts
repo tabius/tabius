@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {UserDataService} from '@app/services/user-data.service';
 import {getDefaultUserSongFontSize, newDefaultUserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {Subject} from 'rxjs';
@@ -22,6 +22,8 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
 
   @Input() songId!: number;
+
+  @Output() closeCallback = new EventEmitter<void>();
 
   deviceSettings = newDefaultUserDeviceSettings();
   readonly defaultFontSize = getDefaultUserSongFontSize();
@@ -87,5 +89,9 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
 
   toggleChordsVisibility(hideChords: boolean): void {
     this.uds.setUserSongSettings({...this.songSettings, hideChords});
+  }
+
+  close(): void {
+    this.closeCallback.emit();
   }
 }

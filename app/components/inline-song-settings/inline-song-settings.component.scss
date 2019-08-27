@@ -3,6 +3,27 @@
   border: 1px solid #ccc;
   display: block;
 
+  .floating-close-icon {
+    float: right;
+    display: inline-block;
+    margin-right: 5px;
+    cursor: pointer;
+    fill: #999;
+
+    gt-svg-icon {
+      width: 12px;
+      height: 12px;
+    }
+    :hover {
+      fill: #707070;
+    }
+  }
+
+  .bottom-buttons-block {
+    margin-top: 12px;
+    text-align: center;
+  }
+
   .settings-title {
     color: #999;
     font-size: 14px;

@@ -129,3 +129,18 @@
 .btn-danger:active, .btn-danger.active {
   background-color: #942a25
 }
+
+.btn-flat-white {
+  border-radius: 0;
+  box-shadow: none;
+  background-color: white;
+  background-image: none;
+}
+
+.btn-flat-white:hover, .btn-flat-white:focus, .btn-flat-white:active, .btn-flat-white.active, .btn-flat-white.disabled, .btn-flat-white[disabled] {
+  background-color: #f5f5f5;
+}
+
+.btn-flat-white:active, .btn-flat-white.active {
+  background-color: #f0f0f0;
+}
