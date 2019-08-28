@@ -5,9 +5,9 @@
 
 <div *ngIf="loaded">
 
-    <gt-song-header [song]="song" [artist]="mode === SongPageMode ? undefined : artist"></gt-song-header>
-    <gt-song-video [songDetails]="songDetails"></gt-song-video>
-    <gt-song-text [song]="songDetails"></gt-song-text>
+    <gt-song-header [song]="song" [artist]="mode !== 'PlaylistMode' ? artist: undefined" [showControls]="mode !==  'PrintMode'"></gt-song-header>
+    <gt-song-video *ngIf="mode !== 'PrintMode'" [songDetails]="songDetails"></gt-song-video>
+    <gt-song-text [song]="songDetails" [multiColumnMode]="mode !== 'PrintMode'" [usePrintFontSize]="mode === 'PrintMode'"></gt-song-text>
     <gt-song-chords *ngIf="!songSettings.hideChords" [songId]="song.id"></gt-song-chords>
 
 </div>

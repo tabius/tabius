@@ -4,6 +4,8 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
 import {skip} from 'rxjs/operators';
 import * as NoSleep from 'nosleep.js/dist/NoSleep';
+import {Router} from '@angular/router';
+import {MOUNT_PRINT_SUFFIX} from '@common/mounts';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +19,11 @@ export class BrowserStateService {
 
   private readonly noSleepMode$ = new BehaviorSubject<boolean>(false);
 
+  private readonly printMode$ = new BehaviorSubject<boolean>(false);
+
   constructor(
       @Inject(PLATFORM_ID) readonly platformId: Object,
+      router: Router,
       toaster: ToastService,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -28,6 +33,16 @@ export class BrowserStateService {
           ? 'Включена блокировка сна.\nТеперь экран будет всегда включён.'
           : 'Блокировка сна отключена.\nИспользуется режим по умолчанию.';
       toaster.show(msg, 'info');
+    });
+
+    router.events.subscribe(event => {
+      const url = (event as any).url || '';
+      if (url) {
+        const printModeState = url.endsWith('/' + MOUNT_PRINT_SUFFIX);
+        if (printModeState !== this.printMode$.getValue()) {
+          this.printMode$.next(printModeState);
+        }
+      }
     });
   }
 
@@ -53,4 +68,7 @@ export class BrowserStateService {
     this.noSleepMode$.next(nextState);
   }
 
+  getPrintMode(): Observable<boolean> {
+    return this.printMode$;
+  }
 }

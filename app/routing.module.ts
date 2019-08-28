@@ -7,11 +7,12 @@ import {ArtistListPageComponent} from '@app/components/artist-list-page/artist-l
 import {ArtistPageComponent} from '@app/components/artist-page/artist-page.component';
 import {SongPageComponent} from '@app/components/song-page/song-page.component';
 import {SettingsPageComponent} from '@app/components/settings-page/settings-page.component';
-import {MOUNT_ARTIST, MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
+import {MOUNT_ARTIST, MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_SONG_PRINT, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
 import {PlaylistPageComponent} from '@app/components/playlist-page/playlist-page.component';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {ObservableStore} from '@app/store/observable-store';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
+import {SongPrintPageComponent} from '@app/components/song-print-page/song-print-page.component';
 
 //TODO: move to a separate file. Use for the most routes?
 @Injectable({providedIn: 'root'})
@@ -32,6 +33,7 @@ const routes: Routes = [
   {path: MOUNT_ARTISTS, component: ArtistListPageComponent, resolve: {storeFlag: BrowserStoreStateResolver}},
   {path: MOUNT_ARTIST, component: ArtistPageComponent},
   {path: MOUNT_SONG, component: SongPageComponent},
+  {path: MOUNT_SONG_PRINT, component: SongPrintPageComponent},
   {path: MOUNT_USER_SETTINGS, component: SettingsPageComponent},
   {path: MOUNT_USER_STUDIO, component: StudioPageComponent,},
   {path: MOUNT_PLAYLIST, component: PlaylistPageComponent},

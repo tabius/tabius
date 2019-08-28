@@ -7,6 +7,8 @@ export const MOUNT_ARTIST = `${MOUNT_ARTIST_PREFIX}:artistMount`;
 
 export const MOUNT_SONG_PREFIX = 'song/';
 export const MOUNT_SONG = `${MOUNT_SONG_PREFIX}:artistMount/:songMount`;
+export const MOUNT_PRINT_SUFFIX = '_print_';
+export const MOUNT_SONG_PRINT = `${MOUNT_SONG_PREFIX}:artistMount/:songMount/${MOUNT_PRINT_SUFFIX}`;
 
 export const MOUNT_PLAYLIST_PREFIX = 'playlist/';
 export const MOUNT_PLAYLIST = `${MOUNT_PLAYLIST_PREFIX}:playlistMount`;

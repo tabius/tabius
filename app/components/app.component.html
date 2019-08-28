@@ -1,14 +1,21 @@
-<header>
-    <gt-navbar></gt-navbar>
-</header>
+<ng-container *ngIf="!(printMode$|async)">
+    <header>
+        <gt-navbar></gt-navbar>
+    </header>
 
-<div class="mobile push"></div>
-<div class="desktop push"></div>
+    <div class="mobile push"></div>
+    <div class="desktop push"></div>
 
-<main>
+    <main>
+        <router-outlet></router-outlet>
+    </main>
+
+    <footer>
+        <gt-footer></gt-footer>
+    </footer>
+
+</ng-container>
+
+<ng-container *ngIf="printMode$|async">
     <router-outlet></router-outlet>
-</main>
-
-<footer>
-    <gt-footer></gt-footer>
-</footer>
+</ng-container>

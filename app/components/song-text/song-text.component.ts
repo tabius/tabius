@@ -14,6 +14,8 @@ import {newDefaultUserSongSettings} from '@common/user-model';
 const MIN_SONG_LINES_FOR_2_COLUMN_MODE = 30;
 const MIN_SONG_LINES_FOR_3_COLUMN_MODE = 60;
 
+export const SONG_PRINT_FONT_SIZE = 14;
+
 /** Отображает содежимое мести (текст) без заголовка и прочей мета-информации. */
 @Component({
   selector: 'gt-song-text',
@@ -26,6 +28,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() song!: SongDetails;
   @Input() multiColumnMode = true;
+  @Input() usePrintFontSize = false;
 
   /** Pre-rendered raw HTML for song text with all chords wrapped with a <c></c> tag*/
   private songHtml: string = '';
@@ -64,7 +67,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
             tap(settings => {
               const style = {};
               if (settings.songFontSize) {
-                style['fontSize'] = `${settings.songFontSize}px`;
+                style['fontSize'] = `${this.usePrintFontSize ? SONG_PRINT_FONT_SIZE : settings.songFontSize}px`; // todo: handle usePrintFontSize in ngChanges.
                 this.songFontSize = settings.songFontSize;
                 this.resetCachedSongStats();
               }
@@ -156,7 +159,8 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
         this.songStats.lineCount++;
       }
       // trivial heuristic for song width.
-      this.songStats.maxLineWidth = (maxCharsPerLine + 1) * (this.songFontSize ? this.songFontSize : 16) * 2 / 3;
+      const songFontSize = this.usePrintFontSize ? SONG_PRINT_FONT_SIZE : this.songFontSize;
+      this.songStats.maxLineWidth = (maxCharsPerLine + 1) * (songFontSize ? songFontSize : 16) * 2 / 3;
     }
     return this.songStats;
   }

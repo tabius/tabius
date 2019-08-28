@@ -19,15 +19,13 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
   @Input() songId!: number;
-  @Input() mode: SongComponentMode = SongComponentMode.SongPage;
+  @Input() mode: SongComponentMode = 'SongPageMode';
 
   song?: Song;
   songDetails?: SongDetails;
   artist?: Artist;
   songSettings?: UserSongSettings;
   private songSubscription?: Subscription;
-
-  readonly SongPageMode = SongComponentMode.SongPage;
 
   get loaded(): boolean {
     return this.song !== undefined;
@@ -74,9 +72,5 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   }
 }
 
-/** Song may be rendered slightly differently based on the current mode .*/
-export enum SongComponentMode {
-  SongPage = 'SongPageMode',
-  Playlist = 'PlaylistMode',
-}
+export type SongComponentMode = 'SongPageMode'|'PlaylistMode'|'PrintMode';
 

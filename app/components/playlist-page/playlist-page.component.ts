@@ -35,7 +35,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
 
   private user?: User;
 
-  readonly mode = SongComponentMode.Playlist;
+  readonly mode: SongComponentMode = 'PlaylistMode';
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
   readonly playlistsLink = `/${MOUNT_USER_STUDIO}`;

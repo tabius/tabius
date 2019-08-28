@@ -16,6 +16,8 @@ export class SongHeaderComponent {
   /** Optional Artist parameter. If present the artist name is appended to the header. */
   @Input() artist?: Artist;
 
+  @Input() showControls = true;
+
   settingsVisible = false;
 
   constructor(private readonly cd: ChangeDetectorRef) {
