@@ -1,14 +1,1 @@
-<div class="content">
-
-    <!-- Loading indicator -->
-    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
-        <div class="message">Загружаем текст песни…</div>
-        <gt-loading-indicator></gt-loading-indicator>
-    </div>
-
-    <!-- Main content -->
-    <div *ngIf="songId">
-        <gt-song [songId]="songId" mode="PrintMode"></gt-song>
-    </div>
-
-</div>
+<gt-song *ngIf="songId > 0" [songId]="songId" mode="PrintMode"></gt-song>

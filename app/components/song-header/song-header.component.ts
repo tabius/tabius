@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Artist, Song} from '@common/artist-model';
 import {getNameFirstFormArtistName} from '@common/util/misc-utils';
 
@@ -8,7 +8,7 @@ import {getNameFirstFormArtistName} from '@common/util/misc-utils';
   styleUrls: ['./song-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongHeaderComponent {
+export class SongHeaderComponent implements OnChanges {
 
   /** The song. Required parameter. */
   @Input() song!: Song;
@@ -20,15 +20,19 @@ export class SongHeaderComponent {
 
   settingsVisible = false;
 
+  title: string = '';
+
   constructor(private readonly cd: ChangeDetectorRef) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['artist'] || changes['song']) {
+      this.title = this.song.title + (this.artist ? ` - ${getNameFirstFormArtistName(this.artist)}` : '');
+    }
   }
 
   toggleSettings() {
     this.settingsVisible = !this.settingsVisible;
-  }
-
-  getTitle(): string {
-    return this.song.title + (this.artist ? ` - ${getNameFirstFormArtistName(this.artist)}` : '');
   }
 
   closeSettings(): void {
