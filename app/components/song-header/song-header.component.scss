@@ -5,10 +5,10 @@
 
   h1 {
     display: inline;
+    margin-right: 10px;
   }
 
   .icons-block {
-
     display: inline-block;
 
     .icon {
@@ -20,14 +20,13 @@
         cursor: pointer;
         fill: $color-default-link;
       }
-    }
 
-    .settings-icon {
-      margin-left: 13px;
-    }
+      &.settings-icon {
+        margin-left: 12px;
+      }
 
-    .print-icon {
-      margin-left: 11px;
+      &.print-icon {
+      }
     }
   }
 
