@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID, SimpleChanges} from '@angular/core';
 import {SongDetails} from '@common/artist-model';
 import {combineLatest, Subject} from 'rxjs';
 import {takeUntil, tap} from 'rxjs/operators';
@@ -8,7 +8,7 @@ import {renderChords} from '@app/utils/chords-renderer';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
 import {isSmallScreenDevice} from '@common/util/misc-utils';
 import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/constants';
-import {newDefaultUserSongSettings} from '@common/user-model';
+import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings} from '@common/user-model';
 
 /** Heuristic used to enable multicolumn mode. */
 const MIN_SONG_LINES_FOR_2_COLUMN_MODE = 30;
@@ -37,6 +37,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   readonly isBrowser: boolean;
 
+  private deviceSettings: UserDeviceSettings = newDefaultUserDeviceSettings();
   private songSettings = newDefaultUserSongSettings(0);
   private h4Si?: boolean;
   private songFontSize?: number;
@@ -64,14 +65,9 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     const style$ = this.uds.getUserDeviceSettings()
         .pipe(
-            tap(settings => {
-              const style = {};
-              if (settings.songFontSize) {
-                style['fontSize'] = `${this.usePrintFontSize ? SONG_PRINT_FONT_SIZE : settings.songFontSize}px`; // todo: handle usePrintFontSize in ngChanges.
-                this.songFontSize = settings.songFontSize;
-                this.resetCachedSongStats();
-              }
-              this.userSongStyle = style;
+            tap(deviceSettings => {
+              this.deviceSettings = deviceSettings;
+              this.updateSongStyle();
             }));
 
     //todo: handle song text update too
@@ -99,7 +95,10 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     this.destroyed$.next();
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['usePrintFontSize']) {
+      this.updateSongStyle();
+    }
     this.resetCachedSongStats();
     this.updateAvailableWidth();
     this.resetSongView();
@@ -163,6 +162,16 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
       this.songStats.maxLineWidth = (maxCharsPerLine + 1) * (songFontSize ? songFontSize : 16) * 2 / 3;
     }
     return this.songStats;
+  }
+
+  private updateSongStyle(): void {
+    if (this.usePrintFontSize) {
+      this.songFontSize = SONG_PRINT_FONT_SIZE;
+    } else {
+      this.songFontSize = this.deviceSettings.songFontSize;
+    }
+    this.userSongStyle['fontSize'] = `${this.songFontSize}px`;
+    this.resetCachedSongStats();
   }
 }
 
