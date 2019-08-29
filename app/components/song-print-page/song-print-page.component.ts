@@ -5,7 +5,6 @@ import {UserDataService} from '@app/services/user-data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {MOUNT_ARTIST_PREFIX} from '@common/mounts';
-import {getSongPageLink} from '@common/util/misc-utils';
 
 @Component({
   selector: 'gt-song-print-page-component',
@@ -48,7 +47,7 @@ export class SongPrintPageComponent {
           this.cd.detectChanges();
           setTimeout(() => {
             window.print();
-            this.router.navigate([getSongPageLink(artistMount, songMount)]).catch(err => console.error(err));
+            window.close();
           }, 2000);
 
         });

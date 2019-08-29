@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Artist, Song} from '@common/artist-model';
 import {getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
-import {Router} from '@angular/router';
 
 export type SongHeaderTitleFormat = 'song'|'song-and-artist';
 
@@ -27,7 +26,6 @@ export class SongHeaderComponent implements OnChanges {
 
   constructor(
       private readonly cd: ChangeDetectorRef,
-      private readonly router: Router,
   ) {
   }
 
@@ -49,6 +47,7 @@ export class SongHeaderComponent implements OnChanges {
   }
 
   printSong(): void {
-    this.router.navigate([getSongPrintPageLink(this.artist.mount, this.song.mount)]);
+    const printPageUrl = getSongPrintPageLink(this.artist.mount, this.song.mount);
+    window.open(printPageUrl, '_blank');
   }
 }
