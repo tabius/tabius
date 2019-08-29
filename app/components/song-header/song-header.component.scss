@@ -7,15 +7,27 @@
     display: inline;
   }
 
-  .inline-settings-toggle {
-    display: inline-block;
-    margin-left: 10px;
+  .icons-block {
 
-    gt-svg-icon {
-      height: 20px;
-      width: 20px;
-      cursor: pointer;
-      fill: $color-default-link;
+    display: inline-block;
+
+    .icon {
+      display: inline-block;
+
+      gt-svg-icon {
+        height: 20px;
+        width: 20px;
+        cursor: pointer;
+        fill: $color-default-link;
+      }
+    }
+
+    .settings-icon {
+      margin-left: 13px;
+    }
+
+    .print-icon {
+      margin-left: 11px;
     }
   }
 

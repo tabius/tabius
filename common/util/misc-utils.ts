@@ -1,6 +1,6 @@
 import {Versioned} from '@common/common-model';
 import {ArtistType, Song} from '@common/artist-model';
-import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
+import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
@@ -87,7 +87,7 @@ export function getSongForumTopicLink(song?: Song): string {
   if (!hasValidForumTopic(song)) {
     return '#';
   }
-  return FORUM_LINK + '/topic/' + song.tid;
+  return `${FORUM_LINK}/topic/${song.tid}`;
 }
 
 export function getArtistPageLink(artistMount: string): string {
@@ -96,6 +96,10 @@ export function getArtistPageLink(artistMount: string): string {
 
 export function getSongPageLink(artistMount: string, songMount: string): string {
   return `/${MOUNT_SONG_PREFIX}${artistMount}/${songMount}`;
+}
+
+export function getSongPrintPageLink(artistMount: string, songMount: string): string {
+  return `/${MOUNT_SONG_PREFIX}${artistMount}/${songMount}/${MOUNT_PRINT_SUFFIX}`;
 }
 
 export function getPlaylistPageLink(playlistId: number): string {

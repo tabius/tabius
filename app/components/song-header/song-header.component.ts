@@ -1,6 +1,9 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Artist, Song} from '@common/artist-model';
-import {getNameFirstFormArtistName} from '@common/util/misc-utils';
+import {getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
+import {Router} from '@angular/router';
+
+export type SongHeaderTitleFormat = 'song'|'song-and-artist';
 
 @Component({
   selector: 'gt-song-header',
@@ -10,11 +13,11 @@ import {getNameFirstFormArtistName} from '@common/util/misc-utils';
 })
 export class SongHeaderComponent implements OnChanges {
 
-  /** The song. Required parameter. */
   @Input() song!: Song;
 
-  /** Optional Artist parameter. If present the artist name is appended to the header. */
-  @Input() artist?: Artist;
+  @Input() artist!: Artist;
+
+  @Input() titleFormat: SongHeaderTitleFormat = 'song-and-artist';
 
   @Input() showControls = true;
 
@@ -22,12 +25,15 @@ export class SongHeaderComponent implements OnChanges {
 
   title: string = '';
 
-  constructor(private readonly cd: ChangeDetectorRef) {
+  constructor(
+      private readonly cd: ChangeDetectorRef,
+      private readonly router: Router,
+  ) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['artist'] || changes['song']) {
-      this.title = this.song.title + (this.artist ? ` - ${getNameFirstFormArtistName(this.artist)}` : '');
+      this.title = this.song.title + (this.titleFormat === 'song-and-artist' ? ` - ${getNameFirstFormArtistName(this.artist)}` : '');
     }
   }
 
@@ -40,5 +46,9 @@ export class SongHeaderComponent implements OnChanges {
       this.settingsVisible = false;
       this.cd.detectChanges();
     }
+  }
+
+  printSong(): void {
+    this.router.navigate([getSongPrintPageLink(this.artist.mount, this.song.mount)]);
   }
 }

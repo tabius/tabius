@@ -2,8 +2,13 @@
 
 <ng-container *ngIf="showControls">
 
-    <div (click)="toggleSettings()" class="inline-settings-toggle" title="Настроить отображение текста и аккордов">
-        <gt-svg-icon icon="song-setting"></gt-svg-icon>
+    <div class="icons-block">
+        <div (click)="printSong()" class="icon print-icon" title="Распечатать текст и аккорды">
+            <gt-svg-icon icon="printer"></gt-svg-icon>
+        </div>
+        <div (click)="toggleSettings()" class="icon settings-icon" title="Настроить отображение текста и аккордов">
+            <gt-svg-icon icon="song-setting"></gt-svg-icon>
+        </div>
     </div>
 
     <gt-inline-song-settings *ngIf="settingsVisible"
