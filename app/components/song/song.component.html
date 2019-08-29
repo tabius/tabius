@@ -5,14 +5,17 @@
 
 <div *ngIf="loaded">
 
-    <gt-song-header [song]="song"
-                    [artist]="artist"
-                    [showControls]="mode !== 'PrintMode'"
-                    [titleFormat]="mode === 'SongPageMode' ? 'song' : 'song-and-artist'"
-    ></gt-song-header>
+    <ng-container *ngIf="mode === 'PrintMode'">
+        <gt-song-header [song]="song" [artist]="artist" [showControls]="false"></gt-song-header>
+        <gt-song-text [song]="songDetails" [multiColumnMode]="false" [usePrintFontSize]="true"></gt-song-text>
+        <gt-song-chords *ngIf="!songSettings.hideChords" [songId]="song.id"></gt-song-chords>
+    </ng-container>
 
-    <gt-song-video *ngIf="mode !== 'PrintMode'" [songDetails]="songDetails"></gt-song-video>
-    <gt-song-text [song]="songDetails" [multiColumnMode]="mode !== 'PrintMode'" [usePrintFontSize]="mode === 'PrintMode'"></gt-song-text>
-    <gt-song-chords *ngIf="!songSettings.hideChords" [songId]="song.id"></gt-song-chords>
+    <ng-container *ngIf="mode !== 'PrintMode'">
+        <gt-song-header [song]="song" [artist]="artist" [titleFormat]="mode === 'SongPageMode' ? 'song' : 'song-and-artist'"></gt-song-header>
+        <gt-song-video [songDetails]="songDetails"></gt-song-video>
+        <gt-song-text [song]="songDetails"></gt-song-text>
+        <gt-song-chords *ngIf="!songSettings.hideChords" [songId]="song.id"></gt-song-chords>
+    </ng-container>
 
 </div>
