@@ -1,11 +1,13 @@
+@import "~app/styles/dimensions";
+
 :host {
   padding: 10px;
   border: 1px solid #ccc;
   display: block;
 
   .floating-close-icon {
+    display: none; /** Visible in desktop mode only. */
     float: right;
-    display: inline-block;
     margin-right: 5px;
     cursor: pointer;
     fill: #999;
@@ -14,6 +16,7 @@
       width: 12px;
       height: 12px;
     }
+
     :hover {
       fill: #707070;
     }
@@ -57,6 +60,14 @@
         min-width: 2.2em;
         margin-left: 5px;
       }
+    }
+  }
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  :host {
+    .floating-close-icon {
+      display: inline-block;
     }
   }
 }
