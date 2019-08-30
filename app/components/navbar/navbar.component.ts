@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
@@ -8,6 +8,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {ToastService} from '@app/toast/toast.service';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
+import {LocationStrategy} from '@angular/common';
 
 enum NavSection {
   Home = 1,
@@ -44,8 +45,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
               private readonly toast: ToastService,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly cd: ChangeDetectorRef,
+              private location: LocationStrategy
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
+    this.location.onPopState(() => {
+      // Closes opened navbar on back button on mobile device.
+      if (this.opened) {
+        this.close();
+        window.history.go(1);
+      }
+    });
   }
 
   ngOnInit() {
@@ -76,15 +85,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return NavSection.Home;
   }
 
-  /** Close menu on navigation. */
-  @HostListener('window:popstate', ['$event'])
-  onPopState() {
-    if (this.opened) {
-      this.close();
-      this.cd.detectChanges();
-    }
-  }
-
   open() {
     this.opened = true;
   }
@@ -98,10 +98,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   getUserIconText(): string {
-    if (!this.user) {
+    const {user} = this;
+    if (!user) {
       return '-';
     }
-    return this.user.username && this.user.username.length > 0 ? this.user.username.charAt(0).toUpperCase() : '+';
+    return user.username && user.username.length > 0 ? user.username.charAt(0).toUpperCase() : '+';
   }
 
   showUserInfo(): void {
