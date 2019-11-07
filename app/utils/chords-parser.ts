@@ -10,7 +10,7 @@ export function isAlpha(char: string): boolean {
 }
 
 export function isWordChar(char: string): boolean {
-  return isAlpha(char) || char == '’';
+  return isAlpha(char) || char === '’';
 }
 
 export function isDigit(char: string): boolean {
@@ -128,10 +128,10 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
   }
   let idx = startIdx === undefined ? 0 : startIdx;
   const tone = findPrefixToken(text, idx, EXTENDED_CHORD_LETTERS);
-  if (tone == undefined) {
+  if (tone === undefined) {
     return undefined;
   }
-  const chord: Chord = {tone: tone == 'H' ? 'B' : tone as ChordTone, type: 'maj'};
+  const chord: Chord = {tone: tone === 'H' ? 'B' : tone as ChordTone, type: 'maj'};
   let parsedType: ChordType|undefined = undefined;
   idx += tone.length;
   let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);

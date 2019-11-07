@@ -64,7 +64,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
         .map(line => line.trim())
         .filter(line => line.length > 0);
 
-    if (lines.length == 1) {
+    if (lines.length === 1) {
       return lines[0].trim();
     }
     const linesSet = new Set<string>();

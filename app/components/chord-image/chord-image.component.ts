@@ -52,6 +52,6 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
   }
 
   private getToneWithH4SiFix(tone: ChordTone): string {
-    return this.h4Si && tone.charAt(0) == 'B' ? `H${tone.substring(1)}` : tone;
+    return this.h4Si && tone.charAt(0) === 'B' ? `H${tone.substring(1)}` : tone;
   }
 }

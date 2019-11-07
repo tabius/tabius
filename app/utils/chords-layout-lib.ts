@@ -419,7 +419,7 @@ function withFlatsFromSharps(chordsMap: StringMap): StringMap {
   for (const name of Object.keys(chordsMap)) {
     const layout = chordsMap[name];
     res[name] = layout;
-    if (name.length >= 2 && name.charAt(1) == '#') {
+    if (name.length >= 2 && name.charAt(1) === '#') {
       const bKey = `${NEXT_TONE_LETTER_MAP[name.charAt(0)]}b${name.substring(2)}`;
       res[bKey] = layout;
     }

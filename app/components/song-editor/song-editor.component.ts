@@ -113,7 +113,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       this.toastService.warning('Необходимо указать название песни');
       return;
     }
-    if (this.content.length == 0) {
+    if (this.content.length === 0) {
       this.toastService.warning('Текст песни не может быть пуст');
       return;
     }

@@ -9,7 +9,7 @@ import Hashids from 'hashids';
 import {fromPromise} from 'rxjs/internal-compatibility';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
-  if (!text || text.length == 0) {
+  if (!text || text.length === 0) {
     return [];
   }
   return text.split(sep).map(v => +v);
@@ -175,12 +175,12 @@ export function playlistIdToMount(playlistId: number): string {
 
 export function playlistMountToId(mount: string): number|undefined {
   const ids = playlistHashIds.decode(mount);
-  return ids && ids.length == 1 ? ids[0] : undefined;
+  return ids && ids.length === 1 ? ids[0] : undefined;
 }
 
 export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promise<unknown>[]): Observable<T> {
   const first$ = of(first);
-  if (promises.length == 0) {
+  if (promises.length === 0) {
     return first$;
   }
   return combineLatest([first$, ...promises.map(p => fromPromise(p))])

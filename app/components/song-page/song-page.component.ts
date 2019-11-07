@@ -129,7 +129,7 @@ export function getSongTextWithNoChords(text: string, linesCount: number, mergeL
       break;
     }
     const chords = parseChordsLine(text, position, newPosition);
-    if (chords.length == 0) {
+    if (chords.length === 0) {
       // do more validation for the line.
       let serviceLine = false;
       for (let idx = position; idx < newPosition && !serviceLine; idx++) {

@@ -7,7 +7,7 @@ describe('Chords layout lib', () => {
   it('should use chord types from chord-parser-lib', () => {
     const chordNamesFromLayouts = Object.keys(CHORDS_LAYOUTS);
     for (const chordName of chordNamesFromLayouts) {
-      const layoutChordNameSuffix = chordName.substring(chordName.length > 1 && (chordName.charAt(1) === '#' || chordName.charAt(1) == 'b') ? 2 : 1);
+      const layoutChordNameSuffix = chordName.substring(chordName.length > 1 && (chordName.charAt(1) === '#' || chordName.charAt(1) === 'b') ? 2 : 1);
       const found = VISUAL_TYPE_BY_CHORD_TYPE.has(layoutChordNameSuffix as any);
       expect(found).toBeTruthy(`Chord layout entry does not match any chord type: ${chordName}`);
     }

@@ -103,7 +103,7 @@ async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> 
     baseMount = generateRandomSongMount();
   }
   for (let i = 0; ; i++) {
-    const mount = baseMount + (i == 0 ? '' : '_' + i);
+    const mount = baseMount + (i === 0 ? '' : '_' + i);
     if (!allMountsSet.has(mount)) {
       return mount;
     }
