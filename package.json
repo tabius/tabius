@@ -77,6 +77,6 @@
     "node-sass": "4.13.0",
     "nodemon": "1.19.4",
     "tsconfig-paths": "3.9.0",
-    "typescript": "3.6.4"
+    "typescript": "3.5.3"
   }
 }
