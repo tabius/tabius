@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div *ngIf="hasEditRight" class="add-song-block">
+        <div *ngIf="canAddSongs" class="add-song-block">
             <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Добавить песню »</a>
 
             <gt-song-editor *ngIf="editorIsOpen"

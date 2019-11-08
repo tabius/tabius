@@ -40,7 +40,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
   artistViewModel?: ArtistViewModel;
 
   user?: User;
-  hasEditRight = false;
+  canAddSongs = false;
   editorIsOpen = false;
   private songDetailsPrefetched = false;
   loaded = false;
@@ -89,7 +89,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
           }
           this.artistViewModel = new ArtistViewModel(artist, bands, songs, artistDetails.listed);
           this.user = user;
-          this.hasEditRight = canEditArtist(this.user, artist.id);
+          this.canAddSongs = canEditArtist(this.user, artist.id);
           this.updateMeta(songs);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
@@ -125,7 +125,7 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
   }
 
   toggleEditor(): void {
-    this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
+    this.editorIsOpen = !this.editorIsOpen && this.canAddSongs;
     this.cd.detectChanges();
   }
 }

@@ -3,12 +3,13 @@ import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/constants';
 
 export const USERS_STORE_SCHEMA_VERSION = 3;
 
-export enum UserGroup {
+export const enum UserGroup {
+  /** The only role we have today. Can add new artists and songs. */
   Moderator = 'moderator',
 }
 
 export interface User {
-  /** Unique user identifier. Shared with NodeBB server (forum).*/
+  /** Unique user identifier. Shared with NodeBB server (forum). */
   readonly id: string;
   /** Username (login). Shared with NodeBB server (forum). */
   readonly username: string;

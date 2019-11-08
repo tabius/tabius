@@ -69,5 +69,15 @@
         </div>
     </div>
 
-
 </div>
+
+<div *ngIf="canAddNewArtist" class="add-artist-block">
+    <div>
+        <a *ngIf="!artistEditorIsOpen" href="javascript:" (click)="toggleArtistEditor()">Добавить артиста »</a>
+
+        <gt-artist-editor *ngIf="artistEditorIsOpen"
+                          (closeRequest)="toggleArtistEditor()"
+        ></gt-artist-editor>
+    </div>
+</div>
+

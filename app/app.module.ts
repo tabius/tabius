@@ -47,6 +47,7 @@ import {SongPrevNextNavigatorComponent} from './components/song-prev-next-naviga
 import {SessionStateInterceptor} from '@app/interceptors/session-state-interceptor.service';
 import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/stores';
 import {SongPrintPageComponent} from './components/song-print-page/song-print-page.component';
+import {ArtistEditorComponent} from './components/artist-editor/artist-editor.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import {SongPrintPageComponent} from './components/song-print-page/song-print-pa
     StudioPageComponent,
     SvgIconComponent,
     TunerPageComponent,
+    ArtistEditorComponent,
   ],
   imports: [
     BrowserAnimationsModule,

@@ -14,6 +14,13 @@ describe('SEO-translit', () => {
     expect(getTranslitAnyCase('London is the capital of GB')).toEqual('London-is-the-capital-of-GB');
   });
 
+  it('should trim leading and trailing "-" symbols', () => {
+    expect(getTranslitAnyCase(' ok')).toEqual('ok');
+    expect(getTranslitAnyCase('ok ')).toEqual('ok');
+    expect(getTranslitAnyCase(' ok ')).toEqual('ok');
+    expect(getTranslitAnyCase('-ok-')).toEqual('ok');
+  });
+
   it('should correctly translate complex letters', () => {
     expect(getTranslitAnyCase('эхо')).toEqual('ehkho');
     expect(getTranslitAnyCase('Эхо')).toEqual('Ehkho');

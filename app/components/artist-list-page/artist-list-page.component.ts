@@ -7,7 +7,7 @@ import {BehaviorSubject, Subject, timer} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {getArtistPageLink} from '@common/util/misc-utils';
+import {canCreateNewArtist, getArtistPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {UserDataService} from '@app/services/user-data.service';
@@ -48,6 +48,8 @@ export class ArtistListPageComponent implements OnInit {
   artistFilterControl = new FormControl();
 
   filteredArtists: Artist[] = [];
+  artistEditorIsOpen = false;
+  canAddNewArtist = false;
 
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
@@ -62,6 +64,12 @@ export class ArtistListPageComponent implements OnInit {
   ngOnInit() {
     enableLoadingIndicator(this);
     this.uds.syncSessionStateAsync();
+    this.uds.getUser()
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(user => {
+          this.canAddNewArtist = canCreateNewArtist(user);
+          this.cd.detectChanges();
+        });
 
     this.artistFilterControl.valueChanges
         .pipe(
@@ -167,6 +175,10 @@ export class ArtistListPageComponent implements OnInit {
   private useFullTextSearch(): boolean {
     return this.searchValue.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH
         && this.searchValue.replace(' ', '').length >= MIN_LEN_FOR_FULL_TEXT_SEARCH;
+  }
+
+  toggleArtistEditor() {
+    this.artistEditorIsOpen = !this.artistEditorIsOpen;
   }
 }
 

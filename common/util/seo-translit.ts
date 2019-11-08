@@ -72,7 +72,7 @@ export function getTranslitAnyCase(str: string|undefined): string {
     }
   }
   if (buf.length > 0 && buf.charAt(buf.length - 1) === MASK_CHAR) {
-    buf = buf.substring(buf.length - 1);
+    buf = buf.substring(0, buf.length - 1);
   }
   return buf;
 }

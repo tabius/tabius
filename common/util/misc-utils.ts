@@ -167,6 +167,10 @@ export function canEditArtist(user: User|undefined, artistId: number): boolean {
   return !!user && (user.groups.includes(UserGroup.Moderator) || user.artistId === artistId);
 }
 
+export function canCreateNewArtist(user: User|undefined): boolean {
+  return !!user && (user.groups.includes(UserGroup.Moderator));
+}
+
 const playlistHashIds = new Hashids('salt', 5);
 
 export function playlistIdToMount(playlistId: number): string {

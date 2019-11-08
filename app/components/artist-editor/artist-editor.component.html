@@ -1,0 +1,28 @@
+<div class="editor-block">
+
+    <h2>Добавление нового артиста</h2>
+
+    <table class="form-table">
+        <tr>
+            <td>Имя артиста</td>
+            <td>
+                <input type="text" [(ngModel)]="name" (ngModelChange)="onNameChanged()"/>
+            </td>
+        </tr>
+        <tr>
+            <td>Адрес страницы</td>
+            <td>
+                <input type="text" [(ngModel)]="mount">
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="buttons-row">
+                <button class="btn btn-info create-button" (click)="create()">Создать</button>
+                <button class="btn close-button" (click)="close()">Закрыть</button>
+            </td>
+        </tr>
+
+    </table>
+
+</div>

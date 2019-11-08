@@ -3,7 +3,7 @@
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
-<div *ngIf="loaded" [class.full-width]="fullWidth">
+<div *ngIf="loaded" class="editor-block">
     <div>
         <input #firstFormElement type="text" [(ngModel)]="title"
                (keydown)="handleKeyboardEvent($event)"
