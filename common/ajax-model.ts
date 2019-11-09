@@ -1,5 +1,5 @@
 import {Playlist, User, UserSettings} from '@common/user-model';
-import {Song, SongDetails} from '@common/artist-model';
+import {Artist, ArtistType, Song, SongDetails} from '@common/artist-model';
 
 export interface AjaxSessionInfo {
   userId: string|undefined;
@@ -25,6 +25,16 @@ export type CreatePlaylistResponse = Playlist[];
 export type UpdatePlaylistResponse = Playlist[];
 export type DeletePlaylistResponse = Playlist[];
 
+export interface CreateArtistRequest {
+  name: string;
+  mount: string;
+  type: ArtistType;
+}
+
+export interface CreateArtistResponse extends TabiusAjaxResponse {
+  /** List of all artists. */
+  artists: Artist[];
+}
 
 export interface UpdateSongRequest extends TabiusAjaxResponse {
   song: Song;

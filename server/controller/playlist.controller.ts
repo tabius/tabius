@@ -26,7 +26,7 @@ export class PlaylistController {
   async create(@Session() session, @Body() createPlaylistRequest: CreatePlaylistRequest): Promise<CreatePlaylistResponse> {
     const vr = validate(createPlaylistRequest, conformsTo(CreatePlaylistRequestValidator));
     if (!vr.success) {
-      throw Error(vr.toString());
+      throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
     }
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`create: ${createPlaylistRequest.name}, user: ${user.email}`);
@@ -39,7 +39,7 @@ export class PlaylistController {
   async update(@Session() session, @Body() playlist: Playlist): Promise<UpdatePlaylistResponse> {
     const vr = validate(playlist, conformsTo(PlaylistValidator));
     if (!vr.success) {
-      throw Error(vr.toString());
+      throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
     }
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`update: ${playlist.name}, user: ${user.email}`);

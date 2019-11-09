@@ -67,15 +67,15 @@ export class SongController {
     }
     const vr1 = validate(updateRequest.song, conformsTo(NewSongValidator));
     if (!vr1.success) {
-      throw vr1.toString();
+      throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
     }
     const vr2 = validate(updateRequest.details, conformsTo(NewSongDetailsValidator));
     if (!vr2.success) {
-      throw vr2.toString();
+      throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
     }
     const songId = await this.songDbi.create(updateRequest.song, updateRequest.details);
     if (!isValidId(songId)) {
-      throw `Failed to create song: ${songId}`;
+      throw new HttpException(`Failed to create song: ${songId}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return await this.getSongUpdateResponse(songId, updateRequest.song.artistId);
   }
@@ -90,11 +90,11 @@ export class SongController {
     }
     const vr1 = validate(updateRequest.song, conformsTo(SongValidator));
     if (!vr1.success) {
-      throw vr1.toString();
+      throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
     }
     const vr2 = validate(updateRequest.details, conformsTo(SongDetailsValidator));
     if (!vr2.success) {
-      throw vr2.toString();
+      throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
     }
     await this.songDbi.update(updateRequest.song.title, updateRequest.details);
     return this.getSongUpdateResponse(updateRequest.song.id, updateRequest.song.artistId);
@@ -107,7 +107,7 @@ export class SongController {
       this.songDbi.getSongsByArtistId(artistId),
     ]);
     if (songFromDb.length === 0 || detailsFromDb.length === 0) {
-      throw `Failed to build response ${songId}/${artistId}`;
+      throw new HttpException(`Failed to build response ${songId}/${artistId}`, HttpStatus.BAD_REQUEST);
     }
     return {song: songFromDb[0], details: detailsFromDb[0], songs};
   }

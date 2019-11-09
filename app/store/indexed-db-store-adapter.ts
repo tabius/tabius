@@ -140,7 +140,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
   }
 
   snapshot(): KV<unknown>[] {
-    throw Error('Not supported');
+    throw new Error('Not supported');
   }
 
   execute(dbOp: (db: IDBDatabase) => void): void {

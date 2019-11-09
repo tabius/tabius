@@ -56,10 +56,10 @@ export class ServerSsoService implements NestInterceptor {
     } else {
       const mongo = ssoConfig.mongo;
       if (!mongo) {
-        throw 'Mongo config is not defined!';
+        throw new Error('Mongo config is not defined!');
       }
       if (!this.sessionCookieSecret) {
-        throw 'Session cookie secret is not set!';
+        throw new Error('Session cookie secret is not set!');
       }
       //TODO: move DB initialization do a separate injectable service & handle connection errors correctly!
       const options: MongoClientOptions = {auth: {user: mongo.user, password: mongo.password}, useNewUrlParser: true};

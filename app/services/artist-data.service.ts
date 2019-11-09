@@ -5,7 +5,7 @@ import {Artist, ArtistDetails, Song, SongDetails} from '@common/artist-model';
 import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {CreateArtistRequest, CreateArtistResponse, DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -185,6 +185,21 @@ export class ArtistDataService {
       this.store.remove<SongDetails>(getSongDetailsKey(songId))
     ]);
     await this.updateArtistSongsOnFetch(artistId, songs, true);
+  }
+
+  async createArtist(createArtistRequest: CreateArtistRequest): Promise<Artist> {
+    const response = await this.httpClient.post<CreateArtistResponse>('/api/artist', createArtistRequest).pipe(take(1)).toPromise();
+    const artistsUpdateArray$$ = response.artists.map(artist => this.store.set<Artist>(getArtistKey(artist.id), artist, checkUpdateByVersion));
+    const listingUpdate$$ = this.store.set(ARTIST_LIST_KEY, response.artists.map(artist => artist.id), checkUpdateByShallowArrayCompare);
+    await Promise.all([
+      ...artistsUpdateArray$$,
+      listingUpdate$$,
+    ]);
+    const artist = response.artists.find(artist => artist.mount === createArtistRequest.mount);
+    if (!artist) {
+      throw new Error('Не удалось создать артиста!');
+    }
+    return artist;
   }
 }
 

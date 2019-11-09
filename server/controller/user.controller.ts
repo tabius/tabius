@@ -1,4 +1,4 @@
-import {Body, Controller, Get, HttpStatus, Logger, Put, Res, Session} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Logger, Put, Res, Session} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
 import {LoginResponse, TabiusAjaxResponse} from '@common/ajax-model';
@@ -56,7 +56,7 @@ export class UserController {
   async setSettings(@Session() session, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
     const vr = validate(songSettings, conformsTo(UserSongSettingsValidator));
     if (!vr.success) {
-      throw vr.toString();
+      throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
     }
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set settings: ${user.email}, song: ${songSettings.songId}`);
@@ -87,7 +87,7 @@ export class UserController {
   private async _getSettings(user: User): Promise<UserSettings> {
     const settings = await this.userDbi.getSettings(user.id);
     if (settings === undefined) {
-      throw `Settings not found! User: ${user.email}, id: ${user.id}`;
+      throw new HttpException(`Settings not found! User: ${user.email}, id: ${user.id}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return settings == null ? newDefaultUserSettings() : settings;
   }

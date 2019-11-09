@@ -20,7 +20,7 @@ async function generateSitemap() {
     for (const row of songRows) {
       const artistMount = artistMountById.get(+row.artist_id);
       if (!artistMount) {
-        throw `Artist not found for song: ${JSON.stringify(row)}`;
+        throw new Error(`Artist not found for song: ${JSON.stringify(row)}`);
       }
       sitemap += `https://tabius.ru/song/${artistMount}/${row.mount}\n`;
     }

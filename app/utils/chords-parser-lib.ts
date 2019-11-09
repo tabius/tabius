@@ -226,7 +226,7 @@ function getRawTypeVariations(originalVariant: string): string[] {
 
 function registerChordTypeByRawType(chordType: ChordType, rawType: string): void {
   if (CHORD_TYPE_BY_RAW_NAME.has(rawType)) {
-    throw `Duplicate chord mapping: A${rawType} => ${chordType}`;
+    throw new Error(`Duplicate chord mapping: A${rawType} => ${chordType}`);
   }
   CHORD_TYPE_BY_RAW_NAME.set(rawType, chordType);
 }

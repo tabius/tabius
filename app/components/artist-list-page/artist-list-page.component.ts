@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Artist} from '@common/artist-model';
 import {ArtistDataService} from '@app/services/artist-data.service';
 import {FormControl} from '@angular/forms';
@@ -35,7 +35,7 @@ let letterBlockFilters: string[] = [];
   styleUrls: ['./artist-list-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ArtistListPageComponent implements OnInit {
+export class ArtistListPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   readonly getArtistPageLink = getArtistPageLink;
@@ -91,6 +91,10 @@ export class ArtistListPageComponent implements OnInit {
           this.navHelper.restoreScrollPosition();
         });
     this.updateMeta();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
   }
 
   private bringFocusToTheSearchField(): void {

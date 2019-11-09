@@ -10,6 +10,9 @@ export enum ArtistType {
 export const MIN_ARTIST_MOUNT_LENGTH = 1;
 export const MAX_ARTIST_MOUNT_LENGTH = 40;
 
+export const MIN_ARTIST_NAME_LENGTH = 4;
+export const MAX_ARTIST_NAME_LENGTH = 64;
+
 export interface Artist extends WithId, Versioned {
   /** Name of the artist. For person it is <Last Name> <First Name>. */
   readonly name: string;

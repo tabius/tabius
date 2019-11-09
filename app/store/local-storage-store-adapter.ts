@@ -106,7 +106,7 @@ export class LocalStorageStoreAdapter implements StoreAdapter {
   }
 
   snapshot(): KV<unknown>[] {
-    throw Error('Not supported');
+    throw new Error('Not supported');
   }
 
 }

@@ -58,7 +58,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     this.createMode = !isValidId(this.songId);
     if (this.createMode) {
       if (!isValidId(this.artistId)) {
-        throw 'Artist ID not provided!';
+        throw new Error('Artist ID not provided!');
       }
       this.loaded = true;
       this.updateUIOnLoadedState();

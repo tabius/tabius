@@ -50,6 +50,6 @@ export interface ObservableStore {
 }
 
 export function skipUpdateCheck(): boolean {
-  throw 'This is a marker function that must never be called!';
+  throw new Error('This is a marker function that must never be called!');
 }
 

@@ -1,14 +1,14 @@
 import {isValidId} from '@common/util/misc-utils';
 import {MAX_PLAYLIST_NAME_LENGTH, MIN_PLAYLIST_NAME_LENGTH, Playlist, UserSongSettings} from '@common/user-model';
 import {eachItem, equals, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
-import {CreatePlaylistRequest} from '@common/ajax-model';
-import {MAX_ARTIST_MOUNT_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_ARTIST_MOUNT_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/artist-model';
+import {CreateArtistRequest, CreatePlaylistRequest} from '@common/ajax-model';
+import {ArtistType, MAX_ARTIST_MOUNT_LENGTH, MAX_ARTIST_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_ARTIST_MOUNT_LENGTH, MIN_ARTIST_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/artist-model';
 import {INVALID_ID} from '@common/constants';
 
 export function paramToId(value: string): number {
   const id = +value;
   if (!isValidId(id)) {
-    throw Error(`Invalid id: ${value}`);
+    throw new Error(`Invalid id: ${value}`);
   }
   return id;
 }
@@ -32,6 +32,7 @@ export const checkStringLength = (minLen: number, maxLen: number) => isString(mi
 export const isUserId = () => checkStringLength(1, 40);
 export const isSongMount = () => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH);
 export const isArtistMount = () => checkStringLength(MIN_ARTIST_MOUNT_LENGTH, MAX_ARTIST_MOUNT_LENGTH);
+export const isArtistType = () => equals(ArtistType.Band, ArtistType.Person);
 
 export const PlaylistValidator: Validator<Playlist> = {
   id: isNumericId(),
@@ -81,4 +82,10 @@ export const NewSongDetailsValidator: Validator<SongDetails> = {
   ...SongDetailsValidator,
   id: equals(INVALID_ID),
   version: equals(0),
+};
+
+export const CreateArtistRequestValidator: Validator<CreateArtistRequest> = {
+  mount: isArtistMount(),
+  name: checkStringLength(MIN_ARTIST_NAME_LENGTH, MAX_ARTIST_NAME_LENGTH),
+  type: isArtistType(),
 };

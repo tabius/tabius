@@ -6,11 +6,11 @@ import {ArtistType} from '@common/artist-model';
 
 const forumUrl = process.env.TABIUS_FORUM_URL;
 if (forumUrl === undefined) {
-  throw 'TABIUS_FORUM_URL is required.';
+  throw new Error('TABIUS_FORUM_URL is required.');
 }
 const forumAuthToken = process.env.TABIUS_NODE_BB_AUTH_TOKEN;
 if (forumAuthToken === undefined) {
-  throw 'TABIUS_NODE_BB_AUTH_TOKEN is required.';
+  throw new Error('TABIUS_NODE_BB_AUTH_TOKEN is required.');
 }
 
 const ALL_ARTISTS_CATEGORY_ID = 5;
@@ -103,7 +103,7 @@ async function syncArtistCategory(artist: ArtistCategoryRow, connection: any): P
     const categoryResponse = (await postAsync(forumUrl + '/api/v2/categories', options)).body;
     if (categoryResponse.code !== 'ok') {
       console.error('Failed to create artist category', artist, categoryResponse);
-      throw `Failed to create artist category: ${artist.id}`;
+      throw new Error(`Failed to create artist category: ${artist.id}`);
     }
     const category = categoryResponse.payload as ForumCategory;
     artist.forum_category_id = category.cid;
@@ -127,7 +127,7 @@ async function syncSongTopic(song: SongTopicRow, connection: any, artistById: Ma
   if (typeof topic === 'string') { // not found
     const artist = artistById.get(song.artist_id);
     if (artist === undefined) {
-      throw `Failed to find artist for song + ${JSON.stringify(song)}`;
+      throw new Error(`Failed to find artist for song + ${JSON.stringify(song)}`);
     }
     const artistTypeName = artist.type === ArtistType.Band ? 'группа' : 'исполнитель';
     const options = {
@@ -146,7 +146,7 @@ async function syncSongTopic(song: SongTopicRow, connection: any, artistById: Ma
     const topicResponse = (await postAsync(forumUrl + '/api/v2/topics', options)).body;
     if (topicResponse.code !== 'ok') {
       console.error('Failed to create song topic', song, topicResponse);
-      throw `Failed to create song topic: ${song.id}`;
+      throw new Error(`Failed to create song topic: ${song.id}`);
     }
     const topic = topicResponse.payload.topicData as ForumTopic;
     song.forum_topic_id = topic.tid;

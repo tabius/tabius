@@ -51,7 +51,7 @@ export class ArtistDbi {
 
   async createArtistForUser(user: User): Promise<number> {
     if (isValidId(user.artistId)) {
-      throw `User already has valid artist id assigned: ${user.id}, artistId: ${user.artistId}`;
+      throw new Error(`User already has valid artist id assigned: ${user.id}, artistId: ${user.artistId}`);
     }
     this.logger.debug('Creating artist record for user: ' + user.email);
 
@@ -79,7 +79,21 @@ export class ArtistDbi {
     return this.db.pool.promise()
         .query(`${SELECT_ARTIST_SQL} WHERE mount = ?`, mount)
         .then(([rows]: [ArtistRow[]]) => rows.length === 0 ? undefined : rowToArtist(rows[0]));
+  }
 
+  async createArtist(name: string, mount: string, type: ArtistType): Promise<number> {
+    this.logger.debug(`Creating new artist: ${name}, ${mount}, ${type}`);
+    const result = await this.db.pool.promise()
+        .query('INSERT IGNORE INTO artist(name, type, mount, listed) VALUES (?,?,?,?)',
+            [name, type, mount, 1])
+        .then(([result]) => result);
+
+    console.log(JSON.stringify(result));
+    let artistId = result.insertId;
+    if (artistId > 0) {
+      this.logger.debug(`Artist record successfully created: ${name}, artist-id: ${artistId}`);
+    }
+    return artistId;
   }
 }
 
