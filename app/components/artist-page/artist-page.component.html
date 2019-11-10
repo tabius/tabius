@@ -16,10 +16,11 @@
             <div>
                 <h1>{{artistViewModel.displayName}}</h1>
 
-                <img *ngIf="!!artistViewModel.imgSrc"
-                     src="{{artistViewModel.imgSrc}}"
-                     alt="{{artistViewModel.artist.name}}"
-                     title="{{artistViewModel.displayName}}"
+                <img *ngIf="!!artistViewModel.imgSrc && !hasImageLoadingError"
+                     [src]="artistViewModel.imgSrc"
+                     [alt]="artistViewModel.artist.name"
+                     [title]="artistViewModel.displayName"
+                     (error)="hasImageLoadingError = true"
                      class="artist-image"
                 />
 

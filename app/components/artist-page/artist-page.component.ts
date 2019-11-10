@@ -46,6 +46,8 @@ export class ArtistPageComponent implements OnInit, OnDestroy {
   loaded = false;
   notFound = false;
 
+  hasImageLoadingError = false;
+
   constructor(private readonly ads: ArtistDataService,
               private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
