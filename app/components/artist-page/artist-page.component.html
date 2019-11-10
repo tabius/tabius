@@ -1,4 +1,5 @@
 <div class="content">
+
     <!-- Loading indicator -->
     <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
         <div class="message">Загружаем список песен…</div>
@@ -29,8 +30,8 @@
                     <div *ngFor="let band of artistViewModel.bands">
                         <a routerLink="{{getArtistPageLink(band.mount)}}">{{band.name}}</a>
                     </div>
-
                 </div>
+
                 <div class="songs-list">
                     <div *ngFor="let song of artistViewModel.songs; trackBy: trackBySongId">
                         <a routerLink="{{getSongPageLink(artistViewModel.artist.mount, song.mount)}}">{{song.title}}</a>
