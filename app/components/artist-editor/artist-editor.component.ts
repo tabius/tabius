@@ -21,6 +21,10 @@ export class ArtistEditorComponent {
 
   mount = '';
 
+  artistType: ArtistType = ArtistType.Person;
+
+  readonly ArtistType = ArtistType;
+
   constructor(private readonly ads: ArtistDataService,
               private readonly toastService: ToastService,
               private readonly router: Router,
@@ -44,9 +48,8 @@ export class ArtistEditorComponent {
 
   private async createImpl(): Promise<void> {
     //TODO: validate fields!
-    //TODO: support Artist type selection.
     //TODO: support Artist image.
-    const artist = await this.ads.createArtist({name: this.name, mount: this.mount, type: ArtistType.Person});
+    const artist = await this.ads.createArtist({name: this.name, mount: this.mount, type: this.artistType});
     this.close();
     this.router.navigate([MOUNT_ARTIST_PREFIX + artist.mount]).catch(err => console.error(err));
   }

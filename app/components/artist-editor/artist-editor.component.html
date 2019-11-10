@@ -16,6 +16,15 @@
             </td>
         </tr>
         <tr>
+            <td>Тип артиста</td>
+            <td>
+                <select [(ngModel)]="artistType">
+                    <option [ngValue]="ArtistType.Person">Персона</option>
+                    <option [ngValue]="ArtistType.Band">Группа</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
             <td></td>
             <td class="buttons-row">
                 <button class="btn btn-info create-button" (click)="create()">Создать</button>

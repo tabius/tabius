@@ -19,6 +19,7 @@
       td:first-child {
         padding-right: 10px;
       }
+
       td:last-child {
         width: 100%;
       }
@@ -27,10 +28,18 @@
     input {
       width: 100%;
     }
+
+    select {
+      border: 1px solid #a9a9a9;
+      height: 32px;
+      background-color: white;
+      padding: 2px 7px;
+      font-size: inherit;
+    }
   }
 
   .buttons-row {
-    margin-top: 10px;
+    padding-top: 10px;
 
     > button {
       &:not(:first-child) {
