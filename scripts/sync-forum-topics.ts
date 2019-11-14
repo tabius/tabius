@@ -82,7 +82,7 @@ async function getCategory(id: number): Promise<ForumCategory|string> {
 }
 
 function getCollectionPageUrl(collectionMount: string): string {
-  return `https://tabius.ru/${MOUNT_COLLECTION_PREFIX}/${collectionMount}`;
+  return `https://tabius.ru/${MOUNT_COLLECTION_PREFIX}${collectionMount}`;
 }
 
 async function syncCollectionTopic(collection: CollectionRow, connection: any): Promise<void> {
