@@ -32,6 +32,22 @@ server {
         alias /opt/tabius/www/sitemap-$1.txt.gz;
     }
 
+
+    # Redirects for old resources and API calls.
+    location ~ ^/images/artists/(.*) {
+        return 301 /images/collection/$1;
+    }   
+
+    location ~ ^/api/artist/(.*) {
+        return 301 /api/collection/$1;
+    }   
+
+    location ~ ^/artist/(.*) {
+        return 301 /chords/$1;
+    }   
+
+
+
     #    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     server_tokens off;
 
