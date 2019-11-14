@@ -1,6 +1,6 @@
 import {promisify} from 'util';
 import {readDbConfig} from '@server/db/db-config';
-import {get, post} from 'request';
+import {get, post, put} from 'request';
 import {getCollectionImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
 import {CollectionType} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
@@ -16,7 +16,7 @@ if (forumAuthToken === undefined) {
 
 const ALL_COLLECTIONS_CATEGORY_ID = 5;
 const mysql = require('mysql2/promise');
-const [getAsync, postAsync] = [get, post].map(promisify);
+const [getAsync, postAsync, putAsync] = [get, post, put].map(promisify);
 
 interface CollectionRow {
   id: number;
@@ -87,21 +87,23 @@ function getCollectionPageUrl(collectionMount: string): string {
 
 async function syncCollectionTopic(collection: CollectionRow, connection: any): Promise<void> {
   const category = collection.forum_category_id === 0 ? 'Not found' : await getCategory(collection.forum_category_id);
+
+  const altCollectionName = getNameFirstFormArtistName(collection);
+  const putPostPayload: any = {
+    json: true,
+    headers: {
+      Authorization: `Bearer ${forumAuthToken}`
+    },
+    form: {
+      name: collection.name,
+      description: `${altCollectionName} - обсуждаем подбор аккордов и новинки. ${getCollectionPageUrl(collection.mount)}`,
+      parentCid: ALL_COLLECTIONS_CATEGORY_ID,
+      backgroundImage: getCollectionImageUrl(collection.mount)
+    },
+  };
+
   if (typeof category === 'string') { // not found
-    const altCollectionName = getNameFirstFormArtistName(collection);
-    const options = {
-      json: true,
-      headers: {
-        Authorization: `Bearer ${forumAuthToken}`
-      },
-      form: {
-        name: collection.name,
-        description: `${altCollectionName} - обсуждаем подбор аккордов и новинки. ${getCollectionPageUrl(collection.mount)}`,
-        parentCid: ALL_COLLECTIONS_CATEGORY_ID,
-        backgroundImage: getCollectionImageUrl(collection.mount)
-      },
-    };
-    const categoryResponse = (await postAsync(forumUrl + '/api/v2/categories', options)).body;
+    const categoryResponse = (await postAsync(`${forumUrl}/api/v2/categories`, putPostPayload)).body;
     if (categoryResponse.code !== 'ok') {
       console.error('Failed to create collection category', collection, categoryResponse);
       throw new Error(`Failed to create collection category: ${collection.id}`);
@@ -111,7 +113,11 @@ async function syncCollectionTopic(collection: CollectionRow, connection: any): 
     await connection.execute(`UPDATE collection SET forum_category_id = ${category.cid} WHERE id = ${collection.id}`);
     console.info(`Created new category for ${collection.mount}`);
   } else {
-    // nothing to update today.
+    const categoryResponse = (await putAsync(`${forumUrl}/api/v2/categories/${collection.forum_category_id}`, putPostPayload)).body;
+    if (categoryResponse.code !== 'ok') {
+      console.error('Failed to update collection category', collection, categoryResponse);
+      throw new Error(`Failed to update collection category: ${collection.id}`);
+    }
   }
 }
 
