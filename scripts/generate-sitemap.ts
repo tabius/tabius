@@ -11,7 +11,7 @@ async function generateSitemap() {
   const connection = await mysql.createConnection(readDbConfig());
   let sitemap = '';
   try {
-    const [collectionRows] = await connection.execute('SELECT id, mount FROM collection WHERE listed = 1');
+    const [collectionRows] = await connection.execute('SELECT id, mount FROM collection');
     const collectionMountById = new Map<number, string>();
     for (const row of collectionRows) {
       collectionMountById.set(+row.id, row.mount);
