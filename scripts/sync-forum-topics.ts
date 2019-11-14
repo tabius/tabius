@@ -54,7 +54,8 @@ async function main() {
   const connection = await mysql.createConnection(readDbConfig());
   try {
     // check that all collections have valid category
-    const [collectionsRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM collection where listed = 1') as CollectionRow[][];
+    const [collectionsRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM collection ' +
+        'WHERE listed = 1 AND id IN (SELECT DISTINCT collection_id FROM song)') as CollectionRow[][];
     console.info(`Read ${collectionsRows.length} collections from DB`);
     const collectionById = new Map<number, CollectionRow>();
     for (const collection of collectionsRows) {
@@ -62,9 +63,9 @@ async function main() {
       collectionById.set(collection.id, collection);
     }
 
-    // check that all songs have valid topics.
-    // const [songRows] = await connection.execute(`# SELECT id, collection_id, title, mount, forum_topic_id FROM song WHERE collection_id = ${collectionRows[0].id} LIMIT 1`);
-    const [songRows] = await connection.execute(`SELECT id, collection_id, title, mount, forum_topic_id FROM song`);
+    // check that all songs in listed collections have valid topics.
+    const [songRows] = await connection.execute('SELECT id, collection_id, title, mount, forum_topic_id FROM song ' +
+        'WHERE collection_id IN (SELECT id FROM collection WHERE listed = 1)');
     for (const song of songRows) {
       await syncSongTopic(song, connection, collectionById);
     }
