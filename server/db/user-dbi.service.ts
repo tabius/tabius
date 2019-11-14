@@ -15,8 +15,8 @@ export class UserDbi {
 
     const now = new Date();
     await this.db.pool.promise()
-        .query('INSERT INTO user(id, artist_id, login_date, settings) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE artist_id = ?',
-            [user.id, user.artistId, now, '{}', user.artistId]);
+        .query('INSERT INTO user(id, collection_id, login_date, settings) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE collection_id = ?',
+            [user.id, user.collectionId, now, '{}', user.collectionId]);
 
     this.logger.debug(`User record successfully created/updated: ${user.email}`);
   }
@@ -51,9 +51,9 @@ export class UserDbi {
         );
   }
 
-  getUserArtistId(userId: string): Promise<number|undefined> {
+  getUserCollectionId(userId: string): Promise<number|undefined> {
     return this.db.pool.promise()
-        .query('SELECT artist_id FROM user WHERE id = ?', [userId])
-        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['artist_id']);
+        .query('SELECT collection_id FROM user WHERE id = ?', [userId])
+        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['collection_id']);
   }
 }

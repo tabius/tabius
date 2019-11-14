@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {Artist, Song} from '@common/artist-model';
+import {Collection, Song} from '@common/catalog-model';
 import {getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
 
-export type SongHeaderTitleFormat = 'song'|'song-and-artist';
+export type SongHeaderTitleFormat = 'song'|'song-and-collection';
 
 @Component({
   selector: 'gt-song-header',
@@ -14,9 +14,9 @@ export class SongHeaderComponent implements OnChanges {
 
   @Input() song!: Song;
 
-  @Input() artist!: Artist;
+  @Input() collection!: Collection;
 
-  @Input() titleFormat: SongHeaderTitleFormat = 'song-and-artist';
+  @Input() titleFormat: SongHeaderTitleFormat = 'song-and-collection';
 
   @Input() showControls = true;
 
@@ -30,8 +30,8 @@ export class SongHeaderComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['artist'] || changes['song']) {
-      this.title = this.song.title + (this.titleFormat === 'song-and-artist' ? ` - ${getNameFirstFormArtistName(this.artist)}` : '');
+    if (changes['collection'] || changes['song']) {
+      this.title = this.song.title + (this.titleFormat === 'song-and-collection' ? ` - ${getNameFirstFormArtistName(this.collection)}` : '');
     }
   }
 
@@ -47,7 +47,7 @@ export class SongHeaderComponent implements OnChanges {
   }
 
   printSong(): void {
-    const printPageUrl = getSongPrintPageLink(this.artist.mount, this.song.mount);
+    const printPageUrl = getSongPrintPageLink(this.collection.mount, this.song.mount);
     window.open(printPageUrl, '_blank');
   }
 }

@@ -54,7 +54,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   }
 
   getSongLink(searchResult: FullTextSongSearchResult): string {
-    return getSongPageLink(searchResult.artistMount, searchResult.songMount);
+    return getSongPageLink(searchResult.collectionMount, searchResult.songMount);
   }
 
   formatResultSnippet(snippet: string): string {

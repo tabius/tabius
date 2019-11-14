@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {Subject} from 'rxjs';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
-import {MOUNT_ARTIST_PREFIX} from '@common/mounts';
+import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-print-page-component',
@@ -15,7 +15,7 @@ export class SongPrintPageComponent {
   readonly destroyed$ = new Subject();
   songId = 0;
 
-  constructor(private readonly ads: ArtistDataService,
+  constructor(private readonly cds: CatalogDataService,
               private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
               private readonly router: Router,
@@ -27,11 +27,11 @@ export class SongPrintPageComponent {
     this.uds.syncSessionStateAsync();
 
     const params = this.activatedRoute.snapshot.params;
-    const artistMount = params['artistMount'];
-    const songMount = params['songMount'];
+    const collectionMount = params[PARAM_COLLECTION_MOUNT];
+    const songMount = params[PARAM_SONG_MOUNT];
 
-    const artistId$ = this.ads.getArtistIdByMount(artistMount);
-    const song$ = artistId$.pipe(flatMap(artistId => this.ads.getSongByMount(artistId, songMount)));
+    const collectionId$ = this.cds.getCollectionIdByMount(collectionMount);
+    const song$ = collectionId$.pipe(flatMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
 
     song$
         .pipe(
@@ -40,7 +40,7 @@ export class SongPrintPageComponent {
         )
         .subscribe(song => {
           if (song === undefined) {
-            this.router.navigate([MOUNT_ARTIST_PREFIX + artistMount]).catch(err => console.error(err));
+            this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
             return;
           }
           this.songId = song.id;

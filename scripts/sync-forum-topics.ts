@@ -1,8 +1,9 @@
 import {promisify} from 'util';
 import {readDbConfig} from '@server/db/db-config';
 import {get, post} from 'request';
-import {getArtistImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
-import {ArtistType} from '@common/artist-model';
+import {getCollectionImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
+import {CollectionType} from '@common/catalog-model';
+import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
 
 const forumUrl = process.env.TABIUS_FORUM_URL;
 if (forumUrl === undefined) {
@@ -13,13 +14,13 @@ if (forumAuthToken === undefined) {
   throw new Error('TABIUS_NODE_BB_AUTH_TOKEN is required.');
 }
 
-const ALL_ARTISTS_CATEGORY_ID = 5;
+const ALL_COLLECTIONS_CATEGORY_ID = 5;
 const mysql = require('mysql2/promise');
 const [getAsync, postAsync] = [get, post].map(promisify);
 
-interface ArtistCategoryRow {
+interface CollectionRow {
   id: number;
-  type: ArtistType,
+  type: CollectionType,
   name: string;
   mount: string;
   forum_category_id: number;
@@ -39,7 +40,7 @@ interface ForumCategory {
 
 interface SongTopicRow {
   id: number;
-  artist_id: number;
+  collection_id: number;
   title: string;
   mount: string;
   forum_topic_id: number;
@@ -52,20 +53,20 @@ interface ForumTopic {
 async function main() {
   const connection = await mysql.createConnection(readDbConfig());
   try {
-    // check that all artists have valid category
-    const [artistRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM artist where listed = 1') as ArtistCategoryRow[][];
-    console.info(`Read ${artistRows.length} artists from DB`);
-    const artistById = new Map<number, ArtistCategoryRow>();
-    for (const artist of artistRows) {
-      await syncArtistCategory(artist, connection);
-      artistById.set(artist.id, artist);
+    // check that all collections have valid category
+    const [collectionsRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM collection where listed = 1') as CollectionRow[][];
+    console.info(`Read ${collectionsRows.length} collections from DB`);
+    const collectionById = new Map<number, CollectionRow>();
+    for (const collection of collectionsRows) {
+      await syncCollectionTopic(collection, connection);
+      collectionById.set(collection.id, collection);
     }
 
     // check that all songs have valid topics.
-    // const [songRows] = await connection.execute(`# SELECT id, artist_id, title, mount, forum_topic_id FROM song WHERE artist_id = ${artistRows[0].id} LIMIT 1`);
-    const [songRows] = await connection.execute(`SELECT id, artist_id, title, mount, forum_topic_id FROM song`);
+    // const [songRows] = await connection.execute(`# SELECT id, collection_id, title, mount, forum_topic_id FROM song WHERE collection_id = ${collectionRows[0].id} LIMIT 1`);
+    const [songRows] = await connection.execute(`SELECT id, collection_id, title, mount, forum_topic_id FROM song`);
     for (const song of songRows) {
-      await syncSongTopic(song, connection, artistById);
+      await syncSongTopic(song, connection, collectionById);
     }
   } finally {
     connection.end();
@@ -80,35 +81,35 @@ async function getCategory(id: number): Promise<ForumCategory|string> {
   return (await getAsync(`${forumUrl}/api/category/${id}`, {json: true})).body;
 }
 
-function getArtistPageUrl(artistMount: string): string {
-  return `https://tabius.ru/artist/${artistMount}`;
+function getCollectionPageUrl(collectionMount: string): string {
+  return `https://tabius.ru/${MOUNT_COLLECTION_PREFIX}/${collectionMount}`;
 }
 
-async function syncArtistCategory(artist: ArtistCategoryRow, connection: any): Promise<void> {
-  const category = artist.forum_category_id === 0 ? 'Not found' : await getCategory(artist.forum_category_id);
+async function syncCollectionTopic(collection: CollectionRow, connection: any): Promise<void> {
+  const category = collection.forum_category_id === 0 ? 'Not found' : await getCategory(collection.forum_category_id);
   if (typeof category === 'string') { // not found
-    const altArtistName = getNameFirstFormArtistName(artist);
+    const altCollectionName = getNameFirstFormArtistName(collection);
     const options = {
       json: true,
       headers: {
         Authorization: `Bearer ${forumAuthToken}`
       },
       form: {
-        name: artist.name,
-        description: `${altArtistName} - обсуждаем подбор аккордов и новинки. ${getArtistPageUrl(artist.mount)}`,
-        parentCid: ALL_ARTISTS_CATEGORY_ID,
-        backgroundImage: getArtistImageUrl(artist.mount)
+        name: collection.name,
+        description: `${altCollectionName} - обсуждаем подбор аккордов и новинки. ${getCollectionPageUrl(collection.mount)}`,
+        parentCid: ALL_COLLECTIONS_CATEGORY_ID,
+        backgroundImage: getCollectionImageUrl(collection.mount)
       },
     };
     const categoryResponse = (await postAsync(forumUrl + '/api/v2/categories', options)).body;
     if (categoryResponse.code !== 'ok') {
-      console.error('Failed to create artist category', artist, categoryResponse);
-      throw new Error(`Failed to create artist category: ${artist.id}`);
+      console.error('Failed to create collection category', collection, categoryResponse);
+      throw new Error(`Failed to create collection category: ${collection.id}`);
     }
     const category = categoryResponse.payload as ForumCategory;
-    artist.forum_category_id = category.cid;
-    await connection.execute(`UPDATE artist SET forum_category_id = ${category.cid} WHERE id = ${artist.id}`);
-    console.info(`Created new category for ${artist.mount}`);
+    collection.forum_category_id = category.cid;
+    await connection.execute(`UPDATE collection SET forum_category_id = ${category.cid} WHERE id = ${collection.id}`);
+    console.info(`Created new category for ${collection.mount}`);
   } else {
     // nothing to update today.
   }
@@ -118,29 +119,29 @@ async function getTopic(id: number): Promise<ForumTopic|string> {
   return (await getAsync(`${forumUrl}/api/topic/${id}`, {json: true})).body;
 }
 
-function getSongPageUrl(artistMount: string, songMount: string): string {
-  return `https://tabius.ru/song/${artistMount}/${songMount}`;
+function getSongPageUrl(collectionMount: string, songMount: string): string {
+  return `https://tabius.ru/song/${collectionMount}/${songMount}`;
 }
 
-async function syncSongTopic(song: SongTopicRow, connection: any, artistById: Map<number, ArtistCategoryRow>): Promise<void> {
+async function syncSongTopic(song: SongTopicRow, connection: any, collectionById: Map<number, CollectionRow>): Promise<void> {
   const topic = song.forum_topic_id === 0 ? 'Not found' : await getTopic(song.forum_topic_id);
   if (typeof topic === 'string') { // not found
-    const artist = artistById.get(song.artist_id);
-    if (artist === undefined) {
-      throw new Error(`Failed to find artist for song + ${JSON.stringify(song)}`);
+    const collection = collectionById.get(song.collection_id);
+    if (collection === undefined) {
+      throw new Error(`Failed to find collection for song + ${JSON.stringify(song)}`);
     }
-    const artistTypeName = artist.type === ArtistType.Band ? 'группа' : 'исполнитель';
+    const collectionTypeName = collection.type === CollectionType.Band ? 'группа' : 'исполнитель';
     const options = {
       json: true,
       headers: {
         Authorization: `Bearer ${forumAuthToken}`
       },
       form: {
-        cid: artist.forum_category_id,
+        cid: collection.forum_category_id,
         title: song.title,
         content: `В этой теме обсуждаем и улучшаем подбор аккордов для песни ` +
-            `[«${song.title}»](${getSongPageUrl(artist.mount, song.mount)}), ` +
-            `${artistTypeName}: [${getNameFirstFormArtistName(artist)}](${getArtistPageUrl(artist.mount)})`,
+            `[«${song.title}»](${getSongPageUrl(collection.mount, song.mount)}), ` +
+            `${collectionTypeName}: [${getNameFirstFormArtistName(collection)}](${getCollectionPageUrl(collection.mount)})`,
       },
     };
     const topicResponse = (await postAsync(forumUrl + '/api/v2/topics', options)).body;
@@ -151,7 +152,7 @@ async function syncSongTopic(song: SongTopicRow, connection: any, artistById: Ma
     const topic = topicResponse.payload.topicData as ForumTopic;
     song.forum_topic_id = topic.tid;
     await connection.execute(`UPDATE song SET forum_topic_id = ${topic.tid} WHERE id = ${song.id}`);
-    console.info(`Created new topic for ${artist.mount}/${song.mount}`);
+    console.info(`Created new topic for ${collection.mount}/${song.mount}`);
   } else {
     // nothing to update today.
   }

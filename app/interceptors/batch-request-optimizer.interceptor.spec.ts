@@ -31,12 +31,12 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
     await Promise.all([
-      http.get('/api/artist/by-ids/0').toPromise().then(r => results.push(r)),
-      http.get('/api/artist/by-ids/1').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/0').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/1').toPromise().then(r => results.push(r)),
     ]);
 
     expect(responseInterceptor.count).toBe(1);
-    expect(responseInterceptor.requests[0]).toBe('/api/artist/by-ids/0,1');
+    expect(responseInterceptor.requests[0]).toBe('/api/collection/by-ids/0,1');
     expect(results.length).toBe(2);
     expect(results[0]).toEqual([{id: '0'}]);
     expect(results[1]).toEqual([{id: '1'}]);
@@ -48,10 +48,10 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     await Promise.all([
-      http.get('/api/artist/by-ids/1').toPromise(),
+      http.get('/api/collection/by-ids/1').toPromise(),
       http.get('/api/song/by-ids/2').toPromise(),
       http.get('/api/all/5').toPromise(),
-      http.post('/api/artist/by-ids/2').toPromise(),
+      http.post('/api/collection/by-ids/2').toPromise(),
     ]);
     expect(responseInterceptor.count).toBe(4);
     done();
@@ -64,16 +64,16 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
     await Promise.all([
-      http.get('/api/artist/by-ids/0').toPromise().then(r => results.push(r)),
-      http.get('/api/artist/by-ids/1,5').toPromise().then(r => results.push(r)),
-      http.get('/api/artist/by-ids/2,1').toPromise().then(r => results.push(r)),
-      http.get('/api/artist/by-ids/3').toPromise().then(r => results.push(r)),
-      http.get('/api/artist/by-ids/1,4,2').toPromise().then(r => results.push(r)),
-      http.get('/api/artist/by-ids/1,1,1').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/0').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/1,5').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/2,1').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/3').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/1,4,2').toPromise().then(r => results.push(r)),
+      http.get('/api/collection/by-ids/1,1,1').toPromise().then(r => results.push(r)),
     ]);
 
     expect(responseInterceptor.count).toBe(1);
-    expect(responseInterceptor.requests[0]).toBe('/api/artist/by-ids/0,1,2,3,4,5');
+    expect(responseInterceptor.requests[0]).toBe('/api/collection/by-ids/0,1,2,3,4,5');
     expect(results.length).toBe(6);
     expect(results[0]).toEqual([{id: '0'}]);
     expect(results[1]).toEqual([{id: '1'}, {id: '5'}]);
@@ -90,7 +90,7 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
-    await http.get('/api/artist/by-ids/100').toPromise().then(r => results.push(r));
+    await http.get('/api/collection/by-ids/100').toPromise().then(r => results.push(r));
 
     expect(responseInterceptor.count).toBe(1);
     expect(results.length).toBe(1);

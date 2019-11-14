@@ -1,0 +1,5 @@
+<a routerLink="{{catalogLink}}">Все артисты</a>
+<ng-container *ngIf="collection && showCollectionLink">
+    <span class="sep">»</span>
+    <a routerLink="{{getCollectionPageLink(collection.mount)}}">{{collection.name}} </a>
+</ng-container>

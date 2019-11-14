@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
-import {Artist, Song, SongDetails} from '@common/artist-model';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {Collection, Song, SongDetails} from '@common/catalog-model';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {flatMap, takeUntil} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
@@ -23,7 +23,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
 
   song?: Song;
   songDetails?: SongDetails;
-  artist?: Artist;
+  collection?: Collection;
   songSettings?: UserSongSettings;
   private songSubscription?: Subscription;
 
@@ -31,7 +31,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
     return this.song !== undefined;
   };
 
-  constructor(private readonly ads: ArtistDataService,
+  constructor(private readonly cds: CatalogDataService,
               private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
   ) {
@@ -40,24 +40,24 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(): void {
     delete this.song;
     delete this.songDetails;
-    delete this.artist;
+    delete this.collection;
     if (this.songSubscription) {
       this.songSubscription.unsubscribe();
     }
 
-    const song$ = this.ads.getSongById(this.songId);
-    const songDetails$ = this.ads.getSongDetailsById(this.songId);
-    const artist$ = song$.pipe(flatMap(song => this.ads.getArtistById(song && song.artistId)));
+    const song$ = this.cds.getSongById(this.songId);
+    const songDetails$ = this.cds.getSongDetailsById(this.songId);
+    const collection$ = song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
     const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song && song.id)));
-    this.songSubscription = combineLatest([song$, songDetails$, artist$, songSettings$])
+    this.songSubscription = combineLatest([song$, songDetails$, collection$, songSettings$])
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(([song, songDetails, artist, songSettings]) => {
-          if (!song || !songDetails || !artist || !songSettings) {
+        .subscribe(([song, songDetails, collection, songSettings]) => {
+          if (!song || !songDetails || !collection || !songSettings) {
             return; // TODO: not found? 404?
           }
           this.song = song;
           this.songDetails = songDetails;
-          this.artist = artist;
+          this.collection = collection;
           this.songSettings = songSettings;
           this.cd.detectChanges();
         });

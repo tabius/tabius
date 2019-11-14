@@ -1,15 +1,15 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Meta, Title} from '@angular/platform-browser';
-import {Artist, Song} from '@common/artist-model';
+import {Collection, Song} from '@common/catalog-model';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
-import {MOUNT_USER_STUDIO} from '@common/mounts';
+import {MOUNT_USER_STUDIO, PARAM_PLAYLIST_MOUNT} from '@common/mounts';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {Playlist, User} from '@common/user-model';
-import {canEditArtist, defined, getArtistPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic, playlistMountToId} from '@common/util/misc-utils';
+import {canEditCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongForumTopicLink, getSongPageLink, hasValidForumTopic, playlistMountToId} from '@common/util/misc-utils';
 import {SongComponentMode} from '@app/components/song/song.component';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {RefreshMode} from '@app/store/observable-store';
@@ -17,8 +17,8 @@ import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component
 
 interface PlaylistSongModel {
   song: Song;
-  artist: Artist;
-  artistName: string;
+  collection: Collection;
+  collectionName: string;
   last: boolean;
 }
 
@@ -39,7 +39,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
   readonly playlistsLink = `/${MOUNT_USER_STUDIO}`;
-  readonly getArtistPageLink = getArtistPageLink;
+  readonly getCollectionPageLink = getCollectionPageLink;
   readonly getSongPageLink = getSongPageLink;
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
@@ -50,7 +50,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
 
   constructor(readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
-              private readonly ads: ArtistDataService,
+              private readonly cds: CatalogDataService,
               private readonly uds: UserDataService,
               readonly title: Title,
               readonly meta: Meta,
@@ -61,21 +61,21 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     enableLoadingIndicator(this);
 
-    const playlistMount = this.route.snapshot.params['playlistMount'];
+    const playlistMount = this.route.snapshot.params[PARAM_PLAYLIST_MOUNT];
     const playlistId = playlistMountToId(playlistMount);
     const playlist$ = this.uds.getPlaylist(playlistId, RefreshMode.Refresh);
     const songs$: Observable<Song[]> = playlist$.pipe(
-        flatMap(playlist => this.ads.getSongsByIds(playlist ? playlist.songIds : [])),
+        flatMap(playlist => this.cds.getSongsByIds(playlist ? playlist.songIds : [])),
         map(songs => songs.filter(defined)),
     );
-    const artists$: Observable<(Artist|undefined)[]> = songs$.pipe(
-        flatMap(songs => this.ads.getArtistsByIds(songs.map(s => s.artistId)))
+    const collections$: Observable<(Collection|undefined)[]> = songs$.pipe(
+        flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId)))
     );
 
-    combineLatest([playlist$, songs$, artists$, this.uds.getUser()]).pipe(
+    combineLatest([playlist$, songs$, collections$, this.uds.getUser()]).pipe(
         takeUntil(this.destroyed$),
         throttleTime(100, undefined, {leading: true, trailing: true}),
-    ).subscribe(([playlist, songs, artists, user]) => {
+    ).subscribe(([playlist, songs, collections, user]) => {
       this.loaded = true;
       if (!playlist) {
         switchToNotFoundMode(this);
@@ -86,12 +86,12 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
       this.songItems = [];
       for (let i = 0; i < songs.length; i++) {
         const song = songs[i];
-        const artist = artists[i];
-        if (artist) {
+        const collection = collections[i];
+        if (collection) {
           this.songItems.push({
             song,
-            artist,
-            artistName: getNameFirstFormArtistName(artist),
+            collection: collection,
+            collectionName: getNameFirstFormArtistName(collection),
             last: i === songs.length - 1,
           });
         }
@@ -128,7 +128,7 @@ export class PlaylistPageComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  hasEditRight(artistId: number): boolean {
-    return canEditArtist(this.user, artistId);
+  hasEditRight(collectionId: number): boolean {
+    return canEditCollection(this.user, collectionId);
   }
 }

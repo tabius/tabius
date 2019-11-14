@@ -17,7 +17,7 @@
         </div>
         <div *ngFor="let searchResult of titleResults">
             <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}}
-                <span class="artist-name">({{searchResult.artistName}})</span>
+                <span class="collection-name">({{searchResult.collectionName}})</span>
             </a>
         </div>
     </div>
@@ -37,7 +37,7 @@
         <div *ngFor="let searchResult of contentResults" class="content-result-item">
             <div>
                 <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}}
-                    <span class="artist-name">({{searchResult.artistName}})</span>
+                    <span class="collection-name">({{searchResult.collectionName}})</span>
                 </a>
             </div>
             <div class="content-result-text-block">

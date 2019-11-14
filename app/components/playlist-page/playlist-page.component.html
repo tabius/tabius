@@ -24,12 +24,12 @@
 
                     <div class="links-block">
                         <a href="{{getSongForumTopicLink(item.song)}}" *ngIf="hasValidForumTopic(item.song)" title="Обсудить подбор на форуме">Форум »</a>
-                        <a routerLink="{{getArtistPageLink(item.artist.mount)}}">Артист »</a>
-                        <a routerLink="{{getSongPageLink(item.artist.mount, item.song.mount)}}">Песня »</a>
-                        <a *ngIf="hasEditRight(item.song.artistId) && !isEditorOpen(item.song.id)" href="javascript:" (click)="toggleEditor(item.song.id)">
+                        <a routerLink="{{getCollectionPageLink(item.collection.mount)}}">Артист »</a>
+                        <a routerLink="{{getSongPageLink(item.collection.mount, item.song.mount)}}">Песня »</a>
+                        <a *ngIf="hasEditRight(item.song.collectionId) && !isEditorOpen(item.song.id)" href="javascript:" (click)="toggleEditor(item.song.id)">
                             Правка »
                         </a>
-                        <div *ngIf="!hasEditRight(item.song.artistId)" class="links-spacer"></div>
+                        <div *ngIf="!hasEditRight(item.song.collectionId)" class="links-spacer"></div>
                     </div>
 
                     <gt-song-editor *ngIf="isEditorOpen(item.song.id)"

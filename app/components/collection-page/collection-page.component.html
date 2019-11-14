@@ -10,31 +10,31 @@
     <gt-resource-not-found *ngIf="notFound" message="Артист не найден"></gt-resource-not-found>
 
     <!-- Main content block -->
-    <div *ngIf="loaded && artistViewModel">
-        <gt-artist-breadcrumb [artist]="artistViewModel ? artistViewModel.artist : null" [showArtistLink]="false"></gt-artist-breadcrumb>
+    <div *ngIf="loaded && collectionViewModel">
+        <gt-collection-breadcrumb [collection]="collectionViewModel ? collectionViewModel.collection : null" [showCollectionLink]="false"></gt-collection-breadcrumb>
 
-        <div class="artist-root">
+        <div class="collection-root">
             <div>
-                <h1>{{artistViewModel.displayName}}</h1>
+                <h1>{{collectionViewModel.displayName}}</h1>
 
-                <img *ngIf="!!artistViewModel.imgSrc && !hasImageLoadingError"
-                     [src]="artistViewModel.imgSrc"
-                     [alt]="artistViewModel.artist.name"
-                     [title]="artistViewModel.displayName"
+                <img *ngIf="!!collectionViewModel.imgSrc && !hasImageLoadingError"
+                     [src]="collectionViewModel.imgSrc"
+                     [alt]="collectionViewModel.collection.name"
+                     [title]="collectionViewModel.displayName"
                      (error)="hasImageLoadingError = true"
-                     class="artist-image"
+                     class="collection-image"
                 />
 
-                <div *ngIf="artistViewModel.bands.length > 0" class="bands-info">
+                <div *ngIf="collectionViewModel.bands.length > 0" class="bands-info">
                     Группы:
-                    <div *ngFor="let band of artistViewModel.bands">
-                        <a routerLink="{{getArtistPageLink(band.mount)}}">{{band.name}}</a>
+                    <div *ngFor="let band of collectionViewModel.bands">
+                        <a routerLink="{{getCollectionPageLink(band.mount)}}">{{band.name}}</a>
                     </div>
                 </div>
 
                 <div class="songs-list">
-                    <div *ngFor="let song of artistViewModel.songs; trackBy: trackBySongId">
-                        <a routerLink="{{getSongPageLink(artistViewModel.artist.mount, song.mount)}}">{{song.title}}</a>
+                    <div *ngFor="let song of collectionViewModel.songs; trackBy: trackBySongId">
+                        <a routerLink="{{getSongPageLink(collectionViewModel.collection.mount, song.mount)}}">{{song.title}}</a>
                     </div>
                 </div>
             </div>
@@ -46,13 +46,13 @@
             <gt-song-editor *ngIf="editorIsOpen"
                             (closeRequest)="toggleEditor()"
                             [songId]="-1"
-                            [artistId]="artistViewModel.artist.id"
+                            [collectionId]="collectionViewModel.collection.id"
                             [initialFocusMode]="'title'"
             ></gt-song-editor>
         </div>
 
-        <div *ngIf="artistViewModel.listed" class="pg-search-block">
-            <a href="https://priceguard.ru/search?g=digital&q={{artistViewModel.displayName}}"
+        <div *ngIf="collectionViewModel.listed" class="pg-search-block">
+            <a href="https://priceguard.ru/search?g=digital&q={{collectionViewModel.displayName}}"
                title="Поддержать исполнителя и купить его официальный диск."
                target="_blank"
                rel="noopener">

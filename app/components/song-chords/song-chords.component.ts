@@ -6,7 +6,7 @@ import {switchMap, takeUntil} from 'rxjs/operators';
 import {combineLatest, ReplaySubject, Subject} from 'rxjs';
 import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 
 @Component({
   selector: 'gt-song-chords',
@@ -29,7 +29,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService,
-              private readonly ads: ArtistDataService,
+              private readonly ads: CatalogDataService,
   ) {
   }
 

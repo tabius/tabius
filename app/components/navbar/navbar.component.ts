@@ -3,7 +3,7 @@ import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
-import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_ARTISTS, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
+import {FORUM_LINK, MOUNT_COLLECTION_PREFIX, MOUNT_CATALOG, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {ToastService} from '@app/toast/toast.service';
@@ -13,7 +13,7 @@ import {LocationStrategy} from '@angular/common';
 enum NavSection {
   Home = 1,
   Forum = 2,
-  Artists = 3,
+  Catalog = 3,
   Studio = 4,
   Tuner = 5,
   Settings = 6
@@ -31,7 +31,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   opened = false;
 
   readonly forumLink = `${FORUM_LINK}`;
-  readonly artistsLink = `/${MOUNT_ARTISTS}`;
+  readonly collectionLink = `/${MOUNT_CATALOG}`;
   readonly studioLink = `/${MOUNT_USER_STUDIO}`;
   readonly tunerLink = `/${MOUNT_TUNER}`;
   readonly settingsLink = `/${MOUNT_USER_SETTINGS}`;
@@ -75,8 +75,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const url = this.router.url.toLocaleLowerCase();
     if (url.startsWith(`/${MOUNT_TUNER}`)) {
       return NavSection.Tuner;
-    } else if (url.startsWith(`/${MOUNT_ARTISTS}`) || url.startsWith(`/${MOUNT_ARTIST_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
-      return NavSection.Artists;
+    } else if (url.startsWith(`/${MOUNT_CATALOG}`) || url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
+      return NavSection.Catalog;
     } else if (url.startsWith(`/${MOUNT_USER_STUDIO}`) || url.startsWith(`/${MOUNT_PLAYLIST_PREFIX}`)) {
       return NavSection.Studio;
     } else if (url.startsWith(`/${MOUNT_USER_SETTINGS}`)) {
@@ -113,9 +113,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetArtistsPageScroll(): void {
-    this.navHelper.resetSavedScrollPosition(this.artistsLink);
-    if (this.router.url === this.artistsLink) {
+  resetCollectionPageScroll(): void {
+    this.navHelper.resetSavedScrollPosition(this.collectionLink);
+    if (this.router.url === this.collectionLink) {
       window.scroll({top: 0, left: 0, behavior: 'smooth'});
     }
   }

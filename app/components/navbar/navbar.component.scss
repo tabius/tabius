@@ -95,15 +95,15 @@ a {
         }
       }
 
-      &.artists {
+      &.catalog {
         &.active {
           .indicator-block:before {
-            background: $color-nav-artists;
+            background: $color-nav-catalog;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-artists;
+          fill: $color-nav-catalog;
         }
       }
 
@@ -283,8 +283,8 @@ a {
         fill: $color-nav-forum;
       }
 
-      &.artists gt-svg-icon {
-        fill: $color-nav-artists;
+      &.catalog gt-svg-icon {
+        fill: $color-nav-catalog;
       }
 
       &.studio gt-svg-icon {

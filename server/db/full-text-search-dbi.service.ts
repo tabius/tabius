@@ -53,14 +53,14 @@ interface SphinxSearchResult {
   readonly meta?: any;
 }
 
-type SphinxMatch = [number, string, string, string, string, string]; // id, snippet, song title, artist name, artist mount, song mount
+type SphinxMatch = [number, string, string, string, string, string]; // id, snippet, song title, collection name, collection mount, song mount
 
 function toSafeSearchText(text: string): string {
   return text.replace(/'/g, '').replace('"', '');
 }
 
 function buildSphinxQuery(fieldName: string, text: string, maxResults: number): string {
-  return `SELECT id, SNIPPET(${fieldName}, '${text}'), title, artist_name, artist_mount, song_mount FROM song_index WHERE MATCH('@${fieldName} ${text}') LIMIT ${maxResults}`;
+  return `SELECT id, SNIPPET(${fieldName}, '${text}'), title, collection_name, collection_mount, song_mount FROM song_index WHERE MATCH('@${fieldName} ${text}') LIMIT ${maxResults}`;
 }
 
 function addResults(sphinxMatches: SphinxMatch[], result: FullTextSongSearchResult[], matchType: FullTextSongSearchResultMatchType): void {
@@ -69,8 +69,8 @@ function addResults(sphinxMatches: SphinxMatch[], result: FullTextSongSearchResu
       songId: match[0],
       snippet: match[1],
       songTitle: match[2],
-      artistName: match[3],
-      artistMount: match[4],
+      collectionName: match[3],
+      collectionMount: match[4],
       songMount: match[5],
       matchType,
     });

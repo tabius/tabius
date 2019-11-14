@@ -3,13 +3,13 @@ import {Page404Component} from '@app/components/page404/page404.component';
 import {ActivatedRouteSnapshot, DetachedRouteHandle, ExtraOptions, Resolve, RouteReuseStrategy, RouterModule, Routes} from '@angular/router';
 import {Inject, Injectable, NgModule} from '@angular/core';
 import {TunerPageComponent} from '@app/components/tuner-page/tuner-page.component';
-import {ArtistListPageComponent} from '@app/components/artist-list-page/artist-list-page.component';
-import {ArtistPageComponent} from '@app/components/artist-page/artist-page.component';
+import {CatalogPageComponent} from '@app/components/catalog-page/catalog-page.component';
+import {CollectionPageComponent} from '@app/components/collection-page/collection-page.component';
 import {SongPageComponent} from '@app/components/song-page/song-page.component';
 import {SettingsPageComponent} from '@app/components/settings-page/settings-page.component';
-import {MOUNT_ARTIST, MOUNT_ARTISTS, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_SONG_PRINT, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
+import {MOUNT_COLLECTION, MOUNT_CATALOG, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_SONG_PRINT, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
 import {PlaylistPageComponent} from '@app/components/playlist-page/playlist-page.component';
-import {TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
+import {TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {ObservableStore} from '@app/store/observable-store';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 import {SongPrintPageComponent} from '@app/components/song-print-page/song-print-page.component';
@@ -18,20 +18,20 @@ import {SongPrintPageComponent} from '@app/components/song-print-page/song-print
 @Injectable({providedIn: 'root'})
 export class BrowserStoreStateResolver implements Resolve<any> {
 
-  constructor(@Inject(TABIUS_ARTISTS_BROWSER_STORE_TOKEN) private readonly artistStore: ObservableStore,
+  constructor(@Inject(TABIUS_CATALOG_BROWSER_STORE_TOKEN) private readonly catalogStore: ObservableStore,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly userStore: ObservableStore) {
   }
 
   resolve(): Promise<any> {
-    return Promise.all([this.artistStore.initialized$$, this.userStore.initialized$$]);
+    return Promise.all([this.catalogStore.initialized$$, this.userStore.initialized$$]);
   }
 }
 
 const routes: Routes = [
   {path: '', component: SiteHomePageComponent, pathMatch: 'full'},
   {path: MOUNT_TUNER, component: TunerPageComponent},
-  {path: MOUNT_ARTISTS, component: ArtistListPageComponent, resolve: {storeFlag: BrowserStoreStateResolver}},
-  {path: MOUNT_ARTIST, component: ArtistPageComponent},
+  {path: MOUNT_CATALOG, component: CatalogPageComponent, resolve: {storeFlag: BrowserStoreStateResolver}},
+  {path: MOUNT_COLLECTION, component: CollectionPageComponent},
   {path: MOUNT_SONG, component: SongPageComponent},
   {path: MOUNT_SONG_PRINT, component: SongPrintPageComponent},
   {path: MOUNT_USER_SETTINGS, component: SettingsPageComponent},
@@ -46,7 +46,7 @@ const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
 };
 
-//TODO: Re-check this solution or fix ArtistPageComponent to handle route update from itself.
+//TODO: Re-check this solution or fix CollectionPageComponent to handle route update from itself.
 export class TabiusRouteReuseStrategy extends RouteReuseStrategy {
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
     return future.routeConfig === curr.routeConfig && JSON.stringify(future.params) === JSON.stringify(curr.params);

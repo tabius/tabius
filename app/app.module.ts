@@ -7,24 +7,24 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {Page404Component} from './components/page404/page404.component';
 import {environment} from './environments/environment';
 import {SongTextComponent} from './components/song-text/song-text.component';
-import {ArtistPageComponent} from './components/artist-page/artist-page.component';
+import {CollectionPageComponent} from './components/collection-page/collection-page.component';
 import {SongPageComponent} from './components/song-page/song-page.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {PlaylistPageComponent} from './components/playlist-page/playlist-page.component';
 import {PlaylistEditorComponent} from './components/playlist-editor/playlist-editor.component';
-import {ArtistListPageComponent} from './components/artist-list-page/artist-list-page.component';
+import {CatalogPageComponent} from './components/catalog-page/catalog-page.component';
 import {ApiUrlInterceptor} from './interceptors/api-url.interceptor';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RoutingModule} from '@app/routing.module';
 import {SvgIconComponent} from './components/svg-icon/svg-icon.component';
 import {TunerPageComponent} from './components/tuner-page/tuner-page.component';
 import {LoadingIndicatorComponent} from './components/loading-indicator/loading-indicator.component';
-import {ArtistBreadcrumbComponent} from './components/artist-breadcrumb/artist-breadcrumb.component';
+import {CollectionBreadcrumbComponent} from './components/collection-breadcrumb/collection-breadcrumb.component';
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
 import {InlineSongSettingsComponent} from './components/inline-song-settings/inline-song-settings.component';
 import {SettingsPageComponent} from './components/settings-page/settings-page.component';
-import {APP_BROWSER_STORE_TOKEN, TABIUS_ARTISTS_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
+import {APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-song-to-playlist.component';
 import {SigninSignoutButtonComponent} from './components/signin-signout-button/signin-signout-button.component';
@@ -45,17 +45,17 @@ import {SongFullTextSearchResultsPanelComponent} from './components/song-full-te
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 import {SongPrevNextNavigatorComponent} from './components/song-prev-next-navigator/song-prev-next-navigator.component';
 import {SessionStateInterceptor} from '@app/interceptors/session-state-interceptor.service';
-import {AppBrowserStore, ArtistsBrowserStore, UserBrowserStore} from '@app/store/stores';
+import {AppBrowserStore, CatalogBrowserStore, UserBrowserStore} from '@app/store/stores';
 import {SongPrintPageComponent} from './components/song-print-page/song-print-page.component';
-import {ArtistEditorComponent} from './components/artist-editor/artist-editor.component';
+import {CollectionEditorComponent} from './components/collection-editor/collection-editor.component';
 
 @NgModule({
   declarations: [
     AddSongToPlaylistComponent,
     AppComponent,
-    ArtistBreadcrumbComponent,
-    ArtistListPageComponent,
-    ArtistPageComponent,
+    CollectionBreadcrumbComponent,
+    CatalogPageComponent,
+    CollectionPageComponent,
     ChordImageComponent,
     FooterComponent,
     InlineSongSettingsComponent,
@@ -84,7 +84,7 @@ import {ArtistEditorComponent} from './components/artist-editor/artist-editor.co
     StudioPageComponent,
     SvgIconComponent,
     TunerPageComponent,
-    ArtistEditorComponent,
+    CollectionEditorComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -105,7 +105,7 @@ import {ArtistEditorComponent} from './components/artist-editor/artist-editor.co
     {provide: HTTP_INTERCEPTORS, useClass: SessionStateInterceptor, multi: true},
     {provide: TABIUS_BASE_API_URL, useValue: environment.apiUrl},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
-    {provide: TABIUS_ARTISTS_BROWSER_STORE_TOKEN, useClass: ArtistsBrowserStore},
+    {provide: TABIUS_CATALOG_BROWSER_STORE_TOKEN, useClass: CatalogBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
     BrowserStateService,
     PwaUpdaterService,

@@ -1,6 +1,6 @@
 import {Versioned} from '@common/common-model';
-import {ArtistType, Song} from '@common/artist-model';
-import {FORUM_LINK, MOUNT_ARTIST_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
+import {CollectionType, Song} from '@common/catalog-model';
+import {FORUM_LINK, MOUNT_COLLECTION_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
@@ -67,16 +67,16 @@ export function isValidId(id: number|undefined): id is number {
   return id !== undefined && id > 0;
 }
 
-export function getNameFirstFormArtistName(artist: { type: ArtistType, name: string }): string {
-  if (artist.type !== ArtistType.Person) {
-    return artist.name;
+export function getNameFirstFormArtistName(collection: { type: CollectionType, name: string }): string {
+  if (collection.type !== CollectionType.Person) {
+    return collection.name;
   }
-  const sepIdx = artist.name.indexOf(' ');
-  return sepIdx > 0 ? artist.name.substring(sepIdx + 1) + ' ' + artist.name.substring(0, sepIdx) : artist.name;
+  const sepIdx = collection.name.indexOf(' ');
+  return sepIdx > 0 ? collection.name.substring(sepIdx + 1) + ' ' + collection.name.substring(0, sepIdx) : collection.name;
 }
 
-export function getArtistImageUrl(mount: string): string {
-  return `https://tabius.ru/images/artists/profile/${mount}.jpg`;
+export function getCollectionImageUrl(mount: string): string {
+  return `https://tabius.ru/images/collection/profile/${mount}.jpg`;
 }
 
 export function hasValidForumTopic(song?: Song): song is Song {
@@ -90,16 +90,16 @@ export function getSongForumTopicLink(song?: Song): string {
   return `${FORUM_LINK}/topic/${song.tid}`;
 }
 
-export function getArtistPageLink(artistMount: string): string {
-  return `/${MOUNT_ARTIST_PREFIX}${artistMount}`;
+export function getCollectionPageLink(collectionMount: string): string {
+  return `/${MOUNT_COLLECTION_PREFIX}${collectionMount}`;
 }
 
-export function getSongPageLink(artistMount: string, songMount: string): string {
-  return `/${MOUNT_SONG_PREFIX}${artistMount}/${songMount}`;
+export function getSongPageLink(collectionMount: string, songMount: string): string {
+  return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}`;
 }
 
-export function getSongPrintPageLink(artistMount: string, songMount: string): string {
-  return `/${MOUNT_SONG_PREFIX}${artistMount}/${songMount}/${MOUNT_PRINT_SUFFIX}`;
+export function getSongPrintPageLink(collectionMount: string, songMount: string): string {
+  return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${MOUNT_PRINT_SUFFIX}`;
 }
 
 export function getPlaylistPageLink(playlistId: number): string {
@@ -163,11 +163,11 @@ export function scrollToView(element?: HTMLElement): void {
   window.scroll({left: window.scrollX, top: element.offsetTop - headerHeight, behavior: 'smooth'});
 }
 
-export function canEditArtist(user: User|undefined, artistId: number): boolean {
-  return !!user && (user.groups.includes(UserGroup.Moderator) || user.artistId === artistId);
+export function canEditCollection(user: User|undefined, collectionId: number): boolean {
+  return !!user && (user.groups.includes(UserGroup.Moderator) || user.collectionId === collectionId);
 }
 
-export function canCreateNewArtist(user: User|undefined): boolean {
+export function canCreateNewPublicCollection(user: User|undefined): boolean {
   return !!user && (user.groups.includes(UserGroup.Moderator));
 }
 

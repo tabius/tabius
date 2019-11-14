@@ -12,7 +12,7 @@
             <div class="search-input-block">
                 <input #searchField type="text"
                        [value]="searchValue"
-                       [formControl]="artistFilterControl"
+                       [formControl]="collectionFilterControl"
                        accesskey="/"
                        placeholder="поиск по имени и тексту"
                        title="Поиск по имени артиста или тексту песни"
@@ -37,32 +37,32 @@
         </div>
     </div>
 
-    <div class="artist-list">
+    <div class="collection-list">
         <div *ngIf="searchValue.length === 0">
             <div *ngFor="let letterBlock of getVisibleLetterBlocks(); trackBy: trackByLetter" class="letter-block">
                 <div class="letter">{{letterBlock.letter}}</div>
                 <div>
-                    <div *ngFor="let artist of letterBlock.artists; trackBy: trackByArtistId">
-                        <a routerLink="{{getArtistPageLink(artist.mount)}}">{{artist.name}}</a>
+                    <div *ngFor="let collection of letterBlock.collections; trackBy: trackByCollectionId">
+                        <a routerLink="{{getCollectionPageLink(collection.mount)}}">{{collection.name}}</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div *ngIf="searchValue.length > 0" class="filtered-artists-block">
+        <div *ngIf="searchValue.length > 0" class="filtered-collections-block">
 
             <div class="search-results-message">Результаты поиска для «<span class="search-text">{{searchValue}}</span>»:</div>
 
             <h2>Артисты</h2>
 
-            <div *ngIf="filteredArtists.length === 0" class="artists-not-found-message">
+            <div *ngIf="filteredCollections.length === 0" class="collection-not-found-message">
                 Артисты не найдены
             </div>
 
-            <div *ngFor="let artist of filteredArtists; trackBy: trackByArtistId">
-                <a routerLink="{{getArtistPageLink(artist.mount)}}">{{artist.name}}</a>
+            <div *ngFor="let collection of filteredCollections; trackBy: trackByCollectionId">
+                <a routerLink="{{getCollectionPageLink(collection.mount)}}">{{collection.name}}</a>
             </div>
 
-            <ng-container *ngIf="useFullTextSearch()" class="filtered-artists-block">
+            <ng-container *ngIf="useFullTextSearch()" class="filtered-collections-block">
                 <h2>Песни</h2>
                 <gt-song-full-text-search-results-panel [searchText]="searchValue"></gt-song-full-text-search-results-panel>
             </ng-container>
@@ -71,13 +71,13 @@
 
 </div>
 
-<div *ngIf="canAddNewArtist" class="add-artist-block">
+<div *ngIf="canCreateNewPublicCollection" class="add-collection-block">
     <div>
-        <a *ngIf="!artistEditorIsOpen" href="javascript:" (click)="toggleArtistEditor()">Добавить артиста »</a>
+        <a *ngIf="!collectionEditorIsOpen" href="javascript:" (click)="toggleCollectionsEditor()">Добавить артиста »</a>
 
-        <gt-artist-editor *ngIf="artistEditorIsOpen"
-                          (closeRequest)="toggleArtistEditor()"
-        ></gt-artist-editor>
+        <gt-collection-editor *ngIf="collectionEditorIsOpen"
+                              (closeRequest)="toggleCollectionsEditor()"
+        ></gt-collection-editor>
     </div>
 </div>
 

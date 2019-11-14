@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences, isValidId, scrollToView} from '@common/util/misc-utils';
-import {Song, SongDetails} from '@common/artist-model';
+import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
 import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 
@@ -23,7 +23,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   @Input() songId!: number;
 
   /** Must be provided for create mode only (when songId is not defined).*/
-  @Input() artistId!: number;
+  @Input() collectionId!: number;
 
   /** If true, component will trigger scrolling edit area into the view. */
   @Input() scrollIntoView = true;
@@ -49,7 +49,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef!: ElementRef;
   @ViewChild('firstFormElement', {static: false, read: ElementRef}) private titleElementRef!: ElementRef;
 
-  constructor(private readonly ads: ArtistDataService,
+  constructor(private readonly ads: CatalogDataService,
               private readonly toastService: ToastService,
   ) {
   }
@@ -57,8 +57,8 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.createMode = !isValidId(this.songId);
     if (this.createMode) {
-      if (!isValidId(this.artistId)) {
-        throw new Error('Artist ID not provided!');
+      if (!isValidId(this.collectionId)) {
+        throw new Error('Collection id not provided!');
       }
       this.loaded = true;
       this.updateUIOnLoadedState();
@@ -121,7 +121,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   }
 
   private async createImpl(): Promise<void> {
-    const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, artistId: this.artistId, tid: INVALID_ID};
+    const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
     const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
     await this.ads.createSong(createdSong, createdDetails);
     this.close();

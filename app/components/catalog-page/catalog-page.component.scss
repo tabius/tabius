@@ -71,7 +71,7 @@ h1 {
   }
 }
 
-.artist-list {
+.collection-list {
   display: flex;
   justify-content: center;
   margin-top: 5px;
@@ -99,7 +99,7 @@ h1 {
   }
 }
 
-.filtered-artists-block {
+.filtered-collections-block {
   padding-top: 20px;
   line-height: 1.7em;
 
@@ -116,7 +116,7 @@ h1 {
     margin-bottom: 10px;
   }
 
-  .artists-not-found-message {
+  .collection-not-found-message {
     color: #999;
   }
 }
@@ -130,7 +130,7 @@ h1 {
     }
   }
 
-  .artist-list {
+  .collection-list {
     .letter-block {
       line-height: $desktop-lists-line-height;
     }
@@ -146,7 +146,7 @@ h1 {
     }
   }
 
-  .artist-list {
+  .collection-list {
     .letter-block {
       .letter {
         font-size: 26px;
@@ -169,7 +169,7 @@ h1 {
   }
 }
 
-.add-artist-block {
+.add-collection-block {
   margin-top: 20px;
   display: flex;
   justify-content: center;

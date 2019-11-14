@@ -1,10 +1,10 @@
 import {KV, StoreAdapter} from '@app/store/store-adapter';
-import {ARTISTS_STORE_NAME, USER_STORE_NAME} from '@common/constants';
+import {CATALOG_STORE_NAME, USER_STORE_NAME} from '@common/constants';
 
 const MAX_KEY_CHAR = '~';
 
 const INDEX_DB_NAME = 'tabius';
-const INDEX_DB_SCHEMA_VERSION = 2;
+const INDEX_DB_SCHEMA_VERSION = 7;
 
 /** Indexed DB bases store adapter. */
 export class IndexedDbStoreAdapter implements StoreAdapter {
@@ -19,7 +19,7 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
             .objectStore(storeName)
             .get(key);
         request.onerror = err => {
-          console.error('IndexDB::get() error!', err);
+          console.error(`IndexDB::get() error! Store: ${storeName}, key:${key}`, err);
           reject();
         };
         request.onsuccess = () => resolve(request.result ? request.result.value : undefined);
@@ -148,11 +148,15 @@ export class IndexedDbStoreAdapter implements StoreAdapter {
     request.onerror = err => console.error(err);
     request.onsuccess = () => dbOp(request.result);
     request.onupgradeneeded = (e: IDBVersionChangeEvent) => {
-      const result = (e.currentTarget as any).result;
+      const result: IDBDatabase = (e.currentTarget as any).result;
       const objectStoreParams = {keyPath: 'key'};
       //FIXME: GH-1 remove hardcoded store names.
-      result.createObjectStore(USER_STORE_NAME, objectStoreParams);
-      result.createObjectStore(ARTISTS_STORE_NAME, objectStoreParams);
+      if (!result.objectStoreNames.contains(USER_STORE_NAME)) {
+        result.createObjectStore(USER_STORE_NAME, objectStoreParams);
+      }
+      if (!result.objectStoreNames.contains(CATALOG_STORE_NAME)) {
+        result.createObjectStore(CATALOG_STORE_NAME, objectStoreParams);
+      }
     };
   }
 

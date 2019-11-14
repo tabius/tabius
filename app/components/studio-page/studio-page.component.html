@@ -37,16 +37,16 @@
         </div>
     </div>
 
-    <div class="artist-block">
+    <div class="collection-block">
         <h1>Песни</h1>
 
-        <div class="artist-block-content">
+        <div class="collection-block-content">
             <div *ngIf="!user" class="register-prompt-block">
                 <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
             </div>
 
-            <div *ngIf="artist" class="artist-link-block">
-                <a routerLink="{{getUserArtistPageLink()}}">Перейти к своим подборам</a>
+            <div *ngIf="collection" class="collection-link-block">
+                <a routerLink="{{getUserCollectionPageLink()}}">Перейти к своим подборам</a>
             </div>
         </div>
     </div>

@@ -1,18 +1,18 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Output} from '@angular/core';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {ArtistType} from '@common/artist-model';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {CollectionType} from '@common/catalog-model';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {ToastService} from '@app/toast/toast.service';
-import {MOUNT_ARTIST_PREFIX} from '@common/mounts';
+import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'gt-artist-editor',
-  templateUrl: './artist-editor.component.html',
-  styleUrls: ['./artist-editor.component.scss'],
+  selector: 'gt-collection-editor',
+  templateUrl: './collection-editor.component.html',
+  styleUrls: ['./collection-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ArtistEditorComponent {
+export class CollectionEditorComponent {
 
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
@@ -21,11 +21,11 @@ export class ArtistEditorComponent {
 
   mount = '';
 
-  artistType: ArtistType = ArtistType.Person;
+  collectionType: CollectionType = CollectionType.Person;
 
-  readonly ArtistType = ArtistType;
+  readonly CollectionType = CollectionType;
 
-  constructor(private readonly ads: ArtistDataService,
+  constructor(private readonly cds: CatalogDataService,
               private readonly toastService: ToastService,
               private readonly router: Router,
   ) {
@@ -48,9 +48,9 @@ export class ArtistEditorComponent {
 
   private async createImpl(): Promise<void> {
     //TODO: validate fields!
-    //TODO: support Artist image.
-    const artist = await this.ads.createArtist({name: this.name, mount: this.mount, type: this.artistType});
+    //TODO: support Collection image.
+    const collection = await this.cds.createCollection({name: this.name, mount: this.mount, type: this.collectionType});
     this.close();
-    this.router.navigate([MOUNT_ARTIST_PREFIX + artist.mount]).catch(err => console.error(err));
+    this.router.navigate([MOUNT_COLLECTION_PREFIX + collection.mount]).catch(err => console.error(err));
   }
 }

@@ -1,5 +1,5 @@
 import {Playlist, User, UserSettings} from '@common/user-model';
-import {Artist, ArtistType, Song, SongDetails} from '@common/artist-model';
+import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
 
 export interface AjaxSessionInfo {
   userId: string|undefined;
@@ -25,15 +25,15 @@ export type CreatePlaylistResponse = Playlist[];
 export type UpdatePlaylistResponse = Playlist[];
 export type DeletePlaylistResponse = Playlist[];
 
-export interface CreateArtistRequest {
+export interface CreateCollectionRequest {
   name: string;
   mount: string;
-  type: ArtistType;
+  type: CollectionType;
 }
 
-export interface CreateArtistResponse extends TabiusAjaxResponse {
-  /** List of all artists. */
-  artists: Artist[];
+export interface CreateCollectionResponse extends TabiusAjaxResponse {
+  /** List of all collections. */
+  collections: Collection[];
 }
 
 export interface UpdateSongRequest extends TabiusAjaxResponse {
@@ -44,12 +44,12 @@ export interface UpdateSongRequest extends TabiusAjaxResponse {
 export interface UpdateSongResponse extends TabiusAjaxResponse {
   song: Song;
   details: SongDetails;
-  /** All artist songs.*/
+  /** All songs in the primary song collection.*/
   songs: Song[];
 }
 
 export interface DeleteSongResponse extends TabiusAjaxResponse {
-  artistId: number;
+  collectionId: number;
   songs: Song[];
 }
 
@@ -70,8 +70,8 @@ export type FullTextSongSearchResultMatchType = 'title'|'content';
 export interface FullTextSongSearchResult extends TabiusAjaxResponse {
   songId: number;
   songTitle: string;
-  artistName: string;
-  artistMount: string;
+  collectionName: string;
+  collectionMount: string;
   songMount: string;
   snippet: string;
   matchType: FullTextSongSearchResultMatchType;

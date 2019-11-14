@@ -14,11 +14,11 @@
                 <div class="title">ФОРУМ</div>
             </a>
         </div>
-        <div class="item artists" [class.active]="getActiveSection() === NavSection.Artists">
-            <a routerLink="{{artistsLink}}" (click)="resetArtistsPageScroll()">
+        <div class="item catalog" [class.active]="getActiveSection() === NavSection.Catalog">
+            <a routerLink="{{collectionLink}}" (click)="resetCollectionPageScroll()">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="artist"></gt-svg-icon>
-                <div class="title">АРТИСТЫ</div>
+                <div class="title">КАТАЛОГ</div>
             </a>
         </div>
         <div class="item studio" [class.active]="getActiveSection()=== NavSection.Studio">
@@ -84,10 +84,10 @@
                 <div class="title">ФОРУМ</div>
             </a>
         </div>
-        <div class="item artists">
-            <a routerLink="{{artistsLink}}" (click)="close()">
+        <div class="item catalog">
+            <a routerLink="{{collectionLink}}" (click)="close()">
                 <gt-svg-icon icon="artist"></gt-svg-icon>
-                <div class="title">АРТИСТЫ</div>
+                <div class="title">КАТАЛОГ</div>
             </a>
         </div>
         <div class="item studio">

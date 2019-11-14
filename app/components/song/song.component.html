@@ -6,13 +6,13 @@
 <div *ngIf="loaded">
 
     <ng-container *ngIf="mode === 'PrintMode'">
-        <gt-song-header [song]="song" [artist]="artist" [showControls]="false"></gt-song-header>
+        <gt-song-header [song]="song" [collection]="collection" [showControls]="false"></gt-song-header>
         <gt-song-text [song]="songDetails" [multiColumnMode]="false" [usePrintFontSize]="true"></gt-song-text>
         <gt-song-chords *ngIf="!songSettings.hideChords" [songId]="song.id"></gt-song-chords>
     </ng-container>
 
     <ng-container *ngIf="mode !== 'PrintMode'">
-        <gt-song-header [song]="song" [artist]="artist" [titleFormat]="mode === 'SongPageMode' ? 'song' : 'song-and-artist'"></gt-song-header>
+        <gt-song-header [song]="song" [collection]="collection" [titleFormat]="mode === 'SongPageMode' ? 'song' : 'song-and-collection'"></gt-song-header>
         <gt-song-video [songDetails]="songDetails"></gt-song-video>
         <gt-song-text [song]="songDetails"></gt-song-text>
         <gt-song-chords *ngIf="!songSettings.hideChords" [songId]="song.id"></gt-song-chords>

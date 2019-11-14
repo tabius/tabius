@@ -1,12 +1,12 @@
 import {SongDbi} from '@server/db/song-dbi.service';
 import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
-import {Song, SongDetails} from '@common/artist-model';
+import {Song, SongDetails} from '@common/catalog-model';
 import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {canEditArtist, isValidId} from '@common/util/misc-utils';
+import {canEditCollection, isValidId} from '@common/util/misc-utils';
 import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {NodeBBService} from '@server/db/node-bb.service';
@@ -31,12 +31,12 @@ export class SongController {
     return this.songDbi.getSongs(ids);
   }
 
-  /** Returns list of artist songs. */
-  @Get('/by-artist/:artistId')
-  async getSongsByArtist(@Param('artistId') artistIdParam: string): Promise<Song[]> {
-    this.logger.log(`by-artist: ${artistIdParam}`);
-    const artistId = paramToId(artistIdParam);
-    return await this.songDbi.getSongsByArtistId(artistId);
+  /** Returns list of songs in the collection. */
+  @Get('/by-collection/:collectionId')
+  async getSongsByCollection(@Param('collectionId') collectionIdParam: string): Promise<Song[]> {
+    this.logger.log(`by-collection: ${collectionIdParam}`);
+    const collectionId = paramToId(collectionIdParam);
+    return await this.songDbi.getSongsByCollectionId(collectionId);
   }
 
   /** Returns found song details by ids. The order of results is not specified. */
@@ -62,7 +62,7 @@ export class SongController {
   async create(@Session() session, @Body() updateRequest: UpdateSongRequest): Promise<UpdateSongResponse> {
     this.logger.log('/create-song' + JSON.stringify(updateRequest));
     const user: User = ServerSsoService.getUserOrFail(session);
-    if (!canEditArtist(user, updateRequest.song.artistId)) {
+    if (!canEditCollection(user, updateRequest.song.collectionId)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     const vr1 = validate(updateRequest.song, conformsTo(NewSongValidator));
@@ -77,7 +77,7 @@ export class SongController {
     if (!isValidId(songId)) {
       throw new HttpException(`Failed to create song: ${songId}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return await this.getSongUpdateResponse(songId, updateRequest.song.artistId);
+    return await this.getSongUpdateResponse(songId, updateRequest.song.collectionId);
   }
 
   /** Updates song and returns updated song & details. */
@@ -85,7 +85,7 @@ export class SongController {
   async update(@Session() session, @Body() updateRequest: UpdateSongRequest): Promise<UpdateSongResponse> {
     this.logger.log('/update-song');
     const user: User = ServerSsoService.getUserOrFail(session);
-    if (!canEditArtist(user, updateRequest.song.artistId)) {
+    if (!canEditCollection(user, updateRequest.song.collectionId)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     const vr1 = validate(updateRequest.song, conformsTo(SongValidator));
@@ -97,22 +97,22 @@ export class SongController {
       throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
     }
     await this.songDbi.update(updateRequest.song.title, updateRequest.details);
-    return this.getSongUpdateResponse(updateRequest.song.id, updateRequest.song.artistId);
+    return this.getSongUpdateResponse(updateRequest.song.id, updateRequest.song.collectionId);
   }
 
-  private async getSongUpdateResponse(songId: number, artistId: number): Promise<UpdateSongResponse> {
+  private async getSongUpdateResponse(songId: number, collectionId: number): Promise<UpdateSongResponse> {
     const [songFromDb, detailsFromDb, songs] = await Promise.all([
       this.songDbi.getSongs([songId]),
       this.songDbi.getSongsDetails([songId]),
-      this.songDbi.getSongsByArtistId(artistId),
+      this.songDbi.getSongsByCollectionId(collectionId),
     ]);
     if (songFromDb.length === 0 || detailsFromDb.length === 0) {
-      throw new HttpException(`Failed to build response ${songId}/${artistId}`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(`Failed to build response ${songId}/${collectionId}`, HttpStatus.BAD_REQUEST);
     }
     return {song: songFromDb[0], details: detailsFromDb[0], songs};
   }
 
-  /** Deletes the song and returns updated artist details. */
+  /** Deletes the song and returns updated collection details. */
   @Delete(':songId')
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {
     this.logger.log(`/delete song ${idParam}`);
@@ -126,7 +126,7 @@ export class SongController {
       throw new HttpException(`Song is not found ${idParam}`, HttpStatus.NOT_FOUND);
     }
     const song = songsArray[0];
-    const artistId = song.artistId;
+    const collectionId = song.collectionId;
 
     try {
       await this.nodeBBService.deleteTopic(song.tid);
@@ -136,9 +136,9 @@ export class SongController {
 
     await this.playlistDbi.deleteSongFromAllPlaylists(songId);
     await this.songDbi.delete(songId);
-    const songs = await this.songDbi.getSongsByArtistId(artistId);
+    const songs = await this.songDbi.getSongsByCollectionId(collectionId);
     return {
-      artistId,
+      collectionId: collectionId,
       songs,
     };
   }

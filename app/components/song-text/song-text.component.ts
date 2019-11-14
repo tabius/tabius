@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID, SimpleChanges} from '@angular/core';
-import {SongDetails} from '@common/artist-model';
+import {SongDetails} from '@common/catalog-model';
 import {combineLatest, Subject} from 'rxjs';
 import {takeUntil, tap} from 'rxjs/operators';
 import {UserDataService} from '@app/services/user-data.service';

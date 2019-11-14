@@ -5,7 +5,7 @@ import {AngularUniversalModule, applyDomino} from '@nestjs/ng-universal';
 import {ServerDbModule} from './db/server-db.module';
 import {UserController} from './controller/user.controller';
 import {SongController} from './controller/song.controller';
-import {ArtistController} from './controller/artist.controller';
+import {CollectionController} from './controller/collection.controller';
 import {PlaylistController} from './controller/playlist.controller';
 import {APP_INTERCEPTOR} from '@nestjs/core';
 import {ServerSsoService} from '@server/service/server-sso.service';
@@ -28,7 +28,7 @@ applyDomino(global, join(BROWSER_DIR, 'index.html'));
   controllers: [
     UserController,
     SongController,
-    ArtistController,
+    CollectionController,
     PlaylistController,
   ],
 })

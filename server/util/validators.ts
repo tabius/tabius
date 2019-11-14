@@ -1,8 +1,8 @@
 import {isValidId} from '@common/util/misc-utils';
 import {MAX_PLAYLIST_NAME_LENGTH, MIN_PLAYLIST_NAME_LENGTH, Playlist, UserSongSettings} from '@common/user-model';
 import {eachItem, equals, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
-import {CreateArtistRequest, CreatePlaylistRequest} from '@common/ajax-model';
-import {ArtistType, MAX_ARTIST_MOUNT_LENGTH, MAX_ARTIST_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_ARTIST_MOUNT_LENGTH, MIN_ARTIST_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/artist-model';
+import {CreateCollectionRequest, CreatePlaylistRequest} from '@common/ajax-model';
+import {CollectionType, MAX_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_COLLECTION_MOUNT_LENGTH, MIN_COLLECTION_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/catalog-model';
 import {INVALID_ID} from '@common/constants';
 
 export function paramToId(value: string): number {
@@ -31,8 +31,8 @@ export const isNumericId = () => min(1);
 export const checkStringLength = (minLen: number, maxLen: number) => isString(minLength(minLen, maxLength(maxLen)));
 export const isUserId = () => checkStringLength(1, 40);
 export const isSongMount = () => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH);
-export const isArtistMount = () => checkStringLength(MIN_ARTIST_MOUNT_LENGTH, MAX_ARTIST_MOUNT_LENGTH);
-export const isArtistType = () => equals(ArtistType.Band, ArtistType.Person);
+export const isCollectionMount = () => checkStringLength(MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
+export const isCollectionType = () => equals(CollectionType.Band, CollectionType.Person);
 
 export const PlaylistValidator: Validator<Playlist> = {
   id: isNumericId(),
@@ -59,7 +59,7 @@ export const SongValidator: Validator<Song> = {
   version: isVersion(),
   title: checkStringLength(MIN_SONG_TITLE_LENGTH, MAX_SONG_TITLE_LENGTH),
   mount: isSongMount(),
-  artistId: isNumericId(),
+  collectionId: isNumericId(),
   tid: min(INVALID_ID), // song may have no valid topic ID.
 };
 
@@ -84,8 +84,8 @@ export const NewSongDetailsValidator: Validator<SongDetails> = {
   version: equals(0),
 };
 
-export const CreateArtistRequestValidator: Validator<CreateArtistRequest> = {
-  mount: isArtistMount(),
-  name: checkStringLength(MIN_ARTIST_NAME_LENGTH, MAX_ARTIST_NAME_LENGTH),
-  type: isArtistType(),
+export const CreateCollectionRequestValidator: Validator<CreateCollectionRequest> = {
+  mount: isCollectionMount(),
+  name: checkStringLength(MIN_COLLECTION_NAME_LENGTH, MAX_COLLECTION_NAME_LENGTH),
+  type: isCollectionType(),
 };

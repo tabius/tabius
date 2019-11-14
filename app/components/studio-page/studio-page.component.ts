@@ -6,10 +6,10 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {Playlist, User} from '@common/user-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
-import {getArtistPageLink, getPlaylistPageLink} from '@common/util/misc-utils';
+import {getCollectionPageLink, getPlaylistPageLink} from '@common/util/misc-utils';
 import {MOUNT_USER_SETTINGS} from '@common/mounts';
-import {Artist} from '@common/artist-model';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {Collection} from '@common/catalog-model';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@common/constants';
 import {RefreshMode} from '@app/store/observable-store';
 
@@ -32,10 +32,10 @@ export class StudioPageComponent implements OnInit, OnDestroy {
   loaded = false;
   playlists: Playlist[] = [];
   user?: User;
-  artist?: Artist;
+  collection?: Collection;
 
   constructor(private readonly uds: UserDataService,
-              private readonly ads: ArtistDataService,
+              private readonly cds: CatalogDataService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,) {
@@ -48,17 +48,17 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
     const playlists$ = this.uds.getUserPlaylists(RefreshMode.Refresh);
     const user$ = this.uds.getUser();
-    const artist$ = user$.pipe(flatMap(user => this.ads.getArtistById(user && user.artistId)));
-    combineLatest([playlists$, user$, artist$])
+    const collection$ = user$.pipe(flatMap(user => this.cds.getCollectionById(user && user.collectionId)));
+    combineLatest([playlists$, user$, collection$])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([playlists, user, artist]) => {
+        .subscribe(([playlists, user, collection]) => {
           this.loaded = true;
           this.playlists = playlists;
           this.user = user;
-          this.artist = artist;
+          this.collection = collection;
           this.cd.detectChanges();
         });
     this.updateMeta();
@@ -76,7 +76,7 @@ export class StudioPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  getUserArtistPageLink(): string {
-    return !this.artist ? '/' : getArtistPageLink(this.artist.mount);
+  getUserCollectionPageLink(): string {
+    return !this.collection ? '/' : getCollectionPageLink(this.collection.mount);
   }
 }

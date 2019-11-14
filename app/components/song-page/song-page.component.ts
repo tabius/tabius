@@ -1,17 +1,17 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Artist, Song, SongDetails} from '@common/artist-model';
+import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserDataService} from '@app/services/user-data.service';
-import {canEditArtist, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
+import {canEditCollection, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {MOUNT_ARTIST_PREFIX} from '@common/mounts';
+import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-page',
@@ -25,7 +25,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   song?: Song;
   songDetails?: SongDetails;
-  artist?: Artist;
+  collection?: Collection;
 
   hasEditRight = false;
   editorIsOpen = false;
@@ -36,7 +36,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
   loaded = false;
   notFound = false;
 
-  constructor(private readonly ads: ArtistDataService,
+  constructor(private readonly cds: CatalogDataService,
               private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
               private readonly router: Router,
@@ -52,34 +52,34 @@ export class SongPageComponent implements OnInit, OnDestroy {
     this.uds.syncSessionStateAsync();
 
     const params = this.route.snapshot.params;
-    const artistMount = params['artistMount'];
-    const songMount = params['songMount'];
+    const collectionMount = params[PARAM_COLLECTION_MOUNT];
+    const songMount = params[PARAM_SONG_MOUNT];
 
-    const artistId$ = this.ads.getArtistIdByMount(artistMount);
-    const artist$ = artistId$.pipe(flatMap(id => this.ads.getArtistById(id)));
-    const song$ = artistId$.pipe(flatMap(artistId => this.ads.getSongByMount(artistId, songMount)));
-    const songDetails$ = song$.pipe(flatMap(song => this.ads.getSongDetailsById(song && song.id)));
+    const collectionId$ = this.cds.getCollectionIdByMount(collectionMount);
+    const collection$ = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
+    const song$ = collectionId$.pipe(flatMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
+    const songDetails$ = song$.pipe(flatMap(song => this.cds.getSongDetailsById(song && song.id)));
 
-    combineLatest([artist$, song$, songDetails$, this.uds.getUser()])
+    combineLatest([collection$, song$, songDetails$, this.uds.getUser()])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([artist, song, songDetails, user]) => {
+        .subscribe(([collection, song, songDetails, user]) => {
           this.loaded = true;
-          if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the artist page.
-            this.router.navigate([MOUNT_ARTIST_PREFIX + artistMount]).catch(err => console.error(err));
+          if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the collection page.
+            this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
             return;
           }
-          if (artist === undefined || song === undefined || songDetails === undefined) {
+          if (collection === undefined || song === undefined || songDetails === undefined) {
             switchToNotFoundMode(this);
             return;
           }
           this.song = song;
           this.songDetails = songDetails;
-          this.artist = artist;
+          this.collection = collection;
           this.updateMeta();
-          this.hasEditRight = canEditArtist(user, artist.id);
+          this.hasEditRight = canEditCollection(user, collection.id);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });
@@ -90,13 +90,13 @@ export class SongPageComponent implements OnInit, OnDestroy {
   }
 
   updateMeta() {
-    if (!this.song || !this.artist || !this.songDetails) {
+    if (!this.song || !this.collection || !this.songDetails) {
       return;
     }
     updatePageMetadata(this.title, this.meta, {
-      title: `${this.song.title}, ${this.artist.name} — текст песни и аккорды`,
+      title: `${this.song.title}, ${this.collection.name} — текст песни и аккорды`,
       description: getSongTextWithNoChords(this.songDetails.content, 5, true),
-      keywords: [`подбор ${this.song.title}`, this.artist.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
+      keywords: [`подбор ${this.song.title}`, this.collection.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
   }
 

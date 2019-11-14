@@ -1,9 +1,9 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {ArtistDataService} from '@app/services/artist-data.service';
+import {CatalogDataService} from '@app/services/catalog-data.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, defined, getSongPageLink, isTouchEventsSupportAvailable} from '@common/util/misc-utils';
-import {sortSongsAlphabetically} from '@app/components/artist-page/artist-page.component';
+import {sortSongsAlphabetically} from '@app/components/collection-page/collection-page.component';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';
@@ -29,7 +29,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   private hammer?: HammerManager;
 
-  constructor(private readonly ads: ArtistDataService,
+  constructor(private readonly cds: CatalogDataService,
               private readonly cd: ChangeDetectorRef,
               private readonly bss: BrowserStateService,
               private readonly router: Router,
@@ -37,19 +37,19 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   }
 
   ngOnInit(): void {
-    const song$ = this.ads.getSongById(this.songId);
-    const artist$ = song$.pipe(flatMap(song => song ? this.ads.getArtistById(song.artistId) : of(undefined)));
-    // list of all artist songs sorted by id.
-    const allSongs$ = artist$.pipe(
-        flatMap(artist => artist ? this.ads.getArtistSongList(artist.id) : of([])),
-        flatMap(songIds => combineLatest0((songIds || []).map(id => this.ads.getSongById(id)))),
+    const song$ = this.cds.getSongById(this.songId);
+    const collection$ = song$.pipe(flatMap(song => song ? this.cds.getCollectionById(song.collectionId) : of(undefined)));
+    // list of all collection songs sorted by id.
+    const allSongs$ = collection$.pipe(
+        flatMap(collection => collection ? this.cds.getCollectionSongList(collection.id) : of([])),
+        flatMap(songIds => combineLatest0((songIds || []).map(id => this.cds.getSongById(id)))),
         map(songs => sortSongsAlphabetically(songs.filter(defined)).map(song => song.id)),
     );
-    combineLatest([artist$, allSongs$])
+    combineLatest([collection$, allSongs$])
         .pipe(
             takeUntil(this.destroyed$),
-            flatMap(([artist, allSongs]) => {
-              if (!artist || !allSongs || allSongs.length === 0) {
+            flatMap(([collection, allSongs]) => {
+              if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined]);
               }
               const songIdx = allSongs.indexOf(this.songId);
@@ -57,15 +57,15 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
               const prevSongIdx = (songIdx + allSongs.length - 1) % allSongs.length;
               const nextSongId = allSongs[nextSongIdx];
               const prevSongId = allSongs[prevSongIdx];
-              return combineLatest([of(artist.mount), this.ads.getSongById(prevSongId), this.ads.getSongById(nextSongId)]);
+              return combineLatest([of(collection.mount), this.cds.getSongById(prevSongId), this.cds.getSongById(nextSongId)]);
             })
         )
-        .subscribe(([artistMount, prevSong, nextSong]) => {
-          if (!artistMount || !prevSong || !nextSong) {
+        .subscribe(([collectionMount, prevSong, nextSong]) => {
+          if (!collectionMount || !prevSong || !nextSong) {
             return;
           }
-          this.prevLink = getSongPageLink(artistMount, prevSong.mount);
-          this.nextLink = getSongPageLink(artistMount, nextSong.mount);
+          this.prevLink = getSongPageLink(collectionMount, prevSong.mount);
+          this.nextLink = getSongPageLink(collectionMount, nextSong.mount);
           this.cd.detectChanges();
         });
   }

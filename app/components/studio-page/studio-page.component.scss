@@ -4,7 +4,7 @@ h1 {
   text-align: center;
 }
 
-.artist-block {
+.collection-block {
 
   margin-top: 20px;
 
@@ -12,7 +12,7 @@ h1 {
     margin-bottom: 20px;
   }
 
-  .artist-block-content {
+  .collection-block-content {
     display: flex;
     justify-content: center;
     margin-top: 10px;
@@ -26,7 +26,7 @@ h1 {
       background-color: #fefbf7;
     }
 
-    .artist-link-block {
+    .collection-link-block {
       text-align: center;
     }
   }
@@ -70,10 +70,10 @@ h1 {
 }
 
 @media only screen and (min-width: $min-desktop-width) {
-  .artist-block {
+  .collection-block {
     margin-top: 40px;
 
-    .artist-block-content {
+    .collection-block-content {
       .register-prompt-block {
         min-width: 700px;
       }

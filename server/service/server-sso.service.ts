@@ -5,7 +5,7 @@ import {Response} from 'express';
 
 import {Db, MongoClient, MongoClientOptions} from 'mongodb';
 import {NODE_BB_COOKIE_DOMAIN, NODE_BB_SESSION_COOKIE, NODE_BB_URL} from '@common/constants';
-import {ArtistDbi} from '@server/db/artist-dbi.service';
+import {CollectionDbi} from '@server/db/collection-dbi.service';
 import {isValidId} from '@common/util/misc-utils';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {map} from 'rxjs/operators';
@@ -46,7 +46,7 @@ export class ServerSsoService implements NestInterceptor {
   private readonly testUser?: User;
 
   constructor(private readonly userDbi: UserDbi,
-              private readonly artistDbi: ArtistDbi,
+              private readonly collectionDbi: CollectionDbi,
   ) {
     this.useTestUser = ssoConfig.useTestUser;
     this.sessionCookieSecret = ssoConfig.sessionCookieSecret;
@@ -115,13 +115,13 @@ export class ServerSsoService implements NestInterceptor {
     } else {
       const userInSession = session[USER_SESSION_KEY];
       if (userInSession && userInSession.id === user.id) {
-        user = {...user, artistId: userInSession.artistId};
+        user = {...user, collectionId: userInSession.collectionId};
       } else {
-        user = {...user, artistId: await this.getUserArtistId(user.id) || -1};
+        user = {...user, collectionId: await this.getUserCollectionId(user.id) || -1};
       }
-      if (!isValidId(user.artistId)) {
-        const artistId = await this.artistDbi.createArtistForUser(user);
-        user = {...user, artistId};
+      if (!isValidId(user.collectionId)) {
+        const collectionId = await this.collectionDbi.createCollectionForUser(user);
+        user = {...user, collectionId};
         await this.userDbi.createUser(user);
       }
       session[USER_SESSION_KEY] = user;
@@ -166,7 +166,7 @@ export class ServerSsoService implements NestInterceptor {
       email: nodeUser.email,
       picture: NODE_BB_URL + nodeUser.picture,
       groups,
-      artistId: -1,
+      collectionId: -1,
     };
   }
 
@@ -175,17 +175,17 @@ export class ServerSsoService implements NestInterceptor {
   }
 
   /** This mapping is immutable, so it is safe to cache */
-  private readonly userIdToArtistIdCache = new Map<string, number>();
+  private readonly userIdToCollectionIdCache = new Map<string, number>();
 
-  private async getUserArtistId(userId: string): Promise<number|undefined> {
-    let artistId = this.userIdToArtistIdCache.get(userId);
-    if (isValidId(artistId)) {
-      return artistId;
+  private async getUserCollectionId(userId: string): Promise<number|undefined> {
+    let collectionId = this.userIdToCollectionIdCache.get(userId);
+    if (isValidId(collectionId)) {
+      return collectionId;
     }
-    artistId = await this.userDbi.getUserArtistId(userId);
-    if (isValidId(artistId)) {
-      this.userIdToArtistIdCache.set(userId, artistId);
+    collectionId = await this.userDbi.getUserCollectionId(userId);
+    if (isValidId(collectionId)) {
+      this.userIdToCollectionIdCache.set(userId, collectionId);
     }
-    return artistId;
+    return collectionId;
   }
 }

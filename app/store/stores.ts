@@ -1,11 +1,11 @@
 import {Inject, PLATFORM_ID} from '@angular/core';
 import {TransferState} from '@angular/platform-browser';
-import {APP_STORE_NAME, ARTISTS_STORE_NAME, USER_STORE_NAME} from '@common/constants';
+import {APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME} from '@common/constants';
 import {isPlatformBrowser} from '@angular/common';
 import {IndexedDbStoreAdapter} from '@app/store/indexed-db-store-adapter';
 import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';
 import {USERS_STORE_SCHEMA_VERSION} from '@common/user-model';
-import {ARTISTS_STORE_SCHEMA_VERSION} from '@common/artist-model';
+import {CATALOG_STORE_SCHEMA_VERSION} from '@common/catalog-model';
 import {LocalStorageStoreAdapter} from '@app/store/local-storage-store-adapter';
 import {ObservableStoreImpl} from '@app/store/observable-store-impl';
 
@@ -18,12 +18,12 @@ export class UserBrowserStore extends ObservableStoreImpl {
   }
 }
 
-/** Store with artist & songs. */
-export class ArtistsBrowserStore extends ObservableStoreImpl {
+/** Store with collections & songs. */
+export class CatalogBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
-    super(ARTISTS_STORE_NAME, isPlatformBrowser(platformId),
+    super(CATALOG_STORE_NAME, isPlatformBrowser(platformId),
         (name, browser) => browser ? new IndexedDbStoreAdapter(name) : new InMemoryStoreAdapter(),
-        serverState, ARTISTS_STORE_SCHEMA_VERSION
+        serverState, CATALOG_STORE_SCHEMA_VERSION
     );
   }
 }

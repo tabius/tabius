@@ -4,7 +4,7 @@ import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/constants';
 export const USERS_STORE_SCHEMA_VERSION = 3;
 
 export const enum UserGroup {
-  /** The only role we have today. Can add new artists and songs. */
+  /** The only role we have today. Can add new collections and songs. */
   Moderator = 'moderator',
 }
 
@@ -19,8 +19,8 @@ export interface User {
   readonly picture: string;
   /** List of user groups. */
   readonly groups: UserGroup[];
-  /** Artist id associated with the user. */
-  readonly artistId: number;
+  /** Default collection associated with the user. */
+  readonly collectionId: number;
 }
 
 

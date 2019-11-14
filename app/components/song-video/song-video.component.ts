@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
-import {SongDetails} from '@common/artist-model';
+import {SongDetails} from '@common/catalog-model';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
 

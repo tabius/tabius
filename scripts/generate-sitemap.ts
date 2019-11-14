@@ -1,5 +1,6 @@
 import {promisify} from 'util';
 import {readDbConfig} from '@server/db/db-config';
+import {MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 
 const mysql = require('mysql2/promise');
 const fs = require('fs');
@@ -10,19 +11,19 @@ async function generateSitemap() {
   const connection = await mysql.createConnection(readDbConfig());
   let sitemap = '';
   try {
-    const [artistRows] = await connection.execute('SELECT id, mount FROM artist');
-    const artistMountById = new Map<number, string>();
-    for (const row of artistRows) {
-      artistMountById.set(+row.id, row.mount);
-      sitemap += `https://tabius.ru/artist/${row.mount}\n`;
+    const [collectionRows] = await connection.execute('SELECT id, mount FROM collection WHERE listed = 1');
+    const collectionMountById = new Map<number, string>();
+    for (const row of collectionRows) {
+      collectionMountById.set(+row.id, row.mount);
+      sitemap += `https://tabius.ru/${MOUNT_COLLECTION_PREFIX}/${row.mount}\n`;
     }
-    const [songRows] = await connection.execute('SELECT artist_id, mount FROM song');
+    const [songRows] = await connection.execute('SELECT collection_id, mount FROM song');
     for (const row of songRows) {
-      const artistMount = artistMountById.get(+row.artist_id);
-      if (!artistMount) {
-        throw new Error(`Artist not found for song: ${JSON.stringify(row)}`);
+      const collectionMount = collectionMountById.get(+row.collection_id);
+      if (!collectionMount) {
+        throw new Error(`Collection not found for song: ${JSON.stringify(row)}`);
       }
-      sitemap += `https://tabius.ru/song/${artistMount}/${row.mount}\n`;
+      sitemap += `https://tabius.ru/${MOUNT_SONG_PREFIX}/${collectionMount}/${row.mount}\n`;
     }
   } finally {
     connection.end();

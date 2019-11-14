@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {MOUNT_ARTISTS} from '@common/mounts';
+import {MOUNT_CATALOG} from '@common/mounts';
 import {NODE_BB_URL} from '@common/constants';
 
 @Component({
@@ -9,6 +9,6 @@ import {NODE_BB_URL} from '@common/constants';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SiteHomePageComponent {
-  readonly artistsLink = MOUNT_ARTISTS;
+  readonly catalogMount = MOUNT_CATALOG;
   readonly forumLink = NODE_BB_URL + "/category/1";
 }

@@ -1,10 +1,10 @@
 <div class="editor-block">
 
-    <h2>Добавление нового артиста</h2>
+    <h2>Добавление коллекции</h2>
 
     <table class="form-table">
         <tr>
-            <td>Имя артиста</td>
+            <td>Имя коллекции</td>
             <td>
                 <input type="text" [(ngModel)]="name" (ngModelChange)="onNameChanged()"/>
             </td>
@@ -16,11 +16,11 @@
             </td>
         </tr>
         <tr>
-            <td>Тип артиста</td>
+            <td>Тип коллекции</td>
             <td>
-                <select [(ngModel)]="artistType">
-                    <option [ngValue]="ArtistType.Person">Персона</option>
-                    <option [ngValue]="ArtistType.Band">Группа</option>
+                <select [(ngModel)]="collectionType">
+                    <option [ngValue]="CollectionType.Person">Персона</option>
+                    <option [ngValue]="CollectionType.Band">Группа</option>
                 </select>
             </td>
         </tr>
