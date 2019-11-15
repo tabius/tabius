@@ -7,7 +7,7 @@ import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canEditCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink} from '@common/util/misc-utils';
+import {canEditCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
@@ -123,18 +123,10 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackBySongId(index: number, song: Song): number {
-    return song.id;
-  }
-
   toggleEditor(): void {
     this.editorIsOpen = !this.editorIsOpen && this.canAddSongs;
     this.cd.detectChanges();
   }
-}
-
-export function sortSongsAlphabetically(songs: Song[]): Song[] {
-  return songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
 }
 
 function getFirstSongsNames(songs: Song[]): string {

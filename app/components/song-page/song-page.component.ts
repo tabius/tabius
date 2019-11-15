@@ -11,7 +11,7 @@ import {UserDataService} from '@app/services/user-data.service';
 import {canEditCollection, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
+import {LINK_USER_STUDIO, MOUNT_COLLECTION_PREFIX, MOUNT_USER_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-page',
@@ -29,6 +29,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   hasEditRight = false;
   editorIsOpen = false;
+  isUserCollection = false;
+  readonly userCollectionLink = LINK_USER_STUDIO;
 
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
@@ -67,8 +69,13 @@ export class SongPageComponent implements OnInit, OnDestroy {
         )
         .subscribe(([collection, song, songDetails, user]) => {
           this.loaded = true;
-          if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the collection page.
-            this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
+          this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
+          if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the user/collection page.
+            if (this.isUserCollection) {
+              this.router.navigate([MOUNT_USER_STUDIO]).catch(err => console.error(err));
+            } else {
+              this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
+            }
             return;
           }
           if (collection === undefined || song === undefined || songDetails === undefined) {

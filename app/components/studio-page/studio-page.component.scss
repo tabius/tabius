@@ -1,45 +1,45 @@
 @import "app/styles/dimensions";
 
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
 h1 {
   text-align: center;
 }
 
-.collection-block {
-
+.register-prompt-block {
+  text-align: center;
+  line-height: 1.5em;
+  padding: 20px;
   margin-top: 20px;
+  margin-bottom: 20px;
+  border: solid 1px #ccc;
+  background-color: #fefbf7;
+}
+
+.collection-block {
+  display: flex;
+  justify-content: center;
 
   h1 {
     margin-bottom: 20px;
   }
+}
 
-  .collection-block-content {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-
-    .register-prompt-block {
-      text-align: center;
-      line-height: 1.5em;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: solid 1px #ccc;
-      background-color: #fefbf7;
-    }
-
-    .collection-link-block {
-      text-align: center;
-    }
-  }
+.add-song-block {
+  margin-top: 15px;
 }
 
 @media only screen and (min-width: $min-desktop-width) {
-  .collection-block {
+  .register-prompt-block {
     margin-top: 40px;
-
-    .collection-block-content {
-      .register-prompt-block {
-        min-width: 700px;
-      }
-    }
+    min-width: 700px;
   }
+
+  .add-song-block {
+    margin-top: 25px;
+  }
+
 }

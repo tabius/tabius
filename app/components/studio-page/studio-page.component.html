@@ -1,22 +1,36 @@
-<div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
-    <div class="message">Загружаем песни и плейлисты …</div>
-    <gt-loading-indicator></gt-loading-indicator>
-</div>
+<div class="content">
+    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+        <div class="message">Загружаем песни …</div>
+        <gt-loading-indicator></gt-loading-indicator>
+    </div>
 
-<div *ngIf="loaded">
+    <div *ngIf="loaded">
 
-    <div class="collection-block">
-        <h1>Песни</h1>
+        <div *ngIf="!user" class="register-prompt-block">
+            <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
+        </div>
 
-        <div class="collection-block-content">
-            <div *ngIf="!user" class="register-prompt-block">
-                <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
-            </div>
+        <div class="collection-block">
+            <div>
+                <h1>Мои подборы</h1>
 
-            <div *ngIf="collection" class="collection-link-block">
-                <a routerLink="{{getUserCollectionPageLink()}}">Перейти к своим подборам</a>
+                <gt-song-list
+                        *ngIf="!editorIsOpen"
+                        [collectionMount]="collection.mount"
+                        [songs]="songs"
+                        [showEmptyNotice]="true"
+                ></gt-song-list>
+
+                <div class="add-song-block">
+                    <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Добавить песню »</a>
+                    <gt-song-editor *ngIf="editorIsOpen"
+                                    (closeRequest)="toggleEditor()"
+                                    [songId]="-1"
+                                    [collectionId]="collection.id"
+                                    [initialFocusMode]="'title'"
+                    ></gt-song-editor>
+                </div>
             </div>
         </div>
     </div>
-
 </div>

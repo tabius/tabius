@@ -2,8 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Ho
 import {CatalogDataService} from '@app/services/catalog-data.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
-import {combineLatest0, defined, getSongPageLink, isTouchEventsSupportAvailable} from '@common/util/misc-utils';
-import {sortSongsAlphabetically} from '@app/components/collection-page/collection-page.component';
+import {combineLatest0, defined, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';

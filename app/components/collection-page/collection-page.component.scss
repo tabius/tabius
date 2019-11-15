@@ -26,11 +26,6 @@
         margin-top: 10px;
         margin-bottom: 10px;
       }
-
-      .songs-list {
-        line-height: $mobile-lists-line-height;
-        margin-top: 15px;
-      }
     }
 
     .add-song-block {
@@ -44,17 +39,5 @@
 
   a {
     color: $color-golden-link;
-  }
-}
-
-@media only screen and (min-width: $min-desktop-width) {
-  :host {
-    .content {
-      .collection-root {
-        .songs-list {
-          line-height: $desktop-lists-line-height;
-        }
-      }
-    }
   }
 }

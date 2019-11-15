@@ -45,6 +45,7 @@ import {SessionStateInterceptor} from '@app/interceptors/session-state-intercept
 import {AppBrowserStore, CatalogBrowserStore, UserBrowserStore} from '@app/store/stores';
 import {SongPrintPageComponent} from './components/song-print-page/song-print-page.component';
 import {CollectionEditorComponent} from './components/collection-editor/collection-editor.component';
+import { SongListComponent } from './components/song-list/song-list.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import {CollectionEditorComponent} from './components/collection-editor/collecti
     SvgIconComponent,
     TunerPageComponent,
     CollectionEditorComponent,
+    SongListComponent,
   ],
   imports: [
     BrowserAnimationsModule,

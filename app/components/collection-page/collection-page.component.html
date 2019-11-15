@@ -11,7 +11,8 @@
 
     <!-- Main content block -->
     <div *ngIf="loaded && collectionViewModel">
-        <gt-collection-breadcrumb [collection]="collectionViewModel ? collectionViewModel.collection : null" [showCollectionLink]="false"></gt-collection-breadcrumb>
+        <gt-collection-breadcrumb [collection]="collectionViewModel ? collectionViewModel.collection : null"
+                                  [showCollectionLink]="false"></gt-collection-breadcrumb>
 
         <div class="collection-root">
             <div>
@@ -32,11 +33,10 @@
                     </div>
                 </div>
 
-                <div class="songs-list">
-                    <div *ngFor="let song of collectionViewModel.songs; trackBy: trackBySongId">
-                        <a routerLink="{{getSongPageLink(collectionViewModel.collection.mount, song.mount)}}">{{song.title}}</a>
-                    </div>
-                </div>
+                <gt-song-list [collectionMount]="collectionViewModel.collection.mount"
+                              [songs]="collectionViewModel.songs"
+                              style="margin-top: 15px;"
+                ></gt-song-list>
             </div>
         </div>
 

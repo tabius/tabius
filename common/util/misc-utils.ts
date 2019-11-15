@@ -5,7 +5,6 @@ import {map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
-import Hashids from 'hashids';
 import {fromPromise} from 'rxjs/internal-compatibility';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
@@ -178,3 +177,8 @@ export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promi
 export function isTouchEventsSupportAvailable(): boolean {
   return document && 'ontouchstart' in document.documentElement;
 }
+
+export function sortSongsAlphabetically(songs: Song[]): Song[] {
+  return songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
+}
+

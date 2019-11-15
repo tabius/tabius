@@ -1,0 +1,10 @@
+<div class="songs-list">
+
+    <div *ngIf="showEmptyNotice && songs.length === 0" class="empty-songs-list">
+        Нет песен
+    </div>
+
+    <div *ngFor="let song of songs; trackBy: trackBySongId">
+        <a routerLink="{{getSongPageLink(collectionMount, song.mount)}}">{{song.title}}</a>
+    </div>
+</div>

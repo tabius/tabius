@@ -14,6 +14,7 @@ export const MOUNT_SONG_PRINT = `${MOUNT_SONG_PREFIX}:${PARAM_COLLECTION_MOUNT}/
 
 export const MOUNT_TUNER = 'tuner';
 export const MOUNT_USER_STUDIO = 'studio';
+export const LINK_USER_STUDIO = `/${MOUNT_USER_STUDIO}`;
 export const MOUNT_USER_SETTINGS = 'settings';
 
 export const MOUNT_PAGE_NOT_FOUND = '404';

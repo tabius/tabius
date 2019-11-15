@@ -1,0 +1,16 @@
+@import "app/styles/dimensions";
+
+.songs-list {
+  line-height: $mobile-lists-line-height;
+}
+
+.empty-songs-list {
+  font-size: 18px;
+  color: #999999;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .songs-list {
+    line-height: $desktop-lists-line-height;
+  }
+}
