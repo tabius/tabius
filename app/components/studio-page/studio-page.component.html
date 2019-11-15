@@ -1,16 +1,18 @@
 <div class="content">
     <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
-        <div class="message">Загружаем песни …</div>
+        <div class="message">Загружаем …</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
     <div *ngIf="loaded">
 
         <div *ngIf="!user" class="register-prompt-block">
-            <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
+            <div class="register-prompt-block-content">
+                <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
+            </div>
         </div>
 
-        <div class="collection-block">
+        <div *ngIf="user" class="collection-block">
             <div>
                 <h1>Мои подборы</h1>
 

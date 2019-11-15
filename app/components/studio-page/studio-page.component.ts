@@ -59,8 +59,9 @@ export class StudioPageComponent implements OnInit, OnDestroy {
         )
         .subscribe(([user, collection, collectionDetails, songs]) => {
           this.loaded = true;
-          if (!collection || !collectionDetails || !songs) {
+          if (!user || !collection || !collectionDetails || !songs) {
             //TODO: switchToNotFoundMode(this);
+            this.cd.detectChanges();
             return;
           }
           this.user = user;
