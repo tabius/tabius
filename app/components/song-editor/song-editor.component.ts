@@ -115,8 +115,8 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       this.toastService.warning('Текст песни не может быть пуст');
       return;
     }
-    this.createImpl().catch(err => {
-      this.toastService.warning(`Ошибка: ${err}`);
+    this.createImpl().catch((err: Error) => {
+      this.toastService.warning(`Не удалось создать песню: ${err.message}`);
     });
   }
 
@@ -138,8 +138,8 @@ export class SongEditorComponent implements OnInit, OnDestroy {
             this.toastService.info('Изменения сохранены');
           }
         })
-        .catch(err => {
-          this.toastService.warning(`Ошибка: ${err}`);
+        .catch((err: Error) => {
+          this.toastService.warning(`Изменения не сохранены: ${err.message}`);
         });
   }
 
