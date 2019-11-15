@@ -16,10 +16,6 @@
 
         <gt-song [songId]="song.id"></gt-song>
 
-        <div class="user-controls">
-            <gt-add-song-to-playlist [songId]="song.id"></gt-add-song-to-playlist>
-        </div>
-
         <div *ngIf="hasEditRight" class="edit-song-block">
             <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Исправить подбор »</a>
 

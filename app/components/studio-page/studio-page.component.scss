@@ -32,43 +32,6 @@ h1 {
   }
 }
 
-.playlist-block {
-
-  .playlist-block-content {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-
-    .playlist-item {
-      line-height: $mobile-lists-line-height;
-    }
-
-    .song-count {
-      color: #999;
-
-      span {
-        margin-left: 2px;
-        margin-right: 2px;
-      }
-    }
-
-    .no-playlists-block {
-      text-align: center;
-      line-height: 1.5em;
-      padding: 20px;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      border: solid 1px #ccc;
-      background-color: #f6fffd;
-    }
-
-    .playlists-bottom-links-block {
-      text-align: center;
-      margin-top: 50px;
-    }
-  }
-}
-
 @media only screen and (min-width: $min-desktop-width) {
   .collection-block {
     margin-top: 40px;
@@ -79,19 +42,4 @@ h1 {
       }
     }
   }
-
-  .playlist-block {
-
-    .playlist-block-content {
-
-      .no-playlists-block {
-        min-width: 700px;
-      }
-
-      .playlist-item {
-        line-height: $desktop-lists-line-height;
-      }
-    }
-  }
-
 }

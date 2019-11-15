@@ -1,19 +1,16 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, Playlist, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
-import {flatMap, map, switchMap, take, tap} from 'rxjs/operators';
+import {flatMap, map, switchMap, take} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByStringify, checkUpdateByVersion, combineLatest0, defined, isValidId} from '@common/util/misc-utils';
-import {CreatePlaylistRequest, CreatePlaylistResponse, DeletePlaylistResponse, UpdatePlaylistResponse} from '@common/ajax-model';
+import {checkUpdateByReference, checkUpdateByStringify, isValidId} from '@common/util/misc-utils';
 import {fromPromise} from 'rxjs/internal-compatibility';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
 const SONG_SETTINGS_KEY_PREFIX = 'ss-';
-const USER_PLAYLISTS_KEY = 'playlists';
-const PLAYLIST_PREFIX_KEY = 'playlist-';
 const H4SI_FLAG_KEY = 'h4Si';
 const USER_KEY = 'user';
 
@@ -138,86 +135,6 @@ export class UserDataService {
     await Promise.all(allOps);
   }
 
-  getUserPlaylists(refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<Playlist[]> {
-    return this.getUser().pipe(
-        switchMap(user => {
-          if (!user) {
-            return of([]);
-          }
-          return this.store.get<number[]>(
-              USER_PLAYLISTS_KEY,
-              () => this.httpClient.get<Playlist[]>(`/api/playlist/by-current-user`)
-                  .pipe(
-                      tap(playlists => this.updatePlaylists(playlists)),
-                      map(playlists => playlists ? playlists.map(p => p.id) : []),
-                  ),
-              refreshMode,
-              checkUpdateByStringify
-          ).pipe(
-              flatMap(ids => {
-                    const playlist$Array = (ids || []).map(m => this.store.get<Playlist>(
-                        getPlaylistKey(m),
-                        DO_NOT_PREFETCH,
-                        RefreshMode.DoNotRefresh,
-                        skipUpdateCheck
-                    ));
-                    return combineLatest0(playlist$Array).pipe(map(playlists => playlists.filter(defined)));
-                  }
-              ),
-              map(array => array.filter(defined) as Playlist[]),
-          ) as Observable<Playlist[]>;
-        }));
-  }
-
-  async createPlaylist(createPlaylistRequest: CreatePlaylistRequest): Promise<void> {
-    const response = await this.httpClient.post<CreatePlaylistResponse>(`/api/playlist/create`, createPlaylistRequest).pipe(take(1)).toPromise();
-    await this.updatePlaylists(response);
-  }
-
-  async updatePlaylist(playlist: Playlist): Promise<void> {
-    const response = await this.httpClient.put<UpdatePlaylistResponse>(`/api/playlist/update`, playlist).pipe(take(1)).toPromise();
-    await this.updatePlaylists(response);
-  }
-
-  async deleteUserPlaylist(playlistId: number): Promise<void> {
-    const response = await this.httpClient.delete<DeletePlaylistResponse>(`/api/playlist/delete/${playlistId}`).pipe(take(1)).toPromise();
-    await this.updatePlaylists(response);
-  }
-
-  /** Update playlists in browser's store. */
-  async updatePlaylists(playlists: readonly Playlist[]): Promise<void> {
-
-    const oldPlaylistEntries = await this.store.list<Playlist>(PLAYLIST_PREFIX_KEY);
-
-    const allOps: Promise<void>[] = [];
-    allOps.push(this.store.set<number[]>(USER_PLAYLISTS_KEY, playlists.map(p => p.id), checkUpdateByShallowArrayCompare));
-    const updatedKeys = new Set<string>();
-    for (const playlist of playlists) {
-      const playlistKey = getPlaylistKey(playlist.id)!;
-      updatedKeys.add(playlistKey);
-      allOps.push(this.store.set<Playlist>(playlistKey, playlist, checkUpdateByVersion));
-    }
-
-    // delete missing playlists.
-    for (const oldPlaylistEntry of oldPlaylistEntries) {
-      if (!updatedKeys.has(oldPlaylistEntry.key)) {
-        allOps.push(this.store.remove(oldPlaylistEntry.key));
-      }
-    }
-
-    await Promise.all(allOps);
-  }
-
-  getPlaylist(playlistId: number|undefined, refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<Playlist|undefined> {
-    const playlistKey = getPlaylistKey(playlistId);
-    return this.store.get<Playlist>(
-        playlistKey,
-        () => this.httpClient.get<Playlist|undefined>(`/api/playlist/by-id/${playlistId}`),
-        refreshMode,
-        checkUpdateByVersion
-    );
-  }
-
   getUser(): Observable<User|undefined> {
     return this.store.get<User>(USER_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck);
   }
@@ -246,14 +163,9 @@ export class UserDataService {
     console.debug('Cleaning up user data on sign-out: ', user);
     await this.store.remove(USER_KEY);
     await this.updateUserSettings(newDefaultUserSettings());
-    await this.updatePlaylists([]);
   }
 }
 
 function getUserSongSettingsKey(songId: number|undefined): string|undefined {
   return isValidId(songId) ? SONG_SETTINGS_KEY_PREFIX + songId : undefined;
-}
-
-function getPlaylistKey(playlistId: number|undefined): string|undefined {
-  return isValidId(playlistId) ? PLAYLIST_PREFIX_KEY + playlistId : undefined;
 }

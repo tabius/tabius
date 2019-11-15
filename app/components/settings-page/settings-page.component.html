@@ -40,15 +40,7 @@
             </div>
         </div>
 
-        <div class="playlist-editor-block" *ngIf="user">
-            <h2>Плейлисты</h2>
-            <div class="playlist-editor-content-block">
-                <gt-playlist-editor></gt-playlist-editor>
-            </div>
-        </div>
-
         <div class="signin-sign-out-block">
-
             <div *ngIf="!user" class="register-prompt-block">
                 <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы получить доступ к расширенным настройкам.
             </div>
@@ -56,7 +48,6 @@
             <div *ngIf="user">
                 <gt-signin-signout-button></gt-signin-signout-button>
             </div>
-
         </div>
 
     </div>

@@ -91,13 +91,3 @@ export function getDefaultUserSongFontSize(): number {
           : SONG_FONT_SIZE_HIRES_DESKTOP;
 }
 
-
-export const MIN_PLAYLIST_NAME_LENGTH = 1;
-export const MAX_PLAYLIST_NAME_LENGTH = 100;
-
-export interface Playlist extends WithId, Versioned {
-  readonly userId: string,
-  readonly name: string;
-  readonly songIds: readonly number[];
-}
-

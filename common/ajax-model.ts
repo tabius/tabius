@@ -1,4 +1,4 @@
-import {Playlist, User, UserSettings} from '@common/user-model';
+import {User, UserSettings} from '@common/user-model';
 import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
 
 export interface AjaxSessionInfo {
@@ -12,18 +12,7 @@ export interface TabiusAjaxResponse {
 export interface LoginResponse extends TabiusAjaxResponse {
   readonly user: User|undefined;
   readonly settings: UserSettings;
-  readonly playlists: Playlist[];
 }
-
-export interface CreatePlaylistRequest {
-  readonly name: string;
-  readonly shared: boolean;
-  readonly songIds: number[];
-}
-
-export type CreatePlaylistResponse = Playlist[];
-export type UpdatePlaylistResponse = Playlist[];
-export type DeletePlaylistResponse = Playlist[];
 
 export interface CreateCollectionRequest {
   name: string;

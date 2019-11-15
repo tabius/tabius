@@ -7,7 +7,6 @@ import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {canEditCollection, isValidId} from '@common/util/misc-utils';
-import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {NodeBBService} from '@server/db/node-bb.service';
 
@@ -17,7 +16,6 @@ export class SongController {
   private readonly logger = new Logger(SongController.name);
 
   constructor(private readonly songDbi: SongDbi,
-              private readonly playlistDbi: PlaylistDbi,
               private readonly fullTextSearchDbi: FullTextSearchDbi,
               private readonly nodeBBService: NodeBBService,
   ) {
@@ -134,7 +132,6 @@ export class SongController {
       this.logger.error(e);
     }
 
-    await this.playlistDbi.deleteSongFromAllPlaylists(songId);
     await this.songDbi.delete(songId);
     const songs = await this.songDbi.getSongsByCollectionId(collectionId);
     return {

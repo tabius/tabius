@@ -1,6 +1,6 @@
 import {Versioned} from '@common/common-model';
 import {CollectionType, Song} from '@common/catalog-model';
-import {FORUM_LINK, MOUNT_COLLECTION_PREFIX, MOUNT_PLAYLIST_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
+import {FORUM_LINK, MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
@@ -102,11 +102,6 @@ export function getSongPrintPageLink(collectionMount: string, songMount: string)
   return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${MOUNT_PRINT_SUFFIX}`;
 }
 
-export function getPlaylistPageLink(playlistId: number): string {
-  return `/${MOUNT_PLAYLIST_PREFIX}${playlistIdToMount(playlistId)}`;
-}
-
-
 /**
  *  Returns true if userAgent is a known mobile (small screen) device user agent.
  *  Used in server side rendering to select correct layout (when needed) to avoid flickering on re-render on the client.
@@ -169,17 +164,6 @@ export function canEditCollection(user: User|undefined, collectionId: number): b
 
 export function canCreateNewPublicCollection(user: User|undefined): boolean {
   return !!user && (user.groups.includes(UserGroup.Moderator));
-}
-
-const playlistHashIds = new Hashids('salt', 5);
-
-export function playlistIdToMount(playlistId: number): string {
-  return playlistHashIds.encode(playlistId);
-}
-
-export function playlistMountToId(mount: string): number|undefined {
-  const ids = playlistHashIds.decode(mount);
-  return ids && ids.length === 1 ? ids[0] : undefined;
 }
 
 export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promise<unknown>[]): Observable<T> {

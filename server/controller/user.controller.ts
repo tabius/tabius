@@ -2,7 +2,6 @@ import {Body, Controller, Get, HttpException, HttpStatus, Logger, Put, Res, Sess
 import {UserDbi} from '@server/db/user-dbi.service';
 import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
 import {LoginResponse, TabiusAjaxResponse} from '@common/ajax-model';
-import {PlaylistDbi} from '@server/db/playlist-dbi.service';
 import {conformsTo, validate} from 'typed-validation';
 import {UserSongSettingsValidator} from '@server/util/validators';
 import {ServerSsoService} from '@server/service/server-sso.service';
@@ -14,7 +13,7 @@ export class UserController {
 
   private readonly logger = new Logger(UserController.name);
 
-  constructor(private readonly userDbi: UserDbi, private readonly playlistDbi: PlaylistDbi) {
+  constructor(private readonly userDbi: UserDbi) {
   }
 
   /** Login callback. Called on successful user login. */
@@ -25,16 +24,14 @@ export class UserController {
       return {
         user: undefined,
         settings: newDefaultUserSettings(),
-        playlists: []
       };
     }
     this.logger.log(`User is logged in: ${user.email}`);
     await this.userDbi.updateOnLogin(user);
-    const [settings, playlists] = await Promise.all([this._getSettings(user), this.playlistDbi.getPlaylists(user.id)]);
+    const settings = await this._getSettings(user);
     return {
       user,
       settings,
-      playlists
     };
   }
 

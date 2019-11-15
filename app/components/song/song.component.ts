@@ -72,5 +72,5 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   }
 }
 
-export type SongComponentMode = 'SongPageMode'|'PlaylistMode'|'PrintMode';
+export type SongComponentMode = 'SongPageMode'|'PrintMode';
 

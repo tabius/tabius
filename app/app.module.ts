@@ -11,8 +11,6 @@ import {CollectionPageComponent} from './components/collection-page/collection-p
 import {SongPageComponent} from './components/song-page/song-page.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {FooterComponent} from './components/footer/footer.component';
-import {PlaylistPageComponent} from './components/playlist-page/playlist-page.component';
-import {PlaylistEditorComponent} from './components/playlist-editor/playlist-editor.component';
 import {CatalogPageComponent} from './components/catalog-page/catalog-page.component';
 import {ApiUrlInterceptor} from './interceptors/api-url.interceptor';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -26,7 +24,6 @@ import {InlineSongSettingsComponent} from './components/inline-song-settings/inl
 import {SettingsPageComponent} from './components/settings-page/settings-page.component';
 import {APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {AddSongToPlaylistComponent} from './components/add-song-to-playlist/add-song-to-playlist.component';
 import {SigninSignoutButtonComponent} from './components/signin-signout-button/signin-signout-button.component';
 import {PwaUpdaterService} from '@app/services/pwa-updater.service';
 import {ChordImageComponent} from './components/chord-image/chord-image.component';
@@ -51,7 +48,6 @@ import {CollectionEditorComponent} from './components/collection-editor/collecti
 
 @NgModule({
   declarations: [
-    AddSongToPlaylistComponent,
     AppComponent,
     CollectionBreadcrumbComponent,
     CatalogPageComponent,
@@ -62,8 +58,6 @@ import {CollectionEditorComponent} from './components/collection-editor/collecti
     LoadingIndicatorComponent,
     NavbarComponent,
     Page404Component,
-    PlaylistEditorComponent,
-    PlaylistPageComponent,
     ResourceNotFoundComponent,
     SafeHtmlPipe,
     SafeResourceUrlPipe,

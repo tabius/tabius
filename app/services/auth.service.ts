@@ -26,13 +26,10 @@ export class AuthService {
       return;
     }
     try {
-      const {user, settings, playlists} = await this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL).pipe(take(1)).toPromise();
+      const {user, settings} = await this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL).pipe(take(1)).toPromise();
       if (user) {
         await this.uds.setUserOnSignIn(user);
-        await Promise.all([
-          this.uds.updateUserSettings(settings),
-          this.uds.updatePlaylists(playlists)]
-        );
+        await this.uds.updateUserSettings(settings);
       } else {
         await this.uds.resetStoreStateOnSignOut();
       }

@@ -3,7 +3,7 @@ import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
-import {FORUM_LINK, MOUNT_COLLECTION_PREFIX, MOUNT_CATALOG, MOUNT_PLAYLIST_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
+import {FORUM_LINK, MOUNT_CATALOG, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {ToastService} from '@app/toast/toast.service';
@@ -77,7 +77,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return NavSection.Tuner;
     } else if (url.startsWith(`/${MOUNT_CATALOG}`) || url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
       return NavSection.Catalog;
-    } else if (url.startsWith(`/${MOUNT_USER_STUDIO}`) || url.startsWith(`/${MOUNT_PLAYLIST_PREFIX}`)) {
+    } else if (url.startsWith(`/${MOUNT_USER_STUDIO}`)) {
       return NavSection.Studio;
     } else if (url.startsWith(`/${MOUNT_USER_SETTINGS}`)) {
       return NavSection.Settings;

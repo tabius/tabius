@@ -1,7 +1,7 @@
 import {isValidId} from '@common/util/misc-utils';
-import {MAX_PLAYLIST_NAME_LENGTH, MIN_PLAYLIST_NAME_LENGTH, Playlist, UserSongSettings} from '@common/user-model';
+import {UserSongSettings} from '@common/user-model';
 import {eachItem, equals, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
-import {CreateCollectionRequest, CreatePlaylistRequest} from '@common/ajax-model';
+import {CreateCollectionRequest} from '@common/ajax-model';
 import {CollectionType, MAX_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_COLLECTION_MOUNT_LENGTH, MIN_COLLECTION_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/catalog-model';
 import {INVALID_ID} from '@common/constants';
 
@@ -33,20 +33,6 @@ export const isUserId = () => checkStringLength(1, 40);
 export const isSongMount = () => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH);
 export const isCollectionMount = () => checkStringLength(MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
 export const isCollectionType = () => equals(CollectionType.Band, CollectionType.Person);
-
-export const PlaylistValidator: Validator<Playlist> = {
-  id: isNumericId(),
-  version: isVersion(),
-  userId: isUserId(),
-  name: checkStringLength(MIN_PLAYLIST_NAME_LENGTH, MAX_PLAYLIST_NAME_LENGTH),
-  songIds: isArray(eachItem(isNumericId())),
-};
-
-export const CreatePlaylistRequestValidator: Validator<CreatePlaylistRequest> = {
-  name: minLength(1),
-  shared: isBoolean(),
-  songIds: isArray(eachItem(isNumericId())),
-};
 
 export const UserSongSettingsValidator: Validator<UserSongSettings> = {
   songId: isNumericId(),

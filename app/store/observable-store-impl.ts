@@ -216,7 +216,6 @@ function pairsToObject(pairs: KV<unknown>[]): { [key: string]: any } {
   return res;
 }
 
-/** Store for user's personal settings and playlists. */
 function noFreeze<T>(obj: T|undefined): T|undefined {
   return obj;
 }

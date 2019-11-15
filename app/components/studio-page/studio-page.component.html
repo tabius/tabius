@@ -5,38 +5,6 @@
 
 <div *ngIf="loaded">
 
-    <div class="playlist-block">
-        <h1> Плейлисты </h1>
-
-        <div *ngIf="loaded" class="playlist-block-content">
-
-            <div *ngIf="playlists.length > 0">
-                <div *ngFor="let playlist of playlists" class="playlist-item">
-                    <a routerLink="{{getPlaylistPageLink(playlist.id)}}" title="Перейти к плейлисту «{{playlist.name}}»">
-                        {{playlist.name}}
-                        <span class="song-count" title="Число песен в плейлисте">[<span>{{playlist.songIds.length}}</span>]</span>
-                    </a>
-                </div>
-
-                <div class="playlists-bottom-links-block">
-                    <a routerLink="{{settingsLink}}">Управление плейлистами »</a>
-                </div>
-
-            </div>
-
-            <div *ngIf="!user" class="no-playlists-block">
-                Только <a href="{{loginLink}}">зарегистрированные</a> пользователи могут создавать плейлисты.
-            </div>
-
-            <div *ngIf="user && playlists.length === 0">
-                <div class="no-playlists-block"> Вы ещё не создали ни один плейлист.</div>
-                <div class="playlists-bottom-links-block">
-                    <a routerLink="{{settingsLink}}">Управление плейлистами »</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="collection-block">
         <h1>Песни</h1>
 

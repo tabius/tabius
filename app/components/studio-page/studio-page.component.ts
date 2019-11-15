@@ -3,10 +3,10 @@ import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {UserDataService} from '@app/services/user-data.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {Playlist, User} from '@common/user-model';
+import {User} from '@common/user-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
-import {getCollectionPageLink, getPlaylistPageLink} from '@common/util/misc-utils';
+import {getCollectionPageLink} from '@common/util/misc-utils';
 import {MOUNT_USER_SETTINGS} from '@common/mounts';
 import {Collection} from '@common/catalog-model';
 import {CatalogDataService} from '@app/services/catalog-data.service';
@@ -24,13 +24,10 @@ export class StudioPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
-  readonly getPlaylistPageLink = getPlaylistPageLink;
-  readonly settingsLink = `/${MOUNT_USER_SETTINGS}`;
   readonly loginLink = NODE_BB_LOGIN_URL;
   readonly registrationLink = NODE_BB_REGISTRATION_URL;
 
   loaded = false;
-  playlists: Playlist[] = [];
   user?: User;
   collection?: Collection;
 
@@ -46,17 +43,15 @@ export class StudioPageComponent implements OnInit, OnDestroy {
     enableLoadingIndicator(this);
     this.uds.syncSessionStateAsync();
 
-    const playlists$ = this.uds.getUserPlaylists(RefreshMode.Refresh);
     const user$ = this.uds.getUser();
     const collection$ = user$.pipe(flatMap(user => this.cds.getCollectionById(user && user.collectionId)));
-    combineLatest([playlists$, user$, collection$])
+    combineLatest([user$, collection$])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([playlists, user, collection]) => {
+        .subscribe(([user, collection]) => {
           this.loaded = true;
-          this.playlists = playlists;
           this.user = user;
           this.collection = collection;
           this.cd.detectChanges();

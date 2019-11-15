@@ -7,8 +7,7 @@ import {CatalogPageComponent} from '@app/components/catalog-page/catalog-page.co
 import {CollectionPageComponent} from '@app/components/collection-page/collection-page.component';
 import {SongPageComponent} from '@app/components/song-page/song-page.component';
 import {SettingsPageComponent} from '@app/components/settings-page/settings-page.component';
-import {MOUNT_COLLECTION, MOUNT_CATALOG, MOUNT_PAGE_NOT_FOUND, MOUNT_PLAYLIST, MOUNT_SONG, MOUNT_SONG_PRINT, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
-import {PlaylistPageComponent} from '@app/components/playlist-page/playlist-page.component';
+import {MOUNT_COLLECTION, MOUNT_CATALOG, MOUNT_PAGE_NOT_FOUND, MOUNT_SONG, MOUNT_SONG_PRINT, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {ObservableStore} from '@app/store/observable-store';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
@@ -36,7 +35,6 @@ const routes: Routes = [
   {path: MOUNT_SONG_PRINT, component: SongPrintPageComponent},
   {path: MOUNT_USER_SETTINGS, component: SettingsPageComponent},
   {path: MOUNT_USER_STUDIO, component: StudioPageComponent,},
-  {path: MOUNT_PLAYLIST, component: PlaylistPageComponent},
   {path: MOUNT_PAGE_NOT_FOUND, component: Page404Component},
   {path: '**', redirectTo: `/${MOUNT_PAGE_NOT_FOUND}`}
 ];
