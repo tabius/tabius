@@ -125,8 +125,8 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
 
   updateMeta() {
     updatePageMetadata(this.title, this.meta, {
-      title: 'Список артистов',
-      description: 'Список всех исполнителей на Tabius и поиск песни по тексту.',
+      title: 'Каталог: все исполнители и коллекции песен',
+      description: 'Поиск аккордов по названию и тексту песни.',
       keywords: ['табы', 'аккорды', 'гитара', 'список артистов', 'поиск песни по тексту'],
     });
   }

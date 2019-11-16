@@ -1,7 +1,7 @@
-<h1>Артисты</h1>
+<h1>Каталог</h1>
 
 <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
-    <div class="message">Загружаем список артистов…</div>
+    <div class="message">Загружаем каталог…</div>
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
@@ -73,7 +73,7 @@
 
 <div *ngIf="canCreateNewPublicCollection" class="add-collection-block">
     <div>
-        <a *ngIf="!collectionEditorIsOpen" href="javascript:" (click)="toggleCollectionsEditor()">Добавить артиста »</a>
+        <a *ngIf="!collectionEditorIsOpen" href="javascript:" (click)="toggleCollectionsEditor()">Добавить коллекцию »</a>
 
         <gt-collection-editor *ngIf="collectionEditorIsOpen"
                               (closeRequest)="toggleCollectionsEditor()"
