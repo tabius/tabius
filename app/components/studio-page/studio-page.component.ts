@@ -7,7 +7,6 @@ import {User} from '@common/user-model';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogDataService} from '@app/services/catalog-data.service';
-import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@common/constants';
 import {Collection, CollectionDetails, Song} from '@common/catalog-model';
 import {defined, sortSongsAlphabetically} from '@common/util/misc-utils';
 
@@ -21,9 +20,6 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
-
-  readonly loginLink = NODE_BB_LOGIN_URL;
-  readonly registrationLink = NODE_BB_REGISTRATION_URL;
 
   loaded = false;
   user?: User;

@@ -1,3 +1,4 @@
+@import "app/styles/colors";
 @import "app/styles/dimensions";
 
 .content {
@@ -9,19 +10,11 @@ h1 {
   text-align: center;
 }
 
-.register-prompt-block {
+.register-prompt {
   display: flex;
   justify-content: center;
   margin-top: 20px;
   margin-bottom: 20px;
-
-  .register-prompt-block-content {
-    text-align: center;
-    line-height: 1.5em;
-    padding: 20px;
-    border: solid 1px #ccc;
-    background-color: #fefbf7;
-  }
 }
 
 .collection-block {
@@ -35,20 +28,18 @@ h1 {
 
 .add-song-block {
   margin-top: 15px;
+
+  .add-song-link {
+    color: $color-golden-link;
+  }
 }
 
 @media only screen and (min-width: $min-desktop-width) {
-  .register-prompt-block {
+  .register-prompt {
     margin-top: 40px;
-
-    .register-prompt-block-content {
-      min-width: 700px;
-      max-width: 1000px;
-    }
   }
 
   .add-song-block {
     margin-top: 25px;
   }
-
 }

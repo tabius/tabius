@@ -1,4 +1,5 @@
 export const FORUM_LINK = 'https://forum.tabius.ru';
+export const FORUM_LINK_ADD_NEW_CATEGORY = `${FORUM_LINK}/category/406`;
 
 export const PARAM_COLLECTION_MOUNT = 'collectionMount';
 export const PARAM_SONG_MOUNT = 'songMount';

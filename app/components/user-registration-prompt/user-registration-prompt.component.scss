@@ -1,0 +1,16 @@
+@import "app/styles/dimensions";
+
+.content {
+  text-align: center;
+  line-height: 1.5em;
+  padding: 20px;
+  border: solid 1px #ccc;
+  background-color: #fefbf7;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .content {
+    min-width: 700px;
+    max-width: 1000px;
+  }
+}

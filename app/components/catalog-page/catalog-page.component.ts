@@ -13,6 +13,8 @@ import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-searc
 import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';
+import {User} from '@common/user-model';
+import {FORUM_LINK_ADD_NEW_CATEGORY} from '@common/mounts';
 
 interface LetterBlock {
   letter: string,
@@ -39,17 +41,18 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   readonly getCollectionPageLink = getCollectionPageLink;
+  readonly addNewCategoryLink = FORUM_LINK_ADD_NEW_CATEGORY;
 
   @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
-
   loaded = false;
   letterBlocks: LetterBlock[] = [];
   searchValue: string = '';
-  collectionFilterControl = new FormControl();
 
+  collectionFilterControl = new FormControl();
   filteredCollections: Collection[] = [];
   collectionEditorIsOpen = false;
   canCreateNewPublicCollection = false;
+  user?: User;
 
   constructor(private readonly ads: CatalogDataService,
               private readonly uds: UserDataService,
@@ -67,6 +70,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
     this.uds.getUser()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {
+          this.user = user;
           this.canCreateNewPublicCollection = canCreateNewPublicCollection(user);
           this.cd.detectChanges();
         });

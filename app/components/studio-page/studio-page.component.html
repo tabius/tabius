@@ -6,11 +6,7 @@
 
     <div *ngIf="loaded">
 
-        <div *ngIf="!user" class="register-prompt-block">
-            <div class="register-prompt-block-content">
-                <a href="{{registrationLink}}">Зарегистрируйтесь</a> или <a href="{{loginLink}}">войдите</a>, чтобы добавлять свои песни.
-            </div>
-        </div>
+        <gt-user-registration-prompt *ngIf="!user" class="register-prompt"></gt-user-registration-prompt>
 
         <div *ngIf="user" class="collection-block">
             <div>
@@ -24,7 +20,9 @@
                 ></gt-song-list>
 
                 <div class="add-song-block">
-                    <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Добавить песню »</a>
+                    <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()" class="add-song-link">
+                        Добавить песню »
+                    </a>
                     <gt-song-editor *ngIf="editorIsOpen"
                                     (closeRequest)="toggleEditor()"
                                     [songId]="-1"

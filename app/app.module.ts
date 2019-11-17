@@ -46,6 +46,7 @@ import {AppBrowserStore, CatalogBrowserStore, UserBrowserStore} from '@app/store
 import {SongPrintPageComponent} from './components/song-print-page/song-print-page.component';
 import {CollectionEditorComponent} from './components/collection-editor/collection-editor.component';
 import { SongListComponent } from './components/song-list/song-list.component';
+import { UserRegistrationPromptComponent } from './components/user-registration-prompt/user-registration-prompt.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { SongListComponent } from './components/song-list/song-list.component';
     TunerPageComponent,
     CollectionEditorComponent,
     SongListComponent,
+    UserRegistrationPromptComponent,
   ],
   imports: [
     BrowserAnimationsModule,
