@@ -11,6 +11,18 @@ export enum CollectionType {
   Compilation = 3,
 }
 
+export function isCompilation(type: CollectionType): boolean {
+  return type === CollectionType.Compilation;
+}
+
+export function isBand(type: CollectionType): boolean {
+  return type === CollectionType.Band;
+}
+
+export function isPerson(type: CollectionType): boolean {
+  return type === CollectionType.Person;
+}
+
 export const MIN_COLLECTION_MOUNT_LENGTH = 1;
 export const MAX_COLLECTION_MOUNT_LENGTH = 40;
 

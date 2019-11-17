@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {CatalogDataService} from '@app/services/catalog-data.service';
-import {Collection, CollectionDetails, Song} from '@common/catalog-model';
+import {Collection, CollectionDetails, isBand, isCompilation, Song} from '@common/catalog-model';
 import {ActivatedRoute} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canEditCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {canEditCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
@@ -36,7 +36,6 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   readonly getCollectionPageLink = getCollectionPageLink;
-  readonly getSongPageLink = getSongPageLink;
 
   collectionViewModel?: CollectionViewModel;
 
@@ -115,8 +114,10 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
       return;
     }
     const name = collectionViewModel.displayName;
+    const {type} = collectionViewModel.collection;
+    const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');
     updatePageMetadata(this.title, this.meta, {
-      title: `${name} — текст песен и аккорды для гитары`,
+      title: `${name}${typeInfo} — тексты песен и аккорды для гитары`,
       description: `${name} — полная коллекция всех песен и аккордов для гитары.${getFirstSongsNames(songs)}`,
       keywords: [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `тексты ${name}`, `песни ${name}`],
       image: collectionViewModel.imgSrc,
