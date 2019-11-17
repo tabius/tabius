@@ -29,10 +29,9 @@ export function paramToArrayOfNumericIds(value: string): number[] {
 export const isVersion = () => min(0);
 export const isNumericId = () => min(1);
 export const checkStringLength = (minLen: number, maxLen: number) => isString(minLength(minLen, maxLength(maxLen)));
-export const isUserId = () => checkStringLength(1, 40);
 export const isSongMount = () => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH);
 export const isCollectionMount = () => checkStringLength(MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
-export const isCollectionType = () => equals(CollectionType.Band, CollectionType.Person);
+export const isCollectionType = () => equals(CollectionType.Band, CollectionType.Person, CollectionType.Compilation);
 
 export const UserSongSettingsValidator: Validator<UserSongSettings> = {
   songId: isNumericId(),
