@@ -15,6 +15,7 @@ export class SongListComponent {
   @Input() collectionMount!: string;
   @Input() songs!: Song[];
   @Input() showEmptyNotice = false;
+  @Input() emptyListMessage = 'Нет песен';
 
   trackBySongId(index: number, song: Song): number {
     return song.id;

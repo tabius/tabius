@@ -17,12 +17,17 @@
                         [collectionMount]="collection.mount"
                         [songs]="songs"
                         [showEmptyNotice]="true"
+                        [emptyListMessage]="'Нет подборов'"
                 ></gt-song-list>
 
                 <div class="add-song-block">
-                    <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()" class="add-song-link">
-                        Добавить песню »
-                    </a>
+                    <button *ngIf="!editorIsOpen"
+                            (click)="toggleEditor()"
+                            class="btn btn-info"
+                            title="Добавить новую песню в персональную коллекцию"
+                    >
+                        Добавить
+                    </button>
                     <gt-song-editor *ngIf="editorIsOpen"
                                     (closeRequest)="toggleEditor()"
                                     [songId]="-1"

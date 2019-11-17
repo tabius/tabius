@@ -71,11 +71,15 @@
 
 </div>
 
-<div class="add-collection-block">
+<div class="add-collection-block" *ngIf="loaded">
     <div>
-        <a *ngIf="!collectionEditorIsOpen" href="javascript:" (click)="toggleCollectionsEditor()" class="add-collection-link">
-            Добавить »
-        </a>
+        <button *ngIf="!collectionEditorIsOpen"
+                (click)="toggleCollectionsEditor()"
+                class="btn btn-info"
+                title="Добавить нового исполнителя или сборник в каталог"
+        >
+            Добавить
+        </button>
 
         <gt-collection-editor *ngIf="collectionEditorIsOpen && canCreateNewPublicCollection"
                               (closeRequest)="toggleCollectionsEditor()"
