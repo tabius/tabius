@@ -125,7 +125,7 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
   }
 
   toggleEditor(): void {
-    this.editorIsOpen = !this.editorIsOpen && this.canAddSongs;
+    this.editorIsOpen = !this.editorIsOpen;
     this.cd.detectChanges();
   }
 }

@@ -40,10 +40,11 @@
             </div>
         </div>
 
-        <div *ngIf="canAddSongs" class="add-song-block">
-            <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Добавить песню »</a>
-
-            <gt-song-editor *ngIf="editorIsOpen"
+        <div class="add-song-block">
+            <button *ngIf="!editorIsOpen" class="btn btn-info" (click)="toggleEditor()">Добавить песню</button>
+            <gt-user-registration-prompt *ngIf="editorIsOpen && !user" class="register-prompt"></gt-user-registration-prompt>
+            <gt-moderator-prompt *ngIf="editorIsOpen && !!user && !canAddSongs" class="has-no-rights-prompt"></gt-moderator-prompt>
+            <gt-song-editor *ngIf="editorIsOpen && canAddSongs"
                             (closeRequest)="toggleEditor()"
                             [songId]="-1"
                             [collectionId]="collectionViewModel.collection.id"

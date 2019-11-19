@@ -41,7 +41,6 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   readonly getCollectionPageLink = getCollectionPageLink;
-  readonly addNewCategoryLink = FORUM_LINK_ADD_NEW_CATEGORY;
 
   @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
   loaded = false;

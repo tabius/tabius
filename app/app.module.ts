@@ -47,6 +47,7 @@ import {SongPrintPageComponent} from './components/song-print-page/song-print-pa
 import {CollectionEditorComponent} from './components/collection-editor/collection-editor.component';
 import { SongListComponent } from './components/song-list/song-list.component';
 import { UserRegistrationPromptComponent } from './components/user-registration-prompt/user-registration-prompt.component';
+import { ModeratorPromptComponent } from './components/moderator-prompt/moderator-prompt.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { UserRegistrationPromptComponent } from './components/user-registration-
     CollectionEditorComponent,
     SongListComponent,
     UserRegistrationPromptComponent,
+    ModeratorPromptComponent,
   ],
   imports: [
     BrowserAnimationsModule,
