@@ -15,7 +15,7 @@ async function generateSitemap() {
     const collectionMountById = new Map<number, string>();
     for (const row of collectionRows) {
       collectionMountById.set(+row.id, row.mount);
-      sitemap += `https://tabius.ru/${MOUNT_COLLECTION_PREFIX}/${row.mount}\n`;
+      sitemap += `https://tabius.ru/${MOUNT_COLLECTION_PREFIX}${row.mount}\n`;
     }
     const [songRows] = await connection.execute('SELECT collection_id, mount FROM song');
     for (const row of songRows) {
@@ -23,7 +23,7 @@ async function generateSitemap() {
       if (!collectionMount) {
         throw new Error(`Collection not found for song: ${JSON.stringify(row)}`);
       }
-      sitemap += `https://tabius.ru/${MOUNT_SONG_PREFIX}/${collectionMount}/${row.mount}\n`;
+      sitemap += `https://tabius.ru/${MOUNT_SONG_PREFIX}${collectionMount}/${row.mount}\n`;
     }
   } finally {
     connection.end();
