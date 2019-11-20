@@ -27,7 +27,12 @@ h1 {
     cursor: pointer;
 
     &.selected {
-      background-color: #f0f0f0;
+      background-color: #1c9fb5;
+      border-color: #598f98;
+
+      .letter-link {
+        color: white;
+      }
     }
 
     .letter-link {
