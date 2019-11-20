@@ -1,6 +1,11 @@
 server {
     server_name tabius.ru;
 
+    # Fix urls with multiple forward slashes (we had them historically in the sitemap)
+    if ($request_uri ~ "//") {
+        return 301 $uri;
+    }
+
     location / {
         proxy_pass http://127.0.0.1:4001;
         proxy_set_header Upgrade $http_upgrade;
