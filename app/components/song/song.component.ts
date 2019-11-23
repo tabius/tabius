@@ -19,6 +19,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
 
   @Input() songId!: number;
+  @Input() activeCollectionId?: number;
   @Input() mode: SongComponentMode = 'SongPageMode';
 
   song?: Song;
@@ -47,7 +48,8 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
 
     const song$ = this.cds.getSongById(this.songId);
     const songDetails$ = this.cds.getSongDetailsById(this.songId);
-    const collection$ = song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
+    const collection$ = !!this.activeCollectionId ? this.cds.getCollectionById(this.activeCollectionId)
+        : song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
     const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song && song.id)));
     this.songSubscription = combineLatest([song$, songDetails$, collection$, songSettings$])
         .pipe(takeUntil(this.destroyed$))

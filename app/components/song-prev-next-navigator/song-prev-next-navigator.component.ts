@@ -20,6 +20,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   private readonly destroyed$ = new Subject();
 
   @Input() songId!: number;
+  @Input() activeCollectionId?: number;
 
   prevLink?: string;
   nextLink?: string;
@@ -36,8 +37,9 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   }
 
   ngOnInit(): void {
-    const song$ = this.cds.getSongById(this.songId);
-    const collection$ = song$.pipe(flatMap(song => song ? this.cds.getCollectionById(song.collectionId) : of(undefined)));
+    const collection$ = !!this.activeCollectionId ?
+        this.cds.getCollectionById(this.activeCollectionId) :
+        this.cds.getSongById(this.songId).pipe(flatMap(song => song ? this.cds.getCollectionById(song.collectionId) : of(undefined)));
     // list of all collection songs sorted by id.
     const allSongs$ = collection$.pipe(
         flatMap(collection => collection ? this.cds.getCollectionSongList(collection.id) : of([])),

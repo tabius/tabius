@@ -93,7 +93,10 @@ export function getCollectionPageLink(collectionMount: string): string {
   return `/${MOUNT_COLLECTION_PREFIX}${collectionMount}`;
 }
 
-export function getSongPageLink(collectionMount: string, songMount: string): string {
+export function getSongPageLink(collectionMount: string, songMount: string, primaryCollectionMount?: string): string {
+  if (!!primaryCollectionMount && primaryCollectionMount !== collectionMount) {
+    return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${primaryCollectionMount}`;
+  }
   return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}`;
 }
 

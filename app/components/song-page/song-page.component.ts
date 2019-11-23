@@ -11,7 +11,7 @@ import {UserDataService} from '@app/services/user-data.service';
 import {canEditCollection, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {LINK_USER_STUDIO, MOUNT_COLLECTION_PREFIX, MOUNT_USER_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
+import {LINK_USER_STUDIO, MOUNT_COLLECTION_PREFIX, MOUNT_USER_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-page',
@@ -25,7 +25,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   song?: Song;
   songDetails?: SongDetails;
-  collection?: Collection;
+  activeCollection?: Collection;
+  primaryCollection?: Collection;
 
   hasEditRight = false;
   editorIsOpen = false;
@@ -55,19 +56,30 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
     const params = this.route.snapshot.params;
     const collectionMount = params[PARAM_COLLECTION_MOUNT];
+    let primaryCollectionMount = params[PARAM_PRIMARY_COLLECTION_MOUNT];
     const songMount = params[PARAM_SONG_MOUNT];
 
+    if (collectionMount === primaryCollectionMount) {
+      switchToNotFoundMode(this); // TODO: use permanent redirect to the primary song page.
+      return;
+    }
+
+    if (primaryCollectionMount === undefined) {
+      primaryCollectionMount = collectionMount;
+    }
     const collectionId$ = this.cds.getCollectionIdByMount(collectionMount);
+    const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
     const collection$ = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
+    const primaryCollection$ = primaryCollectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
     const song$ = collectionId$.pipe(flatMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
     const songDetails$ = song$.pipe(flatMap(song => this.cds.getSongDetailsById(song && song.id)));
 
-    combineLatest([collection$, song$, songDetails$, this.uds.getUser()])
+    combineLatest([collection$, primaryCollection$, song$, songDetails$, this.uds.getUser()])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([collection, song, songDetails, user]) => {
+        .subscribe(([collection, primaryCollection, song, songDetails, user]) => {
           this.loaded = true;
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the user/collection page.
@@ -78,15 +90,16 @@ export class SongPageComponent implements OnInit, OnDestroy {
             }
             return;
           }
-          if (collection === undefined || song === undefined || songDetails === undefined) {
+          if (collection === undefined || primaryCollection === undefined || song === undefined || songDetails === undefined) {
             switchToNotFoundMode(this);
             return;
           }
           this.song = song;
           this.songDetails = songDetails;
-          this.collection = collection;
+          this.activeCollection = collection;
+          this.primaryCollection = primaryCollection;
           this.updateMeta();
-          this.hasEditRight = canEditCollection(user, collection.id);
+          this.hasEditRight = canEditCollection(user, primaryCollection.id);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });
@@ -97,13 +110,13 @@ export class SongPageComponent implements OnInit, OnDestroy {
   }
 
   updateMeta() {
-    if (!this.song || !this.collection || !this.songDetails) {
+    if (!this.song || !this.activeCollection || !this.songDetails) {
       return;
     }
     updatePageMetadata(this.title, this.meta, {
-      title: `${this.song.title}, ${this.collection.name} — текст песни и аккорды`,
+      title: `${this.song.title}, ${this.activeCollection.name} — текст песни и аккорды`,
       description: getSongTextWithNoChords(this.songDetails.content, 5, true),
-      keywords: [`подбор ${this.song.title}`, this.collection.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
+      keywords: [`подбор ${this.song.title}`, this.activeCollection.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
     });
   }
 

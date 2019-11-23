@@ -24,7 +24,7 @@ interface PageWithNotFoundFlag {
   readonly meta?: Meta,
 }
 
-export function switchToNotFoundMode(page: PageWithNotFoundFlag) {
+export function switchToNotFoundMode(page: PageWithNotFoundFlag): void {
   page.notFound = true;
   addStatus404ToResponse(page.response);
   if (page.title) {

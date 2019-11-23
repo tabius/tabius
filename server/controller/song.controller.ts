@@ -34,7 +34,11 @@ export class SongController {
   async getSongsByCollection(@Param('collectionId') collectionIdParam: string): Promise<Song[]> {
     this.logger.log(`by-collection: ${collectionIdParam}`);
     const collectionId = paramToId(collectionIdParam);
-    return await this.songDbi.getSongsByCollectionId(collectionId);
+    const [primarySongs, secondarySongs] = await Promise.all([
+        this.songDbi.getSongsByCollectionId(collectionId),
+        this.songDbi.getSongsBySecondaryCollectionId(collectionId),
+    ]);
+    return [...primarySongs, ...secondarySongs];
   }
 
   /** Returns found song details by ids. The order of results is not specified. */

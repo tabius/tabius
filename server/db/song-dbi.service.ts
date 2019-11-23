@@ -30,21 +30,28 @@ export class SongDbi {
     const idList = songIds.join(',');
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
-        .then(([rows]: [SongRow[]]) => rows.map(row => (row2Song(row))));
+        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
   }
 
   getSongsDetails(songIds: readonly number[]): Promise<SongDetails[]> {
     const idList = songIds.join(',');
     return this.db.pool.promise()
         .query(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
-        .then(([rows]: [SongRow[]]) => rows.map(row => (row2SongDetails(row))));
+        .then(([rows]: [SongRow[]]) => rows.map(row2SongDetails));
   }
 
   getSongsByCollectionId(collectionId: number): Promise<Song[]> {
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL} WHERE s.collection_id = ? ORDER BY s.id`, [collectionId])
-        .then(([rows]: [SongRow[]]) => rows.map(row => row2Song(row)));
+        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
   }
+
+  getSongsBySecondaryCollectionId(collectionId: number): Promise<Song[]> {
+    return this.db.pool.promise()
+        .query(`${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?) ORDER BY s.id`, [collectionId])
+        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
+  }
+
 
   async create(song: Song, details: SongDetails): Promise<number> {
     const con$$ = this.db.pool.promise();

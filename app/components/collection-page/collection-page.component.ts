@@ -18,11 +18,21 @@ export class CollectionViewModel {
   readonly displayName: string;
   readonly imgSrc: string|undefined;
   readonly songs: Song[];
+  readonly primarySongCollectionMounts: (string|undefined)[];
 
-  constructor(readonly collection: Collection, readonly bands: Collection[], songs: Song[], readonly listed: boolean) {
+  constructor(readonly collection: Collection,
+              readonly bands: Collection[],
+              songs: Song[],
+              primarySongCollectionMounts: (string|undefined)[],
+              readonly listed: boolean) {
     this.displayName = getNameFirstFormArtistName(collection);
     this.imgSrc = listed ? getCollectionImageUrl(collection.mount) : undefined;
+    const primaryCollectionMountBySong = new Map<number, string|undefined>();
+    for (let index = 0; index < songs.length; index++) {
+      primaryCollectionMountBySong.set(songs[index].id, primarySongCollectionMounts[index]);
+    }
     this.songs = sortSongsAlphabetically(songs);
+    this.primarySongCollectionMounts = this.songs.map((s) => primaryCollectionMountBySong.get(s.id));
   }
 }
 
@@ -77,19 +87,23 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
         flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
         map(songs => songs.filter(defined))
     );
+    const primarySongCollectionMounts$: Observable<(string|undefined)[]> = songs$.pipe(
+        flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
+        map(collections => collections.map(collection => !!collection ? collection.mount : undefined))
+    );
 
-    combineLatest([collection$, collectionDetails$, bands$, songs$, this.uds.getUser()])
+    combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollectionMounts$, this.uds.getUser()])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([collection, collectionDetails, bands, songs, user]) => {
+        .subscribe(([collection, collectionDetails, bands, songs, primarySongCollectionMounts, user]) => {
           this.loaded = true;
           if (!collection || !collectionDetails || !bands || !songs) {
             switchToNotFoundMode(this);
             return;
           }
-          this.collectionViewModel = new CollectionViewModel(collection, bands, songs, collectionDetails.listed);
+          this.collectionViewModel = new CollectionViewModel(collection, bands, songs, primarySongCollectionMounts, collectionDetails.listed);
           this.user = user;
           this.canAddSongs = canEditCollection(this.user, collection.id);
           this.updateMeta(songs);
