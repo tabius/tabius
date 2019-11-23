@@ -44,29 +44,39 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     const allSongs$ = collection$.pipe(
         flatMap(collection => collection ? this.cds.getCollectionSongList(collection.id) : of([])),
         flatMap(songIds => combineLatest0((songIds || []).map(id => this.cds.getSongById(id)))),
-        map(songs => sortSongsAlphabetically(songs.filter(defined)).map(song => song.id)),
+        map(songs => sortSongsAlphabetically(songs.filter(defined))),
     );
     combineLatest([collection$, allSongs$])
         .pipe(
             takeUntil(this.destroyed$),
             flatMap(([collection, allSongs]) => {
+              const notFound = [undefined, undefined, undefined, undefined, undefined];
               if (!collection || !allSongs || allSongs.length === 0) {
-                return of([undefined, undefined, undefined]);
+                return of(notFound);
               }
-              const songIdx = allSongs.indexOf(this.songId);
+              const songIdx = allSongs.findIndex(song => song.id === this.songId);
+              if (songIdx < 0) {
+                return of(notFound);
+              }
               const nextSongIdx = (songIdx + 1) % allSongs.length;
               const prevSongIdx = (songIdx + allSongs.length - 1) % allSongs.length;
-              const nextSongId = allSongs[nextSongIdx];
-              const prevSongId = allSongs[prevSongIdx];
-              return combineLatest([of(collection.mount), this.cds.getSongById(prevSongId), this.cds.getSongById(nextSongId)]);
+              const prevSong = allSongs[prevSongIdx];
+              const nextSong = allSongs[nextSongIdx];
+              return combineLatest([
+                of(collection),
+                of(prevSong),
+                this.cds.getCollectionById(prevSong.collectionId),
+                of(nextSong),
+                this.cds.getCollectionById(nextSong.collectionId),
+              ]);
             })
         )
-        .subscribe(([collectionMount, prevSong, nextSong]) => {
-          if (!collectionMount || !prevSong || !nextSong) {
+        .subscribe(([collection, prevSong, prevSongPrimaryCollection, nextSong, nextSongPrimaryCollection]) => {
+          if (!collection || !prevSong || !nextSong || !prevSongPrimaryCollection || !nextSongPrimaryCollection) {
             return;
           }
-          this.prevLink = getSongPageLink(collectionMount, prevSong.mount);
-          this.nextLink = getSongPageLink(collectionMount, nextSong.mount);
+          this.prevLink = getSongPageLink(collection.mount, prevSong.mount, prevSongPrimaryCollection.mount);
+          this.nextLink = getSongPageLink(collection.mount, nextSong.mount, nextSongPrimaryCollection.mount);
           this.cd.detectChanges();
         });
   }

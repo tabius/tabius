@@ -60,7 +60,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
     const songMount = params[PARAM_SONG_MOUNT];
 
     if (collectionMount === primaryCollectionMount) {
-      switchToNotFoundMode(this); // TODO: use permanent redirect to the primary song page.
+      this.loaded = true;
+      switchToNotFoundMode(this); // TODO: use permanent redirect to the primary song page?
       return;
     }
 
