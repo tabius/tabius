@@ -14,8 +14,9 @@
 
                 <gt-song-list
                         *ngIf="!editorIsOpen"
-                        [collectionMount]="collection.mount"
-                        [songs]="songs"
+                        [collectionMount]="collectionData.collection.mount"
+                        [songs]="collectionData.songs"
+                        [primarySongCollectionMounts]="collectionData.primarySongCollectionMounts"
                         [showEmptyNotice]="true"
                         [emptyListMessage]="'Нет песен'"
                 ></gt-song-list>
@@ -31,7 +32,7 @@
                     <gt-song-editor *ngIf="editorIsOpen"
                                     (closeRequest)="toggleEditor()"
                                     [songId]="-1"
-                                    [collectionId]="collection.id"
+                                    [collectionId]="collectionData.collection.id"
                                     [initialFocusMode]="'title'"
                     ></gt-song-editor>
                 </div>

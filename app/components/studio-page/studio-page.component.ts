@@ -7,8 +7,9 @@ import {User} from '@common/user-model';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogDataService} from '@app/services/catalog-data.service';
-import {Collection, CollectionDetails, Song} from '@common/catalog-model';
-import {defined, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {CollectionDetails, Song} from '@common/catalog-model';
+import {defined} from '@common/util/misc-utils';
+import {CollectionViewModel} from '@app/components/collection-page/collection-page.component';
 
 @Component({
   selector: 'gt-studio-page',
@@ -23,8 +24,7 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   loaded = false;
   user?: User;
-  collection?: Collection;
-  songs: Song[] = [];
+  collectionData?: CollectionViewModel;
 
   editorIsOpen = false;
 
@@ -48,12 +48,16 @@ export class StudioPageComponent implements OnInit, OnDestroy {
         flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
         map(songs => songs.filter(defined))
     );
-    combineLatest([user$, collection$, collectionDetails$, songs$])
+    const primarySongCollectionMounts$: Observable<(string|undefined)[]> = songs$.pipe(
+        flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
+        map(collections => collections.map(collection => !!collection ? collection.mount : undefined))
+    );
+    combineLatest([user$, collection$, collectionDetails$, songs$, primarySongCollectionMounts$])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([user, collection, collectionDetails, songs]) => {
+        .subscribe(([user, collection, collectionDetails, songs, primarySongCollectionMounts]) => {
           this.loaded = true;
           if (!user || !collection || !collectionDetails || !songs) {
             //TODO: switchToNotFoundMode(this);
@@ -61,8 +65,7 @@ export class StudioPageComponent implements OnInit, OnDestroy {
             return;
           }
           this.user = user;
-          this.collection = collection;
-          this.songs = sortSongsAlphabetically(songs);
+          this.collectionData = new CollectionViewModel(collection, [], songs, primarySongCollectionMounts, false);
           this.cd.detectChanges();
         });
     this.updateMeta();
