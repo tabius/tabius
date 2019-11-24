@@ -37,7 +37,7 @@
 
     .feature-list {
       margin-top: 30px;
-      margin-bottom: 30px;
+      margin-bottom: 15px;
 
       h3 {
         color: #575757;
@@ -82,6 +82,10 @@
         min-width: 60px;
       }
     }
+
+    .bottom-link {
+      display: none;
+    }
   }
 }
 
@@ -108,6 +112,14 @@
 
       .mobile-buttons-row {
         display: none;
+      }
+
+      .bottom-link {
+        display: block;
+      }
+
+      .bottom-sign-in-block {
+        margin-top: 25px;
       }
     }
   }

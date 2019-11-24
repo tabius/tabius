@@ -9,7 +9,7 @@ import {NODE_BB_URL} from '@common/constants';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SiteHomePageComponent {
-  readonly forumLink = NODE_BB_URL + '/category/1';
+  readonly forumNewsLink = NODE_BB_URL + '/category/1';
   readonly catalogLink = LINK_CATALOG;
   readonly studioLink = LINK_STUDIO;
 }
