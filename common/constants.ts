@@ -15,6 +15,7 @@ export const NODE_BB_COOKIE_DOMAIN = '.tabius.ru';
 export const NODE_BB_URL = 'https://forum.tabius.ru';
 export const NODE_BB_LOGIN_URL = `${NODE_BB_URL}/login`;
 export const NODE_BB_REGISTRATION_URL = `${NODE_BB_URL}/register`;
+export const NODE_BB_ADD_NEW_CATEGORY_URL = `${NODE_BB_URL}/category/406`;
 
 // the values below should be in sync with 'dimensions.scss'
 // export const MAX_MOBILE_WIDTH = 899;

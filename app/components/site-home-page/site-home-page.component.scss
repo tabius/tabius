@@ -71,6 +71,17 @@
         }
       }
     }
+
+    .mobile-buttons-row {
+      text-align: center;
+      margin-top: 5px;
+      white-space: nowrap;
+
+      a:not(:first-of-type) {
+        margin-left: 14px;
+        min-width: 60px;
+      }
+    }
   }
 }
 
@@ -93,6 +104,10 @@
         h2 {
           font-size: 24px;
         }
+      }
+
+      .mobile-buttons-row {
+        display: none;
       }
     }
   }

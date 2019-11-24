@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="item catalog" [class.active]="getActiveSection() === NavSection.Catalog">
-            <a routerLink="{{collectionLink}}" (click)="resetCollectionPageScroll()">
+            <a routerLink="{{catalogLink}}" (click)="resetCollectionPageScroll()">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="artist"></gt-svg-icon>
                 <div class="title">КАТАЛОГ</div>
@@ -85,7 +85,7 @@
             </a>
         </div>
         <div class="item catalog">
-            <a routerLink="{{collectionLink}}" (click)="close()">
+            <a routerLink="{{catalogLink}}" (click)="close()">
                 <gt-svg-icon icon="artist"></gt-svg-icon>
                 <div class="title">КАТАЛОГ</div>
             </a>

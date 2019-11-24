@@ -14,7 +14,6 @@ import {UserDataService} from '@app/services/user-data.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';
 import {User} from '@common/user-model';
-import {FORUM_LINK_ADD_NEW_CATEGORY} from '@common/mounts';
 
 interface LetterBlock {
   letter: string,

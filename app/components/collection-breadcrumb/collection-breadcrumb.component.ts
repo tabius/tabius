@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Collection} from '@common/catalog-model';
-import {MOUNT_CATALOG} from '@common/mounts';
+import {LINK_CATALOG} from '@common/mounts';
 import {getCollectionPageLink} from '@common/util/misc-utils';
 
 @Component({
@@ -16,5 +16,5 @@ export class CollectionBreadcrumbComponent {
 
   readonly getCollectionPageLink = getCollectionPageLink;
 
-  readonly catalogLink = `/${MOUNT_CATALOG}`;
+  readonly catalogLink = LINK_CATALOG;
 }

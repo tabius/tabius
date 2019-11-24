@@ -9,7 +9,7 @@ import {User} from '@common/user-model';
 import {CatalogDataService} from '@app/services/catalog-data.service';
 import {Collection, Song} from '@common/catalog-model';
 import {MSG_UNEXPECTED_ERROR} from '@common/messages';
-import {LINK_USER_STUDIO} from '@common/mounts';
+import {LINK_STUDIO} from '@common/mounts';
 
 interface ComponentCollectionData extends Collection {
   isSongInCollection: boolean;
@@ -62,7 +62,7 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
                 isSongInCollection: isSongInCollection[index],
                 // today we have only 1 collection,
                 name: 'Избранное',
-                routerLink: LINK_USER_STUDIO,
+                routerLink: LINK_STUDIO,
               }));
           this.cd.detectChanges();
         });

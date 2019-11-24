@@ -3,12 +3,13 @@ import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
-import {FORUM_LINK, MOUNT_CATALOG, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX, MOUNT_TUNER, MOUNT_USER_SETTINGS, MOUNT_USER_STUDIO} from '@common/mounts';
+import {LINK_CATALOG, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {ToastService} from '@app/toast/toast.service';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {LocationStrategy} from '@angular/common';
+import {NODE_BB_URL} from '@common/constants';
 
 enum NavSection {
   Home = 1,
@@ -30,11 +31,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user?: User;
   opened = false;
 
-  readonly forumLink = `${FORUM_LINK}`;
-  readonly collectionLink = `/${MOUNT_CATALOG}`;
-  readonly studioLink = `/${MOUNT_USER_STUDIO}`;
-  readonly tunerLink = `/${MOUNT_TUNER}`;
-  readonly settingsLink = `/${MOUNT_USER_SETTINGS}`;
+  readonly forumLink = NODE_BB_URL;
+  readonly catalogLink = LINK_CATALOG;
+  readonly studioLink = LINK_STUDIO;
+  readonly tunerLink = LINK_TUNER;
+  readonly settingsLink = LINK_SETTINGS;
 
   readonly NavSection = NavSection;
   readonly noSleepMode$: Observable<boolean>;
@@ -73,13 +74,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   //todo: make an utility in routing module.
   getActiveSection(): NavSection {
     const url = this.router.url.toLocaleLowerCase();
-    if (url.startsWith(`/${MOUNT_TUNER}`)) {
+    if (url.startsWith(LINK_TUNER)) {
       return NavSection.Tuner;
-    } else if (url.startsWith(`/${MOUNT_CATALOG}`) || url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
+    } else if (url.startsWith(LINK_CATALOG) || url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
       return NavSection.Catalog;
-    } else if (url.startsWith(`/${MOUNT_USER_STUDIO}`)) {
+    } else if (url.startsWith(LINK_STUDIO)) {
       return NavSection.Studio;
-    } else if (url.startsWith(`/${MOUNT_USER_SETTINGS}`)) {
+    } else if (url.startsWith(LINK_SETTINGS)) {
       return NavSection.Settings;
     }
     return NavSection.Home;
@@ -114,8 +115,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   resetCollectionPageScroll(): void {
-    this.navHelper.resetSavedScrollPosition(this.collectionLink);
-    if (this.router.url === this.collectionLink) {
+    this.navHelper.resetSavedScrollPosition(this.catalogLink);
+    if (this.router.url === this.catalogLink) {
       window.scroll({top: 0, left: 0, behavior: 'smooth'});
     }
   }

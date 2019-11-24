@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {FORUM_LINK_ADD_NEW_CATEGORY} from '@common/mounts';
+import {NODE_BB_ADD_NEW_CATEGORY_URL} from '@common/constants';
 
 @Component({
   selector: 'gt-moderator-prompt',
@@ -8,5 +8,5 @@ import {FORUM_LINK_ADD_NEW_CATEGORY} from '@common/mounts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModeratorPromptComponent {
-  readonly addNewCategoryLink = FORUM_LINK_ADD_NEW_CATEGORY;
+  readonly addNewCategoryLink = NODE_BB_ADD_NEW_CATEGORY_URL;
 }

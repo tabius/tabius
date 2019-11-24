@@ -1,8 +1,8 @@
 import {Versioned} from '@common/common-model';
 import {CollectionType, Song} from '@common/catalog-model';
-import {FORUM_LINK, MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
+import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
-import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
+import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT, NODE_BB_URL} from '@common/constants';
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import {fromPromise} from 'rxjs/internal-compatibility';
@@ -86,7 +86,7 @@ export function getSongForumTopicLink(song?: Song): string {
   if (!hasValidForumTopic(song)) {
     return '#';
   }
-  return `${FORUM_LINK}/topic/${song.tid}`;
+  return `${NODE_BB_URL}/topic/${song.tid}`;
 }
 
 export function getCollectionPageLink(collectionMount: string): string {

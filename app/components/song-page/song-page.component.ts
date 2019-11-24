@@ -11,7 +11,7 @@ import {UserDataService} from '@app/services/user-data.service';
 import {canEditCollection, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {LINK_USER_STUDIO, MOUNT_COLLECTION_PREFIX, MOUNT_USER_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
+import {LINK_STUDIO, MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-page',
@@ -31,7 +31,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
   hasEditRight = false;
   editorIsOpen = false;
   isUserCollection = false;
-  readonly userCollectionLink = LINK_USER_STUDIO;
+  readonly userCollectionLink = LINK_STUDIO;
 
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
@@ -85,7 +85,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the user/collection page.
             if (this.isUserCollection) {
-              this.router.navigate([MOUNT_USER_STUDIO]).catch(err => console.error(err));
+              this.router.navigate([MOUNT_STUDIO]).catch(err => console.error(err));
             } else {
               this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
             }
