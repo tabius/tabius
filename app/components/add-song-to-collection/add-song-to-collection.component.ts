@@ -7,7 +7,7 @@ import {ToastService} from '@app/toast/toast.service';
 import {combineLatest0, trackById} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
 import {CatalogDataService} from '@app/services/catalog-data.service';
-import {Collection} from '@common/catalog-model';
+import {Collection, Song} from '@common/catalog-model';
 import {MSG_UNEXPECTED_ERROR} from '@common/messages';
 import {LINK_USER_STUDIO} from '@common/mounts';
 
@@ -24,7 +24,7 @@ interface ComponentCollectionData extends Collection {
 })
 export class AddSongToCollectionComponent implements OnInit, OnDestroy {
 
-  @Input() songId!: number;
+  @Input() song!: Song;
 
   user?: User;
   collections: ComponentCollectionData[] = [];
@@ -49,19 +49,21 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
     const isSongInCollection$ = collections$.pipe(
         flatMap(collections => combineLatest0(collections.map(c => this.cds.getCollectionSongList(c.id)))),
         map((songIdsPerCollection: (number[]|undefined)[]) =>
-            songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.songId))),
+            songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.song.id))),
     );
 
     combineLatest([user$, collections$, isSongInCollection$]).pipe(takeUntil(this.destroyed$))
         .subscribe(([user, collections, isSongInCollection]) => {
           this.user = user;
-          this.collections = collections.map((collection, index) => ({
-            ...collection,
-            isSongInCollection: isSongInCollection[index],
-            // today we have only 1 collection,
-            name: 'Избранное',
-            routerLink: LINK_USER_STUDIO,
-          }));
+          this.collections = collections
+              .filter(c => c.id !== this.song.collectionId) // do not show primary collection in the list
+              .map((collection, index) => ({
+                ...collection,
+                isSongInCollection: isSongInCollection[index],
+                // today we have only 1 collection,
+                name: 'Избранное',
+                routerLink: LINK_USER_STUDIO,
+              }));
           this.cd.detectChanges();
         });
   }
@@ -73,9 +75,9 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
   async toggleCollection(collection: ComponentCollectionData, checkboxElement: any = {}) {
     try {
       if (collection.isSongInCollection) {
-        await this.cds.removeSongFromSecondaryCollection(this.songId, collection.id);
+        await this.cds.removeSongFromSecondaryCollection(this.song.id, collection.id);
       } else {
-        await this.cds.addSongToSecondaryCollection(this.songId, collection.id);
+        await this.cds.addSongToSecondaryCollection(this.song.id, collection.id);
       }
     } catch (err) {
       console.error(err);
