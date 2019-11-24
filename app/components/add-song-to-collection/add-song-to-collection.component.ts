@@ -89,8 +89,5 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
   toggleRegistrationPrompt(checkboxElement: any = {}) {
     this.showRegistrationPrompt = !this.showRegistrationPrompt;
     checkboxElement.checked = false;
-    if (this.showRegistrationPrompt) {
-      this.toastService.warning('Зарегистрируйтесь или войдите, чтобы добавлять свои песни.');
-    }
   }
 }
