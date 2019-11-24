@@ -31,9 +31,14 @@ export class SongController {
 
   /** Returns list of songs in the collection. */
   @Get('/by-collection/:collectionId')
-  async getSongsByCollection(@Param('collectionId') collectionIdParam: string): Promise<Song[]> {
+  async getSongsByCollectionId(@Param('collectionId') collectionIdParam: string): Promise<Song[]> {
     this.logger.log(`by-collection: ${collectionIdParam}`);
     const collectionId = paramToId(collectionIdParam);
+    return await this._getSongsByCollectionId(collectionId);
+  }
+
+  /** Returns all songs in the collection. */
+  private async _getSongsByCollectionId(collectionId: number): Promise<Song[]> {
     const [primarySongs, secondarySongs] = await Promise.all([
       this.songDbi.getSongsByCollectionId(collectionId),
       this.songDbi.getSongsBySecondaryCollectionId(collectionId),
@@ -106,7 +111,7 @@ export class SongController {
     const [songFromDb, detailsFromDb, songs] = await Promise.all([
       this.songDbi.getSongs([songId]),
       this.songDbi.getSongsDetails([songId]),
-      this.songDbi.getSongsByCollectionId(collectionId),
+      this._getSongsByCollectionId(collectionId),
     ]);
     if (songFromDb.length === 0 || detailsFromDb.length === 0) {
       throw new HttpException(`Failed to build response ${songId}/${collectionId}`, HttpStatus.BAD_REQUEST);
@@ -137,7 +142,7 @@ export class SongController {
     }
 
     await this.songDbi.delete(songId);
-    const songs = await this.songDbi.getSongsByCollectionId(collectionId);
+    const songs = await this._getSongsByCollectionId(collectionId);
     return {
       collectionId: collectionId,
       songs,

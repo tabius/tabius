@@ -33,7 +33,7 @@ export interface UpdateSongRequest extends TabiusAjaxResponse {
 export interface UpdateSongResponse extends TabiusAjaxResponse {
   song: Song;
   details: SongDetails;
-  /** All songs in the primary song collection.*/
+  /** All songs (owned and secondary) in the primary song collection.*/
   songs: Song[];
 }
 
