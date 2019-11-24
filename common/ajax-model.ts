@@ -51,6 +51,24 @@ export interface FullTextSongSearchResponse extends TabiusAjaxResponse {
   results: FullTextSongSearchResult[];
 }
 
+export interface AddSongToSecondaryCollectionRequest {
+  songId: number;
+  collectionId: number;
+}
+
+export interface AddSongToSecondaryCollectionResponse {
+  songIds: number[];
+}
+
+export interface RemoveSongFromSecondaryCollectionRequest {
+  songId: number;
+  collectionId: number;
+}
+
+export interface RemoveSongFromSecondaryCollectionResponse {
+  songIds: number[]
+}
+
 export const MAX_FULL_TEXT_SEARCH_TITLE_RESULTS = 50;
 export const MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS = 100;
 

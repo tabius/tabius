@@ -185,3 +185,6 @@ export function sortSongsAlphabetically(songs: Song[]): Song[] {
   return songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
 }
 
+export function trackById(idx: number, entity: { id: number|string }): number|string {
+  return entity.id;
+}

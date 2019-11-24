@@ -5,7 +5,7 @@ import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, par
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
-import {DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {canEditCollection, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {NodeBBService} from '@server/db/node-bb.service';
@@ -35,8 +35,8 @@ export class SongController {
     this.logger.log(`by-collection: ${collectionIdParam}`);
     const collectionId = paramToId(collectionIdParam);
     const [primarySongs, secondarySongs] = await Promise.all([
-        this.songDbi.getSongsByCollectionId(collectionId),
-        this.songDbi.getSongsBySecondaryCollectionId(collectionId),
+      this.songDbi.getSongsByCollectionId(collectionId),
+      this.songDbi.getSongsBySecondaryCollectionId(collectionId),
     ]);
     return [...primarySongs, ...secondarySongs];
   }
@@ -142,6 +142,37 @@ export class SongController {
       collectionId: collectionId,
       songs,
     };
+  }
+
+  /** Adds song to secondary collection. */
+  @Put('add-to-secondary-collection')
+  async addSongToSecondaryCollection(@Session() session, @Body() request: AddSongToSecondaryCollectionRequest)
+      : Promise<AddSongToSecondaryCollectionResponse> {
+    const {songId, collectionId} = request;
+    this.logger.log(`/add-to-secondary-collection, song ${songId}, collection-id: ${collectionId}`);
+    const user: User = ServerSsoService.getUserOrFail(session);
+    //todo: check if song exists & is in the listed collection or is in the user collection.
+    if (!canEditCollection(user, collectionId)) {
+      throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
+    }
+    await this.songDbi.addSongToSecondaryCollection(songId, collectionId);
+    const songIds = await this.songDbi.getSongIdsByCollection(collectionId);
+    return {songIds};
+  }
+
+  /** Adds song to secondary collection. */
+  @Put('remove-from-secondary-collection')
+  async removeSongFromSecondaryCollection(@Session() session, @Body() request: RemoveSongFromSecondaryCollectionRequest)
+      : Promise<RemoveSongFromSecondaryCollectionResponse> {
+    const {songId, collectionId} = request;
+    this.logger.log(`/remove-from-secondary-collection, song: ${songId}, collection-id: ${collectionId}`);
+    const user: User = ServerSsoService.getUserOrFail(session);
+    if (!canEditCollection(user, collectionId)) {
+      throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
+    }
+    await this.songDbi.removeSongFromSecondaryCollection(songId, collectionId);
+    const songIds = await this.songDbi.getSongIdsByCollection(collectionId);
+    return {songIds};
   }
 
 }

@@ -5,10 +5,11 @@ import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-
 import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {CreateCollectionRequest, CreateCollectionResponse, DeleteSongResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateCollectionRequest, CreateCollectionResponse, DeleteSongResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {User} from '@common/user-model';
 
 const COLLECTION_LIST_KEY = 'catalog';
 const COLLECTION_KEY_PREFIX = 'c-';
@@ -212,6 +213,37 @@ export class CatalogDataService {
       throw new Error('Не удалось создать артиста!');
     }
     return collection;
+  }
+
+  getUserCollections(user: User|undefined): Observable<Collection[]> {
+    if (!user) {
+      return of([]);
+    }
+    return this.getCollectionById(user.collectionId).pipe(map(c => !!c ? [c] : []));
+  }
+
+  async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
+    const request: AddSongToSecondaryCollectionRequest = {songId, collectionId};
+    try {
+      const {songIds} = await this.httpClient.put<AddSongToSecondaryCollectionResponse>(
+          '/api/song/add-to-secondary-collection', request).pipe(take(1)).toPromise();
+      await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
+    } catch (httpError) {
+      console.error(httpError);
+      throw new Error('Ошибка при обращении к серверу.');
+    }
+  }
+
+  async removeSongFromSecondaryCollection(songId: number, collectionId: number): Promise<void> {
+    const request: RemoveSongFromSecondaryCollectionRequest = {songId, collectionId};
+    try {
+      const {songIds} = await this.httpClient.put<RemoveSongFromSecondaryCollectionResponse>(
+          '/api/song/remove-from-secondary-collection', request).pipe(take(1)).toPromise();
+      await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
+    } catch (httpError) {
+      console.error(httpError);
+      throw new Error('Ошибка при обращении к серверу.');
+    }
   }
 }
 

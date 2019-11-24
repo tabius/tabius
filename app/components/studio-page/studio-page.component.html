@@ -10,14 +10,14 @@
 
         <div *ngIf="user" class="collection-block">
             <div>
-                <h1>Мои подборы</h1>
+                <h1>Избранное</h1>
 
                 <gt-song-list
                         *ngIf="!editorIsOpen"
                         [collectionMount]="collection.mount"
                         [songs]="songs"
                         [showEmptyNotice]="true"
-                        [emptyListMessage]="'Нет подборов'"
+                        [emptyListMessage]="'Нет песен'"
                 ></gt-song-list>
 
                 <div class="add-song-block">

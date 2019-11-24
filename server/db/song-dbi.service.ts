@@ -15,6 +15,10 @@ interface SongRow {
   version: number;
 }
 
+interface IdRow {
+  id: number;
+}
+
 const SONG_FIELDS = 's.id, s.collection_id, s.mount, s.title, s.forum_topic_id, s.version';
 const SONG_DETAILS_FIELDS = `s.id, s.content, s.media_links, s.version`;
 const SELECT_SONG_SQL = `SELECT ${SONG_FIELDS} FROM song s`;
@@ -69,7 +73,36 @@ export class SongDbi {
   }
 
   async delete(songId: number): Promise<void> {
-    await this.db.pool.promise().query('DELETE FROM song WHERE id = ?', [songId]);
+    await Promise.all([
+      this.db.pool.promise().query('DELETE FROM song WHERE id = ?', [songId]),
+      //TODO: add index by song id.
+      this.db.pool.promise().query('DELETE FROM secondary_song_collections WHERE song_id = ?', [songId]),
+    ]);
+  }
+
+  async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
+    //TODO: handle duplicates.
+    //TODO: do not add into secondary when song is in primary.
+    await this.db.pool.promise()
+        .query('INSERT INTO secondary_song_collections(song_id, collection_id) VALUES(?,?)',
+            [songId, collectionId]);
+  }
+
+  async removeSongFromSecondaryCollection(songId: number, collectionId: number): Promise<void> {
+    await this.db.pool.promise()
+        .query('DELETE FROM secondary_song_collections WHERE song_id = ? AND collection_id = ?',
+            [songId, collectionId]);
+
+  }
+
+  async getSongIdsByCollection(collectionId: number): Promise<number[]> {
+    const [primarySongsIds, secondarySongIds] = await Promise.all([
+      this.db.pool.promise().query('SELECT id FROM song WHERE collection_id = ?', [collectionId])
+          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
+      this.db.pool.promise().query('SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ?', [collectionId])
+          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
+    ]);
+    return [...primarySongsIds, ...secondarySongIds];
   }
 }
 

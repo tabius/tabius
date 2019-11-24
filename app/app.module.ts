@@ -48,6 +48,7 @@ import {CollectionEditorComponent} from './components/collection-editor/collecti
 import { SongListComponent } from './components/song-list/song-list.component';
 import { UserRegistrationPromptComponent } from './components/user-registration-prompt/user-registration-prompt.component';
 import { ModeratorPromptComponent } from './components/moderator-prompt/moderator-prompt.component';
+import { AddSongToCollectionComponent } from './components/add-song-to-collection/add-song-to-collection.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { ModeratorPromptComponent } from './components/moderator-prompt/moderato
     SongListComponent,
     UserRegistrationPromptComponent,
     ModeratorPromptComponent,
+    AddSongToCollectionComponent,
   ],
   imports: [
     BrowserAnimationsModule,
