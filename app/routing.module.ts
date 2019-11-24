@@ -32,8 +32,8 @@ const routes: Routes = [
   {path: MOUNT_CATALOG, component: CatalogPageComponent, resolve: {storeFlag: BrowserStoreStateResolver}},
   {path: MOUNT_COLLECTION, component: CollectionPageComponent},
   {path: MOUNT_SONG, component: SongPageComponent},
+  {path: MOUNT_SONG_PRINT, component: SongPrintPageComponent}, // Note: print page must go before the secondary collection page
   {path: MOUNT_SONG_IN_SECONDARY_COLLECTION, component: SongPageComponent},
-  {path: MOUNT_SONG_PRINT, component: SongPrintPageComponent},
   {path: MOUNT_USER_SETTINGS, component: SettingsPageComponent},
   {path: MOUNT_USER_STUDIO, component: StudioPageComponent,},
   {path: MOUNT_PAGE_NOT_FOUND, component: Page404Component},
