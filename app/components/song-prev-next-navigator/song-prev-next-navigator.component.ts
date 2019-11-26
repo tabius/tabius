@@ -2,10 +2,12 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Ho
 import {CatalogDataService} from '@app/services/catalog-data.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
-import {combineLatest0, defined, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {combineLatest0, defined, getCollectionPageLink, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';
+import {LINK_STUDIO} from '@common/mounts';
+import {UserDataService} from '@app/services/user-data.service';
 
 const Hammer: HammerStatic = require('hammerjs');
 
@@ -19,11 +21,16 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   private readonly destroyed$ = new Subject();
 
-  @Input() songId!: number;
-  @Input() activeCollectionId?: number;
+  /** Current song. undefined => no song is shown (used for collection page). */
+  @Input() songId?: number;
+  @Input() activeCollectionId!: number;
 
   prevLink?: string;
+  prevLinkIsCollection = false;
   nextLink?: string;
+  nextLinkIsCollection = false;
+
+  isCollectionFromPublicCatalog = false;
 
   showStickySideBars: 'initializing'|'yes'|'no' = 'initializing';
 
@@ -31,52 +38,63 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   constructor(private readonly cds: CatalogDataService,
               private readonly cd: ChangeDetectorRef,
+              private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
               private readonly router: Router,
   ) {
   }
 
   ngOnInit(): void {
-    const collection$ = !!this.activeCollectionId ?
-        this.cds.getCollectionById(this.activeCollectionId) :
-        this.cds.getSongById(this.songId).pipe(flatMap(song => song ? this.cds.getCollectionById(song.collectionId) : of(undefined)));
+    const collection$ = this.cds.getCollectionById(this.activeCollectionId);
     // list of all collection songs sorted by id.
     const allSongs$ = collection$.pipe(
         flatMap(collection => collection ? this.cds.getCollectionSongList(collection.id) : of([])),
         flatMap(songIds => combineLatest0((songIds || []).map(id => this.cds.getSongById(id)))),
         map(songs => sortSongsAlphabetically(songs.filter(defined))),
     );
-    combineLatest([collection$, allSongs$])
+    const user$ = this.uds.getUser();
+    combineLatest([collection$, allSongs$, user$])
         .pipe(
             takeUntil(this.destroyed$),
-            flatMap(([collection, allSongs]) => {
-              const notFound = [undefined, undefined, undefined, undefined, undefined];
+            flatMap(([collection, allSongs, user]) => {
               if (!collection || !allSongs || allSongs.length === 0) {
-                return of(notFound);
+                return of([undefined, undefined, undefined, undefined, undefined]);
               }
-              const songIdx = allSongs.findIndex(song => song.id === this.songId);
-              if (songIdx < 0) {
-                return of(notFound);
-              }
-              const nextSongIdx = (songIdx + 1) % allSongs.length;
-              const prevSongIdx = (songIdx + allSongs.length - 1) % allSongs.length;
-              const prevSong = allSongs[prevSongIdx];
-              const nextSong = allSongs[nextSongIdx];
+              const songIdx = this.songId === undefined ? -1 : allSongs.findIndex(song => song.id === this.songId);
+              const prevSongIdx = songIdx === -1 ? allSongs.length - 1 : songIdx - 1;
+              const prevSong = prevSongIdx === -1 ? undefined : allSongs[prevSongIdx];
+              const nextSongIdx = songIdx === -1 ? 0 : songIdx + 1;
+              const nextSong = nextSongIdx >= allSongs.length ? undefined : allSongs[nextSongIdx];
+              this.isCollectionFromPublicCatalog = !user || user.collectionId !== this.activeCollectionId;
               return combineLatest([
                 of(collection),
                 of(prevSong),
-                this.cds.getCollectionById(prevSong.collectionId),
+                prevSong ? this.cds.getCollectionById(prevSong.collectionId) : of(undefined),
                 of(nextSong),
-                this.cds.getCollectionById(nextSong.collectionId),
+                nextSong ? this.cds.getCollectionById(nextSong.collectionId) : of(undefined),
               ]);
             })
         )
         .subscribe(([collection, prevSong, prevSongPrimaryCollection, nextSong, nextSongPrimaryCollection]) => {
-          if (!collection || !prevSong || !nextSong || !prevSongPrimaryCollection || !nextSongPrimaryCollection) {
+          if (!collection) {
             return;
           }
-          this.prevLink = getSongPageLink(collection.mount, prevSong.mount, prevSongPrimaryCollection.mount);
-          this.nextLink = getSongPageLink(collection.mount, nextSong.mount, nextSongPrimaryCollection.mount);
+          // noinspection DuplicatedCode
+          if (prevSong && prevSongPrimaryCollection) {
+            this.prevLink = getSongPageLink(collection.mount, prevSong.mount, prevSongPrimaryCollection.mount);
+            this.prevLinkIsCollection = false;
+          } else {
+            this.prevLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection.mount) : LINK_STUDIO;
+            this.prevLinkIsCollection = true;
+          }
+          // noinspection DuplicatedCode
+          if (nextSong && nextSongPrimaryCollection) {
+            this.nextLink = getSongPageLink(collection.mount, nextSong.mount, nextSongPrimaryCollection.mount);
+            this.nextLinkIsCollection = false;
+          } else {
+            this.nextLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection.mount) : LINK_STUDIO;
+            this.nextLinkIsCollection = true;
+          }
           this.cd.detectChanges();
         });
   }
