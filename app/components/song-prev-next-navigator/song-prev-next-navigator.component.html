@@ -6,11 +6,11 @@
     </div>
 
     <div *ngIf="showStickySideBars === 'yes'" class="sticky-sidebar">
-        <div class="left-bar" (click)="navigate(prevLink)" title="Перейти к предыдущей песне">
+        <div class="left-bar" (click)="navigate(prevLink)" title="{{prevLinkIsCollection ? 'В коллекцию' : 'Перейти к предыдущей песне'}}">
             <gt-svg-icon icon="prev"></gt-svg-icon>
         </div>
 
-        <div class="right-bar" (click)="navigate(nextLink)" title="Перейти к следующей песне">
+        <div class="right-bar" (click)="navigate(nextLink)" title="{{nextLinkIsCollection ? 'В коллекцию' : 'Перейти к следующей песне'}}">
             <gt-svg-icon icon="next"></gt-svg-icon>
         </div>
     </div>
