@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {UserDataService} from '@app/services/user-data.service';
 import {getDefaultUserSongFontSize, newDefaultUserDeviceSettings, UserSongSettings} from '@common/user-model';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {Subject, Subscription} from 'rxjs';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
 
 
@@ -17,9 +17,9 @@ export const MIN_SONG_FONT_SIZE = 8;
   styleUrls: ['./inline-song-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InlineSongSettingsComponent implements OnInit, OnDestroy {
+export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy {
 
-  readonly destroyed$ = new Subject();
+  private readonly destroyed$ = new Subject();
 
   @Input() songId!: number;
 
@@ -28,10 +28,28 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
   deviceSettings = newDefaultUserDeviceSettings();
   readonly defaultFontSize = getDefaultUserSongFontSize();
 
-  songSettings!: UserSongSettings;
+  songSettings?: UserSongSettings;
+
+  private subscription?: Subscription;
 
   constructor(private readonly uds: UserDataService,
               private readonly cd: ChangeDetectorRef) {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.songSettings = undefined;
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+
+    this.subscription = this.uds.getUser()
+        .pipe(switchMap(() => this.uds.getUserSongSettings(this.songId)))
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(songSettings => {
+          this.songSettings = songSettings;
+          this.cd.detectChanges();
+        });
+
   }
 
   ngOnInit() {
@@ -39,14 +57,6 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe(deviceSettings => {
           this.deviceSettings = deviceSettings;
-          this.cd.detectChanges();
-        });
-
-    //FIXME: GH-3 resubscribe on changes.
-    this.uds.getUserSongSettings(this.songId)
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(songSettings => {
-          this.songSettings = songSettings;
           this.cd.detectChanges();
         });
   }
@@ -74,21 +84,21 @@ export class InlineSongSettingsComponent implements OnInit, OnDestroy {
   }
 
   transposeDown(): void {
-    const transpose = (this.songSettings.transpose - 1) % TONES_COUNT;
-    this.uds.setUserSongSettings({...this.songSettings, transpose});
+    const transpose = (this.songSettings!.transpose - 1) % TONES_COUNT;
+    this.uds.setUserSongSettings({...this.songSettings!, transpose});
   }
 
   transposeUp(): void {
-    const transpose = (this.songSettings.transpose + 1) % TONES_COUNT;
-    this.uds.setUserSongSettings({...this.songSettings, transpose});
+    const transpose = (this.songSettings!.transpose + 1) % TONES_COUNT;
+    this.uds.setUserSongSettings({...this.songSettings!, transpose});
   }
 
   resetSongTranspose() {
-    this.uds.setUserSongSettings({...this.songSettings, transpose: 0});
+    this.uds.setUserSongSettings({...this.songSettings!, transpose: 0});
   }
 
   toggleChordsVisibility(hideChords: boolean): void {
-    this.uds.setUserSongSettings({...this.songSettings, hideChords});
+    this.uds.setUserSongSettings({...this.songSettings!, hideChords});
   }
 
   close(): void {
