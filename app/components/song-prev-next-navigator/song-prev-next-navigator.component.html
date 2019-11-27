@@ -1,8 +1,8 @@
 <div *ngIf="prevLink && nextLink && showStickySideBars !== 'initializing'">
 
     <div class="prev-next-links-block" *ngIf="showStickySideBars === 'no'">
-        <a routerLink="{{prevLink}}" class="prev-link">{{ prevLinkIsCollection ? "« В коллекцию" : "« Пред. песня"}}</a>
-        <a routerLink="{{nextLink}}" class="next-link">{{ nextLinkIsCollection ? "В коллекцию »" : "След. песня »"}}</a>
+        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? "« В коллекцию" : "« Пред. песня"}}</a>
+        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? "В коллекцию »" : "След. песня »"}}</a>
     </div>
 
     <div *ngIf="showStickySideBars === 'yes'" class="sticky-sidebar">
