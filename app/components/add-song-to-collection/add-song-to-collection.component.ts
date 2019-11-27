@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {combineLatest, Subject} from 'rxjs';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy} from '@angular/core';
+import {combineLatest, Subject, Subscription} from 'rxjs';
 import {UserDataService} from '@app/services/user-data.service';
 import {AuthService} from '@app/services/auth.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
@@ -22,7 +22,7 @@ interface ComponentCollectionData extends Collection {
   styleUrls: ['./add-song-to-collection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddSongToCollectionComponent implements OnInit, OnDestroy {
+export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
 
   @Input() song!: Song;
 
@@ -32,6 +32,7 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
 
   readonly trackById = trackById;
 
+  private subscription?: Subscription;
   private readonly destroyed$ = new Subject();
 
   constructor(
@@ -43,7 +44,8 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
   ) {
   }
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.resetComponentData();
     const user$ = this.uds.getUser();
     const collections$ = user$.pipe(flatMap(user => this.cds.getUserCollections(user)));
     const isSongInCollection$ = collections$.pipe(
@@ -52,7 +54,7 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
             songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.song.id))),
     );
 
-    combineLatest([user$, collections$, isSongInCollection$]).pipe(takeUntil(this.destroyed$))
+    this.subscription = combineLatest([user$, collections$, isSongInCollection$]).pipe(takeUntil(this.destroyed$))
         .subscribe(([user, collections, isSongInCollection]) => {
           this.user = user;
           this.collections = collections
@@ -66,6 +68,16 @@ export class AddSongToCollectionComponent implements OnInit, OnDestroy {
               }));
           this.cd.detectChanges();
         });
+  }
+
+  private resetComponentData(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = undefined;
+    }
+    this.user = undefined;
+    this.collections = [];
+    this.showRegistrationPrompt = false;
   }
 
   ngOnDestroy() {
