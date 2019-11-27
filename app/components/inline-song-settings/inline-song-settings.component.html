@@ -9,7 +9,10 @@
     <table>
         <tr>
             <td>размер шрифта:</td>
-            <td class="value" [class.default-value]="defaultFontSize === deviceSettings.songFontSize">
+            <td class="value"
+                [class.default-value]="isDefaultFontSize"
+                [attr.title]="isDefaultFontSize ? null : 'Текущий размер шрифта. Нажмите, чтобы вернуть стандартный размер.'"
+            >
                 <div (click)="resetFontSize()">{{deviceSettings.songFontSize}}</div>
             </td>
             <td>
@@ -19,7 +22,10 @@
         </tr>
         <tr>
             <td>транспонирование:</td>
-            <td class="value" [class.default-value]="songSettings.transpose === 0">
+            <td class="value"
+                [class.default-value]="!isTransposed"
+                [attr.title]="isTransposed ? 'Текущее транспонирование. Нажмите, чтобы сбросить.' : null"
+            >
                 <div (click)="resetSongTranspose()"> {{(songSettings.transpose > 0 ? '+' : '') + songSettings.transpose}}</div>
             </td>
             <td>

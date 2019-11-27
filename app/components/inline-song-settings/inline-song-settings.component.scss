@@ -45,6 +45,7 @@
       }
 
       .value {
+        cursor: pointer;
         min-width: 3em;
         color: #146a78;
         padding-right: 5px;
@@ -53,6 +54,7 @@
       }
 
       .default-value {
+        cursor: initial;
         color: #555;
       }
 

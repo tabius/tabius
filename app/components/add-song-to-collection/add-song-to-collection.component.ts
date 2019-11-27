@@ -32,7 +32,7 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
 
   readonly trackById = trackById;
 
-  private subscription?: Subscription;
+  private songSubscription?: Subscription;
   private readonly destroyed$ = new Subject();
 
   constructor(
@@ -45,7 +45,7 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges() {
-    this.resetComponentData();
+    this.resetComponentState();
     const user$ = this.uds.getUser();
     const collections$ = user$.pipe(flatMap(user => this.cds.getUserCollections(user)));
     const isSongInCollection$ = collections$.pipe(
@@ -54,7 +54,7 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
             songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.song.id))),
     );
 
-    this.subscription = combineLatest([user$, collections$, isSongInCollection$]).pipe(takeUntil(this.destroyed$))
+    this.songSubscription = combineLatest([user$, collections$, isSongInCollection$]).pipe(takeUntil(this.destroyed$))
         .subscribe(([user, collections, isSongInCollection]) => {
           this.user = user;
           this.collections = collections
@@ -70,10 +70,10 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
         });
   }
 
-  private resetComponentData(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-      this.subscription = undefined;
+  private resetComponentState(): void {
+    if (this.songSubscription) {
+      this.songSubscription.unsubscribe();
+      this.songSubscription = undefined;
     }
     this.user = undefined;
     this.collections = [];

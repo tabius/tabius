@@ -25,31 +25,42 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
 
   @Output() closeCallback = new EventEmitter<void>();
 
-  deviceSettings = newDefaultUserDeviceSettings();
   readonly defaultFontSize = getDefaultUserSongFontSize();
+
+  deviceSettings = newDefaultUserDeviceSettings();
 
   songSettings?: UserSongSettings;
 
-  private subscription?: Subscription;
+  isTransposed = false;
+
+  isDefaultFontSize = true;
+
+  private songSettingsTranscription?: Subscription;
 
   constructor(private readonly uds: UserDataService,
               private readonly cd: ChangeDetectorRef) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.songSettings = undefined;
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.resetComponentState();
 
-    this.subscription = this.uds.getUser()
+    this.songSettingsTranscription = this.uds.getUser()
         .pipe(switchMap(() => this.uds.getUserSongSettings(this.songId)))
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {
           this.songSettings = songSettings;
+          this.isTransposed = songSettings.transpose !== 0;
           this.cd.detectChanges();
         });
 
+  }
+
+  private resetComponentState(): void {
+    this.songSettings = undefined;
+    this.isTransposed = false;
+    if (this.songSettingsTranscription) {
+      this.songSettingsTranscription.unsubscribe();
+    }
   }
 
   ngOnInit() {
@@ -57,6 +68,7 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
         .pipe(takeUntil(this.destroyed$))
         .subscribe(deviceSettings => {
           this.deviceSettings = deviceSettings;
+          this.isDefaultFontSize = this.defaultFontSize === deviceSettings.songFontSize;
           this.cd.detectChanges();
         });
   }
