@@ -1,4 +1,4 @@
-<div class="editor-block">
+<div class="editor-block" #editorBlock>
 
     <h2>Добавление коллекции</h2>
 
@@ -6,7 +6,7 @@
         <tr>
             <td>Имя коллекции</td>
             <td>
-                <input type="text" [(ngModel)]="name" (ngModelChange)="onNameChanged()"/>
+                <input type="text" [(ngModel)]="name" (ngModelChange)="onNameChanged()" #collectionNameInput/>
             </td>
         </tr>
         <tr>

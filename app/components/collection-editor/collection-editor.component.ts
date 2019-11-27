@@ -1,10 +1,11 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {CollectionType} from '@common/catalog-model';
 import {CatalogDataService} from '@app/services/catalog-data.service';
 import {ToastService} from '@app/toast/toast.service';
 import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
 import {Router} from '@angular/router';
+import {scrollToView} from '@common/util/misc-utils';
 
 @Component({
   selector: 'gt-collection-editor',
@@ -12,10 +13,15 @@ import {Router} from '@angular/router';
   styleUrls: ['./collection-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CollectionEditorComponent {
+export class CollectionEditorComponent implements OnInit {
+
+  @Input() scrollIntoViewAndFocus = true;
 
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
+
+  @ViewChild('editorBlock', {static: false, read: ElementRef}) private editorBlockRef!: ElementRef;
+  @ViewChild('collectionNameInput', {static: false, read: ElementRef}) private collectionNameInputRef!: ElementRef;
 
   name = '';
 
@@ -30,6 +36,20 @@ export class CollectionEditorComponent {
               private readonly router: Router,
   ) {
   }
+
+  ngOnInit(): void {
+    if (this.scrollIntoViewAndFocus) {
+      setTimeout(() => {
+        if (this.editorBlockRef && this.editorBlockRef.nativeElement) {
+          scrollToView(this.editorBlockRef.nativeElement);
+          if (this.collectionNameInputRef && this.collectionNameInputRef.nativeElement) {
+            this.collectionNameInputRef.nativeElement.focus();
+          }
+        }
+      }, 200);
+    }
+  }
+
 
   create() {
     this.createImpl().catch(err => {
