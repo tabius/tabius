@@ -75,7 +75,7 @@
       }
     }
 
-    .mobile-buttons-row {
+    .buttons-row {
       text-align: center;
       margin-top: 5px;
       white-space: nowrap;
@@ -86,9 +86,10 @@
       }
     }
 
-    .bottom-link {
-      display: none;
+    .bottom-sign-in-block {
+      text-align: center;
     }
+
   }
 }
 
@@ -118,8 +119,14 @@
         margin-top: 20px;
       }
 
-      .mobile-buttons-row {
-        display: none;
+      .buttons-row {
+        margin-bottom: 23px;
+
+        .btn {
+          padding: 8px 15px;
+          font-size: 16px;
+          letter-spacing: 1px;
+        }
       }
 
       .bottom-link {
@@ -127,7 +134,7 @@
       }
 
       .bottom-sign-in-block {
-        margin-top: 25px;
+        margin-top: 15px;
       }
     }
   }
