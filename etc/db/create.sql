@@ -54,9 +54,10 @@ CREATE TABLE user (
 
 CREATE TABLE secondary_song_collections (
     song_id INT  NOT NULL REFERENCES song(id),
-    collection_id INT  NOT NULL REFERENCES collection(id)
+    collection_id INT NOT NULL REFERENCES collection(id)
 ) ENGINE InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
 CREATE INDEX secondary_song_collections_collection_id_index on secondary_song_collections(collection_id);
+CREATE INDEX secondary_song_collections_song_id_index on secondary_song_collections(song_id);

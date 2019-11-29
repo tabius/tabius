@@ -100,7 +100,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
           this.activeCollection = collection;
           this.primaryCollection = primaryCollection;
           this.updateMeta();
-          this.hasEditRight = canEditCollection(user, primaryCollection.id);
+          this.hasEditRight = canEditCollection(user, primaryCollection);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });

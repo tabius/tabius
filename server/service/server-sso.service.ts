@@ -120,7 +120,7 @@ export class ServerSsoService implements NestInterceptor {
         user = {...user, collectionId: await this.getUserCollectionId(user.id) || -1};
       }
       if (!isValidId(user.collectionId)) {
-        const collectionId = await this.collectionDbi.createCollectionForUser(user);
+        const collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
         user = {...user, collectionId};
         await this.userDbi.createUser(user);
       }

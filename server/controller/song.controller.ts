@@ -9,6 +9,7 @@ import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionRespons
 import {canEditCollection, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {NodeBBService} from '@server/db/node-bb.service';
+import {CollectionDbi} from '@server/db/collection-dbi.service';
 
 @Controller('/api/song')
 export class SongController {
@@ -16,6 +17,7 @@ export class SongController {
   private readonly logger = new Logger(SongController.name);
 
   constructor(private readonly songDbi: SongDbi,
+              private readonly collectionDbi: CollectionDbi,
               private readonly fullTextSearchDbi: FullTextSearchDbi,
               private readonly nodeBBService: NodeBBService,
   ) {
@@ -66,45 +68,53 @@ export class SongController {
 
   /** Creates song and returns updated song & details. */
   @Post()
-  async create(@Session() session, @Body() updateRequest: UpdateSongRequest): Promise<UpdateSongResponse> {
-    this.logger.log('/create-song' + JSON.stringify(updateRequest));
+  async create(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
+    this.logger.log('/create-song' + JSON.stringify(request));
     const user: User = ServerSsoService.getUserOrFail(session);
-    if (!canEditCollection(user, updateRequest.song.collectionId)) {
+    const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
+    if (!collection) {
+      throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
+    }
+    if (!canEditCollection(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr1 = validate(updateRequest.song, conformsTo(NewSongValidator));
+    const vr1 = validate(request.song, conformsTo(NewSongValidator));
     if (!vr1.success) {
       throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
     }
-    const vr2 = validate(updateRequest.details, conformsTo(NewSongDetailsValidator));
+    const vr2 = validate(request.details, conformsTo(NewSongDetailsValidator));
     if (!vr2.success) {
       throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
     }
-    const songId = await this.songDbi.create(updateRequest.song, updateRequest.details);
+    const songId = await this.songDbi.create(request.song, request.details);
     if (!isValidId(songId)) {
       throw new HttpException(`Failed to create song: ${songId}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return await this.getSongUpdateResponse(songId, updateRequest.song.collectionId);
+    return await this.getSongUpdateResponse(songId, request.song.collectionId);
   }
 
   /** Updates song and returns updated song & details. */
   @Put()
-  async update(@Session() session, @Body() updateRequest: UpdateSongRequest): Promise<UpdateSongResponse> {
+  async update(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     this.logger.log('/update-song');
     const user: User = ServerSsoService.getUserOrFail(session);
-    if (!canEditCollection(user, updateRequest.song.collectionId)) {
+    const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
+    if (!collection) {
+      throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
+    }
+    if (!canEditCollection(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr1 = validate(updateRequest.song, conformsTo(SongValidator));
+    const vr1 = validate(request.song, conformsTo(SongValidator));
     if (!vr1.success) {
       throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
     }
-    const vr2 = validate(updateRequest.details, conformsTo(SongDetailsValidator));
+    const vr2 = validate(request.details, conformsTo(SongDetailsValidator));
     if (!vr2.success) {
       throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
     }
-    await this.songDbi.update(updateRequest.song.title, updateRequest.details);
-    return this.getSongUpdateResponse(updateRequest.song.id, updateRequest.song.collectionId);
+    await this.songDbi.update(request.song.title, request.details);
+    return this.getSongUpdateResponse(request.song.id, request.song.collectionId);
   }
 
   private async getSongUpdateResponse(songId: number, collectionId: number): Promise<UpdateSongResponse> {
@@ -157,7 +167,11 @@ export class SongController {
     this.logger.log(`/add-to-secondary-collection, song ${songId}, collection-id: ${collectionId}`);
     const user: User = ServerSsoService.getUserOrFail(session);
     //todo: check if song exists & is in the listed collection or is in the user collection.
-    if (!canEditCollection(user, collectionId)) {
+    const collection = await this.collectionDbi.getCollectionById(collectionId);
+    if (!collection) {
+      throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
+    }
+    if (!canEditCollection(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     await this.songDbi.addSongToSecondaryCollection(songId, collectionId);
@@ -172,7 +186,11 @@ export class SongController {
     const {songId, collectionId} = request;
     this.logger.log(`/remove-from-secondary-collection, song: ${songId}, collection-id: ${collectionId}`);
     const user: User = ServerSsoService.getUserOrFail(session);
-    if (!canEditCollection(user, collectionId)) {
+    const collection = await this.collectionDbi.getCollectionById(collectionId);
+    if (!collection) {
+      throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
+    }
+    if (!canEditCollection(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     await this.songDbi.removeSongFromSecondaryCollection(songId, collectionId);

@@ -105,7 +105,7 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
           }
           this.collectionViewModel = new CollectionViewModel(collection, bands, songs, primarySongCollectionMounts, collectionDetails.listed);
           this.user = user;
-          this.canAddSongs = canEditCollection(this.user, collection.id);
+          this.canAddSongs = canEditCollection(this.user, collection);
           this.updateMeta(songs);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();

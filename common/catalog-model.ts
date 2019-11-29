@@ -36,6 +36,8 @@ export interface Collection extends WithId, Versioned {
   readonly mount: string;
   /** Type of the collection: Band, Person, Compilation. */
   readonly type: CollectionType;
+  /** Collection owner. Undefined for the public catalog collections. */
+  readonly userId?: string;
 }
 
 export interface CollectionDetails extends WithId, Versioned {

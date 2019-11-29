@@ -75,7 +75,6 @@ export class SongDbi {
   async delete(songId: number): Promise<void> {
     await Promise.all([
       this.db.pool.promise().query('DELETE FROM song WHERE id = ?', [songId]),
-      //TODO: add index by song id.
       this.db.pool.promise().query('DELETE FROM secondary_song_collections WHERE song_id = ?', [songId]),
     ]);
   }
@@ -103,6 +102,18 @@ export class SongDbi {
           .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
     ]);
     return [...primarySongsIds, ...secondarySongIds];
+  }
+
+  async updateSongsPrimaryCollection(songIds: number[], collectionId: number): Promise<void> {
+    const idList = songIds.join(',');
+    await this.db.pool.promise().query(`UPDATE song SET collection_id = ? WHERE id IN ( ${idList} )`, [collectionId]);
+  }
+
+  async removeSongsFromSecondaryCollection(songIds: number[], secondaryCollectionId: number): Promise<void> {
+    const idList = songIds.join(',');
+    await this.db.pool.promise()
+        .query(`DELETE FROM secondary_song_collections WHERE collection_id = ? AND song_id IN ( ${idList} )`,
+            [secondaryCollectionId]);
   }
 }
 

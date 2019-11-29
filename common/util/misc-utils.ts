@@ -1,5 +1,5 @@
 import {Versioned} from '@common/common-model';
-import {CollectionType, Song} from '@common/catalog-model';
+import {Collection, CollectionType, Song} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
 import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT, NODE_BB_URL} from '@common/constants';
@@ -160,8 +160,14 @@ export function scrollToView(element?: HTMLElement): void {
   window.scroll({left: window.scrollX, top: element.offsetTop - headerHeight, behavior: 'smooth'});
 }
 
-export function canEditCollection(user: User|undefined, collectionId: number): boolean {
-  return !!user && (user.groups.includes(UserGroup.Moderator) || user.collectionId === collectionId);
+export function canEditCollection(user: User|undefined, collection: Collection): boolean {
+  if (!!user && user.groups.includes(UserGroup.Moderator)) {
+    return true;
+  }
+  if (!user || !collection.userId) {
+    return false;
+  }
+  return collection.userId === user.id;
 }
 
 export function canCreateNewPublicCollection(user: User|undefined): boolean {

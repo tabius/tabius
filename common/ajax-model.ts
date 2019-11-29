@@ -21,7 +21,25 @@ export interface CreateCollectionRequest {
 }
 
 export interface CreateCollectionResponse extends TabiusAjaxResponse {
-  /** List of all collections. */
+  /** Id of the created collection. */
+  collectionId: number;
+  /** List of all collections (for the catalog or a user). */
+  collections: Collection[];
+}
+
+export interface UpdateCollectionRequest {
+  id: number,
+  name: string;
+  mount: string;
+}
+
+export interface UpdateCollectionResponse extends TabiusAjaxResponse {
+  /** List of all collections (for the catalog or a user). */
+  collections: Collection[];
+}
+
+export interface DeleteCollectionResponse extends TabiusAjaxResponse {
+  /** List of all collections (for the catalog or a user). */
   collections: Collection[];
 }
 
