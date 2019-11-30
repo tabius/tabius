@@ -135,11 +135,12 @@ export class SongController {
     }
     const song = songsArray[0];
     const collectionId = song.collectionId;
-
-    try {
-      await this.nodeBBService.deleteTopic(song.tid);
-    } catch (e) {
-      this.logger.error(e);
+    if (isValidId(song.tid)) {
+      try {
+        await this.nodeBBService.deleteTopic(song.tid);
+      } catch (e) {
+        this.logger.error(e);
+      }
     }
 
     await this.songDbi.delete(songId);
