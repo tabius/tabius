@@ -27,10 +27,10 @@
     "@angular/pwa": "0.803.20",
     "@angular/router": "8.2.14",
     "@angular/service-worker": "8.2.14",
-    "@nestjs/common": "6.10.3",
-    "@nestjs/core": "6.10.3",
+    "@nestjs/common": "6.10.4",
+    "@nestjs/core": "6.10.4",
     "@nestjs/ng-universal": "2.0.1",
-    "@nestjs/platform-express": "6.10.3",
+    "@nestjs/platform-express": "6.10.4",
     "@nguniversal/common": "8.1.1",
     "@nguniversal/express-engine": "8.1.1",
     "@nguniversal/module-map-ngfactory-loader": "8.1.1",
@@ -51,7 +51,7 @@
     "zone.js": "0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "0.803.19",
+    "@angular-devkit/build-angular": "0.803.20",
     "@angular/cli": "8.3.20",
     "@angular/compiler-cli": "8.2.14",
     "@angular/language-service": "8.2.14",
