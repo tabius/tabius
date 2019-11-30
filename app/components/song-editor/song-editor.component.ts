@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {takeUntil} from 'rxjs/operators';
@@ -49,7 +49,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef!: ElementRef;
   @ViewChild('firstFormElement', {static: false, read: ElementRef}) private titleElementRef!: ElementRef;
 
-  constructor(private readonly ads: CatalogDataService,
+  constructor(private readonly ads: CollectionsDataService,
               private readonly toastService: ToastService,
   ) {
   }

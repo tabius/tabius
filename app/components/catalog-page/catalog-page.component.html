@@ -43,7 +43,7 @@
                 <div class="letter">{{letterBlock.letter}}</div>
                 <div>
                     <div *ngFor="let collection of letterBlock.collections; trackBy: trackByCollectionId">
-                        <a routerLink="{{getCollectionPageLink(collection.mount)}}">{{collection.name}}</a>
+                        <a routerLink="{{getCollectionPageLink(collection)}}">{{collection.name}}</a>
                     </div>
                 </div>
             </div>
@@ -59,7 +59,7 @@
             </div>
 
             <div *ngFor="let collection of filteredCollections; trackBy: trackByCollectionId">
-                <a routerLink="{{getCollectionPageLink(collection.mount)}}">{{collection.name}}</a>
+                <a routerLink="{{getCollectionPageLink(collection)}}">{{collection.name}}</a>
             </div>
 
             <ng-container *ngIf="useFullTextSearch()" class="filtered-collections-block">

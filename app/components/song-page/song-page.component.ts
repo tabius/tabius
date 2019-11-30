@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
@@ -39,7 +39,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
   loaded = false;
   notFound = false;
 
-  constructor(private readonly cds: CatalogDataService,
+  constructor(private readonly cds: CollectionsDataService,
               private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
               private readonly router: Router,

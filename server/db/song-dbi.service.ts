@@ -44,16 +44,35 @@ export class SongDbi {
         .then(([rows]: [SongRow[]]) => rows.map(row2SongDetails));
   }
 
-  getSongsByCollectionId(collectionId: number): Promise<Song[]> {
+  private getSongsByCollectionId(collectionId: number): Promise<Song[]> {
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL} WHERE s.collection_id = ? ORDER BY s.id`, [collectionId])
         .then(([rows]: [SongRow[]]) => rows.map(row2Song));
   }
 
-  getSongsBySecondaryCollectionId(collectionId: number): Promise<Song[]> {
+  private getSongsBySecondaryCollectionId(collectionId: number): Promise<Song[]> {
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?) ORDER BY s.id`, [collectionId])
         .then(([rows]: [SongRow[]]) => rows.map(row2Song));
+  }
+
+  async getPrimaryAndSecondarySongIdsByCollectionId(collectionId: number): Promise<number[]> {
+    const [primarySongsIds, secondarySongIds] = await Promise.all([
+      this.db.pool.promise().query('SELECT id FROM song WHERE collection_id = ?', [collectionId])
+          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
+      this.db.pool.promise().query('SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ?', [collectionId])
+          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
+    ]);
+    return [...primarySongsIds, ...secondarySongIds];
+  }
+
+  /** Returns all songs in the collection. */
+  async getPrimaryAndSecondarySongsByCollectionId(collectionId: number): Promise<Song[]> {
+    const [primarySongs, secondarySongs] = await Promise.all([
+      this.getSongsByCollectionId(collectionId),
+      this.getSongsBySecondaryCollectionId(collectionId),
+    ]);
+    return [...primarySongs, ...secondarySongs];
   }
 
 
@@ -92,16 +111,6 @@ export class SongDbi {
         .query('DELETE FROM secondary_song_collections WHERE song_id = ? AND collection_id = ?',
             [songId, collectionId]);
 
-  }
-
-  async getSongIdsByCollection(collectionId: number): Promise<number[]> {
-    const [primarySongsIds, secondarySongIds] = await Promise.all([
-      this.db.pool.promise().query('SELECT id FROM song WHERE collection_id = ?', [collectionId])
-          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
-      this.db.pool.promise().query('SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ?', [collectionId])
-          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
-    ]);
-    return [...primarySongsIds, ...secondarySongIds];
   }
 
   async updateSongsPrimaryCollection(songIds: number[], collectionId: number): Promise<void> {

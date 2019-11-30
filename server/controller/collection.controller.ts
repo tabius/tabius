@@ -1,8 +1,8 @@
 import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
 import {Collection, CollectionDetails} from '@common/catalog-model';
-import {CollectionDbi} from '@server/db/collection-dbi.service';
-import {CreateCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
-import {CreateCollectionRequest, CreateCollectionResponse, DeleteCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
+import {CollectionDbi, generateCollectionMountForUser} from '@server/db/collection-dbi.service';
+import {CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
+import {CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
 import {User, UserGroup} from '@common/user-model';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {conformsTo, validate} from 'typed-validation';
@@ -24,7 +24,7 @@ export class CollectionController {
     return this.collectionDbi.getAllCollections(true);
   }
 
-  /** Returns list of all 'listed' collections. */
+  /** Returns list of all user collections. */
   @Get('/user/:userId')
   async getAllUserCollections(@Param('userId') userId: string): Promise<GetUserCollectionsResponse> {
     this.logger.log(`user/${userId}`);
@@ -32,7 +32,9 @@ export class CollectionController {
       throw new HttpException(`Invalid user id: ${userId}`, HttpStatus.BAD_REQUEST);
     }
     const collections = await this.collectionDbi.getAllUserCollections(userId);
-    const songIds: number[][] = await Promise.all(collections.map(collection => this.songDbi.getSongIdsByCollection(collection.id)));
+    const songIds: number[][] = await Promise.all(
+        collections.map(collection => this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collection.id))
+    );
     return {
       collectionInfos: collections.map((collection, index) => ({
         collection,
@@ -40,7 +42,6 @@ export class CollectionController {
       })),
     };
   }
-
 
   /** Returns collection by mount. */
   @Get('/by-mount/:mount')
@@ -76,13 +77,13 @@ export class CollectionController {
   }
 
   @Post()
-  async createListedCollection(@Session() session, @Body() request: CreateCollectionRequest): Promise<CreateCollectionResponse> {
+  async createListedCollection(@Session() session, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
     this.logger.log(`create-collection: ${request.name}, ${request.mount}`);
     const user: User = ServerSsoService.getUserOrFail(session);
     if (!user.groups.includes(UserGroup.Moderator)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr1 = validate(request, conformsTo(CreateCollectionRequestValidator));
+    const vr1 = validate(request, conformsTo(CreateListedCollectionRequestValidator));
     if (!vr1.success) {
       throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
     }
@@ -102,22 +103,24 @@ export class CollectionController {
     };
   }
 
-  @Post('/secondary-user-collection')
-  async createSecondaryUserCollection(@Session() session, @Body() request: CreateCollectionRequest): Promise<CreateCollectionResponse> {
-    this.logger.log(`create-secondary-collection: ${request.name}, ${request.mount}`);
+  @Post('/user')
+  async createUserCollection(@Session() session, @Body() request: CreateUserCollectionRequest): Promise<CreateUserCollectionResponse> {
+    this.logger.log(`create secondary user collection: ${request.name}`);
     const user = ServerSsoService.getUserOrFail(session);
-    const userCollections = await this.collectionDbi.getAllUserCollections(user.id);
-    if (userCollections.find((c) => c.name === request.name)) {
-      throw new HttpException('Collection with the same name already exists!', HttpStatus.BAD_REQUEST);
-    }
-    if (userCollections.find((c) => c.mount === request.mount)) {
-      throw new HttpException('Collection with the same mount already exists!', HttpStatus.BAD_REQUEST);
-    }
-    const vr = validate(request, conformsTo(CreateCollectionRequestValidator));
+    const vr = validate(request, conformsTo(CreateUserCollectionRequestValidator));
     if (!vr.success) {
       throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
     }
-    const collectionId = await this.collectionDbi.createSecondaryUserCollection(user.id, request.name, request.mount);
+    const userCollections = await this.collectionDbi.getAllUserCollections(user.id);
+    if (userCollections.find(c => c.name === request.name)) {
+      throw new HttpException('Collection with the same name already exists!', HttpStatus.BAD_REQUEST);
+    }
+    let mount = generateCollectionMountForUser(user, request.name);
+    let mountIdx = 1;
+    while (userCollections.find(c => c.mount === mount)) {
+      mount = generateCollectionMountForUser(user, `${request.name} ${mountIdx++}`);
+    }
+    const collectionId = await this.collectionDbi.createSecondaryUserCollection(user.id, request.name, mount);
     if (collectionId <= 0) {
       throw new HttpException('Failed to create collection', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -128,9 +131,9 @@ export class CollectionController {
   }
 
   /** Updates collection and returns updated song & details. */
-  @Put('/secondary-user-collection')
-  async update(@Session() session, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
-    this.logger.log('/update-collection');
+  @Put('/user')
+  async updateUserCollection(@Session() session, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
+    this.logger.log('update user collection');
     const user: User = ServerSsoService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.id);
     if (!collection) {
@@ -146,13 +149,13 @@ export class CollectionController {
   }
 
   /** Deletes collection and returns list of all user collection. */
-  @Delete('/secondary-user-collection/:collectionId')
-  async delete(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteCollectionResponse> {
-    this.logger.log(`/delete secondary user collection ${idParam}`);
+  @Delete('/user/:collectionId')
+  async deleteUserCollection(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteCollectionResponse> {
+    this.logger.log(`delete user collection ${idParam}`);
     const user: User = ServerSsoService.getUserOrFail(session);
     const collectionId = +idParam;
     if (collectionId === user.collectionId) {
-      throw new HttpException('Can\'t remove primary user collection', HttpStatus.BAD_REQUEST);
+      throw new HttpException(`Can't remove primary user collection`, HttpStatus.BAD_REQUEST);
     }
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
@@ -161,7 +164,7 @@ export class CollectionController {
     if (collection.userId !== user.id) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const songs = await this.songDbi.getSongsByCollectionId(collectionId);
+    const songs = await this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId);
     if (songs.length > 0) {
       // Move primary songs to the primary user collection.
       const primarySongIds = songs.filter((s) => s.collectionId === collectionId).map((s) => s.id);

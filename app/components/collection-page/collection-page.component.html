@@ -28,11 +28,11 @@
 
                 <div *ngIf="collectionViewModel.bands.length > 0" class="bands-info">
                     <div *ngIf="collectionViewModel.bands.length === 1">
-                        Группа <a routerLink="{{getCollectionPageLink(collectionViewModel.bands[0].mount)}}">{{collectionViewModel.bands[0].name}}</a>
+                        Группа <a routerLink="{{getCollectionPageLink(collectionViewModel.bands[0])}}">{{collectionViewModel.bands[0].name}}</a>
                     </div>
                     <div *ngIf="collectionViewModel.bands.length > 1">
                         Группы <span *ngFor="let band of collectionViewModel.bands; let last = last">
-                            <a routerLink="{{getCollectionPageLink(band.mount)}}">{{band.name}}</a><span *ngIf="!last">,</span>
+                            <a routerLink="{{getCollectionPageLink(band)}}">{{band.name}}</a><span *ngIf="!last">,</span>
                         </span>
                     </div>
                 </div>

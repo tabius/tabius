@@ -93,8 +93,14 @@ export function getSongForumTopicLink(song?: Song): string {
   return `${NODE_BB_URL}/topic/${song.tid}`;
 }
 
-export function getCollectionPageLink(collectionMount: string): string {
-  return `/${MOUNT_COLLECTION_PREFIX}${collectionMount}`;
+export function getCollectionPageLink(collectionOrMount: string|{ mount: string }): string {
+  let mount = '';
+  if (typeof collectionOrMount === 'string') {
+    mount = collectionOrMount;
+  } else {
+    mount = collectionOrMount.mount;
+  }
+  return `/${MOUNT_COLLECTION_PREFIX}${mount}`;
 }
 
 export function getSongPageLink(collectionMount: string, songMount: string, primaryCollectionMount?: string): string {

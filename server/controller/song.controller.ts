@@ -36,16 +36,7 @@ export class SongController {
   async getSongsByCollectionId(@Param('collectionId') collectionIdParam: string): Promise<Song[]> {
     this.logger.log(`by-collection: ${collectionIdParam}`);
     const collectionId = paramToId(collectionIdParam);
-    return await this._getSongsByCollectionId(collectionId);
-  }
-
-  /** Returns all songs in the collection. */
-  private async _getSongsByCollectionId(collectionId: number): Promise<Song[]> {
-    const [primarySongs, secondarySongs] = await Promise.all([
-      this.songDbi.getSongsByCollectionId(collectionId),
-      this.songDbi.getSongsBySecondaryCollectionId(collectionId),
-    ]);
-    return [...primarySongs, ...secondarySongs];
+    return await this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId);
   }
 
   /** Returns found song details by ids. The order of results is not specified. */
@@ -121,7 +112,7 @@ export class SongController {
     const [songFromDb, detailsFromDb, songs] = await Promise.all([
       this.songDbi.getSongs([songId]),
       this.songDbi.getSongsDetails([songId]),
-      this._getSongsByCollectionId(collectionId),
+      this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId),
     ]);
     if (songFromDb.length === 0 || detailsFromDb.length === 0) {
       throw new HttpException(`Failed to build response ${songId}/${collectionId}`, HttpStatus.BAD_REQUEST);
@@ -152,7 +143,7 @@ export class SongController {
     }
 
     await this.songDbi.delete(songId);
-    const songs = await this._getSongsByCollectionId(collectionId);
+    const songs = await this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId);
     return {
       collectionId: collectionId,
       songs,
@@ -161,7 +152,7 @@ export class SongController {
 
   /** Adds song to secondary collection. */
   @Put('add-to-secondary-collection')
-  async addSongToSecondaryCollection(@Session() session, @Body() request: AddSongToSecondaryCollectionRequest)
+  async addSongToCollection(@Session() session, @Body() request: AddSongToSecondaryCollectionRequest)
       : Promise<AddSongToSecondaryCollectionResponse> {
     const {songId, collectionId} = request;
     this.logger.log(`/add-to-secondary-collection, song ${songId}, collection-id: ${collectionId}`);
@@ -174,12 +165,16 @@ export class SongController {
     if (!canEditCollection(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
+    const currentSongIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collectionId);
+    if (currentSongIds.includes(request.songId)) {
+      throw new HttpException('Song is already added to the collection', HttpStatus.BAD_REQUEST);
+    }
     await this.songDbi.addSongToSecondaryCollection(songId, collectionId);
-    const songIds = await this.songDbi.getSongIdsByCollection(collectionId);
+    const songIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collectionId);
     return {songIds};
   }
 
-  /** Adds song to secondary collection. */
+  /** Removes song to secondary collection. */
   @Put('remove-from-secondary-collection')
   async removeSongFromSecondaryCollection(@Session() session, @Body() request: RemoveSongFromSecondaryCollectionRequest)
       : Promise<RemoveSongFromSecondaryCollectionResponse> {
@@ -194,7 +189,7 @@ export class SongController {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     await this.songDbi.removeSongFromSecondaryCollection(songId, collectionId);
-    const songIds = await this.songDbi.getSongIdsByCollection(collectionId);
+    const songIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collectionId);
     return {songIds};
   }
 

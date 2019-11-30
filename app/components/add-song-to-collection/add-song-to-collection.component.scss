@@ -1,3 +1,5 @@
+@import "app/styles/dimensions";
+
 h3 {
 }
 
@@ -8,6 +10,7 @@ h3 {
   .collection-item {
     margin-top: 2px;
     margin-bottom: 2px;
+    line-height: $mobile-lists-line-height;
 
     label {
       cursor: pointer;
@@ -28,3 +31,10 @@ h3 {
   }
 }
 
+@media only screen and (min-width: $min-desktop-width) {
+  .collections-list {
+    .collection-item {
+      line-height: $mobile-lists-line-height;
+    }
+  }
+}

@@ -1,9 +1,14 @@
-<a routerLink="{{catalogLink}}" title="Перейти в каталог">
+<a *ngIf="showCatalogLink" routerLink="{{catalogLink}}" title="Перейти в каталог">
     Каталог
     <gt-svg-icon *ngIf="!showCollectionLink" icon="level-up"></gt-svg-icon>
 </a>
 
+<a *ngIf="showStudioLink" routerLink="{{studioLink}}" title="Перейти к списку своих коллекций">
+    Студия
+    <gt-svg-icon icon="level-up"></gt-svg-icon>
+</a>
+
 <ng-container *ngIf="collection && showCollectionLink">
     <span class="sep">»</span>
-    <a routerLink="{{getCollectionPageLink(collection.mount)}}">{{collection.name}} </a>
+    <a [routerLink]="collectionPageLink">{{collection.name}} </a>
 </ng-container>

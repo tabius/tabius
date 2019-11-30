@@ -4,12 +4,11 @@ import {UserDataService} from '@app/services/user-data.service';
 import {AuthService} from '@app/services/auth.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {ToastService} from '@app/toast/toast.service';
-import {combineLatest0, trackById} from '@common/util/misc-utils';
+import {combineLatest0, getCollectionPageLink, trackById} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {Collection, Song} from '@common/catalog-model';
 import {MSG_UNEXPECTED_ERROR} from '@common/messages';
-import {LINK_STUDIO} from '@common/mounts';
 
 interface ComponentCollectionData extends Collection {
   isSongInCollection: boolean;
@@ -37,7 +36,7 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
 
   constructor(
       private readonly uds: UserDataService,
-      private readonly cds: CatalogDataService,
+      private readonly cds: CollectionsDataService,
       private readonly authService: AuthService,
       private readonly cd: ChangeDetectorRef,
       private readonly toastService: ToastService,
@@ -58,14 +57,15 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
         .subscribe(([user, collections, isSongInCollection]) => {
           this.user = user;
           this.collections = collections
-              .filter(c => c.id !== this.song.collectionId) // do not show primary collection in the list
               .map((collection, index) => ({
                 ...collection,
                 isSongInCollection: isSongInCollection[index],
                 // today we have only 1 collection,
-                name: 'Избранное',
-                routerLink: LINK_STUDIO,
-              }));
+                name: collection.name,
+                routerLink: getCollectionPageLink(collection),
+              }))
+              .filter(c => c.id !== this.song.collectionId); // do not show primary collection in the list
+
           this.cd.detectChanges();
         });
   }

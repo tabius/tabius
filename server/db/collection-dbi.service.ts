@@ -3,7 +3,8 @@ import {DbService} from './db.service';
 import {Collection, CollectionDetails, CollectionType} from '@common/catalog-model';
 import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
-import Hashids from 'hashids';
+import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_NAME, USER_FAV_COLLECTION_SUFFIX} from '@common/constants';
+import {getTranslitLowerCase} from '@common/util/seo-translit';
 
 interface CollectionRow {
   id: number;
@@ -77,14 +78,14 @@ export class CollectionDbi {
 
   async createPrimaryUserCollection(user: User): Promise<number> {
     if (isValidId(user.collectionId)) {
-      throw new Error(`User already has valid collection id assigned: ${user.id}, collectionId: ${user.collectionId}`);
+      throw new Error(`User already has valid primary collection id assigned: ${user.id}, collectionId: ${user.collectionId}`);
     }
-    this.logger.debug(`Creating collection record for user: ${user.email}`);
+    this.logger.debug(`Creating primary user collection for user: ${user.email}`);
 
-    const collectionMount = generateCollectionMountForUser();
+    const collectionMount = generateCollectionMountForUser(user, USER_FAV_COLLECTION_SUFFIX);
     const result = await this.db.pool.promise()
         .query('INSERT IGNORE INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
-            [user.username, CollectionType.Compilation, collectionMount, 0, user.id])
+            [USER_FAV_COLLECTION_NAME, CollectionType.Compilation, collectionMount, 0, user.id])
         .then(([result]) => result);
 
     let collectionId = result.insertId;
@@ -102,7 +103,7 @@ export class CollectionDbi {
   }
 
   async createSecondaryUserCollection(userId: string, name: string, mount: string): Promise<number> {
-    this.logger.debug(`Creating collection record for user: ${userId}`);
+    this.logger.debug(`Creating secondary collection for user: ${userId}, name: ${name}, mount: ${mount}`);
     const result = await this.db.pool.promise()
         .query('INSERT INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
             [name, CollectionType.Compilation, mount, 0, userId])
@@ -110,7 +111,7 @@ export class CollectionDbi {
 
     let collectionId = result.insertId;
     if (collectionId > 0) {
-      this.logger.debug(`Secondary collection was successfully created! Name: ${userId}, name: ${name}, collection-id: ${collectionId}`);
+      this.logger.debug(`Secondary user collection was successfully created! Name: ${userId}, name: ${name}, collection-id: ${collectionId}`);
     }
     return collectionId;
   }
@@ -131,9 +132,8 @@ export class CollectionDbi {
   }
 }
 
-function generateCollectionMountForUser(): string {
-  const hashIds = new Hashids('salt', 5);
-  return `u${hashIds.encode(Date.now())}`;
+export function generateCollectionMountForUser(user: User, nameForSuffix: string): string {
+  return `u${user.id}${USER_COLLECTION_MOUNT_SEPARATOR}${getTranslitLowerCase(nameForSuffix)}`;
 }
 
 function rowToCollection(row: CollectionRow): Collection {

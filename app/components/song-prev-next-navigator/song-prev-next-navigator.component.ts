@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, defined, getCollectionPageLink, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
@@ -36,7 +36,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   private hammer?: HammerManager;
 
-  constructor(private readonly cds: CatalogDataService,
+  constructor(private readonly cds: CollectionsDataService,
               private readonly cd: ChangeDetectorRef,
               private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
@@ -84,7 +84,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
             this.prevLink = getSongPageLink(collection.mount, prevSong.mount, prevSongPrimaryCollection.mount);
             this.prevLinkIsCollection = false;
           } else {
-            this.prevLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection.mount) : LINK_STUDIO;
+            this.prevLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection) : LINK_STUDIO;
             this.prevLinkIsCollection = true;
           }
           // noinspection DuplicatedCode
@@ -92,7 +92,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
             this.nextLink = getSongPageLink(collection.mount, nextSong.mount, nextSongPrimaryCollection.mount);
             this.nextLinkIsCollection = false;
           } else {
-            this.nextLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection.mount) : LINK_STUDIO;
+            this.nextLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection) : LINK_STUDIO;
             this.nextLinkIsCollection = true;
           }
           this.cd.detectChanges();

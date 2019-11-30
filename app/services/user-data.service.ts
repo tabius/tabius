@@ -7,7 +7,6 @@ import {flatMap, map, switchMap, take} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {checkUpdateByReference, checkUpdateByStringify, isValidId} from '@common/util/misc-utils';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {Collection} from '@common/catalog-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';

@@ -1,19 +1,19 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
-import {CreateCollectionRequest} from '@common/ajax-model';
-import {CollectionType} from '@common/catalog-model';
+import {CreateUserCollectionRequest} from '@common/ajax-model';
 import {MSG_UNEXPECTED_ERROR} from '@common/messages';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {UserDataService} from '@app/services/user-data.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, getCollectionPageLink} from '@common/util/misc-utils';
 
 
 interface CollectionInfo {
-  name: string;
+  linkText: string;
   link: string;
   songCount: number;
+  titleText: string;
 }
 
 @Component({
@@ -34,9 +34,10 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
 
   private userIdSubscription?: Subscription;
 
-  constructor(private readonly cds: CatalogDataService,
+  constructor(private readonly cds: CollectionsDataService,
               private readonly uds: UserDataService,
               private readonly toastService: ToastService,
+              private readonly cd: ChangeDetectorRef,
   ) {
   }
 
@@ -60,11 +61,13 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
             const collection = collections[i];
             const songCount = songCounts[i];
             this.collectionInfos.push({
-              name: collection.name,
-              link: getCollectionPageLink(collection.mount),
+              linkText: collection.name + (songCount > 0 ? ` [${songCount}]` : ''),
+              link: getCollectionPageLink(collection),
               songCount,
+              titleText: `Коллекция «${collection.name}»${songCount == 0 ? ', нет песен' : ', песен: ' + songCount}`
             });
           }
+          this.cd.detectChanges();
         });
   }
 
@@ -73,9 +76,10 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
   }
 
   createCollection(): void {
-    const mount = ''; //TODO
-    const request: CreateCollectionRequest = {name: this.newCollectionName, mount, type: CollectionType.Compilation};
-    this.cds.createCollection(request)
+    const request: CreateUserCollectionRequest = {
+      name: this.newCollectionName,
+    };
+    this.cds.createUserCollection(this.userId, request)
         .catch(err => this.toastService.warning(err, MSG_UNEXPECTED_ERROR));
   }
 

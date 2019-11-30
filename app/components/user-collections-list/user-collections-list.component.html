@@ -1,6 +1,6 @@
-<ul *ngFor="let collection of collectionInfos" class="collections-list">
+<ul *ngFor="let collectionInfo of collectionInfos" class="collections-list">
     <li>
-        <a [routerLink]="collection.link">{{collection.name}} [{{collection.songCount}}] </a>
+        <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{collectionInfo.linkText}}</a>
     </li>
 </ul>
 

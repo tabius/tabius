@@ -5,7 +5,7 @@ import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-
 import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateCollectionRequest, CreateCollectionResponse, DeleteSongResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -22,7 +22,7 @@ const USER_COLLECTIONS_KEY = 'u-collections-';
 @Injectable({
   providedIn: 'root'
 })
-export class CatalogDataService {
+export class CollectionsDataService {
 
   constructor(private readonly httpClient: HttpClient,
               private readonly bss: BrowserStateService,
@@ -199,19 +199,37 @@ export class CatalogDataService {
     await this.updateCollectionSongsOnFetch(collectionId, songs, true);
   }
 
-  async createCollection(createCollectionRequest: CreateCollectionRequest): Promise<Collection> {
-    const response = await this.httpClient.post<CreateCollectionResponse>('/api/collection', createCollectionRequest).pipe(take(1)).toPromise();
+  async createListedCollection(createCollectionRequest: CreateListedCollectionRequest): Promise<Collection> {
+    const response = await this.httpClient.post<CreateListedCollectionResponse>('/api/collection', createCollectionRequest).pipe(take(1)).toPromise();
     const collectionsUpdateArray$$ = response.collections
         .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
-    const listingUpdate$$ = this.store.set(COLLECTION_LIST_KEY,
-        response.collections.map(collection => collection.id), checkUpdateByShallowArrayCompare);
+    const collectionIds = response.collections.map(collection => collection.id);
+    const listingUpdate$$ = this.store.set(COLLECTION_LIST_KEY, collectionIds, checkUpdateByShallowArrayCompare);
     await Promise.all([
       ...collectionsUpdateArray$$,
       listingUpdate$$,
     ]);
-    const collection = response.collections.find(collection => collection.mount === createCollectionRequest.mount);
+    const collection = response.collections.find(collection => collection.id === response.collectionId);
     if (!collection) {
-      throw new Error('Не удалось создать артиста!');
+      throw new Error('Не удалось создать коллекцию!');
+    }
+    return collection;
+  }
+
+  async createUserCollection(userId: string, createCollectionRequest: CreateUserCollectionRequest): Promise<Collection> {
+    const response = await this.httpClient.post<CreateUserCollectionResponse>('/api/collection/user', createCollectionRequest).pipe(take(1)).toPromise();
+    const collectionsUpdateArray$$ = response.collections
+        .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
+    const userCollectionsKey = getUserCollectionsKey(userId);
+    const collectionIds = response.collections.map(collection => collection.id);
+    const listingUpdate$$ = this.store.set(userCollectionsKey, collectionIds, checkUpdateByShallowArrayCompare);
+    await Promise.all([
+      ...collectionsUpdateArray$$,
+      listingUpdate$$,
+    ]);
+    const collection = response.collections.find(collection => collection.id === response.collectionId);
+    if (!collection) {
+      throw new Error('Не удалось создать коллекцию!');
     }
     return collection;
   }

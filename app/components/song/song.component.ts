@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {flatMap, takeUntil} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserDataService} from '@app/services/user-data.service';
@@ -32,7 +32,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
     return this.song !== undefined;
   };
 
-  constructor(private readonly cds: CatalogDataService,
+  constructor(private readonly cds: CollectionsDataService,
               private readonly uds: UserDataService,
               readonly cd: ChangeDetectorRef,
   ) {

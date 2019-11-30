@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Collection} from '@common/catalog-model';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {FormControl} from '@angular/forms';
 import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, Subject, timer} from 'rxjs';
@@ -52,7 +52,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   canCreateNewPublicCollection = false;
   user?: User;
 
-  constructor(private readonly ads: CatalogDataService,
+  constructor(private readonly ads: CollectionsDataService,
               private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,

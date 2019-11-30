@@ -10,35 +10,37 @@
 
         <div *ngIf="user" class="collection-block">
             <div>
-                <h1>Коллекции</h1>
-                <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
-            </div>
-            <div>
-                <h1>Избранное</h1>
+                <div>
+                    <h1>Коллекции</h1>
+                    <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
+                </div>
+                <div class="song-list-block">
+                    <h1>Избранное</h1>
 
-                <gt-song-list
-                        *ngIf="!editorIsOpen"
-                        [collectionMount]="collectionData.collection.mount"
-                        [songs]="collectionData.songs"
-                        [primarySongCollectionMounts]="collectionData.primarySongCollectionMounts"
-                        [showEmptyNotice]="true"
-                        [emptyListMessage]="'Нет песен'"
-                ></gt-song-list>
+                    <gt-song-list
+                            *ngIf="!editorIsOpen"
+                            [collectionMount]="collectionData.collection.mount"
+                            [songs]="collectionData.songs"
+                            [primarySongCollectionMounts]="collectionData.primarySongCollectionMounts"
+                            [showEmptyNotice]="true"
+                            [emptyListMessage]="'Нет песен'"
+                    ></gt-song-list>
 
-                <div class="add-song-block">
-                    <button *ngIf="!editorIsOpen"
-                            (click)="toggleEditor()"
-                            class="btn btn-info"
-                            title="Добавить новую песню в персональную коллекцию"
-                    >
-                        Добавить
-                    </button>
-                    <gt-song-editor *ngIf="editorIsOpen"
-                                    (closeRequest)="toggleEditor()"
-                                    [songId]="-1"
-                                    [collectionId]="collectionData.collection.id"
-                                    [initialFocusMode]="'title'"
-                    ></gt-song-editor>
+                    <div class="add-song-block">
+                        <button *ngIf="!editorIsOpen"
+                                (click)="toggleEditor()"
+                                class="btn btn-info"
+                                title="Добавить новую песню в персональную коллекцию"
+                        >
+                            Добавить
+                        </button>
+                        <gt-song-editor *ngIf="editorIsOpen"
+                                        (closeRequest)="toggleEditor()"
+                                        [songId]="-1"
+                                        [collectionId]="collectionData.collection.id"
+                                        [initialFocusMode]="'title'"
+                        ></gt-song-editor>
+                    </div>
                 </div>
             </div>
         </div>

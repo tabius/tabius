@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {Collection, CollectionDetails, isBand, isCompilation, Song} from '@common/catalog-model';
 import {ActivatedRoute} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
@@ -58,7 +58,7 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
 
   hasImageLoadingError = false;
 
-  constructor(private readonly cds: CatalogDataService,
+  constructor(private readonly cds: CollectionsDataService,
               private readonly uds: UserDataService,
               private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,

@@ -6,7 +6,7 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {User} from '@common/user-model';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
-import {CatalogDataService} from '@app/services/catalog-data.service';
+import {CollectionsDataService} from '@app/services/collections-data.service';
 import {CollectionDetails, Song} from '@common/catalog-model';
 import {defined} from '@common/util/misc-utils';
 import {CollectionViewModel} from '@app/components/collection-page/collection-page.component';
@@ -29,7 +29,7 @@ export class StudioPageComponent implements OnInit, OnDestroy {
   editorIsOpen = false;
 
   constructor(private readonly uds: UserDataService,
-              private readonly cds: CatalogDataService,
+              private readonly cds: CollectionsDataService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,) {

@@ -30,3 +30,7 @@ export const SSR_MOBILE_WIDTH = 360;
 export const SSR_DESKTOP_WIDTH = 1920;
 
 export const INVALID_ID = -1;
+
+export const USER_COLLECTION_MOUNT_SEPARATOR = '--';
+export const USER_FAV_COLLECTION_NAME = 'Избранное';
+export const USER_FAV_COLLECTION_SUFFIX = 'favorite';

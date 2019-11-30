@@ -14,18 +14,30 @@ export interface LoginResponse extends TabiusAjaxResponse {
   readonly settings: UserSettings;
 }
 
-export interface CreateCollectionRequest {
+export interface CreateListedCollectionRequest {
   name: string;
   mount: string;
   type: CollectionType;
 }
 
-export interface CreateCollectionResponse extends TabiusAjaxResponse {
+export interface CreateListedCollectionResponse extends TabiusAjaxResponse {
   /** Id of the created collection. */
   collectionId: number;
-  /** List of all collections (for the catalog or a user). */
+  /** List of all listed collections. */
   collections: Collection[];
 }
+
+export interface CreateUserCollectionRequest {
+  name: string;
+}
+
+export interface CreateUserCollectionResponse extends TabiusAjaxResponse {
+  /** Id of the created collection. */
+  collectionId: number;
+  /** List of all user collections. */
+  collections: Collection[];
+}
+
 
 export interface UpdateCollectionRequest {
   id: number,
