@@ -44,7 +44,7 @@ export class StudioPageComponent implements OnInit, OnDestroy {
     const collection$ = user$.pipe(flatMap(user => this.cds.getCollectionById(user && user.collectionId)));
     const collectionDetails$: Observable<CollectionDetails|undefined> = user$.pipe(flatMap(user => this.cds.getCollectionDetails(user && user.collectionId)));
     const songs$: Observable<Song[]> = collection$.pipe(
-        flatMap(collection => this.cds.getCollectionSongList(collection && collection.id)),
+        flatMap(collection => this.cds.getSongIdsByCollection(collection && collection.id)),
         flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
         map(songs => songs.filter(defined))
     );

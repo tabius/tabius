@@ -48,7 +48,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     const collection$ = this.cds.getCollectionById(this.activeCollectionId);
     // list of all collection songs sorted by id.
     const allSongs$ = collection$.pipe(
-        flatMap(collection => collection ? this.cds.getCollectionSongList(collection.id) : of([])),
+        flatMap(collection => collection ? this.cds.getSongIdsByCollection(collection.id) : of([])),
         flatMap(songIds => combineLatest0((songIds || []).map(id => this.cds.getSongById(id)))),
         map(songs => sortSongsAlphabetically(songs.filter(defined))),
     );

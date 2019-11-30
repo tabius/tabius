@@ -35,7 +35,7 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
 
   isDefaultFontSize = true;
 
-  private songSettingsTranscription?: Subscription;
+  private songSettingsSubscription?: Subscription;
 
   constructor(private readonly uds: UserDataService,
               private readonly cd: ChangeDetectorRef) {
@@ -44,7 +44,7 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
   ngOnChanges(changes: SimpleChanges): void {
     this.resetComponentState();
 
-    this.songSettingsTranscription = this.uds.getUser()
+    this.songSettingsSubscription = this.uds.getUser()
         .pipe(switchMap(() => this.uds.getUserSongSettings(this.songId)))
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {
@@ -58,8 +58,8 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
   private resetComponentState(): void {
     this.songSettings = undefined;
     this.isTransposed = false;
-    if (this.songSettingsTranscription) {
-      this.songSettingsTranscription.unsubscribe();
+    if (this.songSettingsSubscription) {
+      this.songSettingsSubscription.unsubscribe();
     }
   }
 

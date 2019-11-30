@@ -22,7 +22,7 @@ import {CollectionBreadcrumbComponent} from './components/collection-breadcrumb/
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
 import {InlineSongSettingsComponent} from './components/inline-song-settings/inline-song-settings.component';
 import {SettingsPageComponent} from './components/settings-page/settings-page.component';
-import {APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
+import {APP_BROWSER_STORE_TOKEN, TABIUS_BASE_API_URL, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {SigninSignoutButtonComponent} from './components/signin-signout-button/signin-signout-button.component';
 import {PwaUpdaterService} from '@app/services/pwa-updater.service';
@@ -45,10 +45,11 @@ import {SessionStateInterceptor} from '@app/interceptors/session-state-intercept
 import {AppBrowserStore, CatalogBrowserStore, UserBrowserStore} from '@app/store/stores';
 import {SongPrintPageComponent} from './components/song-print-page/song-print-page.component';
 import {CollectionEditorComponent} from './components/collection-editor/collection-editor.component';
-import { SongListComponent } from './components/song-list/song-list.component';
-import { UserRegistrationPromptComponent } from './components/user-registration-prompt/user-registration-prompt.component';
-import { ModeratorPromptComponent } from './components/moderator-prompt/moderator-prompt.component';
-import { AddSongToCollectionComponent } from './components/add-song-to-collection/add-song-to-collection.component';
+import {SongListComponent} from './components/song-list/song-list.component';
+import {UserRegistrationPromptComponent} from './components/user-registration-prompt/user-registration-prompt.component';
+import {ModeratorPromptComponent} from './components/moderator-prompt/moderator-prompt.component';
+import {AddSongToCollectionComponent} from './components/add-song-to-collection/add-song-to-collection.component';
+import {UserCollectionsListComponent} from '@app/components/user-collections-list/user-collections-list.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { AddSongToCollectionComponent } from './components/add-song-to-collectio
     UserRegistrationPromptComponent,
     ModeratorPromptComponent,
     AddSongToCollectionComponent,
+    UserCollectionsListComponent,
   ],
   imports: [
     BrowserAnimationsModule,

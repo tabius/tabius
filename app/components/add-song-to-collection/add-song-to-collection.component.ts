@@ -47,9 +47,9 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
   ngOnChanges() {
     this.resetComponentState();
     const user$ = this.uds.getUser();
-    const collections$ = user$.pipe(flatMap(user => this.cds.getUserCollections(user)));
+    const collections$ = user$.pipe(flatMap(user => !!user ? this.cds.getUserCollections(user.id) : []));
     const isSongInCollection$ = collections$.pipe(
-        flatMap(collections => combineLatest0(collections.map(c => this.cds.getCollectionSongList(c.id)))),
+        flatMap(collections => combineLatest0(collections.map(c => this.cds.getSongIdsByCollection(c.id)))),
         map((songIdsPerCollection: (number[]|undefined)[]) =>
             songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.song.id))),
     );

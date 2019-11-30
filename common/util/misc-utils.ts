@@ -66,6 +66,10 @@ export function isValidId(id: number|undefined): id is number {
   return id !== undefined && id > 0;
 }
 
+export function isValidUserId(id: string|undefined): id is string {
+  return id !== undefined && id.length > 0;
+}
+
 export function getNameFirstFormArtistName(collection: { type: CollectionType, name: string }): string {
   if (collection.type !== CollectionType.Person) {
     return collection.name;

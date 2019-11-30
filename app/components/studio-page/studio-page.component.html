@@ -10,6 +10,10 @@
 
         <div *ngIf="user" class="collection-block">
             <div>
+                <h1>Коллекции</h1>
+                <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
+            </div>
+            <div>
                 <h1>Избранное</h1>
 
                 <gt-song-list

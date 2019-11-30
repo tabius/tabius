@@ -2,11 +2,11 @@ import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param,
 import {Collection, CollectionDetails} from '@common/catalog-model';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
 import {CreateCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
-import {CreateCollectionRequest, CreateCollectionResponse, DeleteCollectionResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
+import {CreateCollectionRequest, CreateCollectionResponse, DeleteCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
 import {User, UserGroup} from '@common/user-model';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {conformsTo, validate} from 'typed-validation';
-import {canEditCollection} from '@common/util/misc-utils';
+import {canEditCollection, isValidUserId} from '@common/util/misc-utils';
 import {SongDbi} from '@server/db/song-dbi.service';
 
 @Controller('/api/collection')
@@ -23,6 +23,24 @@ export class CollectionController {
     this.logger.log('all-listed');
     return this.collectionDbi.getAllCollections(true);
   }
+
+  /** Returns list of all 'listed' collections. */
+  @Get('/user/:userId')
+  async getAllUserCollections(@Param('userId') userId: string): Promise<GetUserCollectionsResponse> {
+    this.logger.log(`user/${userId}`);
+    if (!isValidUserId(userId)) {
+      throw new HttpException(`Invalid user id: ${userId}`, HttpStatus.BAD_REQUEST);
+    }
+    const collections = await this.collectionDbi.getAllUserCollections(userId);
+    const songIds: number[][] = await Promise.all(collections.map(collection => this.songDbi.getSongIdsByCollection(collection.id)));
+    return {
+      collectionInfos: collections.map((collection, index) => ({
+        collection,
+        songIds: songIds[index],
+      })),
+    };
+  }
+
 
   /** Returns collection by mount. */
   @Get('/by-mount/:mount')

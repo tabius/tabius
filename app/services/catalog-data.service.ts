@@ -5,11 +5,10 @@ import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-
 import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateCollectionRequest, CreateCollectionResponse, DeleteSongResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateCollectionRequest, CreateCollectionResponse, DeleteSongResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {User} from '@common/user-model';
 
 const COLLECTION_LIST_KEY = 'catalog';
 const COLLECTION_KEY_PREFIX = 'c-';
@@ -18,6 +17,7 @@ const COLLECTION_MOUNT_KEY_PREFIX = 'c-mount-';
 const COLLECTION_SONG_LIST_KEY_PREFIX = 'c-songs-';
 const SONG_KEY_PREFIX = 's-';
 const SONG_DETAIL_KEY_PREFIX = 's-details-';
+const USER_COLLECTIONS_KEY = 'u-collections-';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +42,7 @@ export class CatalogDataService {
         RefreshMode.RefreshOncePerSession,
         checkUpdateByShallowArrayCompare,
     )
+        //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
         .pipe(
             flatMap(ids => combineLatest0((ids || []).map(id => this.getCollectionById(id)))),
             map(items => (items.filter(defined) as Collection[])),
@@ -81,7 +82,7 @@ export class CatalogDataService {
   }
 
   /** Returns list of all collection's song ids. The songs in the list are always sorted by id. */
-  getCollectionSongList(collectionId: number|undefined): Observable<number[]|undefined> {
+  getSongIdsByCollection(collectionId: number|undefined): Observable<number[]|undefined> {
     return this.store.get<number[]>(
         getCollectionSongListKey(collectionId),
         () => this.httpClient.get<Song[]>(`/api/song/by-collection/${collectionId}`)
@@ -149,7 +150,7 @@ export class CatalogDataService {
     if (!isValidId(collectionId) || !songMount) {
       return of(undefined);
     }
-    return this.getCollectionSongList(collectionId)
+    return this.getSongIdsByCollection(collectionId)
         .pipe(
             flatMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
             map(songsIds => songsIds.find(s => s !== undefined && s.mount === songMount)),
@@ -215,11 +216,31 @@ export class CatalogDataService {
     return collection;
   }
 
-  getUserCollections(user: User|undefined): Observable<Collection[]> {
-    if (!user) {
+  getUserCollections(userId?: string): Observable<Collection[]> {
+    const collectionIds$ = this.getUserCollectionIds(userId);
+    return collectionIds$.pipe(
+        flatMap((ids) => this.getCollectionsByIds(ids)),
+        map(collections => (collections.filter(defined) as Collection[])),
+    );
+  }
+
+  getUserCollectionIds(userId?: string): Observable<number[]> {
+    const userCollectionsListKey = getUserCollectionsKey(userId);
+    if (!userCollectionsListKey || !userId) {
       return of([]);
     }
-    return this.getCollectionById(user.collectionId).pipe(map(c => !!c ? [c] : []));
+    return this.store.get<number[]>(
+        userCollectionsListKey,
+        () => this.httpClient.get<GetUserCollectionsResponse>(`/api/collection/user/${userId}`)
+            .pipe(
+                flatMap(response =>
+                    waitForAllPromisesAndReturnFirstArg(response,
+                        response.collectionInfos.map(info => this.updateCollectionOnFetch(info.collection)))),
+                map((response) => response.collectionInfos.map(info => info.collection.id))
+            ),
+        RefreshMode.RefreshOncePerSession,
+        checkUpdateByShallowArrayCompare,
+    ).pipe(map(collectionIds => !!collectionIds ? collectionIds : []));
   }
 
   async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
@@ -269,5 +290,9 @@ function getSongKey(songId: number|undefined): string|undefined {
 
 function getSongDetailsKey(songId: number|undefined): string|undefined {
   return isValidId(songId) ? SONG_DETAIL_KEY_PREFIX + songId : undefined;
+}
+
+function getUserCollectionsKey(userId: string|undefined): string|undefined {
+  return isValidUserId(userId) ? USER_COLLECTIONS_KEY + userId : undefined;
 }
 

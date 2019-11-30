@@ -101,3 +101,12 @@ export interface FullTextSongSearchResult extends TabiusAjaxResponse {
   snippet: string;
   matchType: FullTextSongSearchResultMatchType;
 }
+
+export interface UserCollectionInfo {
+  collection: Collection;
+  songIds: number[];
+}
+
+export interface GetUserCollectionsResponse {
+  collectionInfos: UserCollectionInfo[];
+}

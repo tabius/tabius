@@ -83,7 +83,7 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     );
 
     const songs$: Observable<Song[]> = collection$.pipe(
-        flatMap(collection => this.cds.getCollectionSongList(collection && collection.id)),
+        flatMap(collection => this.cds.getSongIdsByCollection(collection && collection.id)),
         flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
         map(songs => songs.filter(defined))
     );

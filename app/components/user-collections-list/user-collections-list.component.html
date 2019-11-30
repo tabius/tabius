@@ -1,0 +1,20 @@
+<ul *ngFor="let collection of collectionInfos" class="collections-list">
+    <li>
+        <a [routerLink]="collection.link">{{collection.name}} [{{collection.songCount}}] </a>
+    </li>
+</ul>
+
+<form #createCollectionForm="ngForm" (ngSubmit)="createCollection()" class="new-collection-form">
+    <input type="text" [(ngModel)]="newCollectionName"
+           name="name" required
+           class="new-collection-name-input"
+           placeholder="Имя новой коллекции"
+    />
+    <button type="submit"
+            class="btn create-button"
+            title="Создать новую коллекцию"
+            [disabled]="!createCollectionForm.form.valid">
+        Создать
+    </button>
+
+</form>

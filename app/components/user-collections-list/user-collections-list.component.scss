@@ -1,0 +1,18 @@
+.collections-list {
+  line-height: 28px;
+}
+
+.new-collection-form {
+  margin-top: 10px;
+  line-height: 2.2em; // useful when input & button are on the different lines (wrapped).
+
+  .new-collection-name-input {
+    width: 180px;
+    margin-right: 5px;
+  }
+
+  .create-button {
+  }
+
+}
+
