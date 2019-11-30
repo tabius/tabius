@@ -192,6 +192,7 @@ export class CollectionsDataService {
       return;
     }
     const {collectionId, songs} = await this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`).pipe(take(1)).toPromise();
+    //todo: fix secondary collections listing that had the deleted song!
     await Promise.all([
       this.store.remove<Song>(getSongDetailsKey(songId)),
       this.store.remove<SongDetails>(getSongDetailsKey(songId))
