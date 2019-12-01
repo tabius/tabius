@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {User} from '@common/user-model';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 import {CollectionDetails, Song} from '@common/catalog-model';
 import {defined} from '@common/util/misc-utils';
 import {CollectionViewModel} from '@app/components/collection-page/collection-page.component';
@@ -28,8 +28,8 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   editorIsOpen = false;
 
-  constructor(private readonly uds: UserDataService,
-              private readonly cds: CollectionsDataService,
+  constructor(private readonly uds: UserService,
+              private readonly cds: CatalogService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,) {

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {AuthService} from '@app/services/auth.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 
 @Component({
   selector: 'gt-signin-signout-button',
@@ -16,7 +16,7 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
 
-  constructor(private readonly uds: UserDataService,
+  constructor(private readonly uds: UserService,
               private readonly authService: AuthService,
               private readonly cd: ChangeDetectorRef,
   ) {

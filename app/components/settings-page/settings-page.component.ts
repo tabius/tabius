@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {getDefaultUserSongFontSize, User, UserDeviceSettings} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
@@ -32,7 +32,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   loaded = false;
 
   constructor(readonly cd: ChangeDetectorRef,
-              private readonly uds: UserDataService,
+              private readonly uds: UserService,
   ) {
   }
 

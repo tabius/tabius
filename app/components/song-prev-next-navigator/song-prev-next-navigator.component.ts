@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, defined, getCollectionPageLink, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
@@ -7,7 +7,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';
 import {LINK_STUDIO} from '@common/mounts';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 
 const Hammer: HammerStatic = require('hammerjs');
 
@@ -36,9 +36,9 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   private hammer?: HammerManager;
 
-  constructor(private readonly cds: CollectionsDataService,
+  constructor(private readonly cds: CatalogService,
               private readonly cd: ChangeDetectorRef,
-              private readonly uds: UserDataService,
+              private readonly uds: UserService,
               private readonly bss: BrowserStateService,
               private readonly router: Router,
   ) {

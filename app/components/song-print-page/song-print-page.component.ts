@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {Subject} from 'rxjs';
-import {CollectionsDataService} from '@app/services/collections-data.service';
-import {UserDataService} from '@app/services/user-data.service';
+import {CatalogService} from '@app/services/catalog.service';
+import {UserService} from '@app/services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -15,8 +15,8 @@ export class SongPrintPageComponent {
   readonly destroyed$ = new Subject();
   songId = 0;
 
-  constructor(private readonly cds: CollectionsDataService,
-              private readonly uds: UserDataService,
+  constructor(private readonly cds: CatalogService,
+              private readonly uds: UserService,
               readonly cd: ChangeDetectorRef,
               private readonly router: Router,
               private readonly activatedRoute: ActivatedRoute,

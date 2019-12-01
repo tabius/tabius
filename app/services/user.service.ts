@@ -14,11 +14,11 @@ const SONG_SETTINGS_KEY_PREFIX = 'ss-';
 const H4SI_FLAG_KEY = 'h4Si';
 const USER_KEY = 'user';
 
-/** Data that belongs to the active user. */
+/** Client-side API to access/update personal user settings. */
 @Injectable({
   providedIn: 'root'
 })
-export class UserDataService {
+export class UserService {
 
   constructor(private readonly httpClient: HttpClient,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: ObservableStore,

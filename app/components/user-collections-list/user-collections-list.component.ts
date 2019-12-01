@@ -3,8 +3,8 @@ import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
 import {CreateUserCollectionRequest} from '@common/ajax-model';
 import {MSG_UNEXPECTED_ERROR} from '@common/messages';
-import {CollectionsDataService} from '@app/services/collections-data.service';
-import {UserDataService} from '@app/services/user-data.service';
+import {CatalogService} from '@app/services/catalog.service';
+import {UserService} from '@app/services/user.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, getCollectionPageLink} from '@common/util/misc-utils';
 
@@ -34,8 +34,8 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
 
   private userIdSubscription?: Subscription;
 
-  constructor(private readonly cds: CollectionsDataService,
-              private readonly uds: UserDataService,
+  constructor(private readonly cds: CatalogService,
+              private readonly uds: UserService,
               private readonly toastService: ToastService,
               private readonly cd: ChangeDetectorRef,
   ) {

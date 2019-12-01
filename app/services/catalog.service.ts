@@ -19,10 +19,11 @@ const SONG_KEY_PREFIX = 's-';
 const SONG_DETAIL_KEY_PREFIX = 's-details-';
 const USER_COLLECTIONS_KEY = 'u-collections-';
 
+/** Client-side API to access/update catalog: collections and songs. */
 @Injectable({
   providedIn: 'root'
 })
-export class CollectionsDataService {
+export class CatalogService {
 
   constructor(private readonly httpClient: HttpClient,
               private readonly bss: BrowserStateService,

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
@@ -7,7 +7,7 @@ import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {canEditCollection, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
@@ -39,8 +39,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
   loaded = false;
   notFound = false;
 
-  constructor(private readonly cds: CollectionsDataService,
-              private readonly uds: UserDataService,
+  constructor(private readonly cds: CatalogService,
+              private readonly uds: UserService,
               readonly cd: ChangeDetectorRef,
               private readonly router: Router,
               private readonly route: ActivatedRoute,

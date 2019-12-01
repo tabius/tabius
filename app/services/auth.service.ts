@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {LoginResponse} from '@common/ajax-model';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {NODE_BB_LOGIN_URL} from '@common/constants';
 import {take} from 'rxjs/operators';
@@ -15,7 +15,7 @@ export const LOGOUT_URL = '/api/user/logout';
 export class AuthService {
 
   constructor(private readonly httpClient: HttpClient,
-              private readonly uds: UserDataService,
+              private readonly uds: UserService,
               private readonly bss: BrowserStateService,
   ) {
   }

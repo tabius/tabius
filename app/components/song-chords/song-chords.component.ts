@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {ChordRenderingOptions, renderChord} from '@app/utils/chords-renderer';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {combineLatest, ReplaySubject, Subject} from 'rxjs';
 import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 
 @Component({
   selector: 'gt-song-chords',
@@ -28,8 +28,8 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   private readonly songId$ = new ReplaySubject<number>(1);
 
   constructor(private readonly cd: ChangeDetectorRef,
-              private readonly uds: UserDataService,
-              private readonly ads: CollectionsDataService,
+              private readonly uds: UserService,
+              private readonly ads: CatalogService,
   ) {
   }
 

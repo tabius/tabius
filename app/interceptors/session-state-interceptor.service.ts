@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 import {flatMap} from 'rxjs/operators';
 import {AjaxSessionInfo} from '@common/ajax-model';
 import {AuthService, LOGOUT_URL, UPDATE_SIGN_IN_STATE_URL} from '@app/services/auth.service';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
@@ -15,7 +15,7 @@ export class SessionStateInterceptor implements HttpInterceptor {
   private userId?: string;
 
   constructor(private readonly authService: AuthService,
-              private readonly uds: UserDataService,
+              private readonly uds: UserService,
               private readonly bss: BrowserStateService,
   ) {
     this.uds.getUser().subscribe(user => this.userId = user && user.id);

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {CollectionType} from '@common/catalog-model';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 import {ToastService} from '@app/toast/toast.service';
 import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
 import {Router} from '@angular/router';
@@ -31,7 +31,7 @@ export class CollectionEditorComponent implements OnInit {
 
   readonly CollectionType = CollectionType;
 
-  constructor(private readonly cds: CollectionsDataService,
+  constructor(private readonly cds: CatalogService,
               private readonly toastService: ToastService,
               private readonly router: Router,
   ) {

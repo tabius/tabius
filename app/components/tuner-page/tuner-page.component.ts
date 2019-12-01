@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostL
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {Subject} from 'rxjs';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {takeUntil} from 'rxjs/operators';
 import {newDefaultUserDeviceSettings, TunerToneType} from '@common/user-model';
 
@@ -34,7 +34,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,
-              private readonly uds: UserDataService,
+              private readonly uds: UserService,
   ) {
   }
 

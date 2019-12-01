@@ -5,7 +5,7 @@ import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {LINK_CATALOG, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {ToastService} from '@app/toast/toast.service';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {LocationStrategy} from '@angular/common';
@@ -40,7 +40,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly NavSection = NavSection;
   readonly noSleepMode$: Observable<boolean>;
 
-  constructor(private readonly uds: UserDataService,
+  constructor(private readonly uds: UserService,
               private readonly router: Router,
               private readonly bss: BrowserStateService,
               private readonly toast: ToastService,

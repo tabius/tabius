@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inj
 import {SongDetails} from '@common/catalog-model';
 import {combineLatest, Subject} from 'rxjs';
 import {takeUntil, tap} from 'rxjs/operators';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {isPlatformBrowser} from '@angular/common';
 import {renderChords} from '@app/utils/chords-renderer';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
@@ -49,7 +49,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   private readonly widthFromUserAgent;
 
   constructor(private readonly cd: ChangeDetectorRef,
-              private readonly uds: UserDataService,
+              private readonly uds: UserService,
               @Inject(PLATFORM_ID) platformId: string,
               @Optional() @Inject(REQUEST) private request: any,
   ) {

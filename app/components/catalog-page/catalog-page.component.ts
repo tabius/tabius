@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Collection} from '@common/catalog-model';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 import {FormControl} from '@angular/forms';
 import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, Subject, timer} from 'rxjs';
@@ -10,7 +10,7 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canCreateNewPublicCollection, getCollectionPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';
 import {User} from '@common/user-model';
@@ -52,8 +52,8 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   canCreateNewPublicCollection = false;
   user?: User;
 
-  constructor(private readonly ads: CollectionsDataService,
-              private readonly uds: UserDataService,
+  constructor(private readonly ads: CatalogService,
+              private readonly uds: UserService,
               private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,

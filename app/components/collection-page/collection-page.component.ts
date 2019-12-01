@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 import {Collection, CollectionDetails, isBand, isCompilation, Song} from '@common/catalog-model';
 import {ActivatedRoute} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
@@ -10,7 +10,7 @@ import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canEditCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {PARAM_COLLECTION_MOUNT} from '@common/mounts';
 
@@ -58,8 +58,8 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
 
   hasImageLoadingError = false;
 
-  constructor(private readonly cds: CollectionsDataService,
-              private readonly uds: UserDataService,
+  constructor(private readonly cds: CatalogService,
+              private readonly uds: UserService,
               private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,

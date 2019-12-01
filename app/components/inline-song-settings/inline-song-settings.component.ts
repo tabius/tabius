@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 import {getDefaultUserSongFontSize, newDefaultUserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {Subject, Subscription} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
@@ -37,7 +37,7 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
 
   private songSettingsSubscription?: Subscription;
 
-  constructor(private readonly uds: UserDataService,
+  constructor(private readonly uds: UserService,
               private readonly cd: ChangeDetectorRef) {
   }
 

@@ -2,10 +2,10 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
-import {CollectionsDataService} from '@app/services/collections-data.service';
+import {CatalogService} from '@app/services/catalog.service';
 import {flatMap, takeUntil} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
-import {UserDataService} from '@app/services/user-data.service';
+import {UserService} from '@app/services/user.service';
 
 @Component({
   selector: 'gt-song',
@@ -32,8 +32,8 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
     return this.song !== undefined;
   };
 
-  constructor(private readonly cds: CollectionsDataService,
-              private readonly uds: UserDataService,
+  constructor(private readonly cds: CatalogService,
+              private readonly uds: UserService,
               readonly cd: ChangeDetectorRef,
   ) {
   }
