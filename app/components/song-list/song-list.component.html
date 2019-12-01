@@ -4,7 +4,7 @@
         {{emptyListMessage}}
     </div>
 
-    <div *ngFor="let song of songs; let i = index; trackBy: trackBySongId">
-        <a routerLink="{{getSongPageLink(collectionMount, song.mount, primarySongCollectionMounts[i])}}">{{song.title}}</a>
+    <div *ngFor="let songItem of songItems; trackBy: trackById">
+        <a [routerLink]="songItem.link">{{songItem.title}}</a>
     </div>
 </div>

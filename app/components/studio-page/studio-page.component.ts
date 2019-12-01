@@ -7,9 +7,9 @@ import {User} from '@common/user-model';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
-import {CollectionDetails, Song} from '@common/catalog-model';
-import {defined} from '@common/util/misc-utils';
-import {CollectionViewModel} from '@app/components/collection-page/collection-page.component';
+import {Song} from '@common/catalog-model';
+import {sortSongsAndMounts} from '@app/components/collection-page/collection-page.component';
+import {combineLatest0, defined} from '@common/util/misc-utils';
 
 @Component({
   selector: 'gt-studio-page',
@@ -24,7 +24,10 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   loaded = false;
   user?: User;
-  collectionData?: CollectionViewModel;
+
+  /** Personal pick-ups. */
+  songs: Song[] = [];
+  primarySongCollectionMounts: (string|undefined)[] = [];
 
   editorIsOpen = false;
 
@@ -41,31 +44,45 @@ export class StudioPageComponent implements OnInit, OnDestroy {
     this.uds.syncSessionStateAsync();
 
     const user$ = this.uds.getUser();
-    const collection$ = user$.pipe(flatMap(user => this.cds.getCollectionById(user && user.collectionId)));
-    const collectionDetails$: Observable<CollectionDetails|undefined> = user$.pipe(flatMap(user => this.cds.getCollectionDetails(user && user.collectionId)));
-    const songs$: Observable<Song[]> = collection$.pipe(
-        flatMap(collection => this.cds.getSongIdsByCollection(collection && collection.id)),
-        flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
-        map(songs => songs.filter(defined))
+    const allUserCollectionIds$ = user$.pipe(flatMap(user => this.cds.getUserCollectionIds(user && user.id)));
+    const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
+        flatMap((collectionIds: number[]|undefined) =>
+            combineLatest0((collectionIds || []).map(id => this.cds.getSongIdsByCollection(id)))),
+        flatMap((songIdsArray: (number[]|undefined)[]) => {
+          const uniqueSongIds = new Set<number>();
+          for (const collectionSongIds of (songIdsArray || [])) {
+            for (const songId of (collectionSongIds || [])) {
+              uniqueSongIds.add(songId);
+            }
+          }
+          return combineLatest0([...uniqueSongIds].map(songId => this.cds.getSongById(songId)));
+        }),
+        map(songs => songs.filter(defined)),
     );
-    const primarySongCollectionMounts$: Observable<(string|undefined)[]> = songs$.pipe(
+
+    const songsPickedByUser$: Observable<Song[]> = combineLatest([allUserCollectionIds$, allSongsInAllUserCollections$])
+        .pipe(
+            map(([collectionIds, songs]) => songs.filter(s => collectionIds.includes(s.collectionId)))
+        );
+
+    const primarySongCollectionMounts$: Observable<(string|undefined)[]> = songsPickedByUser$.pipe(
         flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
         map(collections => collections.map(collection => !!collection ? collection.mount : undefined))
     );
-    combineLatest([user$, collection$, collectionDetails$, songs$, primarySongCollectionMounts$])
+    combineLatest([user$, songsPickedByUser$, primarySongCollectionMounts$])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([user, collection, collectionDetails, songs, primarySongCollectionMounts]) => {
+        .subscribe(([user, songs, primarySongCollectionMounts]) => {
           this.loaded = true;
-          if (!user || !collection || !collectionDetails || !songs) {
+          if (!user || !songs || !primarySongCollectionMounts) {
             //TODO: switchToNotFoundMode(this);
             this.cd.detectChanges();
             return;
           }
           this.user = user;
-          this.collectionData = new CollectionViewModel(collection, [], songs, primarySongCollectionMounts, false);
+          [this.songs, this.primarySongCollectionMounts] = sortSongsAndMounts(songs, primarySongCollectionMounts);
           this.cd.detectChanges();
         });
     this.updateMeta();

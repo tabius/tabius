@@ -13,11 +13,7 @@
     <div *ngIf="song">
 
         <div class="breadcrumb-block">
-            <a *ngIf="isUserCollection" routerLink="{{userCollectionLink}}" class="breadcrumb-link">
-                К своим подборам
-                <gt-svg-icon icon="level-up"></gt-svg-icon>
-            </a>
-            <gt-collection-breadcrumb *ngIf="!isUserCollection" [collection]="activeCollection"></gt-collection-breadcrumb>
+            <gt-collection-breadcrumb [collection]="activeCollection"></gt-collection-breadcrumb>
         </div>
 
         <gt-song [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song>

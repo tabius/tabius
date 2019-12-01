@@ -22,10 +22,15 @@ h1 {
   justify-content: center;
 
   h1 {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
+
   .song-list-block {
     margin-top: 20px;
+
+    .add-song-block {
+      margin-top: 20px;
+    }
   }
 }
 

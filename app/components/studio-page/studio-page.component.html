@@ -15,15 +15,14 @@
                     <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
                 </div>
                 <div class="song-list-block">
-                    <h1>Избранное</h1>
+                    <h1>Подборы</h1>
 
                     <gt-song-list
                             *ngIf="!editorIsOpen"
-                            [collectionMount]="collectionData.collection.mount"
-                            [songs]="collectionData.songs"
-                            [primarySongCollectionMounts]="collectionData.primarySongCollectionMounts"
+                            [songs]="songs"
+                            [primarySongCollectionMounts]="primarySongCollectionMounts"
                             [showEmptyNotice]="true"
-                            [emptyListMessage]="'Нет песен'"
+                            [emptyListMessage]="'Нет своих подборов'"
                     ></gt-song-list>
 
                     <div class="add-song-block">
@@ -37,7 +36,7 @@
                         <gt-song-editor *ngIf="editorIsOpen"
                                         (closeRequest)="toggleEditor()"
                                         [songId]="-1"
-                                        [collectionId]="collectionData.collection.id"
+                                        [collectionId]="user.collectionId"
                                         [initialFocusMode]="'title'"
                         ></gt-song-editor>
                     </div>
@@ -45,7 +44,7 @@
             </div>
         </div>
 
-        <gt-song-prev-next-navigator [activeCollectionId]="collectionData.collection.id"></gt-song-prev-next-navigator>
+        <!-- TODO? navigate own pick-ups?  <gt-song-prev-next-navigator [activeCollectionId]="collectionData.collection.id"></gt-song-prev-next-navigator>-->
 
     </div>
 </div>

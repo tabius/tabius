@@ -11,7 +11,7 @@ import {UserService} from '@app/services/user.service';
 import {canManageCollectionContent, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {LINK_STUDIO, MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
+import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 
 @Component({
   selector: 'gt-song-page',
@@ -30,8 +30,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   hasEditRight = false;
   editorIsOpen = false;
-  isUserCollection = false;
-  readonly userCollectionLink = LINK_STUDIO;
+  private isUserCollection = false;
 
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;

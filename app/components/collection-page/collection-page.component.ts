@@ -27,12 +27,7 @@ export class CollectionViewModel {
               readonly listed: boolean) {
     this.displayName = getNameFirstFormArtistName(collection);
     this.imgSrc = listed ? getCollectionImageUrl(collection.mount) : undefined;
-    const primaryCollectionMountBySong = new Map<number, string|undefined>();
-    for (let index = 0; index < songs.length; index++) {
-      primaryCollectionMountBySong.set(songs[index].id, primarySongCollectionMounts[index]);
-    }
-    this.songs = sortSongsAlphabetically(songs);
-    this.primarySongCollectionMounts = this.songs.map((s) => primaryCollectionMountBySong.get(s.id));
+    [this.songs, this.primarySongCollectionMounts] = sortSongsAndMounts(songs, primarySongCollectionMounts);
   }
 }
 
@@ -173,5 +168,15 @@ function getFirstSongsNames(songs: Song[]): string {
     res += ` ${song.title}.`;
   }
   return res;
+}
+
+export function sortSongsAndMounts(songs: Song[], primarySongCollectionMounts: (string|undefined)[]): ([Song[], (string|undefined)[]]) {
+  const primaryCollectionMountBySong = new Map<number, string|undefined>();
+  for (let index = 0; index < songs.length; index++) {
+    primaryCollectionMountBySong.set(songs[index].id, primarySongCollectionMounts[index]);
+  }
+  const sortedSongs = sortSongsAlphabetically(songs);
+  const sortedPrimarySongCollectionMounts = songs.map(s => primaryCollectionMountBySong.get(s.id));
+  return [sortedSongs, sortedPrimarySongCollectionMounts];
 }
 

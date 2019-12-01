@@ -6,8 +6,6 @@ import {combineLatest0, defined, getCollectionPageLink, getSongPageLink, isTouch
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/constants';
-import {LINK_STUDIO} from '@common/mounts';
-import {UserService} from '@app/services/user.service';
 
 const Hammer: HammerStatic = require('hammerjs');
 
@@ -30,15 +28,12 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   nextLink?: string;
   nextLinkIsCollection = false;
 
-  isCollectionFromPublicCatalog = false;
-
   showStickySideBars: 'initializing'|'yes'|'no' = 'initializing';
 
   private hammer?: HammerManager;
 
   constructor(private readonly cds: CatalogService,
               private readonly cd: ChangeDetectorRef,
-              private readonly uds: UserService,
               private readonly bss: BrowserStateService,
               private readonly router: Router,
   ) {
@@ -52,11 +47,10 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
         flatMap(songIds => combineLatest0((songIds || []).map(id => this.cds.getSongById(id)))),
         map(songs => sortSongsAlphabetically(songs.filter(defined))),
     );
-    const user$ = this.uds.getUser();
-    combineLatest([collection$, allSongs$, user$])
+    combineLatest([collection$, allSongs$])
         .pipe(
             takeUntil(this.destroyed$),
-            flatMap(([collection, allSongs, user]) => {
+            flatMap(([collection, allSongs]) => {
               if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined, undefined, undefined]);
               }
@@ -65,7 +59,6 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
               const prevSong = prevSongIdx === -1 ? undefined : allSongs[prevSongIdx];
               const nextSongIdx = songIdx === -1 ? 0 : songIdx + 1;
               const nextSong = nextSongIdx >= allSongs.length ? undefined : allSongs[nextSongIdx];
-              this.isCollectionFromPublicCatalog = !user || user.collectionId !== this.activeCollectionId;
               return combineLatest([
                 of(collection),
                 of(prevSong),
@@ -84,7 +77,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
             this.prevLink = getSongPageLink(collection.mount, prevSong.mount, prevSongPrimaryCollection.mount);
             this.prevLinkIsCollection = false;
           } else {
-            this.prevLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection) : LINK_STUDIO;
+            this.prevLink = getCollectionPageLink(collection);
             this.prevLinkIsCollection = true;
           }
           // noinspection DuplicatedCode
@@ -92,7 +85,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
             this.nextLink = getSongPageLink(collection.mount, nextSong.mount, nextSongPrimaryCollection.mount);
             this.nextLinkIsCollection = false;
           } else {
-            this.nextLink = this.isCollectionFromPublicCatalog ? getCollectionPageLink(collection) : LINK_STUDIO;
+            this.nextLink = getCollectionPageLink(collection);
             this.nextLinkIsCollection = true;
           }
           this.cd.detectChanges();

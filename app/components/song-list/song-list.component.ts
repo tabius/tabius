@@ -1,6 +1,12 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Song} from '@common/catalog-model';
-import {getSongPageLink} from '@common/util/misc-utils';
+import {getSongPageLink, trackById} from '@common/util/misc-utils';
+
+interface SongViewModel {
+  id: number,
+  title: string,
+  link: string,
+}
 
 @Component({
   selector: 'gt-song-list',
@@ -10,10 +16,10 @@ import {getSongPageLink} from '@common/util/misc-utils';
 })
 export class SongListComponent implements OnChanges {
 
-  readonly getSongPageLink = getSongPageLink;
+  readonly trackById = trackById;
 
-  /** Active collection. */
-  @Input() collectionMount!: string;
+  /** Active collection mount. If not defined, the primary song collection mount is used. */
+  @Input() collectionMount?: string;
 
   /** List of primary and secondary songs for the collection. */
   @Input() songs!: Song[];
@@ -27,14 +33,26 @@ export class SongListComponent implements OnChanges {
   /** Text of the empty notice. Used only if 'showEmptyNotice' is true. */
   @Input() emptyListMessage = 'Нет песен';
 
-  trackBySongId(index: number, song: Song): number {
-    return song.id;
-  }
+  songItems: SongViewModel[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['songs'] || changes['primarySongCollectionMounts']) {
-      if (!this.primarySongCollectionMounts || this.primarySongCollectionMounts.length != this.songs.length) {
-        this.primarySongCollectionMounts = this.songs.map(s => undefined);
+    if (changes['songs'] || changes['primarySongCollectionMounts'] || changes['collectionMount']) {
+      this.songItems = [];
+      if (this.songs.length !== this.primarySongCollectionMounts.length) {
+        throw new Error(`Primary collection mounts count !== songs count: ${this.songs.length}, mounts: ${this.primarySongCollectionMounts.length}`);
+      }
+      for (let i = 0; i < this.songs.length; i++) {
+        const song = this.songs[i];
+        const primaryCollectionMount = this.primarySongCollectionMounts[i];
+        const collectionMount = this.collectionMount || primaryCollectionMount;
+        if (!primaryCollectionMount || !collectionMount) {
+          throw new Error(`Primary collection mount not specified. Index: ${i}`);
+        }
+        this.songItems.push({
+          id: song.id,
+          title: song.title,
+          link: getSongPageLink(collectionMount, song.mount, primaryCollectionMount),
+        });
       }
     }
   }
