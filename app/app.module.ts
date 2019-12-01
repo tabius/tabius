@@ -50,6 +50,7 @@ import {UserRegistrationPromptComponent} from './components/user-registration-pr
 import {ModeratorPromptComponent} from './components/moderator-prompt/moderator-prompt.component';
 import {AddSongToCollectionComponent} from './components/add-song-to-collection/add-song-to-collection.component';
 import {UserCollectionsListComponent} from '@app/components/user-collections-list/user-collections-list.component';
+import {UserCollectionEditorComponent} from './components/user-collection-editor/user-collection-editor.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +90,7 @@ import {UserCollectionsListComponent} from '@app/components/user-collections-lis
     ModeratorPromptComponent,
     AddSongToCollectionComponent,
     UserCollectionsListComponent,
+    UserCollectionEditorComponent,
   ],
   imports: [
     BrowserAnimationsModule,

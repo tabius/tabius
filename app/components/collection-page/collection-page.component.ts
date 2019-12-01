@@ -1,18 +1,18 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, CollectionDetails, isBand, isCompilation, Song} from '@common/catalog-model';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canEditCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {canManageCollectionContent, canRemoveCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {PARAM_COLLECTION_MOUNT} from '@common/mounts';
+import {LINK_CATALOG, LINK_STUDIO, PARAM_COLLECTION_MOUNT} from '@common/mounts';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -51,7 +51,9 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
 
   user?: User;
   canAddSongs = false;
-  editorIsOpen = false;
+  canEditCollection = false;
+  songEditorIsOpen = false;
+  collectionEditorIsOpen = false;
   private songDetailsPrefetched = false;
   loaded = false;
   notFound = false;
@@ -65,6 +67,7 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
               private readonly route: ActivatedRoute,
               readonly title: Title,
               readonly meta: Meta,
+              private readonly router: Router,
               private readonly navHelper: RoutingNavigationHelper,
   ) {
   }
@@ -100,12 +103,17 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
         .subscribe(([collection, collectionDetails, bands, songs, primarySongCollectionMounts, user]) => {
           this.loaded = true;
           if (!collection || !collectionDetails || !bands || !songs) {
-            switchToNotFoundMode(this);
+            if (this.collectionViewModel) {
+              this.router.navigate([this.collectionViewModel.listed ? LINK_CATALOG : LINK_STUDIO]);
+            } else {
+              switchToNotFoundMode(this);
+            }
             return;
           }
           this.collectionViewModel = new CollectionViewModel(collection, bands, songs, primarySongCollectionMounts, collectionDetails.listed);
           this.user = user;
-          this.canAddSongs = canEditCollection(this.user, collection);
+          this.canAddSongs = canManageCollectionContent(this.user, collection);
+          this.canEditCollection = canRemoveCollection(this.user, collection);
           this.updateMeta(songs);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
@@ -138,8 +146,19 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleEditor(): void {
-    this.editorIsOpen = !this.editorIsOpen;
+  toggleSongEditor(): void {
+    this.songEditorIsOpen = !this.songEditorIsOpen;
+    if (this.collectionEditorIsOpen && this.songEditorIsOpen) {
+      this.collectionEditorIsOpen = false;
+    }
+    this.cd.detectChanges();
+  }
+
+  toggleCollectionEditor(): void {
+    this.collectionEditorIsOpen = !this.collectionEditorIsOpen;
+    if (this.collectionEditorIsOpen && this.songEditorIsOpen) {
+      this.songEditorIsOpen = false;
+    }
     this.cd.detectChanges();
   }
 }

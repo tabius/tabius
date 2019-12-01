@@ -52,7 +52,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   canCreateNewPublicCollection = false;
   user?: User;
 
-  constructor(private readonly ads: CatalogService,
+  constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               private readonly bss: BrowserStateService,
               readonly cd: ChangeDetectorRef,
@@ -80,7 +80,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
         )
         .subscribe(newValue => this.updateCollectionFilter(newValue));
 
-    this.ads.getListedCollections()
+    this.cds.getListedCollections()
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),

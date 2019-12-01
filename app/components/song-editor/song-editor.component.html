@@ -36,7 +36,12 @@
                        title="Подтверждение удаления песни">
                 <span>&nbsp;</span>
             </label>
-            <button class="btn btn-danger delete-button" [disabled]="!deleteConfirmationFlag" (click)="delete()">Удалить</button>
+            <button class="btn btn-danger delete-button"
+                    [disabled]="!deleteConfirmationFlag"
+                    (click)="delete()"
+                    [title]="deleteConfirmationFlag ? 'Удалить песню' : 'Необходимо подтвердить удаление песни: поставьте отметку слева.'"
+            >Удалить
+            </button>
         </div>
     </div>
 </div>

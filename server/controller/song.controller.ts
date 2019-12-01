@@ -6,7 +6,7 @@ import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {canEditCollection, isValidId} from '@common/util/misc-utils';
+import {canManageCollectionContent, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {NodeBBService} from '@server/db/node-bb.service';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
@@ -66,7 +66,7 @@ export class SongController {
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
     }
-    if (!canEditCollection(user, collection)) {
+    if (!canManageCollectionContent(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     const vr1 = validate(request.song, conformsTo(NewSongValidator));
@@ -93,7 +93,7 @@ export class SongController {
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
     }
-    if (!canEditCollection(user, collection)) {
+    if (!canManageCollectionContent(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     const vr1 = validate(request.song, conformsTo(SongValidator));
@@ -163,7 +163,7 @@ export class SongController {
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
     }
-    if (!canEditCollection(user, collection)) {
+    if (!canManageCollectionContent(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     const currentSongIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collectionId);
@@ -186,7 +186,7 @@ export class SongController {
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
     }
-    if (!canEditCollection(user, collection)) {
+    if (!canManageCollectionContent(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     await this.songDbi.removeSongFromSecondaryCollection(songId, collectionId);

@@ -29,8 +29,14 @@
       }
     }
 
-    .add-song-block {
+    .editors-block {
       margin-top: 15px;
+
+      .buttons-line {
+        button:not(:first-of-type) {
+          margin-left: 14px;
+        }
+      }
     }
   }
 }

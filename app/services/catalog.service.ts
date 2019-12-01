@@ -5,9 +5,9 @@ import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-
 import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
-import {ObservableStore, RefreshMode} from '@app/store/observable-store';
+import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 const COLLECTION_LIST_KEY = 'catalog';
@@ -220,21 +220,45 @@ export class CatalogService {
 
   async createUserCollection(userId: string, createCollectionRequest: CreateUserCollectionRequest): Promise<Collection> {
     const response = await this.httpClient.post<CreateUserCollectionResponse>('/api/collection/user', createCollectionRequest).pipe(take(1)).toPromise();
-    const collectionsUpdateArray$$ = response.collections
-        .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
-    const userCollectionsKey = getUserCollectionsKey(userId);
-    const collectionIds = response.collections.map(collection => collection.id);
-    const listingUpdate$$ = this.store.set(userCollectionsKey, collectionIds, checkUpdateByShallowArrayCompare);
-    await Promise.all([
-      ...collectionsUpdateArray$$,
-      listingUpdate$$,
-    ]);
+    await this.updateUserCollections(userId, response.collections);
     const collection = response.collections.find(collection => collection.id === response.collectionId);
     if (!collection) {
       throw new Error('Не удалось создать коллекцию!');
     }
     return collection;
   }
+
+  async deleteUserCollection(collectionId: number|undefined): Promise<void> {
+    if (!isValidId(collectionId)) {
+      return;
+    }
+    const {userId, collections} = await this.httpClient.delete<DeleteUserCollectionResponse>(`/api/collection/user/${collectionId}`).pipe(take(1)).toPromise();
+    // todo: personal songs were moved to the 'favorite'. Update it?
+    await this.updateUserCollections(userId, collections);
+  }
+
+  private async updateUserCollections(userId: string, collections: Collection[]): Promise<void> {
+    const userCollectionsKey = getUserCollectionsKey(userId);
+    const collectionIdsInStore = await this.store.get<number[]>(userCollectionsKey, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    const collectionsRemoveArray$$: Promise<void>[] = [];
+    for (const collectionId of (collectionIdsInStore || [])) {
+      if (!collections.find(c => c.id === collectionId)) {
+        collectionsRemoveArray$$.push(this.store.remove(getCollectionKey(collectionId)));
+        collectionsRemoveArray$$.push(this.store.remove(getCollectionDetailsKey(collectionId)));
+      }
+    }
+
+    const collectionIds = collections.map(c => c.id);
+    const collectionsUpdateArray$$ = collections.map(collection =>
+        this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
+    await Promise.all([
+      ...collectionsUpdateArray$$,
+      ...collectionsRemoveArray$$,
+      this.store.set(userCollectionsKey, collectionIds, checkUpdateByShallowArrayCompare),
+
+    ]);
+  }
+
 
   getUserCollections(userId?: string): Observable<Collection[]> {
     const collectionIds$ = this.getUserCollectionIds(userId);

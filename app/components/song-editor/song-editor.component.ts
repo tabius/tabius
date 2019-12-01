@@ -49,7 +49,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   @ViewChild('textArea', {static: false, read: ElementRef}) private contentRef!: ElementRef;
   @ViewChild('firstFormElement', {static: false, read: ElementRef}) private titleElementRef!: ElementRef;
 
-  constructor(private readonly ads: CatalogService,
+  constructor(private readonly cds: CatalogService,
               private readonly toastService: ToastService,
   ) {
   }
@@ -64,7 +64,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       this.updateUIOnLoadedState();
     } else {
       enableLoadingIndicator(this);
-      combineLatest([this.ads.getSongById(this.songId), this.ads.getSongDetailsById(this.songId)])
+      combineLatest([this.cds.getSongById(this.songId), this.cds.getSongDetailsById(this.songId)])
           .pipe(takeUntil(this.destroyed$))
           .subscribe(([song, details]) => {
             if (song === undefined || details === undefined) {
@@ -123,7 +123,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   private async createImpl(): Promise<void> {
     const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
     const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
-    await this.ads.createSong(createdSong, createdDetails);
+    await this.cds.createSong(createdSong, createdDetails);
     this.close();
   }
 
@@ -152,7 +152,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     if (changed) {
       const updatedSong: Song = {...this.song, title: this.title};
       const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
-      await this.ads.updateSong(updatedSong, updatedDetails);
+      await this.cds.updateSong(updatedSong, updatedDetails);
     }
     this.close();
     return changed;
@@ -215,12 +215,12 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       return;
     }
     try {
-      await this.ads.deleteSong(this.songId);
+      await this.cds.deleteSong(this.songId);
     } catch (err) {
       this.toastService.warning('Ошибка при удалении песни!');
       return;
     }
+    this.toastService.info('Песня удалена.');
     this.close();
-    this.toastService.info('Песня удалена!');
   }
 }

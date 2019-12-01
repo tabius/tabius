@@ -118,10 +118,9 @@ export class SongDbi {
     await this.db.pool.promise().query(`UPDATE song SET collection_id = ? WHERE id IN ( ${idList} )`, [collectionId]);
   }
 
-  async removeSongsFromSecondaryCollection(songIds: number[], secondaryCollectionId: number): Promise<void> {
-    const idList = songIds.join(',');
+  async removeAllSongsFromSecondaryCollection(secondaryCollectionId: number): Promise<void> {
     await this.db.pool.promise()
-        .query(`DELETE FROM secondary_song_collections WHERE collection_id = ? AND song_id IN ( ${idList} )`,
+        .query(`DELETE FROM secondary_song_collections WHERE collection_id = ?`,
             [secondaryCollectionId]);
   }
 }

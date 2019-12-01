@@ -8,7 +8,7 @@ import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canEditCollection, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
+import {canManageCollectionContent, getSongForumTopicLink, hasValidForumTopic} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {LINK_STUDIO, MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -100,7 +100,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
           this.activeCollection = collection;
           this.primaryCollection = primaryCollection;
           this.updateMeta();
-          this.hasEditRight = canEditCollection(user, primaryCollection);
+          this.hasEditRight = canManageCollectionContent(user, primaryCollection);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });

@@ -50,7 +50,8 @@ export interface UpdateCollectionResponse extends TabiusAjaxResponse {
   collections: Collection[];
 }
 
-export interface DeleteCollectionResponse extends TabiusAjaxResponse {
+export interface DeleteUserCollectionResponse extends TabiusAjaxResponse {
+  userId: string;
   /** List of all collections (for the catalog or a user). */
   collections: Collection[];
 }

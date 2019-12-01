@@ -2,11 +2,11 @@ import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param,
 import {Collection, CollectionDetails} from '@common/catalog-model';
 import {CollectionDbi, generateCollectionMountForUser} from '@server/db/collection-dbi.service';
 import {CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
-import {CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
+import {CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
 import {User, UserGroup} from '@common/user-model';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {conformsTo, validate} from 'typed-validation';
-import {canEditCollection, isValidUserId} from '@common/util/misc-utils';
+import {canManageCollectionContent, isValidUserId} from '@common/util/misc-utils';
 import {SongDbi} from '@server/db/song-dbi.service';
 
 @Controller('/api/collection')
@@ -139,7 +139,7 @@ export class CollectionController {
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
     }
-    if (!canEditCollection(user, collection)) {
+    if (!canManageCollectionContent(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     await this.collectionDbi.updateCollection(request.id, request.name, request.mount);
@@ -150,7 +150,7 @@ export class CollectionController {
 
   /** Deletes collection and returns list of all user collection. */
   @Delete('/user/:collectionId')
-  async deleteUserCollection(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteCollectionResponse> {
+  async deleteUserCollection(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
     this.logger.log(`delete user collection ${idParam}`);
     const user: User = ServerSsoService.getUserOrFail(session);
     const collectionId = +idParam;
@@ -166,20 +166,20 @@ export class CollectionController {
     }
     const songs = await this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId);
     if (songs.length > 0) {
-      // Move primary songs to the primary user collection.
-      const primarySongIds = songs.filter((s) => s.collectionId === collectionId).map((s) => s.id);
+      const primarySongIds = songs.filter(s => s.collectionId === collectionId).map(s => s.id);
+      const secondarySongIds = songs.filter(s => s.collectionId !== collectionId).map(s => s.id);
       if (primarySongIds.length > 0) {
+        // Move primary songs to the primary user collection.
         await this.songDbi.updateSongsPrimaryCollection(primarySongIds, user.collectionId);
-        await this.songDbi.removeSongsFromSecondaryCollection(primarySongIds, user.collectionId);
       }
-      // Delete songs from the secondary collections.
-      const secondarySongIds = songs.filter((s) => s.collectionId !== collectionId).map((s) => s.id);
       if (secondarySongIds.length > 0) {
-        await this.songDbi.removeSongsFromSecondaryCollection(secondarySongIds, collectionId);
+        // Cleanup secondary collection records.
+        await this.songDbi.removeAllSongsFromSecondaryCollection(collectionId);
       }
     }
     await this.collectionDbi.deleteCollection(collectionId);
     return {
+      userId: user.id,
       collections: await this.collectionDbi.getAllUserCollections(user.id)
     };
   }

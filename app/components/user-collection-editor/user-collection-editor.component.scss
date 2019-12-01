@@ -1,0 +1,18 @@
+.editor-block {
+  width: 250px;
+}
+
+.buttons-row {
+  margin-top: 10px;
+
+  > button {
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+}
+
+.delete-button-group {
+  margin-left: 10px;
+  float: right;
+}

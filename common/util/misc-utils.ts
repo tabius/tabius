@@ -170,7 +170,7 @@ export function scrollToView(element?: HTMLElement): void {
   window.scroll({left: window.scrollX, top: element.offsetTop - headerHeight, behavior: 'smooth'});
 }
 
-export function canEditCollection(user: User|undefined, collection: Collection): boolean {
+export function canManageCollectionContent(user: User|undefined, collection: Collection): user is User {
   if (!!user && user.groups.includes(UserGroup.Moderator)) {
     return true;
   }
@@ -178,6 +178,19 @@ export function canEditCollection(user: User|undefined, collection: Collection):
     return false;
   }
   return collection.userId === user.id;
+}
+
+export function canRemoveCollection(user: User|undefined, collection: Collection): user is User {
+  if (!canManageCollectionContent(user, collection)) {
+    return false;
+  }
+  if (user.collectionId === collection.id) {
+    // Can't remove primary collection.
+    return false;
+  }
+  // Collection removal from public catalog (userId === undefined) is not supported.
+  return !!collection.userId;
+
 }
 
 export function canCreateNewPublicCollection(user: User|undefined): boolean {

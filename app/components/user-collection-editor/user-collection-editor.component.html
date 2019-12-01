@@ -1,0 +1,25 @@
+<div class="editor-block">
+
+    <h3>Настройки коллекции</h3>
+
+    <div class="buttons-row">
+        <button class="btn close-button" (click)="close()">Закрыть</button>
+
+        <div class="delete-button-group">
+            <label class="checkbox">
+                <input type="checkbox"
+                       [checked]="deleteConfirmationFlag"
+                       (change)="toggleDeleteConfirmationFlag($event)"
+                       title="Подтверждение удаления песни"
+                >
+                <span>&nbsp;</span>
+            </label>
+            <button class="btn btn-danger delete-button"
+                    [disabled]="!deleteConfirmationFlag"
+                    (click)="delete()"
+                    [title]="deleteConfirmationFlag ? 'Удалить коллекцию' : 'Необходимо подтвердить удаление коллекции: поставьте отметку слева.'"
+            >Удалить
+            </button>
+        </div>
+    </div>
+</div>

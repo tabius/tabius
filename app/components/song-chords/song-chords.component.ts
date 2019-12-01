@@ -29,14 +29,14 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserService,
-              private readonly ads: CatalogService,
+              private readonly cds: CatalogService,
   ) {
   }
 
   ngOnInit(): void {
     const songSettings$ = this.songId$.pipe(switchMap(songId => this.uds.getUserSongSettings(songId)));
     const h4Si$ = this.uds.getH4SiFlag();
-    const details$ = this.songId$.pipe(switchMap(songId => this.ads.getSongDetailsById(songId)));
+    const details$ = this.songId$.pipe(switchMap(songId => this.cds.getSongDetailsById(songId)));
 
     combineLatest([songSettings$, h4Si$, details$]).pipe(takeUntil(this.destroyed$))
         .subscribe(([songSettings, h4Si, details]) => {
