@@ -7,12 +7,13 @@ import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canManageCollectionContent, canRemoveCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {canManageCollectionContent, canRemoveCollection, defined, getCollectionImageUrl, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {LINK_CATALOG, LINK_STUDIO, PARAM_COLLECTION_MOUNT} from '@common/mounts';
+import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -141,12 +142,21 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleSongEditor(): void {
-    this.songEditorIsOpen = !this.songEditorIsOpen;
-    if (this.collectionEditorIsOpen && this.songEditorIsOpen) {
-      this.collectionEditorIsOpen = false;
-    }
+  openSongEditor(): void {
+    this.songEditorIsOpen = true;
+    this.collectionEditorIsOpen = false;
     this.cd.detectChanges();
+  }
+
+  closeSongEditor(editResult: SongEditResult): void {
+    this.songEditorIsOpen = false;
+    this.cd.detectChanges();
+    if (editResult.type === 'created') {
+      // go to the newly created song.
+      const songMount = editResult.song!.mount;
+      const collectionMount = this.collectionViewModel!.collection.mount;
+      this.router.navigate([getSongPageLink(collectionMount, songMount)]);
+    }
   }
 
   toggleCollectionEditor(): void {

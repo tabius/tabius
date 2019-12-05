@@ -4,12 +4,14 @@ import {Meta, Title} from '@angular/platform-browser';
 import {UserService} from '@app/services/user.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {User} from '@common/user-model';
-import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
 import {Song} from '@common/catalog-model';
 import {sortSongsAndMounts} from '@app/components/collection-page/collection-page.component';
-import {combineLatest0, defined} from '@common/util/misc-utils';
+import {combineLatest0, defined, getSongPageLink} from '@common/util/misc-utils';
+import {SongEditResult} from '@app/components/song-editor/song-editor.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'gt-studio-page',
@@ -31,11 +33,15 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   editorIsOpen = false;
 
+  private primaryUserCollectionMount: string = '';
+
   constructor(private readonly uds: UserService,
               private readonly cds: CatalogService,
               readonly cd: ChangeDetectorRef,
               private readonly title: Title,
-              private readonly meta: Meta,) {
+              private readonly meta: Meta,
+              private readonly router: Router,
+  ) {
   }
 
 
@@ -69,19 +75,25 @@ export class StudioPageComponent implements OnInit, OnDestroy {
         flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
         map(collections => collections.map(collection => !!collection ? collection.mount : undefined))
     );
-    combineLatest([user$, songsPickedByUser$, primarySongCollectionMounts$])
+
+    const primaryUserCollection$ = user$.pipe(
+        flatMap(user => user ? this.cds.getCollectionById(user.collectionId) : of(undefined))
+    );
+
+    combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollectionMounts$])
         .pipe(
             takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
         )
-        .subscribe(([user, songs, primarySongCollectionMounts]) => {
+        .subscribe(([user, primaryUserCollection, songs, primarySongCollectionMounts]) => {
           this.loaded = true;
-          if (!user || !songs || !primarySongCollectionMounts) {
+          if (!user || !primaryUserCollection || !songs || !primarySongCollectionMounts) {
             //TODO: switchToNotFoundMode(this);
             this.cd.detectChanges();
             return;
           }
           this.user = user;
+          this.primaryUserCollectionMount = primaryUserCollection.mount;
           [this.songs, this.primarySongCollectionMounts] = sortSongsAndMounts(songs, primarySongCollectionMounts);
           this.cd.detectChanges();
         });
@@ -100,8 +112,18 @@ export class StudioPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleEditor(): void {
-    this.editorIsOpen = !this.editorIsOpen;
+  openEditor(): void {
+    this.editorIsOpen = true;
     this.cd.detectChanges();
+  }
+
+  closeEditor(editResult: SongEditResult): void {
+    this.editorIsOpen = false;
+    this.cd.detectChanges();
+    if (editResult.type === 'created') {
+      // go to the newly created song.
+      const songMount = editResult.song!.mount;
+      this.router.navigate([getSongPageLink(this.primaryUserCollectionMount, songMount)]);
+    }
   }
 }

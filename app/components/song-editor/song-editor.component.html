@@ -26,7 +26,7 @@
     <div class="buttons-row">
         <button *ngIf="createMode" class="btn btn-info create-button" (click)="create()">Создать</button>
         <button *ngIf="!createMode" class="btn btn-info update-button" (click)="update()">Сохранить</button>
-        <button class="btn close-button" (click)="close()">Закрыть</button>
+        <button class="btn close-button" (click)="close('canceled')">Закрыть</button>
 
         <div *ngIf="!createMode" class="delete-button-group">
             <label class="checkbox">

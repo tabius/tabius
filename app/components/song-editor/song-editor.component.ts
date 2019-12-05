@@ -9,6 +9,13 @@ import {ToastService} from '@app/toast/toast.service';
 import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
+export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'
+
+export type SongEditResult = {
+  type: SongEditResultType;
+  /** Set only for the 'created' type. */
+  song?: Song;
+}
 
 /** Embeddable song editor component. */
 @Component({
@@ -31,7 +38,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   @Input() initialFocusMode: SongEditorInitialFocusMode = 'text';
 
   /** Emitted when panel wants to be closed. */
-  @Output() closeRequest = new EventEmitter();
+  @Output() closeRequest = new EventEmitter<SongEditResult>();
 
   readonly destroyed$ = new Subject();
 
@@ -121,10 +128,10 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   }
 
   private async createImpl(): Promise<void> {
-    const createdSong: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
-    const createdDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
-    await this.cds.createSong(createdSong, createdDetails);
-    this.close();
+    const song: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
+    const songDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
+    const createdSong = await this.cds.createSong(song, songDetails);
+    this.close({type: 'created', song: createdSong});
   }
 
   private getMediaLinksAsArray(): string[] {
@@ -154,7 +161,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
       await this.cds.updateSong(updatedSong, updatedDetails);
     }
-    this.close();
+    this.close({type: changed ? 'updated' : 'canceled'});
     return changed;
   }
 
@@ -178,7 +185,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       }
     } else if (event.key === 'Escape') {
       if (!this.isChanged()) {
-        this.close();
+        this.close({type: 'canceled'});
       }
     }
   }
@@ -201,8 +208,8 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     return bound(8, countOccurrences(this.content, '\n') + 1, (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
   }
 
-  close(): void {
-    this.closeRequest.emit();
+  close(result: SongEditResult): void {
+    this.closeRequest.emit(result);
   }
 
   toggleDeleteConfirmationFlag($event): void {
@@ -221,6 +228,6 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       return;
     }
     this.toastService.info('Песня удалена.');
-    this.close();
+    this.close({type: 'deleted'});
   }
 }

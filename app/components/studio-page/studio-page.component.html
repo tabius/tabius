@@ -27,14 +27,14 @@
 
                     <div class="add-song-block">
                         <button *ngIf="!editorIsOpen"
-                                (click)="toggleEditor()"
+                                (click)="openEditor()"
                                 class="btn btn-info"
                                 title="Добавить новую песню в персональную коллекцию"
                         >
                             Добавить
                         </button>
                         <gt-song-editor *ngIf="editorIsOpen"
-                                        (closeRequest)="toggleEditor()"
+                                        (closeRequest)="closeEditor($event)"
                                         [songId]="-1"
                                         [collectionId]="user.collectionId"
                                         [initialFocusMode]="'title'"

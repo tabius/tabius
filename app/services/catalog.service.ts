@@ -158,11 +158,12 @@ export class CatalogService {
         );
   }
 
-  async createSong(song: Song, details: SongDetails): Promise<void> {
+  async createSong(song: Song, details: SongDetails): Promise<Song> {
     const request: UpdateSongRequest = {song, details};
     try {
       const response = await this.httpClient.post<UpdateSongResponse>('/api/song', request).pipe(take(1)).toPromise();
       await this.processSongUpdateResponse(response);
+      return response.song;
     } catch (httpError) {
       console.error(httpError);
       throw new Error('Ошибка при обращении к серверу.');
