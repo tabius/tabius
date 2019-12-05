@@ -1,0 +1,76 @@
+server {
+    server_name tabius.org;
+
+    location / {
+        proxy_pass http://127.0.0.1:4001;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # remove headers we do not want to expose
+        proxy_hide_header X-Powered-By;
+
+        if ($request_uri ~* \.(css|js|jpg|jpeg|png|gif)$) {
+            expires 28d;
+        }
+    }
+
+    location /images {
+        alias /opt/tabius/images;
+    }
+
+    location /robots.txt {
+        alias /opt/tabius/www/robots.txt;
+    }
+
+    location /sitemap.xml {
+        alias /opt/tabius/www/sitemap.xml;
+    }
+
+    location ~ ^/sitemap-([0-9]+).txt.gz {
+        alias /opt/tabius/www/sitemap-$1.txt.gz;
+    }
+
+
+    # Redirects for old resources and API calls.
+    location ~ ^/images/artists/(.*) {
+        return 301 /images/collection/$1;
+    }   
+
+    location ~ ^/api/artist/(.*) {
+        return 301 /api/collection/$1;
+    }   
+
+    location ~ ^/artist/(.*) {
+        return 301 /chords/$1;
+    }   
+
+    #    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    server_tokens off;
+
+    gzip on;
+    gzip_types text/plain application/xml application/json text/xml text/css application/javascript text/javascript;
+    gzip_min_length 1000;
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/tabius.org/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/tabius.org/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+    if ($host = tabius.org) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    server_name tabius.org;
+
+    listen 80;
+    return 404; # managed by Certbot
+
+
+}
