@@ -137,7 +137,11 @@ async function syncSongTopic(song: SongTopicRow, connection: any, collectionById
     if (collection === undefined) {
       throw new Error(`Failed to find collection for song + ${JSON.stringify(song)}`);
     }
-    const collectionTypeName = collection.type === CollectionType.Band ? 'группа' : 'исполнитель';
+    const collectionTypeName = collection.type === CollectionType.Person
+        ? 'исполнитель'
+        : (collection.type === CollectionType.Band
+            ? 'группа'
+            : 'коллекция');
     const options = {
       json: true,
       headers: {
