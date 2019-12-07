@@ -3,6 +3,7 @@ import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
+import {getServerPort} from '@server/util/server-config-utils';
 
 const cookieParser = require('cookie-parser');
 
@@ -21,7 +22,7 @@ async function bootstrap() {
     resave: false,
     saveUninitialized: true
   }));
-  await app.listen(4001);
+  await app.listen(getServerPort());
 }
 
 bootstrap().catch(err => console.error(err));

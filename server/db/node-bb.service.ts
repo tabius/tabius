@@ -3,11 +3,11 @@ import {isValidId} from '@common/util/misc-utils';
 import {promisify} from 'util';
 
 import {del} from 'request';
-import {getConfigDir} from '@server/util/server-config-utils';
+import {getConfigFilePath} from '@server/util/server-config-utils';
 
 const [delAsync] = [del].map(promisify);
 
-const nodeBBConfig: NodeBBConfig = require(getConfigDir('nodebb-config.json'));
+const nodeBBConfig: NodeBBConfig = require(getConfigFilePath('nodebb-config.json'));
 
 interface NodeBBConfig {
   writeApi: {
