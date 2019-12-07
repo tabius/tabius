@@ -53,7 +53,8 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
             songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.song.id))),
     );
 
-    this.songSubscription = combineLatest([user$, collections$, isSongInCollection$]).pipe(takeUntil(this.destroyed$))
+    this.songSubscription = combineLatest([user$, collections$, isSongInCollection$])
+        .pipe(takeUntil(this.destroyed$))
         .subscribe(([user, collections, isSongInCollection]) => {
           this.user = user;
           this.collections = collections

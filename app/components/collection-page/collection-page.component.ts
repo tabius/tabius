@@ -93,8 +93,8 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
 
     combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollectionMounts$, this.uds.getUser()])
         .pipe(
-            takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
+            takeUntil(this.destroyed$),
         )
         .subscribe(([collection, collectionDetails, bands, songs, primarySongCollectionMounts, user]) => {
           this.loaded = true;

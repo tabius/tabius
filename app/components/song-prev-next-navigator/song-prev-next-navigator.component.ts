@@ -49,7 +49,6 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     );
     combineLatest([collection$, allSongs$])
         .pipe(
-            takeUntil(this.destroyed$),
             flatMap(([collection, allSongs]) => {
               if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined, undefined, undefined]);
@@ -66,7 +65,8 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
                 of(nextSong),
                 nextSong ? this.cds.getCollectionById(nextSong.collectionId) : of(undefined),
               ]);
-            })
+            }),
+            takeUntil(this.destroyed$),
         )
         .subscribe(([collection, prevSong, prevSongPrimaryCollection, nextSong, nextSongPrimaryCollection]) => {
           if (!collection) {

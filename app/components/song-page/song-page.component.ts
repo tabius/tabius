@@ -76,8 +76,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
     combineLatest([collection$, primaryCollection$, song$, songDetails$, this.uds.getUser()])
         .pipe(
-            takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
+            takeUntil(this.destroyed$),
         )
         .subscribe(([collection, primaryCollection, song, songDetails, user]) => {
           this.loaded = true;

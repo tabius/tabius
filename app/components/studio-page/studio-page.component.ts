@@ -82,8 +82,8 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
     combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollectionMounts$])
         .pipe(
-            takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
+            takeUntil(this.destroyed$),
         )
         .subscribe(([user, primaryUserCollection, songs, primarySongCollectionMounts]) => {
           this.loaded = true;

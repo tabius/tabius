@@ -82,8 +82,8 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
 
     this.cds.getListedCollections()
         .pipe(
-            takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
+            takeUntil(this.destroyed$),
         )
         .subscribe(collections => {
           this.letterBlocks = toLetterBlocks(collections);

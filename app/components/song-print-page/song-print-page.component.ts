@@ -35,8 +35,8 @@ export class SongPrintPageComponent {
 
     song$
         .pipe(
-            takeUntil(this.destroyed$),
             throttleTime(100, undefined, {leading: true, trailing: true}),
+            takeUntil(this.destroyed$),
         )
         .subscribe(song => {
           if (song === undefined) {

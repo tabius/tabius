@@ -38,7 +38,8 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
     const h4Si$ = this.uds.getH4SiFlag();
     const details$ = this.songId$.pipe(switchMap(songId => this.cds.getSongDetailsById(songId)));
 
-    combineLatest([songSettings$, h4Si$, details$]).pipe(takeUntil(this.destroyed$))
+    combineLatest([songSettings$, h4Si$, details$])
+        .pipe(takeUntil(this.destroyed$))
         .subscribe(([songSettings, h4Si, details]) => {
           this.transpose = songSettings.transpose;
           this.h4Si = h4Si;
