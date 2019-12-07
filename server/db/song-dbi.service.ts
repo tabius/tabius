@@ -2,7 +2,6 @@ import {Injectable} from '@nestjs/common';
 import {Song, SongDetails} from '@common/catalog-model';
 import {DbService} from './db.service';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
-import Hashids from 'hashids';
 
 interface SongRow {
   id: number;
@@ -159,7 +158,7 @@ async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> 
   const allMountsSet = new Set<string>(allMounts);
   let baseMount = getTranslitLowerCase(song.title);
   if (baseMount.length === 0) {
-    baseMount = generateRandomSongMount();
+    throw new Error(`Failed to generate song mount for song: ${song.title}`);
   }
   for (let i = 0; ; i++) {
     const mount = baseMount + (i === 0 ? '' : '_' + i);
@@ -167,9 +166,4 @@ async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> 
       return mount;
     }
   }
-}
-
-function generateRandomSongMount(): string {
-  const hashIds = new Hashids('salt', 5);
-  return hashIds.encode(Date.now());
 }
