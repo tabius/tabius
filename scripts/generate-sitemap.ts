@@ -1,6 +1,7 @@
 import {promisify} from 'util';
 import {readDbConfig} from '@server/db/db-config';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
+import {getConfigDir} from '@server/util/server-config-utils';
 
 const mysql = require('mysql2/promise');
 const fs = require('fs');
@@ -28,7 +29,7 @@ async function generateSitemap() {
   } finally {
     connection.end();
   }
-  const sitemapFileName = '/opt/tabius/www/sitemap-1.txt';
+  const sitemapFileName = getConfigDir('www/sitemap-1.txt');
   await writeFile(sitemapFileName, sitemap);
   await exec(`gzip -f ${sitemapFileName}`);
 }

@@ -9,6 +9,7 @@ import {CollectionDbi} from '@server/db/collection-dbi.service';
 import {isValidId} from '@common/util/misc-utils';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {map} from 'rxjs/operators';
+import {getConfigDir} from '@server/util/server-config-utils';
 import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';
@@ -33,7 +34,7 @@ interface NodeUser {
   groupTitle?: string[],
 }
 
-const ssoConfig: SsoServiceConfig = require('/opt/tabius/sso-config.json');
+const ssoConfig: SsoServiceConfig = require(getConfigDir('sso-config.json'));
 
 @Injectable()
 export class ServerSsoService implements NestInterceptor {
