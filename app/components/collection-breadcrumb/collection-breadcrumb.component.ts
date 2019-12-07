@@ -28,7 +28,7 @@ export class CollectionBreadcrumbComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (this.collection) {
       this.showStudioLink = isValidUserId(this.collection.userId);
-      this.showCatalogLink = !isValidUserId(this.collection.userId);
+      this.showCatalogLink = !this.showStudioLink;
       this.collectionPageLink = getCollectionPageLink(this.collection);
     } else {
       this.showStudioLink = false;

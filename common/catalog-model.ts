@@ -1,6 +1,6 @@
 import {Versioned, WithId} from '@common/common-model';
 
-export const CATALOG_STORE_SCHEMA_VERSION = 4;
+export const CATALOG_STORE_SCHEMA_VERSION = 5;
 
 export enum CollectionType {
   /* Artist, person. Example: Michael Jackson. */

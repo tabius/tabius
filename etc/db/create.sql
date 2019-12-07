@@ -13,7 +13,7 @@ CREATE TABLE collection (
     version INT NOT NULL DEFAULT 0,
     forum_category_id INT NOT NULL DEFAULT 0,
     listed INT(1) NOT NULL DEFAULT 0,
-    user_id VARCHAR(40) DEFAULT NULL UNIQUE
+    user_id VARCHAR(40) DEFAULT NULL
 ) ENGINE InnoDB
   DEFAULT CHARSET = utf8mb4,
   COLLATE utf8mb4_unicode_ci;
@@ -23,6 +23,9 @@ CREATE INDEX collection_listed_index
 
 CREATE INDEX collection_mount_index
 	ON collection (mount);
+
+CREATE INDEX collection_user_id_index
+	ON collection (user_id);
 
 CREATE TABLE song (
     id                   INT PRIMARY KEY AUTO_INCREMENT,

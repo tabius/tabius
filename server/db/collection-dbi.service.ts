@@ -14,7 +14,7 @@ interface CollectionRow {
   band_ids: string;
   version: number;
   listed: number;
-  user_id: string|undefined;
+  user_id: string|null;
 }
 
 interface CollectionWithDetailsRow extends CollectionRow {
@@ -143,7 +143,7 @@ function rowToCollection(row: CollectionRow): Collection {
     type: row.type,
     mount: row.mount,
     version: row.version,
-    userId: row.user_id,
+    userId: row.user_id || undefined,
   };
 }
 
