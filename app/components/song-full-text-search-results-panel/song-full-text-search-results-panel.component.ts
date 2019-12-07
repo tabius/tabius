@@ -32,14 +32,14 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.titleResults = [];
-    this.contentResults = [];
+    this.clearResults();
     if (this.searchText.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH) {
       const fullTextSearchRequest: FullTextSongSearchRequest = {text: this.searchText};
       this.loading = true;
       //todo: handle concurrent requests
       this.httpClient.post<FullTextSongSearchResponse>('/api/song/by-text', fullTextSearchRequest)
           .subscribe(response => {
+            this.clearResults();
             for (const result of response.results) {
               if (result.matchType === 'title') {
                 this.titleResults.push(result);
@@ -51,6 +51,11 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
             this.cd.detectChanges();
           });
     }
+  }
+
+  private clearResults(): void {
+    this.titleResults = [];
+    this.contentResults = [];
   }
 
   getSongLink(searchResult: FullTextSongSearchResult): string {
