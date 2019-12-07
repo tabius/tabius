@@ -6,7 +6,11 @@
 }
 
 .editor-block {
-  width: calc(80vw);
+  min-width: calc(80vw);
+
+  input, textarea {
+    box-sizing: border-box;
+  }
 }
 
 .song-title {
@@ -35,15 +39,22 @@ textarea.song-content {
 
 .buttons-row {
   margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
 
-  > button {
-    &:not(:first-child) {
-      margin-left: 10px;
+  .left-side-block {
+    white-space: nowrap;
+
+    > button {
+      &:not(:first-child) {
+        margin-left: 10px;
+      }
     }
   }
 }
 
 .delete-button-group {
+  white-space: nowrap;
   margin-left: 10px;
   float: right;
 }
