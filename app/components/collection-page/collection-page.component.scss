@@ -33,6 +33,8 @@
       margin-top: 25px;
 
       .buttons-line {
+        display: flex;
+
         button:not(:first-of-type) {
           margin-left: 14px;
         }
