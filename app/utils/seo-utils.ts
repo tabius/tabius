@@ -10,12 +10,17 @@ export interface PageMetadata {
 export function updatePageMetadata(title: Title, meta: Meta, page: PageMetadata) {
   title.setTitle(page.title);
   meta.addTag({name: 'og:title', content: page.title});
+  meta.addTag({name: 'twitter:title', content: page.title});
 
   meta.addTag({name: 'description', content: page.description});
   meta.addTag({name: 'og:description', content: page.description});
+  meta.addTag({name: 'twitter:description', content: page.description});
 
   meta.addTag({name: 'keywords', content: page.keywords.join(',')});
-  if (page.image) {
+
+  if (!!page.image) {
+    // meta.addTag({name: 'image_src', content: page.image});
     meta.addTag({name: 'og:image', content: page.image});
+    meta.addTag({name: 'twitter:image', content: page.image});
   }
 }
