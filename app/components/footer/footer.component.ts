@@ -12,10 +12,8 @@ export class FooterComponent {
 
   readonly version = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(2);
 
-  constructor(readonly router: Router) {
-  }
+  readonly footerClass = `c${1 + Date.now() % 5}`;
 
-  getRandomizedFooterClass(): string {
-    return 'c' + (1 + Date.now() % 5);
+  constructor(readonly router: Router) {
   }
 }

@@ -1,4 +1,14 @@
-<div [ngClass]="getRandomizedFooterClass()">
-    <span (click)="router.navigate(['/'])" style="cursor:pointer;">tabius.ru</span>
+<div [ngClass]="footerClass">
+
+    <div class="twitter">
+        <a href="https://twitter.com/tratatabius" target="_blank" title="Последние новости сервиса в Твиттер.">
+            <gt-svg-icon icon="twitter"></gt-svg-icon>
+        </a>
+    </div>
+
+    <span (click)="router.navigate(['/'])" style="cursor:pointer;" title="Перейти на главную страницу сайта.">
+        tabius.ru
+    </span>
+
     <div class="version" title="Текущая версия приложения">v{{version}}</div>
 </div>

@@ -26,6 +26,20 @@
   color: $color-nav-settings;
 }
 
+.twitter {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  gt-svg-icon {
+    width: 22px;
+    height: 22px;
+    padding-top: 11px;
+    padding-left: 5px;
+    fill: #AAAAAA;
+  }
+}
+
 .version {
   position: absolute;
   top: 0;
