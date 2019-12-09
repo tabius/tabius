@@ -171,9 +171,13 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
 
   private getFilteredCollections(): Collection[] {
     const result: Collection[] = [];
-    const filterLc = this.searchValue.toLocaleLowerCase();
+    const filterLcTokens = this.searchValue.toLocaleLowerCase().split(' ');
     for (const letterBlock of this.letterBlocks) {
-      letterBlock.collections.filter(c => c.lcName.includes(filterLc)).forEach(a => result.push(a));
+      letterBlock.collections
+          .filter(collectionItem => isCollectionNameMatchesFilter(collectionItem, filterLcTokens))
+          .forEach(collectionItem => {
+            result.push(collectionItem);
+          });
     }
     return result;
   }
@@ -203,4 +207,13 @@ function toLetterBlocks(collections: readonly Collection[]): LetterBlock[] {
   }
   blocksByLetter.forEach(block => block.collections.sort((a1, a2) => a1.name.localeCompare(a2.name)));
   return Array.from(blocksByLetter.values()).sort((b1, b2) => b1.letter.localeCompare(b2.letter));
+}
+
+function isCollectionNameMatchesFilter(item: CollectionListItem, filterLcTokens: string[]): boolean {
+  for (const lcToken of filterLcTokens) {
+    if (!item.lcName.includes(lcToken)) {
+      return false;
+    }
+  }
+  return true;
 }
