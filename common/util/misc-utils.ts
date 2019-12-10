@@ -6,6 +6,7 @@ import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT, NODE_BB_URL} f
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import {fromPromise} from 'rxjs/internal-compatibility';
+import {environment} from '@app/environments/environment';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length === 0) {
@@ -79,7 +80,7 @@ export function getNameFirstFormArtistName(collection: { type: CollectionType, n
 }
 
 export function getCollectionImageUrl(mount: string): string {
-  return `https://tabius.ru/images/collection/profile/${mount}.jpg`;
+  return `${environment.backendUrl}/images/collection/profile/${mount}.jpg`;
 }
 
 export function hasValidForumTopic(song?: Song): song is Song {

@@ -42,21 +42,37 @@
             "scripts": []
           },
           "configurations": {
-            "production": {
+            "tabius-ru": {
               "fileReplacements": [
                 {
                   "replace": "app/environments/environment.ts",
-                  "with": "app/environments/environment.prod.ts"
+                  "with": "app/environments/environment.prod-ru.ts"
                 }
               ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": true,
-              "extractCss": true,
               "aot": true,
               "buildOptimizer": true,
+              "extractCss": true,
+              "ngswConfigPath": "ngsw-config.json",
+              "optimization": true,
+              "outputHashing": "all",
               "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "sourceMap": true
+            },
+            "tabius-org": {
+              "fileReplacements": [
+                {
+                  "replace": "app/environments/environment.ts",
+                  "with": "app/environments/environment.prod-org.ts"
+                }
+              ],
+              "aot": true,
+              "buildOptimizer": true,
+              "extractCss": true,
+              "ngswConfigPath": "ngsw-config.json",
+              "optimization": true,
+              "outputHashing": "all",
+              "serviceWorker": true,
+              "sourceMap": true
             }
           }
         },
@@ -67,8 +83,11 @@
             "port": 4201
           },
           "configurations": {
-            "production": {
-              "browserTarget": "tabius:build:production"
+            "tabius-ru": {
+              "browserTarget": "tabius:build:tabius-ru"
+            },
+            "tabius-org": {
+              "browserTarget": "tabius:build:tabius-org"
             }
           }
         },
@@ -80,11 +99,19 @@
             "tsConfig": "app/tsconfig.ssr.json"
           },
           "configurations": {
-            "production": {
+            "tabius-ru": {
               "fileReplacements": [
                 {
                   "replace": "app/environments/environment.ts",
-                  "with": "app/environments/environment.prod.ts"
+                  "with": "app/environments/environment.prod-ru.ts"
+                }
+              ]
+            },
+            "tabius-org": {
+              "fileReplacements": [
+                {
+                  "replace": "app/environments/environment.ts",
+                  "with": "app/environments/environment.prod-org.ts"
                 }
               ]
             }

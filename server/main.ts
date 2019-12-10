@@ -4,6 +4,7 @@ import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
 import {getServerPort} from '@server/util/server-config-utils';
+import {environment} from '@app/environments/environment';
 
 const cookieParser = require('cookie-parser');
 
@@ -27,7 +28,7 @@ async function bootstrap() {
 
 bootstrap().catch(err => console.error(err));
 
-const CORS_ORIGIN_WHITELIST = ['http://localhost:4201', 'http://localhost:4001', 'https://tabius.ru'];
+const CORS_ORIGIN_WHITELIST = ['http://localhost:4201', environment.backendUrl];
 
 function buildCorsOptions(): CorsOptions {
   return {

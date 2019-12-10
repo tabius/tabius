@@ -8,7 +8,8 @@
     "server": "nodemon",
     "sitemap": "ts-node scripts/generate-sitemap.ts",
     "ssr:dev": "npm run update-version && ng build && ng run tabius:ssr",
-    "ssr:prod": "npm run update-version && ng build --prod && ng run tabius:ssr:production",
+    "ssr:prod-ru": "npm run update-version && ng build -c tabius-ru && ng run tabius:ssr:tabius-ru",
+    "ssr:prod-org": "npm run update-version && ng build -c tabius-org && ng run tabius:ssr:tabius-org",
     "start": "npm run update-version && ng serve",
     "test": "ng test",
     "update-version": "node scripts/update-build-version.js"

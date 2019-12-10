@@ -1,7 +1,13 @@
 import {buildInfo} from '@app/environments/build';
+import {TabiusEnv} from '@app/environments';
 
-export const environment = {
+const APP_DOMAIN = 'localhost';
+
+/** Default development environment. */
+export const environment: TabiusEnv = {
   production: false,
-  apiUrl: 'http://localhost:4001',
+  backendUrl: `http://${APP_DOMAIN}:4001`,
+  nodeBbUrl: `http://${APP_DOMAIN}:4002`,
+  nodeBbCookieDomain: APP_DOMAIN,
   buildInfo,
 };

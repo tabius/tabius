@@ -1,6 +1,6 @@
-export const TABIUS_BASE_API_URL = 'TABIUS_BASE_API_URL';
-
 /** Browser store names. */
+import {environment} from '@app/environments/environment';
+
 export const USER_STORE_NAME = 'user';
 export const CATALOG_STORE_NAME = 'catalog';
 export const APP_STORE_NAME = 'tabius';
@@ -10,12 +10,12 @@ export const TABIUS_USER_BROWSER_STORE_TOKEN = 'user';
 export const TABIUS_CATALOG_BROWSER_STORE_TOKEN = 'catalog';
 export const APP_BROWSER_STORE_TOKEN = 'tabius';
 
+export const NODE_BB_URL = environment.nodeBbUrl;
 export const NODE_BB_SESSION_COOKIE = 'express.sid';
-export const NODE_BB_COOKIE_DOMAIN = '.tabius.ru';
-export const NODE_BB_URL = 'https://forum.tabius.ru';
-export const NODE_BB_LOGIN_URL = `${NODE_BB_URL}/login`;
-export const NODE_BB_REGISTRATION_URL = `${NODE_BB_URL}/register`;
-export const NODE_BB_ADD_NEW_CATEGORY_URL = `${NODE_BB_URL}/category/406`;
+export const NODE_BB_COOKIE_DOMAIN = environment.nodeBbCookieDomain;
+export const NODE_BB_LOGIN_URL = `${environment.nodeBbUrl}/login`;
+export const NODE_BB_REGISTRATION_URL = `${environment.nodeBbUrl}/register`;
+export const NODE_BB_ADD_NEW_CATEGORY_URL = `${environment.nodeBbUrl}/category/406`;
 
 // the values below should be in sync with 'dimensions.scss'
 // export const MAX_MOBILE_WIDTH = 899;
