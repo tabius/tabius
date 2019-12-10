@@ -11,7 +11,7 @@
     "ssr:prod-ru": "npm run update-version && ng build -c tabius-ru && ng run tabius:ssr:tabius-ru",
     "ssr:prod-org": "npm run update-version && ng build -c tabius-org && ng run tabius:ssr:tabius-org",
     "start": "npm run update-version && ng serve",
-    "test": "ng test",
+    "test": "npm run update-version && ng test",
     "update-version": "node scripts/update-build-version.js"
   },
   "private": true,
