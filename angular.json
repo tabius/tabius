@@ -81,14 +81,6 @@
           "options": {
             "browserTarget": "tabius:build",
             "port": 4201
-          },
-          "configurations": {
-            "tabius-ru": {
-              "browserTarget": "tabius:build:tabius-ru"
-            },
-            "tabius-org": {
-              "browserTarget": "tabius:build:tabius-org"
-            }
           }
         },
         "ssr": {
