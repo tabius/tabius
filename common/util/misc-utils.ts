@@ -16,7 +16,7 @@ export function toArrayOfInts(text: string, sep: string): number[] {
 }
 
 /** Returns true if update is needed. */
-export function checkUpdateByVersion(oldValue: Versioned|undefined, newValue: Versioned|undefined): boolean {
+export function isEqualByVersion(oldValue: Versioned|undefined, newValue: Versioned|undefined): boolean {
   if (oldValue === newValue) {
     return false;
   }
@@ -26,11 +26,11 @@ export function checkUpdateByVersion(oldValue: Versioned|undefined, newValue: Ve
   return newValue.version > oldValue.version;
 }
 
-export function checkUpdateByShallowArrayCompare(oldValue: readonly any[]|undefined, newValue: readonly any[]|undefined): boolean {
+export function isEqualByShallowArrayCompare(oldValue: readonly any[]|undefined, newValue: readonly any[]|undefined): boolean {
   return !shallowArraysEquals(oldValue, newValue);
 }
 
-export function checkUpdateByStringify(oldValue: any|undefined, newValue: any|undefined): boolean {
+export function isEqualByStringify(oldValue: any|undefined, newValue: any|undefined): boolean {
   if (oldValue === newValue) {
     return false;
   }
@@ -40,7 +40,7 @@ export function checkUpdateByStringify(oldValue: any|undefined, newValue: any|un
   return JSON.stringify(oldValue) !== JSON.stringify(newValue);
 }
 
-export function checkUpdateByReference(oldValue: any|undefined, newValue: any|undefined): boolean {
+export function isEqualByReference(oldValue: any|undefined, newValue: any|undefined): boolean {
   return newValue !== oldValue;
 }
 

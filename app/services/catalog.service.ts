@@ -6,7 +6,7 @@ import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion, combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
+import {isEqualByReference, isEqualByShallowArrayCompare, isEqualByVersion, combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
@@ -41,7 +41,7 @@ export class CatalogService {
                 map(collections => collections.map(a => a.id)),
             ),
         RefreshMode.RefreshOncePerSession,
-        checkUpdateByShallowArrayCompare,
+        isEqualByShallowArrayCompare,
     )
         //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
         .pipe(
@@ -55,7 +55,7 @@ export class CatalogService {
         getCollectionKey(collectionId),
         () => this.httpClient.get<Collection[]>(`/api/collection/by-ids/${collectionId}`).pipe(mapToFirstInArray),
         RefreshMode.RefreshOncePerSession,
-        checkUpdateByVersion,
+        isEqualByVersion,
     );
   }
 
@@ -68,8 +68,8 @@ export class CatalogService {
       return Promise.resolve();
     }
     return Promise.all([
-      this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion),
-      this.store.set<number>(getCollectionIdByMountKey(collection.mount), collection.id, checkUpdateByReference)
+      this.store.set<Collection>(getCollectionKey(collection.id), collection, isEqualByVersion),
+      this.store.set<number>(getCollectionIdByMountKey(collection.mount), collection.id, isEqualByReference)
     ]);
   }
 
@@ -78,7 +78,7 @@ export class CatalogService {
         getCollectionDetailsKey(collectionId),
         () => this.httpClient.get<CollectionDetails|undefined>(`/api/collection/details-by-id/${collectionId}`),
         RefreshMode.RefreshOncePerSession,
-        checkUpdateByVersion
+        isEqualByVersion
     );
   }
 
@@ -91,18 +91,18 @@ export class CatalogService {
                 flatMap(songs => fromPromise(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))
             ),
         RefreshMode.RefreshOncePerSession,
-        checkUpdateByShallowArrayCompare
+        isEqualByShallowArrayCompare
     );
   }
 
   // TODO: cleanup songs that are not in the list anymore? Schedule GC by time?
   private async updateCollectionSongsOnFetch(collectionId: number, songs: Song[], updateCollectionSongList: boolean): Promise<number[]> {
-    const songUpdatesArray$$ = songs.map(song => this.store.set<Song>(getSongKey(song.id), song, checkUpdateByVersion));
+    const songUpdatesArray$$ = songs.map(song => this.store.set<Song>(getSongKey(song.id), song, isEqualByVersion));
     const songIds = songs.map(s => s.id);
 
     // noinspection ES6MissingAwait
     const listingUpdate$$ = updateCollectionSongList
-        ? this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare)
+        ? this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, isEqualByShallowArrayCompare)
         : Promise.resolve();
 
     await Promise.all([
@@ -121,7 +121,7 @@ export class CatalogService {
                 map(a => a && a.id)
             ),
         RefreshMode.RefreshOncePerSession,
-        checkUpdateByReference,
+        isEqualByReference,
     );
   }
 
@@ -130,7 +130,7 @@ export class CatalogService {
         getSongKey(songId),
         () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
         RefreshMode.RefreshOncePerSession,
-        checkUpdateByVersion,
+        isEqualByVersion,
     );
   }
 
@@ -143,7 +143,7 @@ export class CatalogService {
         getSongDetailsKey(songId),
         () => this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songId}`).pipe(mapToFirstInArray),
         refreshCachedVersion ? RefreshMode.RefreshOncePerSession : RefreshMode.DoNotRefresh,
-        checkUpdateByVersion
+        isEqualByVersion
     );
   }
 
@@ -183,8 +183,8 @@ export class CatalogService {
 
   private async processSongUpdateResponse(response: UpdateSongResponse): Promise<void> {
     await Promise.all([
-      this.store.set<Song>(getSongKey(response.song.id), response.song, checkUpdateByVersion),
-      this.store.set<SongDetails>(getSongDetailsKey(response.details.id), response.details, checkUpdateByVersion),
+      this.store.set<Song>(getSongKey(response.song.id), response.song, isEqualByVersion),
+      this.store.set<SongDetails>(getSongDetailsKey(response.details.id), response.details, isEqualByVersion),
       this.updateCollectionSongsOnFetch(response.song.collectionId, response.songs, true),
     ]);
   }
@@ -205,9 +205,9 @@ export class CatalogService {
   async createListedCollection(createCollectionRequest: CreateListedCollectionRequest): Promise<Collection> {
     const response = await this.httpClient.post<CreateListedCollectionResponse>('/api/collection', createCollectionRequest).pipe(take(1)).toPromise();
     const collectionsUpdateArray$$ = response.collections
-        .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
+        .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, isEqualByVersion));
     const collectionIds = response.collections.map(collection => collection.id);
-    const listingUpdate$$ = this.store.set(COLLECTION_LIST_KEY, collectionIds, checkUpdateByShallowArrayCompare);
+    const listingUpdate$$ = this.store.set(COLLECTION_LIST_KEY, collectionIds, isEqualByShallowArrayCompare);
     await Promise.all([
       ...collectionsUpdateArray$$,
       listingUpdate$$,
@@ -251,11 +251,11 @@ export class CatalogService {
 
     const collectionIds = collections.map(c => c.id);
     const collectionsUpdateArray$$ = collections.map(collection =>
-        this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
+        this.store.set<Collection>(getCollectionKey(collection.id), collection, isEqualByVersion));
     await Promise.all([
       ...collectionsUpdateArray$$,
       ...collectionsRemoveArray$$,
-      this.store.set(userCollectionsKey, collectionIds, checkUpdateByShallowArrayCompare),
+      this.store.set(userCollectionsKey, collectionIds, isEqualByShallowArrayCompare),
 
     ]);
   }
@@ -284,7 +284,7 @@ export class CatalogService {
                 map((response) => response.collectionInfos.map(info => info.collection.id))
             ),
         RefreshMode.RefreshOncePerSession,
-        checkUpdateByShallowArrayCompare,
+        isEqualByShallowArrayCompare,
     ).pipe(map(collectionIds => !!collectionIds ? collectionIds : []));
   }
 
@@ -293,7 +293,7 @@ export class CatalogService {
     try {
       const {songIds} = await this.httpClient.put<AddSongToSecondaryCollectionResponse>(
           '/api/song/add-to-secondary-collection', request).pipe(take(1)).toPromise();
-      await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
+      await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, isEqualByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
       throw new Error('Ошибка при обращении к серверу.');
@@ -305,7 +305,7 @@ export class CatalogService {
     try {
       const {songIds} = await this.httpClient.put<RemoveSongFromSecondaryCollectionResponse>(
           '/api/song/remove-from-secondary-collection', request).pipe(take(1)).toPromise();
-      await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
+      await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, isEqualByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
       throw new Error('Ошибка при обращении к серверу.');

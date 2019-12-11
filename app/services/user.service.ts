@@ -5,7 +5,7 @@ import {DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings,
 import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {flatMap, map, switchMap, take} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
-import {checkUpdateByReference, checkUpdateByStringify, isValidId} from '@common/util/misc-utils';
+import {isEqualByReference, isEqualByStringify, isValidId} from '@common/util/misc-utils';
 import {fromPromise} from 'rxjs/internal-compatibility';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
@@ -35,7 +35,7 @@ export class UserService {
   }
 
   async setUserDeviceSettings(userDeviceSettings: UserDeviceSettings): Promise<void> {
-    await this.store.set<UserDeviceSettings>(DEVICE_SETTINGS_KEY, userDeviceSettings, checkUpdateByStringify);
+    await this.store.set<UserDeviceSettings>(DEVICE_SETTINGS_KEY, userDeviceSettings, isEqualByStringify);
   }
 
   getUserSongSettings(songId: number|undefined): Observable<UserSongSettings> {
@@ -53,7 +53,7 @@ export class UserService {
               }
             },
             RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response
-            checkUpdateByStringify
+            isEqualByStringify
         ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)))));
   }
 
@@ -70,7 +70,7 @@ export class UserService {
 
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
     const key = getUserSongSettingsKey(songSettings.songId);
-    await this.store.set<UserSongSettings>(key, songSettings, checkUpdateByStringify);
+    await this.store.set<UserSongSettings>(key, songSettings, isEqualByStringify);
     // update settings on the server only if we have valid user session.
     const update$$ = this.getUser().pipe(
         flatMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).pipe(take(1)) : of(undefined)),
@@ -90,7 +90,7 @@ export class UserService {
               H4SI_FLAG_KEY,
               () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.h4Si)),
               refreshMode,
-              checkUpdateByReference
+              isEqualByReference
           ).pipe(map(flag => !!flag));
         })
     );
@@ -120,7 +120,7 @@ export class UserService {
       const key = getUserSongSettingsKey(songSettings.songId);
       if (key) {
         updatedKeys.add(key);
-        allOps.push(this.store.set<UserSongSettings>(key, songSettings, checkUpdateByStringify));
+        allOps.push(this.store.set<UserSongSettings>(key, songSettings, isEqualByStringify));
       }
     }
 
@@ -131,7 +131,7 @@ export class UserService {
       }
     }
 
-    allOps.push(this.store.set<boolean>(H4SI_FLAG_KEY, userSettings.h4Si || undefined, checkUpdateByReference));
+    allOps.push(this.store.set<boolean>(H4SI_FLAG_KEY, userSettings.h4Si || undefined, isEqualByReference));
     await Promise.all(allOps);
   }
 
@@ -152,7 +152,7 @@ export class UserService {
     if (oldUser && oldUser.id !== user.id) {
       await this.resetStoreStateOnSignOut();
     }
-    await this.store.set<User>(USER_KEY, user, checkUpdateByStringify);
+    await this.store.set<User>(USER_KEY, user, isEqualByStringify);
   }
 
   async resetStoreStateOnSignOut(): Promise<void> {
