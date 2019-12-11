@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
@@ -15,7 +15,7 @@ const Hammer: HammerStatic = require('hammerjs');
   styleUrls: ['./song-prev-next-navigator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SongPrevNextNavigatorComponent implements OnInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
 
@@ -28,7 +28,8 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   nextLink?: string;
   nextLinkIsCollection = false;
 
-  showStickySideBars: 'initializing'|'yes'|'no' = 'initializing';
+  isInitializing = true;
+  isWideScreenMode = false;
 
   private hammer?: HammerManager;
 
@@ -39,6 +40,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   ) {
   }
 
+  // TODO: handle changes & re-subscribe!
   ngOnInit(): void {
     const collection$ = this.cds.getCollectionById(this.activeCollectionId);
     // list of all collection songs sorted by id.
@@ -88,26 +90,41 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
             this.nextLink = getCollectionPageLink(collection);
             this.nextLinkIsCollection = true;
           }
-          this.cd.detectChanges();
+          if (this.isInitializing) {
+            this.isInitializing = false;
+            console.error('Initialization finished');
+            this.updateMobileControls(true);
+          }
         });
   }
 
-  ngAfterViewInit(): void {
-    if (this.bss.isBrowser && isTouchEventsSupportAvailable()) {
-      delete Hammer.defaults.cssProps.userSelect; // to allow selection
-      this.hammer = new Hammer(window.document.body, {
-        touchAction: 'auto',
-        inputClass: Hammer['SUPPORT_POINTER_EVENTS'] ? Hammer.PointerEventInput : Hammer.TouchMouseInput,
-        recognizers: [[Hammer.Swipe, {direction: Hammer.DIRECTION_HORIZONTAL}]],
-      });
-      this.hammer.on('swiperight', () => this.navigate(this.nextLink));
-      this.hammer.on('swipeleft', () => this.navigate(this.prevLink));
-    }
-    setTimeout(() => this.updateStickySideBarsVisibility(), 100);
+  ngOnDestroy(): void {
+    this.unsubscribeHammer();
+    this.destroyed$.next();
   }
 
-  ngOnDestroy(): void {
-    this.destroyed$.next();
+  private updateMobileControls(forceUpdate = false): void {
+    const isWideScreenMode = window.innerWidth >= MIN_DESKTOP_WIDTH;
+    if (forceUpdate || this.isWideScreenMode !== isWideScreenMode) {
+      this.unsubscribeHammer();
+      if (this.bss.isBrowser && !isWideScreenMode && isTouchEventsSupportAvailable()) {
+        console.error('Installing hammer!');
+        delete Hammer.defaults.cssProps.userSelect; // to allow selection
+        this.hammer = new Hammer(window.document.body, {
+          touchAction: 'auto',
+          inputClass: Hammer['SUPPORT_POINTER_EVENTS'] ? Hammer.PointerEventInput : Hammer.TouchMouseInput,
+          recognizers: [[Hammer.Swipe, {direction: Hammer.DIRECTION_HORIZONTAL}]],
+        });
+        this.hammer.on('swiperight', () => this.navigate(this.prevLink));
+        this.hammer.on('swipeleft', () => this.navigate(this.nextLink));
+      }
+
+      this.isWideScreenMode = isWideScreenMode;
+      this.cd.detectChanges();
+    }
+  }
+
+  private unsubscribeHammer(): void {
     if (this.hammer) {
       this.hammer.destroy();
       delete this.hammer;
@@ -116,15 +133,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   @HostListener('window:resize', [])
   onWindowResize() {
-    this.updateStickySideBarsVisibility();
-  }
-
-  private updateStickySideBarsVisibility(): void {
-    const showStickySideBars = window.innerWidth > MIN_DESKTOP_WIDTH ? 'yes' : 'no';
-    if (this.showStickySideBars !== showStickySideBars) {
-      this.showStickySideBars = showStickySideBars;
-      this.cd.detectChanges();
-    }
+    this.updateMobileControls();
   }
 
   navigate(link: string|undefined): void {
