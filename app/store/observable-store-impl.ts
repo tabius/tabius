@@ -134,13 +134,13 @@ export class ObservableStoreImpl implements ObservableStore {
       }
     }
     try {
-      const promise = this.setImpl(key, value, needUpdateFn);
+      const setImplPromise$$ = this.setImpl(key, value, needUpdateFn);
       const queue = this.setOpsQueue.get(key) || [];
-      queue.push({promise, value, needUpdateFn});
+      queue.push({promise: setImplPromise$$, value, needUpdateFn});
       if (queue.length === 1) {
         this.setOpsQueue.set(key, queue);
       }
-      await promise;
+      await setImplPromise$$;
     } finally {
       const queue = this.setOpsQueue.get(key)!;
       if (queue.length === 1) {
@@ -156,7 +156,7 @@ export class ObservableStoreImpl implements ObservableStore {
     const inRefreshSet = this.refreshSet.has(key);
     const store = await this.storeAdapter$$;
     if (needUpdateFn !== skipUpdateCheck) {
-      let oldValue = await store.get<T>(key);
+      const oldValue = await store.get<T>(key);
       if (!needUpdateFn(oldValue, value)) {
         const firstUpdate = !inRefreshSet;
         const forceUpdate = firstUpdate && value === undefined && oldValue === undefined;
