@@ -165,7 +165,7 @@ export class ServerSsoService implements NestInterceptor {
       id: nodeUser.uid,
       username: nodeUser.username,
       email: nodeUser.email,
-      picture: NODE_BB_URL + nodeUser.picture,
+      picture: nodeUser.picture ? NODE_BB_URL + nodeUser.picture : '',
       groups,
       collectionId: -1,
     };
