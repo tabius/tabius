@@ -92,7 +92,6 @@ export class SongPrevNextNavigatorComponent implements OnInit, OnDestroy {
           }
           if (this.isInitializing) {
             this.isInitializing = false;
-            console.error('Initialization finished');
             this.updateMobileControls(true);
           }
         });
@@ -108,7 +107,6 @@ export class SongPrevNextNavigatorComponent implements OnInit, OnDestroy {
     if (forceUpdate || this.isWideScreenMode !== isWideScreenMode) {
       this.unsubscribeHammer();
       if (this.bss.isBrowser && !isWideScreenMode && isTouchEventsSupportAvailable()) {
-        console.error('Installing hammer!');
         delete Hammer.defaults.cssProps.userSelect; // to allow selection
         this.hammer = new Hammer(window.document.body, {
           touchAction: 'auto',
