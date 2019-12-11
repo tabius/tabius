@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inp
 import {UserService} from '@app/services/user.service';
 import {getDefaultUserSongFontSize, newDefaultUserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {Subject, Subscription} from 'rxjs';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
 
 
@@ -44,8 +44,7 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
   ngOnChanges(changes: SimpleChanges): void {
     this.resetComponentState();
 
-    this.songSettingsSubscription = this.uds.getUser()
-        .pipe(switchMap(() => this.uds.getUserSongSettings(this.songId)))
+    this.songSettingsSubscription = this.uds.getUserSongSettings(this.songId)
         .pipe(takeUntil(this.destroyed$))
         .subscribe(songSettings => {
           this.songSettings = songSettings;

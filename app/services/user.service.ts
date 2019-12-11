@@ -45,14 +45,14 @@ export class UserService {
     return this.getUser().pipe(
         switchMap(user => this.store.get<UserSongSettings>(
             getUserSongSettingsKey(songId),
-            () => {
+            () => { // fetch function.
               if (user) {
                 return this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.songs[songId]));
               } else {
                 return of(newDefaultUserSongSettings(songId));
               }
             },
-            RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response
+            RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response or on every song settings update.
             isEqualByStringify
         ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)))));
   }
