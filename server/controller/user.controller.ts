@@ -6,7 +6,6 @@ import {conformsTo, validate} from 'typed-validation';
 import {UserSongSettingsValidator} from '@server/util/validators';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {Response} from 'express';
-import {checkUpdateByStringify} from '@common/util/misc-utils';
 
 @Controller('/api/user')
 export class UserController {
@@ -59,13 +58,8 @@ export class UserController {
     this.logger.log(`set settings: ${user.email}, song: ${songSettings.songId}`);
     const settings = await this._getSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
-    const sameAsDefault = !checkUpdateByStringify(defaultSettings, songSettings);
     const updatedSettings = {...settings} as any;
-    if (sameAsDefault) {
-      delete updatedSettings.songs[songSettings.songId];
-    } else {
-      updatedSettings.songs[songSettings.songId] = songSettings;
-    }
+    updatedSettings.songs[songSettings.songId] = songSettings;
     await this.userDbi.updateSettings(user.id, updatedSettings);
     return updatedSettings;
   }
