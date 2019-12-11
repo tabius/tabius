@@ -72,15 +72,19 @@ export class UserService {
     const key = getUserSongSettingsKey(songSettings.songId);
     await this.store.set<UserSongSettings>(key, songSettings, isEqualByStringify);
     // update settings on the server only if we have valid user session.
-    const update$$ = this.getUser().pipe(
-        flatMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings).pipe(take(1)) : of(undefined)),
-        flatMap(settings => settings ? fromPromise(this.updateUserSettings(settings)) : of()),
+    const userSettingsFromServer = await this.getUser().pipe(
+        flatMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings) : of(undefined)),
         take(1)
     ).toPromise();
-    await update$$;
+    if (userSettingsFromServer) {
+      await this.updateUserSettings(userSettingsFromServer);
+    }
   }
 
-  getH4SiFlag(refreshMode: RefreshMode = RefreshMode.RefreshOncePerSession): Observable<boolean> {
+  /**
+   * Note: using custom refresh option to allow forced refresh.
+   */
+  getH4SiFlag(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<boolean> {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {

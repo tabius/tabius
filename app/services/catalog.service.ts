@@ -6,7 +6,7 @@ import {flatMap, map, take} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@common/constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {isEqualByReference, isEqualByShallowArrayCompare, isEqualByVersion, combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
+import {combineLatest0, defined, isEqualByReference, isEqualByShallowArrayCompare, isEqualByVersion, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
@@ -16,7 +16,7 @@ const COLLECTION_DETAILS_KEY_PREFIX = 'c-details-';
 const COLLECTION_MOUNT_KEY_PREFIX = 'c-mount-';
 const COLLECTION_SONG_LIST_KEY_PREFIX = 'c-songs-';
 const SONG_KEY_PREFIX = 's-';
-const SONG_DETAIL_KEY_PREFIX = 's-details-';
+const SONG_DETAILS_KEY_PREFIX = 's-details-';
 const USER_COLLECTIONS_KEY = 'u-collections-';
 
 /** Client-side API to access/update catalog: collections and songs. */
@@ -334,7 +334,7 @@ function getSongKey(songId: number|undefined): string|undefined {
 }
 
 function getSongDetailsKey(songId: number|undefined): string|undefined {
-  return isValidId(songId) ? SONG_DETAIL_KEY_PREFIX + songId : undefined;
+  return isValidId(songId) ? SONG_DETAILS_KEY_PREFIX + songId : undefined;
 }
 
 function getUserCollectionsKey(userId: string|undefined): string|undefined {
