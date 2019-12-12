@@ -8,7 +8,7 @@ import {UserService} from '@app/services/user.service';
 import {waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
-/** Checks session state in the TabiusAjaxResponse and updates app state. */
+/** Checks session state in the Tabius AjaxResponse and updates app state. */
 @Injectable()
 export class SessionStateInterceptor implements HttpInterceptor {
 

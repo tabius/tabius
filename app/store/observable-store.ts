@@ -9,11 +9,20 @@ export const DO_NOT_PREFETCH = undefined;
 
 /** Lazy refresh (re-fetch) modes for get operation. */
 export enum RefreshMode {
-  /** The key is never re-fetched. */
+  /**
+   * The key is not re-fetched if found in the local store.
+   * If key is not found in the local store -> fetch is initiated.
+   */
   DoNotRefresh = 1,
-  /** The key is fetched if it not was fetched during the session before. */
+  /**
+   * The key is fetched only if
+   *  1. It was not successfully fetched during the app session before.
+   *  2. There was no set during the app session for the key yet.
+   */
   RefreshOncePerSession = 2,
-  /** The key is fetched. */
+  /**
+   * The key is fetched regardless of the local store content.
+   */
   Refresh = 3
 }
 
@@ -21,9 +30,9 @@ export interface ObservableStore {
   /**
    * Returns observable for the key.
    * @param key - key of the value. 'undefined' key will result to no-op.
-   * @param fetchFn - optional fetch function. If value was never seen before fetch() will be called.
-   * @param refreshMode - defines how to refresh value. fetchFn is used to get the refreshed value.
-   * @param needUpdateFn - compares existing & refreshed values and return false if the update should be ignored.
+   * @param fetchFn - optional fetch function. Called if refreshMode requires it.
+   * @param refreshMode - defines how to refresh the value. fetchFn is used to get the refreshed value.
+   * @param needUpdateFn - compares existing & refreshed values and decides if the update should be ignored.
    */
   get<T>(key: string|undefined,
          fetchFn: FetchFn<T>|undefined,
@@ -35,7 +44,7 @@ export interface ObservableStore {
    * Updates value in the DB.
    * @param key - key of the value. 'undefined' key will result to no-op.
    * @param value - the value to set. 'undefined' value will trigger entry removal from the DB.
-   * @param needUpdateFn -  used to check if the old value equal to the new value. If values are equal -> set will result to no-op.
+   * @param needUpdateFn - used to check if the old value equal to the new value. If values are equal -> set will result to no-op.
    */
   set<T>(key: string|undefined, value: T|undefined, needUpdateFn: NeedUpdateFn<T>): Promise<void>;
 

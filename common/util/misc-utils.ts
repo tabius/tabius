@@ -1,4 +1,3 @@
-import {Versioned} from '@common/common-model';
 import {Collection, CollectionType, Song} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
@@ -15,37 +14,18 @@ export function toArrayOfInts(text: string, sep: string): number[] {
   return text.split(sep).map(v => +v);
 }
 
-/** Returns true if update is needed. */
-export function isEqualByVersion(oldValue: Versioned|undefined, newValue: Versioned|undefined): boolean {
-  if (oldValue === newValue) {
-    return false;
-  }
-  if (oldValue === undefined || newValue === undefined) {
-    return true;
-  }
-  return newValue.version > oldValue.version;
-}
-
-export function isEqualByShallowArrayCompare(oldValue: readonly any[]|undefined, newValue: readonly any[]|undefined): boolean {
-  return !shallowArraysEquals(oldValue, newValue);
-}
-
 export function isEqualByStringify(oldValue: any|undefined, newValue: any|undefined): boolean {
   if (oldValue === newValue) {
-    return false;
-  }
-  if (oldValue === undefined || newValue === undefined) {
     return true;
   }
-  return JSON.stringify(oldValue) !== JSON.stringify(newValue);
-}
-
-export function isEqualByReference(oldValue: any|undefined, newValue: any|undefined): boolean {
-  return newValue !== oldValue;
+  if (oldValue === undefined || newValue === undefined) {
+    return false;
+  }
+  return JSON.stringify(oldValue) === JSON.stringify(newValue);
 }
 
 /** Returns true if arrays are equal. */
-export function shallowArraysEquals(a1?: readonly any[], a2?: readonly any[]): boolean {
+export function isEqualByShallowArrayCompare(a1?: readonly any[], a2?: readonly any[]): boolean {
   if (a1 === a2) {
     return true;
   }

@@ -2,8 +2,9 @@ import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';
 import {ObservableStoreImpl} from '@app/store/observable-store-impl';
 import {KV, StoreAdapter} from '@app/store/store-adapter';
 import {RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
-import {take} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {delay, switchMap, take} from 'rxjs/operators';
+import {of, ReplaySubject} from 'rxjs';
+import {checkUpdateByStringify} from '@app/store/check-update-functions';
 
 /** No-Op impl used in tests. */
 class NoOpStoreAdapter implements StoreAdapter {
@@ -121,8 +122,7 @@ describe('ObservableStore', () => {
       }
     }
 
-    const adapter = new StoreAdapter();
-    const store = new ObservableStoreImpl('name', true, () => adapter);
+    const store = new ObservableStoreImpl('name', true, () => new StoreAdapter());
 
     const getKey = 'key';
     const fetchedValue = 'fetched';
@@ -135,4 +135,118 @@ describe('ObservableStore', () => {
     done();
   });
 
+  it('should respect RefreshMode.RefreshOncePerSession', async (done) => {
+    let nFetchesCalled = 0;
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return of('value');
+    };
+    const store = new ObservableStoreImpl('name1', true, () => new NoOpStoreAdapter());
+    const key = 'Key';
+    const v1 = await store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    const v2 = await store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    expect(v1).toBe(v2);
+    expect(nFetchesCalled).toBe(1);
+    done();
+  });
+
+  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel', async (done) => {
+    let nFetchesCalled = 0;
+    const key = 'Key';
+    const value = 'Value';
+    const resolver$ = new ReplaySubject(1);
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return resolver$.pipe(switchMap(() => of(value)));
+    };
+    const store = new ObservableStoreImpl('store', true, () => new NoOpStoreAdapter());
+    const v1$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    const v2$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    resolver$.next();
+    const res = await Promise.all([v1$$, v2$$]);
+    expect(nFetchesCalled).toBe(1);
+    expect(res).toEqual([value, value]);
+    done();
+  });
+
+  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel with delay', async (done) => {
+    let nFetchesCalled = 0;
+    const key = 'Key';
+    const value = 'Value';
+    const resolver$ = new ReplaySubject(1);
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return resolver$.pipe(delay(100), switchMap(() => of(value)));
+    };
+    const store = new ObservableStoreImpl('store', true, () => new NoOpStoreAdapter());
+    const v1$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    const v2$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    resolver$.next();
+    const res = await Promise.all([v1$$, v2$$]);
+    expect(nFetchesCalled).toBe(1);
+    expect(res).toEqual([value, value]);
+    done();
+  });
+
+  it('should not call fetchFn for RefreshMode.RefreshOncePerSession if there was set before', async (done) => {
+    const key = 'Key';
+    const value = 'Value';
+
+    class TestStoreAdapter extends NoOpStoreAdapter {
+      get = <T>(k: string): Promise<T|undefined> => (Promise.resolve(k === key ? value : undefined) as Promise<T|undefined>);
+    }
+
+    let nFetchesCalled = 0;
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return of(value);
+    };
+
+    const store = new ObservableStoreImpl('store', true, () => new TestStoreAdapter());
+    await store.set<string>(key, value, skipUpdateCheck);
+    await store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    expect(nFetchesCalled).toBe(0);
+    done();
+  });
+
+  it('should not call fetchFn for RefreshMode.DoNotRefresh', async (done) => {
+    let nFetchesCalled = 0;
+    const key = 'Key';
+    const value = 'Value';
+
+    class TestStoreAdapter extends NoOpStoreAdapter {
+      get = <T>(k: string): Promise<T|undefined> => (Promise.resolve(k === key ? value : undefined) as Promise<T|undefined>);
+    }
+
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return of('?');
+    };
+    const store = new ObservableStoreImpl('store', true, () => new TestStoreAdapter());
+    await store.set<string>(key, value, skipUpdateCheck);
+    const result = await store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify).pipe(take(1)).toPromise();
+    expect(nFetchesCalled).toBe(0);
+    expect(result).toBe(value);
+    done();
+  });
+
+  it('should call fetchFn for RefreshMode.Refresh for all gets', async (done) => {
+    let nFetchesCalled = 0;
+    const key = 'Key';
+    const value = 'Value';
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return of(value);
+    };
+    const store = new ObservableStoreImpl('store', true, () => new NoOpStoreAdapter());
+    await store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify).pipe(take(1)).toPromise();
+    await store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify).pipe(take(1)).toPromise();
+    await store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify).pipe(take(1)).toPromise();
+    await store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, checkUpdateByStringify).pipe(take(1)).toPromise();
+    await store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify).pipe(take(1)).toPromise();
+    expect(nFetchesCalled).toBe(3);
+    done();
+  });
+
+  // TODO: add tests for error handling!
 });
