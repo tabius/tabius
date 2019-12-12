@@ -1,8 +1,8 @@
-import {Observable, of, ReplaySubject, throwError} from 'rxjs';
+import {Observable, of, ReplaySubject} from 'rxjs';
 import {KV, StoreAdapter} from '@app/store/store-adapter';
 import {makeStateKey, TransferState} from '@angular/platform-browser';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {catchError, shareReplay, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, flatMap, shareReplay, switchMap, take} from 'rxjs/operators';
 import {FetchFn, NeedUpdateFn, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 
 const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
@@ -70,10 +70,12 @@ export class ObservableStoreImpl implements ObservableStore {
     if (rs$) {
       return this.refreshRxStreamIfNeeded(rs$, key, fetchFn, refreshMode, needUpdateFn);
     }
-    return this.createNewRxStreamForKey(key, fetchFn, refreshMode, needUpdateFn);
+    const init$$ = this.createNewRxStreamForKey(key, fetchFn, refreshMode, needUpdateFn);
+    return fromPromise(init$$)
+        .pipe(flatMap((v: Observable<T|undefined>) => v));
   }
 
-  private createNewRxStreamForKey<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): Observable<T|undefined> {
+  private async createNewRxStreamForKey<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): Promise<Observable<T|undefined>> {
     // First get op. First create a blocking promise for concurrent first gets.
     let firstGetResolveFn: (() => void)|undefined = undefined;
     const firstGetOp: InitOp = {
@@ -81,29 +83,19 @@ export class ObservableStoreImpl implements ObservableStore {
         firstGetResolveFn = resolve;
       })
     };
-    this.inFlightInitRxOps.set(key, firstGetOp);
+    try {
+      this.inFlightInitRxOps.set(key, firstGetOp);
 
-    // create new replay subject for the key.
-    const rs$ = this.registerNewRxStreamForKey<T>(key);
+      // create new replay subject for the key.
+      const rs$ = this.registerNewRxStreamForKey<T>(key);
 
-    // create firstGet promise. It will emit the value into rs$ on completion
-    const firstGetOp$$ = this.initializeRxStream(rs$, key, fetchFn, refreshMode, needUpdateFn);
-
-    // run first get op and return rs$ as the result.
-    const firstGetOp$: Observable<void> = fromPromise(firstGetOp$$);
-    return firstGetOp$.pipe(
-        take(1),
-        switchMap(() => rs$),
-        tap(() => {
-          this.inFlightInitRxOps.delete(key);
-          firstGetResolveFn!();
-        }),
-        catchError((err) => {
-          this.inFlightInitRxOps.delete(key);
-          firstGetResolveFn!();
-          return throwError(err);
-        }),
-    );
+      // create firstGet promise. It will emit the value into rs$ on completion
+      await this.initializeRxStream(rs$, key, fetchFn, refreshMode, needUpdateFn);
+      return rs$;
+    } finally {
+      firstGetResolveFn!();
+      this.inFlightInitRxOps.delete(key);
+    }
   }
 
   /** Note: This method is called only on the first access to the value during the app session. */
@@ -119,10 +111,8 @@ export class ObservableStoreImpl implements ObservableStore {
       await this.refresh(key, fetchFn, refreshMode, needUpdateFn);
       return;
     }
-    if (fetchFn) {
-      const valueFromFetch = await this.doFetch(fetchFn, key);
-      await this.set(key, valueFromFetch, needUpdateFn);
-    }
+    const valueFromFetch = fetchFn ? await this.doFetch(fetchFn, key) : undefined;
+    await this.set(key, valueFromFetch, needUpdateFn);
   }
 
   private refreshRxStreamIfNeeded<T>(rs$: Observable<T|undefined>,
@@ -131,7 +121,7 @@ export class ObservableStoreImpl implements ObservableStore {
                                      refreshMode: RefreshMode,
                                      needUpdateFn: NeedUpdateFn<T>): Observable<T|undefined> {
     const firstGetOp = this.inFlightInitRxOps.get(key);
-    const firstGet$: Observable<unknown> = firstGetOp ? fromPromise(firstGetOp.promise) : of('');
+    const firstGet$: Observable<unknown> = firstGetOp ? fromPromise(firstGetOp.promise) : of(undefined);
     return firstGet$.pipe( // wait until first get is completed.
         switchMap(() => fromPromise(this.refresh(key, fetchFn, refreshMode, needUpdateFn))), // do refresh
         take(1),

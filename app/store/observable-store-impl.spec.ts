@@ -248,5 +248,45 @@ describe('ObservableStore', () => {
     done();
   });
 
+  it('should return store value when RefreshMode.DoNotRefresh and no fetchFn provided', async (done) => {
+    const store = new ObservableStoreImpl('store', true, () => new NoOpStoreAdapter());
+    const result = await store.get<string>('some key', undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    expect(result).toBeUndefined();
+    done();
+  });
+
+  it('should not be blocked by gets with no subscription', async (done) => {
+    const key = 'Key';
+    const value = 'Value';
+    const fetchFn = () => {
+      return of(value);
+    };
+    const store = new ObservableStoreImpl('store', true, () => new NoOpStoreAdapter());
+    store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, skipUpdateCheck);
+    const o2 = store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, skipUpdateCheck);
+    const res = await o2.pipe(take(1)).toPromise();
+    expect(res).toBe(value);
+    done();
+  });
+
+  it('should not fetch twice with RefreshMode.RefreshOncePerSession when init is delayed', async (done) => {
+    const key = 'Key';
+    const value = 'Value';
+    let nFetchesCalled = 0;
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return of(value);
+    };
+    const store = new ObservableStoreImpl('store', true, () => new NoOpStoreAdapter());
+    const o1 = store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, skipUpdateCheck);
+    const o2 = store.get<string>(key, fetchFn, RefreshMode.RefreshOncePerSession, skipUpdateCheck);
+    const res1 = await o1.pipe(take(1)).toPromise();
+    const res2 = await o2.pipe(take(1)).toPromise();
+    expect(res1).toBe(value);
+    expect(res2).toBe(value);
+    expect(nFetchesCalled).toBe(1);
+    done();
+  });
+
   // TODO: add tests for error handling!
 });
