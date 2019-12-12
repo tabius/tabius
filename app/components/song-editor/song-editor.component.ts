@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
@@ -58,6 +58,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
 
   constructor(private readonly cds: CatalogService,
               private readonly toastService: ToastService,
+              readonly cd: ChangeDetectorRef,
   ) {
   }
 
@@ -84,6 +85,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
             this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
             this.loaded = true;
             this.updateUIOnLoadedState();
+            this.cd.detectChanges();
           });
     }
   }
@@ -108,7 +110,6 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyed$.next();
   }
-
 
   create(): void {
     if (!this.createMode) {
