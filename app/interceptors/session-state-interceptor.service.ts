@@ -8,7 +8,10 @@ import {UserService} from '@app/services/user.service';
 import {waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
-/** Checks session state in the Tabius AjaxResponse and updates app state. */
+/**
+ * Checks session state in the response and updates app session state if needed.
+ * Unpacks payload from the response (originally wrapped by ServerSsoService).
+ */
 @Injectable()
 export class SessionStateInterceptor implements HttpInterceptor {
 
@@ -23,20 +26,27 @@ export class SessionStateInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (this.bss.isServer || isSessionStateManagementRequest(req)) {
-      return next.handle(req);
+      return next.handle(req).pipe(
+          flatMap(event => {
+            return event instanceof HttpResponse
+                ? of(event.clone({body: event.body.payload}))
+                : of(event);
+          }));
     }
     return next.handle(req)
         .pipe(
             flatMap(event => {
-              if (event instanceof HttpResponse) {
-                const session: AjaxSessionInfo|undefined = (event.body || {}).session;
-                if (session && this.userId !== session.userId) {
-                  console.info(`Enforcing session info update. Old user: ${this.userId} new user: ${session.userId}`);
-                  const authPromise$$ = session.userId ? this.authService.updateSignInState() : this.authService.signOut();
-                  return waitForAllPromisesAndReturnFirstArg(event, [authPromise$$]);
-                }
+              if (!(event instanceof HttpResponse)) {
+                return of(event);
               }
-              return of(event);
+              const session: AjaxSessionInfo|undefined = (event.body || {}).session;
+              const newEvent = event.clone({body: event.body.payload});
+              if (session && this.userId !== session.userId) {
+                console.info(`Enforcing session info update. Old user: ${this.userId} new user: ${session.userId}`);
+                const authPromise$$ = session.userId ? this.authService.updateSignInState() : this.authService.signOut();
+                return waitForAllPromisesAndReturnFirstArg(newEvent, [authPromise$$]);
+              }
+              return of(newEvent);
             })
         );
   }

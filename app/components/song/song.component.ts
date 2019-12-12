@@ -54,7 +54,6 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
     this.songSubscription = combineLatest([song$, songDetails$, collection$, songSettings$])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(([song, songDetails, collection, songSettings]) => {
-          console.log('gt-song')
           if (!song || !songDetails || !collection || !songSettings) {
             return; // TODO: not found? 404?
           }

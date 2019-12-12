@@ -69,7 +69,7 @@ export class ServerSsoService implements NestInterceptor {
             this.logger.log('Successfully connected to MongoDB');
             this.nodeDb = client.db(mongo.db);
           })
-          .catch(err => this.logger.error('Failed to initialize connection to MongoDB: ' + JSON.stringify(err)));
+          .catch(err => this.logger.error(`Failed to initialize connection to MongoDB: ${JSON.stringify(err)}`));
     }
   }
 
@@ -79,12 +79,9 @@ export class ServerSsoService implements NestInterceptor {
     await this.processSessionCookie(req.session, ssoSessionCookie); //todo: handle errors correctly.
     // process request and append user session info to it.
     return next.handle().pipe(
-        map(response => {
-          if (Array.isArray(response)) { //todo: remove all array responses.
-            return response;
-          }
+        map(originalResponse => {
           const user = ServerSsoService.getUserOrUndefined(req.session);
-          return {...response, session: {userId: user && user.id}};
+          return {payload: originalResponse, session: {userId: user && user.id}};
         })
     );
   }

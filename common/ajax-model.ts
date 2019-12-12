@@ -9,7 +9,7 @@ export interface TabiusAjaxResponse {
   session?: AjaxSessionInfo;
 }
 
-export interface LoginResponse extends TabiusAjaxResponse {
+export interface LoginResponse {
   readonly user: User|undefined;
   readonly settings: UserSettings;
 }
@@ -20,7 +20,7 @@ export interface CreateListedCollectionRequest {
   type: CollectionType;
 }
 
-export interface CreateListedCollectionResponse extends TabiusAjaxResponse {
+export interface CreateListedCollectionResponse {
   /** Id of the created collection. */
   collectionId: number;
   /** List of all listed collections. */
@@ -31,7 +31,7 @@ export interface CreateUserCollectionRequest {
   name: string;
 }
 
-export interface CreateUserCollectionResponse extends TabiusAjaxResponse {
+export interface CreateUserCollectionResponse {
   /** Id of the created collection. */
   collectionId: number;
   /** List of all user collections. */
@@ -45,40 +45,40 @@ export interface UpdateCollectionRequest {
   mount: string;
 }
 
-export interface UpdateCollectionResponse extends TabiusAjaxResponse {
+export interface UpdateCollectionResponse {
   /** List of all collections (for the catalog or a user). */
   collections: Collection[];
 }
 
-export interface DeleteUserCollectionResponse extends TabiusAjaxResponse {
+export interface DeleteUserCollectionResponse {
   userId: string;
   /** List of all collections (for the catalog or a user). */
   collections: Collection[];
 }
 
-export interface UpdateSongRequest extends TabiusAjaxResponse {
+export interface UpdateSongRequest {
   song: Song;
   details: SongDetails;
 }
 
-export interface UpdateSongResponse extends TabiusAjaxResponse {
+export interface UpdateSongResponse {
   song: Song;
   details: SongDetails;
   /** All songs (owned and secondary) in the primary song collection.*/
   songs: Song[];
 }
 
-export interface DeleteSongResponse extends TabiusAjaxResponse {
+export interface DeleteSongResponse {
   collectionId: number;
   songs: Song[];
 }
 
 
-export interface FullTextSongSearchRequest extends TabiusAjaxResponse {
+export interface FullTextSongSearchRequest {
   text: string;
 }
 
-export interface FullTextSongSearchResponse extends TabiusAjaxResponse {
+export interface FullTextSongSearchResponse {
   results: FullTextSongSearchResult[];
 }
 
@@ -105,7 +105,7 @@ export const MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS = 100;
 
 export type FullTextSongSearchResultMatchType = 'title'|'content';
 
-export interface FullTextSongSearchResult extends TabiusAjaxResponse {
+export interface FullTextSongSearchResult {
   songId: number;
   songTitle: string;
   collectionName: string;
