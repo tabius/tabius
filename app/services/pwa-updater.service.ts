@@ -1,7 +1,7 @@
 import {ApplicationRef, Inject, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {first, take} from 'rxjs/operators';
-import {APP_BROWSER_STORE_TOKEN} from '@common/constants';
+import {APP_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 
 const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';

@@ -2,7 +2,7 @@ import {HttpService, Injectable, Logger} from '@nestjs/common';
 import {FullTextSongSearchResult, FullTextSongSearchResultMatchType, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
 import {take} from 'rxjs/operators';
 import {AxiosResponse} from 'axios';
-import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
+import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 
 const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 

@@ -3,8 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {FullTextSongSearchRequest, FullTextSongSearchResponse, FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
 import {getSongPageLink} from '@common/util/misc-utils';
 import {getSongTextWithNoChords} from '@app/components/song-page/song-page.component';
-
-export const MIN_LEN_FOR_FULL_TEXT_SEARCH = 4;
+import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 
 // TODO unify listing styles with other components.
 

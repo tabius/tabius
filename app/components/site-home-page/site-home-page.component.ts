@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {LINK_CATALOG, LINK_STUDIO} from '@common/mounts';
-import {NODE_BB_URL} from '@common/constants';
+import {NODE_BB_URL} from '@app/app-constants';
 
 @Component({
   selector: 'gt-site-home-page',

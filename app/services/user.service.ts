@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 import {DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {flatMap, map, switchMap, take} from 'rxjs/operators';
-import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
+import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {isEqualByStringify, isValidId} from '@common/util/misc-utils';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {checkUpdateByReference, checkUpdateByStringify} from '@app/store/check-update-functions';

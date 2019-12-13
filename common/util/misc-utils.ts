@@ -1,11 +1,10 @@
 import {Collection, CollectionType, Song} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
-import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT, NODE_BB_URL} from '@common/constants';
+import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {environment} from '@app/environments/environment';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length === 0) {
@@ -59,28 +58,12 @@ export function getNameFirstFormArtistName(collection: { type: CollectionType, n
   return sepIdx > 0 ? collection.name.substring(sepIdx + 1) + ' ' + collection.name.substring(0, sepIdx) : collection.name;
 }
 
-export function getCollectionImageUrl(mount: string): string {
-  return `${environment.backendUrl}/images/collection/profile/${mount}.jpg`;
-}
-
 export function hasValidForumTopic(song?: Song): song is Song {
   return song !== undefined && isValidId(song.tid);
 }
 
-export function getSongForumTopicLink(song?: Song): string {
-  if (!hasValidForumTopic(song)) {
-    return '#';
-  }
-  return `${NODE_BB_URL}/topic/${song.tid}`;
-}
-
 export function getCollectionPageLink(collectionOrMount: string|{ mount: string }): string {
-  let mount = '';
-  if (typeof collectionOrMount === 'string') {
-    mount = collectionOrMount;
-  } else {
-    mount = collectionOrMount.mount;
-  }
+  const mount = typeof collectionOrMount === 'string' ? collectionOrMount : collectionOrMount.mount;
   return `/${MOUNT_COLLECTION_PREFIX}${mount}`;
 }
 

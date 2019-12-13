@@ -2,7 +2,7 @@ import {IndexedDbStoreAdapter} from '@app/store/indexed-db-store-adapter';
 import {LocalStorageStoreAdapter} from '@app/store/local-storage-store-adapter';
 import {StoreAdapter} from '@app/store/store-adapter';
 import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';
-import {USER_STORE_NAME} from '@common/constants';
+import {USER_STORE_NAME} from '@app/app-constants';
 
 describe('Store adapter [IndexedDb]', () => {
 

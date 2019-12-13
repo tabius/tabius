@@ -1,5 +1,5 @@
 import {KV, StoreAdapter} from '@app/store/store-adapter';
-import {CATALOG_STORE_NAME, USER_STORE_NAME} from '@common/constants';
+import {CATALOG_STORE_NAME, USER_STORE_NAME} from '@app/app-constants';
 
 const MAX_KEY_CHAR = '~';
 

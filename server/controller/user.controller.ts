@@ -13,7 +13,9 @@ export class UserController {
 
   private readonly logger = new Logger(UserController.name);
 
-  constructor(private readonly userDbi: UserDbi) {
+  constructor(private readonly userDbi: UserDbi,
+              private ssoService: ServerSsoService,
+  ) {
   }
 
   /** Login callback. Called on successful user login. */
@@ -38,7 +40,7 @@ export class UserController {
   @Get('/logout')
   async logout(@Res() response: Response, @Session() session): Promise<void> {
     this.logger.log('/logout ' + JSON.stringify(ServerSsoService.getUserOrUndefined(session)));
-    ServerSsoService.logout(response);
+    this.ssoService.logout(response);
     response.status(HttpStatus.OK).send();
   }
 

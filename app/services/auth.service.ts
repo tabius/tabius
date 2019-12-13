@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {LoginResponse} from '@common/ajax-model';
 import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {NODE_BB_LOGIN_URL} from '@common/constants';
+import {NODE_BB_LOGIN_URL} from '@app/app-constants';
 import {take} from 'rxjs/operators';
 
 export const UPDATE_SIGN_IN_STATE_URL = '/api/user/login';

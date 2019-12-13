@@ -3,7 +3,7 @@ import {UserSongSettings} from '@common/user-model';
 import {eachItem, equals, isArray, isBoolean, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
 import {CreateListedCollectionRequest, CreateUserCollectionRequest} from '@common/ajax-model';
 import {CollectionType, MAX_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_COLLECTION_MOUNT_LENGTH, MIN_COLLECTION_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/catalog-model';
-import {INVALID_ID} from '@common/constants';
+import {INVALID_ID} from '@common/common-constants';
 
 export function paramToId(value: string): number {
   const id = +value;

@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-model';
 import {flatMap, map, take} from 'rxjs/operators';
-import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@common/constants';
+import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';

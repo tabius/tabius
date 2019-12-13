@@ -1,7 +1,7 @@
 import {promisify} from 'util';
 import {readDbConfig} from '@server/db/db-config';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {getConfigFilePath} from '@server/util/server-config-utils';
+import {getConfigFilePath} from '@server/util/server-config';
 
 const mysql = require('mysql2/promise');
 const fs = require('fs');

@@ -5,7 +5,7 @@ import {takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SongDetails} from '@common/catalog-model';
-import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@common/constants';
+import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
 import {RefreshMode} from '@app/store/observable-store';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 

@@ -9,7 +9,7 @@ import {UserService} from '@app/services/user.service';
 import {ToastService} from '@app/toast/toast.service';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {LocationStrategy} from '@angular/common';
-import {NODE_BB_URL} from '@common/constants';
+import {NODE_BB_URL} from '@app/app-constants';
 
 enum NavSection {
   Home = 1,

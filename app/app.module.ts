@@ -22,7 +22,7 @@ import {CollectionBreadcrumbComponent} from '@app/components/collection-breadcru
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
 import {InlineSongSettingsComponent} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SettingsPageComponent} from '@app/components/settings-page/settings-page.component';
-import {APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@common/constants';
+import {APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {SigninSignoutButtonComponent} from '@app/components/signin-signout-button/signin-signout-button.component';
 import {PwaUpdaterService} from '@app/services/pwa-updater.service';

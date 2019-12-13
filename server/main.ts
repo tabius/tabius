@@ -3,8 +3,7 @@ import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
-import {getServerPort} from '@server/util/server-config-utils';
-import {environment} from '@app/environments/environment';
+import {SERVER_CONFIG} from '@server/util/server-config';
 
 const cookieParser = require('cookie-parser');
 
@@ -19,20 +18,18 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(session({
     secret: 'we have no secret',
-    name: 'tabius.sid',
+    name: SERVER_CONFIG.sessionCookieName,
     resave: false,
     saveUninitialized: true
   }));
-  await app.listen(getServerPort());
+  await app.listen(SERVER_CONFIG.serverPort);
 }
 
 bootstrap().catch(err => console.error(err));
 
-const CORS_ORIGIN_WHITELIST = ['http://localhost:4201', environment.backendUrl];
-
 function buildCorsOptions(): CorsOptions {
   return {
-    origin: CORS_ORIGIN_WHITELIST,
+    origin: SERVER_CONFIG.corsOriginWhitelist,
     credentials: true
   };
 }

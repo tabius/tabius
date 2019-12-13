@@ -7,7 +7,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {renderChords} from '@app/utils/chords-renderer';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
 import {isSmallScreenDevice} from '@common/util/misc-utils';
-import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/constants';
+import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/common-constants';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings} from '@common/user-model';
 
 /** Heuristic used to enable multicolumn mode. */

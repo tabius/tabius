@@ -6,7 +6,7 @@ import {takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
-import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/constants';
+import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'

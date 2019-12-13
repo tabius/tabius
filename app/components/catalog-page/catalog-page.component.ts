@@ -9,10 +9,9 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canCreateNewPublicCollection, getCollectionPageLink} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {MIN_DESKTOP_WIDTH} from '@common/constants';
+import {MIN_DESKTOP_WIDTH, MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {User} from '@common/user-model';
 
 interface LetterBlock {

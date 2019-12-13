@@ -1,5 +1,4 @@
-import {Versioned, WithId} from '@common/common-model';
-import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/constants';
+import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/common-constants';
 
 export const USERS_STORE_SCHEMA_VERSION = 3;
 

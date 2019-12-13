@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {NODE_BB_ADD_NEW_CATEGORY_URL} from '@common/constants';
+import {NODE_BB_ADD_NEW_CATEGORY_URL} from '@app/app-constants';
 
 @Component({
   selector: 'gt-moderator-prompt',

@@ -5,6 +5,7 @@ import {DbService} from './db.service';
 import {CollectionDbi} from './collection-dbi.service';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {NodeBBService} from '@server/db/node-bb.service';
+import {ServerSsoService} from '@server/service/server-sso.service';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {NodeBBService} from '@server/db/node-bb.service';
     DbService,
     FullTextSearchDbi,
     NodeBBService,
+    ServerSsoService,
     SongDbi,
     UserDbi,
   ],
@@ -22,6 +24,7 @@ import {NodeBBService} from '@server/db/node-bb.service';
     CollectionDbi,
     FullTextSearchDbi,
     NodeBBService,
+    ServerSsoService,
     SongDbi,
     UserDbi,
   ]

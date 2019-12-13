@@ -3,7 +3,7 @@ import {DbService} from './db.service';
 import {Collection, CollectionDetails, CollectionType} from '@common/catalog-model';
 import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
-import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_NAME, USER_FAV_COLLECTION_SUFFIX} from '@common/constants';
+import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_NAME, USER_FAV_COLLECTION_SUFFIX} from '@common/common-constants';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 
 interface CollectionRow {

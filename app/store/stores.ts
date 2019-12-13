@@ -1,6 +1,6 @@
 import {Inject, PLATFORM_ID} from '@angular/core';
 import {TransferState} from '@angular/platform-browser';
-import {APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME} from '@common/constants';
+import {APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME} from '@app/app-constants';
 import {isPlatformBrowser} from '@angular/common';
 import {IndexedDbStoreAdapter} from '@app/store/indexed-db-store-adapter';
 import {InMemoryStoreAdapter} from '@app/store/in-memory-store-adapter';

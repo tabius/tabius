@@ -5,7 +5,7 @@ import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, defined, getCollectionPageLink, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
-import {MIN_DESKTOP_WIDTH} from '@common/constants';
+import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 
 const Hammer: HammerStatic = require('hammerjs');
 
