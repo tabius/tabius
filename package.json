@@ -5,11 +5,12 @@
   "repository": {},
   "scripts": {
     "build": "npm run update-version && ng build",
+    "e2e": "ng e2e",
     "server": "nodemon",
     "sitemap": "ts-node scripts/generate-sitemap.ts",
     "ssr:dev": "npm run update-version && ng build && ng run tabius:ssr",
-    "ssr:prod-ru": "npm run update-version && ng build -c tabius-ru && ng run tabius:ssr:tabius-ru",
     "ssr:prod-org": "npm run update-version && ng build -c tabius-org && ng run tabius:ssr:tabius-org",
+    "ssr:prod-ru": "npm run update-version && ng build -c tabius-ru && ng run tabius:ssr:tabius-ru",
     "start": "npm run update-version && ng serve",
     "test": "npm run update-version && ng test",
     "update-version": "node scripts/update-build-version.js"
@@ -74,6 +75,8 @@
     "karma-jasmine-html-reporter": "1.4.2",
     "node-sass": "4.13.0",
     "nodemon": "2.0.2",
+    "protractor": "5.4.2",
+    "ts-node": "8.5.4",
     "tsconfig-paths": "3.9.0",
     "typescript": "3.5.3"
   }
