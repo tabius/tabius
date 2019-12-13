@@ -7,7 +7,7 @@ const APP_DOMAIN = 'tabius.org';
 export const environment: TabiusEnv = {
   production: true,
   backendUrl: `https://${APP_DOMAIN}`,
+  ssrBackendUrl: 'http://localhost:24001',
   nodeBbUrl: `https://forum.${APP_DOMAIN}`,
-  nodeBbCookieDomain: `.${APP_DOMAIN}`,
   buildInfo,
 };
