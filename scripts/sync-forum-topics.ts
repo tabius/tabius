@@ -1,14 +1,20 @@
 import {promisify} from 'util';
 import {readDbConfig} from '@server/db/db-config';
 import {get, post, put} from 'request';
-import {getCollectionImageUrl, getNameFirstFormArtistName} from '@common/util/misc-utils';
+import {getNameFirstFormArtistName} from '@common/util/misc-utils';
 import {CollectionType} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
 
-const forumUrl = process.env.TABIUS_FORUM_URL;
-if (forumUrl === undefined) {
+const FORUM_URL = process.env.TABIUS_FORUM_URL;
+if (FORUM_URL === undefined) {
   throw new Error('TABIUS_FORUM_URL is required.');
 }
+
+const BACKEND_URL = process.env.TABIUS_FORUM_URL;
+if (BACKEND_URL === undefined) {
+  throw new Error('TABIUS_BACKEND_URL is required.');
+}
+
 const forumAuthToken = process.env.TABIUS_NODE_BB_AUTH_TOKEN;
 if (forumAuthToken === undefined) {
   throw new Error('TABIUS_NODE_BB_AUTH_TOKEN is required.');
@@ -79,7 +85,7 @@ main()
     .catch(error => console.error(error));
 
 async function getCategory(id: number): Promise<ForumCategory|string> {
-  return (await getAsync(`${forumUrl}/api/category/${id}`, {json: true})).body;
+  return (await getAsync(`${FORUM_URL}/api/category/${id}`, {json: true})).body;
 }
 
 function getCollectionPageUrl(collectionMount: string): string {
@@ -99,12 +105,12 @@ async function syncCollectionTopic(collection: CollectionRow, connection: any): 
       name: collection.name,
       description: `${altCollectionName} - обсуждаем подбор аккордов и новинки. ${getCollectionPageUrl(collection.mount)}`,
       parentCid: ALL_COLLECTIONS_CATEGORY_ID,
-      backgroundImage: getCollectionImageUrl(collection.mount)
+      backgroundImage: `${BACKEND_URL}/images/collection/profile/${collection.mount}.jpg`,
     },
   };
 
   if (typeof category === 'string') { // not found
-    const categoryResponse = (await postAsync(`${forumUrl}/api/v2/categories`, putPostPayload)).body;
+    const categoryResponse = (await postAsync(`${FORUM_URL}/api/v2/categories`, putPostPayload)).body;
     if (categoryResponse.code !== 'ok') {
       console.error('Failed to create collection category', collection, categoryResponse);
       throw new Error(`Failed to create collection category: ${collection.id}`);
@@ -114,7 +120,7 @@ async function syncCollectionTopic(collection: CollectionRow, connection: any): 
     await connection.execute(`UPDATE collection SET forum_category_id = ${category.cid} WHERE id = ${collection.id}`);
     console.info(`Created new category for ${collection.mount}`);
   } else {
-    const categoryResponse = (await putAsync(`${forumUrl}/api/v2/categories/${collection.forum_category_id}`, putPostPayload)).body;
+    const categoryResponse = (await putAsync(`${FORUM_URL}/api/v2/categories/${collection.forum_category_id}`, putPostPayload)).body;
     if (categoryResponse.code !== 'ok') {
       console.error('Failed to update collection category', collection, categoryResponse);
       throw new Error(`Failed to update collection category: ${collection.id}`);
@@ -123,7 +129,7 @@ async function syncCollectionTopic(collection: CollectionRow, connection: any): 
 }
 
 async function getTopic(id: number): Promise<ForumTopic|string> {
-  return (await getAsync(`${forumUrl}/api/topic/${id}`, {json: true})).body;
+  return (await getAsync(`${FORUM_URL}/api/topic/${id}`, {json: true})).body;
 }
 
 function getSongPageUrl(collectionMount: string, songMount: string): string {
@@ -155,7 +161,7 @@ async function syncSongTopic(song: SongTopicRow, connection: any, collectionById
             `${collectionTypeName}: [${getNameFirstFormArtistName(collection)}](${getCollectionPageUrl(collection.mount)})`,
       },
     };
-    const topicResponse = (await postAsync(forumUrl + '/api/v2/topics', options)).body;
+    const topicResponse = (await postAsync(FORUM_URL + '/api/v2/topics', options)).body;
     if (topicResponse.code !== 'ok') {
       console.error('Failed to create song topic', song, topicResponse);
       throw new Error(`Failed to create song topic: ${song.id}`);
