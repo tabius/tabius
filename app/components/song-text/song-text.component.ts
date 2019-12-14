@@ -107,7 +107,11 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   getSongHtml(): string {
     if (this.songHtml === '') {
       const {transpose, hideChords} = this.songSettings;
-      this.songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: this.h4Si}) : '';
+      let songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: this.h4Si}) : '';
+      if (this.multiColumnMode) {
+        songHtml = preserveBlocksOnColumnBreak(songHtml);
+      }
+      this.songHtml = songHtml;
     }
     return this.songHtml;
   }
@@ -180,4 +184,37 @@ interface SongStats {
   lineCount: number;
   /** Heuristic based maximum song line width in pixels. */
   maxLineWidth: number;
+}
+
+/**
+ * Wraps blocks of text separated with multiple line breaks
+ * with 'break-inside: avoid-column' css style.
+ */
+function preserveBlocksOnColumnBreak(songHtml: string): string {
+  const blocks = songHtml.replace(/[^\S\n]+$/gm, '').split('\n\n');
+  if (blocks.length === 1) {
+    return songHtml;
+  }
+  let blockIsOpen = false;
+  let songHtmlWithBlocks = '';
+  for (const block of blocks) {
+    if (blockIsOpen) {
+      songHtmlWithBlocks += '</div>';
+      blockIsOpen = false;
+    }
+    const linesCountInBlock = (block.match(/\n/g) || '').length;
+    const makeBlockNonBreaking = linesCountInBlock <= 12; // Keep blocks up to 6 lines (6 text + 6 chords).
+    if (makeBlockNonBreaking) {
+      songHtmlWithBlocks += '<div style="break-inside: avoid-column;">';
+      songHtmlWithBlocks += block;
+      blockIsOpen = true;
+    } else {
+      songHtmlWithBlocks += block;
+    }
+    songHtmlWithBlocks += '\n\n';
+  }
+  if (blockIsOpen) {
+    songHtmlWithBlocks += '</div>';
+  }
+  return songHtmlWithBlocks;
 }
