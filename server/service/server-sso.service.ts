@@ -13,7 +13,7 @@ import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';
 
-type SsoMode = 'node-bb'|'mock-user'
+type SsoMode = 'nodebb'|'mock-user'
 
 interface SsoServiceConfig {
   mode: SsoMode,
