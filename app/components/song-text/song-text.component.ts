@@ -14,6 +14,8 @@ import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSett
 const MIN_SONG_LINES_FOR_2_COLUMN_MODE = 30;
 const MIN_SONG_LINES_FOR_3_COLUMN_MODE = 60;
 
+const CHORDS_TAG = 'c';
+
 export const SONG_PRINT_FONT_SIZE = 14;
 
 /** Отображает содежимое мести (текст) без заголовка и прочей мета-информации. */
@@ -107,7 +109,9 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   getSongHtml(): string {
     if (this.songHtml === '') {
       const {transpose, hideChords} = this.songSettings;
-      let songHtml = this.song && this.isBrowser ? renderChords(this.song.content, {tag: 'c', transpose, hideChords, useH: this.h4Si}) : '';
+      let songHtml = this.song && this.isBrowser
+          ? renderChords(this.song.content, {tag: CHORDS_TAG, transpose, hideChords, useH: this.h4Si})
+          : '';
       if (this.multiColumnMode) {
         songHtml = preserveBlocksOnColumnBreak(songHtml);
       }
@@ -186,6 +190,9 @@ interface SongStats {
   maxLineWidth: number;
 }
 
+const NON_BREAKING_TAG_START = '<div style="break-inside: avoid-column;">';
+const NON_BREAKING_TAG_END = '</div>';
+
 /**
  * Wraps blocks of text separated with multiple line breaks
  * with 'break-inside: avoid-column' css style.
@@ -205,16 +212,40 @@ function preserveBlocksOnColumnBreak(songHtml: string): string {
     const linesCountInBlock = (block.match(/\n/g) || '').length;
     const makeBlockNonBreaking = linesCountInBlock <= 12; // Keep blocks up to 6 lines (6 text + 6 chords).
     if (makeBlockNonBreaking) {
-      songHtmlWithBlocks += '<div style="break-inside: avoid-column;">';
-      songHtmlWithBlocks += block;
+      songHtmlWithBlocks += NON_BREAKING_TAG_START;
+      songHtmlWithBlocks += preserveBlockOnColumnBreak(block);
       blockIsOpen = true;
     } else {
-      songHtmlWithBlocks += block;
+      songHtmlWithBlocks += preserveBlockOnColumnBreak(block);
     }
-    songHtmlWithBlocks += '\n\n';
+    if (songHtmlWithBlocks.endsWith(NON_BREAKING_TAG_END)) {
+      songHtmlWithBlocks += '\n'; // already ends with line end.
+    } else {
+      songHtmlWithBlocks += '\n\n';
+    }
   }
   if (blockIsOpen) {
-    songHtmlWithBlocks += '</div>';
+    songHtmlWithBlocks += NON_BREAKING_TAG_END;
   }
   return songHtmlWithBlocks;
+}
+
+/** Wrap pairs of lines (chords + non-chords) into non-breaking block. */
+function preserveBlockOnColumnBreak(blockHtml: string): string {
+  const hasChords = (line: string) => line.includes(`<${CHORDS_TAG}>`);
+  const lines = blockHtml.split('\n');
+  let resultHtml = '';
+  for (let i = 0; i < lines.length; i++) {
+    if (i + 1 < lines.length) {
+      const line1 = lines[i];
+      const line2 = lines[i + 1];
+      if (hasChords(line1) && !hasChords(line2)) {
+        resultHtml += NON_BREAKING_TAG_START + line1 + '\n' + line2 + NON_BREAKING_TAG_END;
+        i++;
+        continue;
+      }
+    }
+    resultHtml += lines[i] + (i === lines.length - 1 ? '' : '\n');
+  }
+  return resultHtml;
 }
