@@ -80,14 +80,14 @@ export class SongDbi {
     const mount = await generateUniqueSongMount(song, con$$);
     return con$$
         .query('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
-            [song.collectionId, mount, song.title, details.content, packLinks(details.mediaLinks)])
+            [song.collectionId, mount, song.title, details.content, packMediaLinks(details.mediaLinks)])
         .then(([result]) => result.insertId);
   }
 
   async update(title: string, details: SongDetails): Promise<void> {
     await this.db.pool.promise()
         .query('UPDATE song SET title = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
-            [title, details.content, packLinks(details.mediaLinks), details.id]);
+            [title, details.content, packMediaLinks(details.mediaLinks), details.id]);
   }
 
   async delete(songId: number): Promise<void> {
@@ -144,7 +144,8 @@ function row2SongDetails(row: SongRow): SongDetails {
   };
 }
 
-function packLinks(links: string[]): string {
+/** Packs media links into DB representation. */
+export function packMediaLinks(links: string[]): string {
   return links.filter(l => l.length > 0).join('\n');
 }
 

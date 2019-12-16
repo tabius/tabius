@@ -69,11 +69,7 @@ export class CollectionDbi {
             [name, type, mount, 1])
         .then(([result]) => result);
 
-    let collectionId = result.insertId;
-    if (collectionId <= 0) {
-      this.logger.debug(`Listed collection was successfully created! Name: ${name}, collection-id: ${collectionId}`);
-    }
-    return collectionId;
+    return result.insertId;
   }
 
   async createPrimaryUserCollection(user: User): Promise<number> {
