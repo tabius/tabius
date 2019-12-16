@@ -173,6 +173,30 @@ a {
   }
 }
 
+@media only screen and (max-height: $hires-desktop-height) {
+  .desktop {
+    nav {
+      height: $desktop-low-height-nav-height;
+
+      .item {
+        height: $desktop-low-height-nav-height - (2 * $desktop-nav-item-padding);
+
+        a {
+          .title {
+            margin-top: 5px;
+            font-size: 17px;
+          }
+
+          gt-svg-icon {
+            margin-top: -2px;
+            height: 48px;
+          }
+        }
+      }
+    }
+  }
+}
+
 .mobile {
   nav {
     .spacer {

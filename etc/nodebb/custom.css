@@ -259,3 +259,23 @@ body {
     }
 }
 
+@media only screen and (max-height: 800px) and (min-width: 900px) {
+    .tabius nav {
+        height: 96px;
+    }
+
+    .tabius nav .item {
+        height: 76px;
+    }
+
+    .tabius nav .item a .title {
+        margin-top: 5px;
+        font-size: 16px;
+    }
+
+    .tabius nav .item a gt-svg-icon {
+        margin-top: -1px;
+        height: 48px;
+    }
+}
+
