@@ -35,6 +35,11 @@
       .buttons-line {
         display: flex;
 
+        button {
+          min-width: 135px;
+          white-space: nowrap;
+        }
+
         button:not(:first-of-type) {
           margin-left: 14px;
         }
