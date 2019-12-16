@@ -182,6 +182,14 @@ a {
         height: $desktop-low-height-nav-height - (2 * $desktop-nav-item-padding);
 
         a {
+          .logo {
+            font-size: 42px;
+          }
+
+          .logo2 {
+            font-size: 16px;
+          }
+
           .title {
             margin-top: 5px;
             font-size: 17px;

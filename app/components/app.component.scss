@@ -20,6 +20,14 @@
   }
 }
 
+@media only screen and (max-height: $hires-desktop-height) {
+  .desktop {
+    &.push {
+      height: $desktop-low-height-nav-height;
+    }
+  }
+}
+
 main {
   padding: 20px 20px $footer-height;
   margin-bottom: 40px;
