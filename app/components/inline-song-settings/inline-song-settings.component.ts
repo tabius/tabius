@@ -108,9 +108,9 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
     this.uds.setUserSongSettings({...this.songSettings!, transpose: 0});
   }
 
-  toggleChordsVisibility(hideChords: boolean): void {
+  onHideChordsCheckboxChanged(event: Event): void {
     if (this.songSettings) {
-      this.uds.setUserSongSettings({...this.songSettings, hideChords});
+      this.uds.setUserSongSettings({...this.songSettings, hideChords: (event.target! as HTMLInputElement).checked});
     }
   }
 

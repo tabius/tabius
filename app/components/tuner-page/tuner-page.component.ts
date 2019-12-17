@@ -170,6 +170,10 @@ export class TunerPageComponent implements OnInit, OnDestroy {
     this.uds.setUserDeviceSettings({...this.deviceSettings, tunerRepeatMode: repeat});
   }
 
+  onRepeatModeCheckboxChanged(event: Event) {
+    this.setRepeatMode((event.target! as HTMLInputElement).checked);
+  }
+
   getToneType(): TunerToneType {
     return this.deviceSettings.tunerToneType;
   }

@@ -11,7 +11,7 @@
             </select>
 
             <label class="checkbox" style="margin-left: 25px;">
-                <input type="checkbox" [checked]="getRepeatMode()" (change)="setRepeatMode($event.target.checked)"><span>повтор</span>
+                <input type="checkbox" [checked]="getRepeatMode()" (change)="onRepeatModeCheckboxChanged($event)"><span>повтор</span>
             </label>
 
         </div>
