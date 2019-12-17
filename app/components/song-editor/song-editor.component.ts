@@ -209,6 +209,10 @@ export class SongEditorComponent implements OnInit, OnDestroy {
     return bound(8, countOccurrences(this.content, '\n') + 1, (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
   }
 
+  cancel() {
+    this.close({type: 'canceled', song: this.song});
+  }
+
   close(result: SongEditResult): void {
     this.closeRequest.emit(result);
   }
