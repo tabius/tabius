@@ -166,7 +166,7 @@ export class ServerSsoService implements NestInterceptor {
 
   logout(res: Response): void {
     if (this.ssoConfig) {
-      res.clearCookie(this.ssoConfig.cookieName, {domain: this.ssoConfig.cookieSecret});
+      res.clearCookie(this.ssoConfig.cookieName, {domain: this.ssoConfig.cookieDomain});
     }
   }
 
