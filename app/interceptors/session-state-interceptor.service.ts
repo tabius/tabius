@@ -28,7 +28,7 @@ export class SessionStateInterceptor implements HttpInterceptor {
     if (this.bss.isServer || isSessionStateManagementRequest(req)) {
       return next.handle(req).pipe(
           flatMap(event => {
-            return event instanceof HttpResponse
+            return event instanceof HttpResponse && !!event.body && !!event.body.payload
                 ? of(event.clone({body: event.body.payload}))
                 : of(event);
           }));
