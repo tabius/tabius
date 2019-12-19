@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnD
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
-import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, of, Subject} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
@@ -13,6 +13,8 @@ import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {getSongForumTopicLink} from '@app/utils/url-utils';
+import {TONES_COUNT} from '@app/utils/chords-renderer';
+import {UserSongSettings} from '@common/user-model';
 
 @Component({
   selector: 'gt-song-page',
@@ -28,6 +30,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
   songDetails?: SongDetails;
   activeCollection?: Collection;
   primaryCollection?: Collection;
+  songSettings?: UserSongSettings;
 
   hasEditRight = false;
   editorIsOpen = false;
@@ -104,6 +107,12 @@ export class SongPageComponent implements OnInit, OnDestroy {
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });
+
+    song$.pipe(flatMap(song => song ? this.uds.getUserSongSettings(song.id) : of(undefined)),
+        takeUntil(this.destroyed$)
+    ).subscribe(songSettings => {
+      this.songSettings = songSettings;
+    });
   }
 
   ngOnDestroy(): void {
@@ -132,6 +141,27 @@ export class SongPageComponent implements OnInit, OnDestroy {
     this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
     this.cd.detectChanges();
   }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.shiftKey && ((event.target) as HTMLElement).tagName.toLowerCase() !== 'textarea') {
+      if (event.code === 'ArrowUp' || event.code === 'Minus') {
+        this.transpose(-1);
+      } else if (event.code === 'ArrowDown' || event.code === 'Equal' || event.code === 'Plus') {
+        this.transpose(1);
+      } else if (event.code === 'Digit0') {
+        this.transpose(0);
+      }
+    }
+  }
+
+  transpose(steps: number): void {
+    if (this.songSettings) {
+      const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
+      this.uds.setUserSongSettings({...this.songSettings!, transpose});
+    }
+  }
+
 }
 
 function isServiceLineChar(c: string): boolean {
