@@ -145,9 +145,9 @@ export class SongPageComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.shiftKey && ((event.target) as HTMLElement).tagName.toLowerCase() !== 'textarea') {
-      if (event.code === 'ArrowUp' || event.code === 'Minus') {
+      if (event.code === 'ArrowDown' || event.code === 'Minus') {
         this.transpose(-1);
-      } else if (event.code === 'ArrowDown' || event.code === 'Equal' || event.code === 'Plus') {
+      } else if (event.code === 'ArrowUp' || event.code === 'Equal' || event.code === 'Plus') {
         this.transpose(1);
       } else if (event.code === 'Digit0') {
         this.transpose(0);
