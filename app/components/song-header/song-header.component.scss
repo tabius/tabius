@@ -21,6 +21,10 @@
         fill: $color-default-link;
       }
 
+      gt-svg-icon:hover {
+        fill: $color-golden-link;
+      }
+
       &.settings-icon {
         margin-left: 12px;
       }
