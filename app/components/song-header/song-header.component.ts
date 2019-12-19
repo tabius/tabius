@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Collection, Song} from '@common/catalog-model';
 import {getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
 
@@ -49,5 +49,12 @@ export class SongHeaderComponent implements OnChanges {
   printSong(): void {
     const printPageUrl = getSongPrintPageLink(this.collection.mount, this.song.mount);
     window.open(printPageUrl, '_blank');
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.code === 'Escape') {
+      this.closeSettings();
+    }
   }
 }
