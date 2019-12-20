@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
@@ -15,6 +15,7 @@ import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRI
 import {getSongForumTopicLink} from '@app/utils/url-utils';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserSongSettings} from '@common/user-model';
+import {PopoverService} from '@app/popover/popover.service';
 
 @Component({
   selector: 'gt-song-page',
@@ -25,6 +26,7 @@ import {UserSongSettings} from '@common/user-model';
 export class SongPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+  @ViewChild('keyboardShortcuts', {static: true}) keyboardShortcuts!: TemplateRef<{}>;
 
   song?: Song;
   songDetails?: SongDetails;
@@ -50,6 +52,7 @@ export class SongPageComponent implements OnInit, OnDestroy {
               readonly title: Title,
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
+              private readonly popover: PopoverService,
   ) {
   }
 
@@ -151,6 +154,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
         this.transpose(1);
       } else if (event.code === 'Digit0') {
         this.transpose(0);
+      } else if (event.code === 'Slash/TODO') {
+        this.popover.open(this.keyboardShortcuts, null, {data: '?'}, {});
       }
     }
   }

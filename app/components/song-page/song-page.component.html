@@ -38,4 +38,10 @@
         <gt-song-prev-next-navigator [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song-prev-next-navigator>
 
     </div>
+
+    <!-- TODO: data? -->
+    <ng-template #keyboardShortcuts let-data let-popover="popover">
+        <gt-keyboard-shortcuts-popup page="song" [popover]="popover"></gt-keyboard-shortcuts-popup>
+    </ng-template>
+
 </div>

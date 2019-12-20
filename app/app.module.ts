@@ -51,6 +51,8 @@ import {ModeratorPromptComponent} from '@app/components/moderator-prompt/moderat
 import {AddSongToCollectionComponent} from '@app/components/add-song-to-collection/add-song-to-collection.component';
 import {UserCollectionsListComponent} from '@app/components/user-collections-list/user-collections-list.component';
 import {UserCollectionEditorComponent} from '@app/components/user-collection-editor/user-collection-editor.component';
+import {PopoverModule} from '@app/popover/popover.module';
+import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +93,7 @@ import {UserCollectionEditorComponent} from '@app/components/user-collection-edi
     AddSongToCollectionComponent,
     UserCollectionsListComponent,
     UserCollectionEditorComponent,
+    KeyboardShortcutsPopupComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -101,6 +104,7 @@ import {UserCollectionEditorComponent} from '@app/components/user-collection-edi
     BrowserTransferStateModule,
     RoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
+    PopoverModule,
     ToastModule,
   ],
   providers: [
