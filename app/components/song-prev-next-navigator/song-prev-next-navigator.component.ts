@@ -135,6 +135,18 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     this.updateViewDimensions();
   }
 
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.shiftKey && ((event.target) as HTMLElement).tagName.toLowerCase() !== 'textarea') {
+      if (event.code === 'ArrowLeft') {
+        this.navigate(this.prevLink);
+      } else if (event.code === 'ArrowRight') {
+        this.navigate(this.nextLink);
+      }
+    }
+  }
+
+
   navigate(link: string|undefined): void {
     if (link) {
       this.router.navigate([link]).catch(err => console.error(err));
