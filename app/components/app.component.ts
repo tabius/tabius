@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, OnInit,
 import {AuthService} from '@app/services/auth.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Observable} from 'rxjs';
-import {isInputElement} from '@common/util/misc-utils';
+import {isInputEvent} from '@common/util/misc-utils';
 import {HelpService} from '@app/services/help.service';
 
 @Component({
@@ -34,7 +34,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.shiftKey && !isInputElement(event.target as HTMLElement)) {
+    if (event.shiftKey && !isInputEvent(event)) {
       if (event.code === 'Slash') {
         this.helpService.showKeyboardShortcuts();
       }

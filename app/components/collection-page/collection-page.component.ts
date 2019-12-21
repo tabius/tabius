@@ -137,8 +137,8 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');
     updatePageMetadata(this.title, this.meta, {
       title: `${name}${typeInfo} — тексты песен и аккорды для гитары`,
-      description: `${name} — полная коллекция всех песен и аккордов для гитары.${getFirstSongsNames(songs)}`,
-      keywords: [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `тексты ${name}`, `песни ${name}`],
+      description: `${name} — песни и аккорды для гитары: ${getFirstSongsNames(songs)}`,
+      keywords: [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `текст ${name}`, `песни ${name}`],
       image: collectionViewModel.imgSrc,
     });
   }

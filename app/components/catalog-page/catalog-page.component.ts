@@ -7,7 +7,7 @@ import {BehaviorSubject, Subject, timer} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canCreateNewPublicCollection, getCollectionPageLink, isInputElement} from '@common/util/misc-utils';
+import {canCreateNewPublicCollection, getCollectionPageLink, isInputEvent} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -100,7 +100,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (!event.shiftKey && event.code === 'Slash' && !isInputElement(event.target as HTMLElement)) {
+    if (!event.shiftKey && event.code === 'Slash' && !isInputEvent(event)) {
       this.bringFocusToTheSearchField();
     }
   }

@@ -8,7 +8,7 @@ import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, hasValidForumTopic} from '@common/util/misc-utils';
+import {canManageCollectionContent, getNameFirstFormArtistName, hasValidForumTopic, isInputEvent} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -123,16 +123,18 @@ export class SongPageComponent implements OnInit, OnDestroy {
     if (!this.song || !this.activeCollection || !this.songDetails) {
       return;
     }
+    const titlePrefix = `${this.song.title}, ${getNameFirstFormArtistName(this.activeCollection)} | `;
+    const titleSuffix = titlePrefix.length > 50 ? 'аккорды' : titlePrefix.length > 35 ? 'текст и аккорды' : 'текст песни и аккорды';
     updatePageMetadata(this.title, this.meta, {
-      title: `${this.song.title}, ${this.activeCollection.name} — текст песни и аккорды`,
+      title: titlePrefix + titleSuffix,
       description: getSongTextWithNoChords(this.songDetails.content, 5, true),
-      keywords: [`подбор ${this.song.title}`, this.activeCollection.name, 'табы', 'аккорды', 'аппликатура', 'гитара'],
+      keywords: [`подбор ${this.song.title}`, this.activeCollection.name, 'табы', 'аккорды', 'текст песни', 'стихи', 'аппликатура', 'гитара'],
     });
   }
 
   @HostListener('window:keydown', ['$event'])
-  keyEvent(event: any): void {
-    if (this.hasEditRight && !this.editorIsOpen && event.shiftKey && event.code === 'KeyE') {
+  keyEvent(event: KeyboardEvent): void {
+    if (this.hasEditRight && !this.editorIsOpen && event.shiftKey && !isInputEvent(event) && event.code === 'KeyE') {
       this.toggleEditor();
     }
   }

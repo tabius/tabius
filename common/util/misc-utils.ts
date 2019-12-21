@@ -183,10 +183,12 @@ export function trackById(idx: number, entity: { id: number|string }): number|st
 }
 
 /** Returns true if the element is input element: <textarea> or <input>. */
+export function isInputEvent(event: KeyboardEvent): boolean {
+  return isInputElement(event.target as HTMLElement);
+}
+
+/** Returns true if the element is input element: <textarea> or <input>. */
 export function isInputElement(element: HTMLElement|undefined): boolean {
-  if (!element) {
-    return false;
-  }
-  const tagName = element.tagName.toLowerCase();
+  const tagName = element ? element.tagName.toLowerCase() : '';
   return tagName === 'textarea' || tagName === 'input';
 }
