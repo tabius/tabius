@@ -181,3 +181,12 @@ export function sortSongsAlphabetically(songs: Song[]): Song[] {
 export function trackById(idx: number, entity: { id: number|string }): number|string {
   return entity.id;
 }
+
+/** Returns true if the element is input element: <textarea> or <input>. */
+export function isInputElement(element: HTMLElement|undefined): boolean {
+  if (!element) {
+    return false;
+  }
+  const tagName = element.tagName.toLowerCase();
+  return tagName === 'textarea' || tagName === 'input';
+}

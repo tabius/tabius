@@ -28,6 +28,7 @@ enum NavSection {
 export class NavbarComponent implements OnInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
+
   user?: User;
   opened = false;
 
@@ -46,7 +47,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               private readonly toast: ToastService,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly cd: ChangeDetectorRef,
-              private location: LocationStrategy
+              private location: LocationStrategy,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
     this.location.onPopState(() => {

@@ -4,6 +4,7 @@ import {getDefaultUserSongFontSize, newDefaultUserDeviceSettings, UserSongSettin
 import {Subject, Subscription} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
+import {HelpService} from '@app/services/help.service';
 
 
 export const MAX_SONG_FONT_SIZE = 42;
@@ -38,7 +39,9 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
   private songSettingsSubscription?: Subscription;
 
   constructor(private readonly uds: UserService,
-              private readonly cd: ChangeDetectorRef) {
+              private readonly cd: ChangeDetectorRef,
+              private readonly helpService: HelpService,
+  ) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -116,5 +119,9 @@ export class InlineSongSettingsComponent implements OnInit, OnChanges, OnDestroy
 
   close(): void {
     this.closeCallback.emit();
+  }
+
+  showShortcuts(): void {
+    this.helpService.showKeyboardShortcuts();
   }
 }

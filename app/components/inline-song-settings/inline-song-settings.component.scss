@@ -27,6 +27,18 @@
     text-align: center;
   }
 
+  .shortcuts-block {
+    display: none;
+    float: right;
+    font-size: 15px;
+    margin-top: -22px;
+
+    a {
+      cursor: pointer;
+      color: #CCC;
+    }
+  }
+
   .settings-title {
     color: #999;
     font-size: 14px;
@@ -69,6 +81,10 @@
 @media only screen and (min-width: $min-desktop-width) {
   :host {
     .floating-close-icon {
+      display: inline-block;
+    }
+
+    .shortcuts-block {
       display: inline-block;
     }
   }

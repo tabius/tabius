@@ -23,7 +23,8 @@ export class PopoverRef<T = any> {
 
       this.overlayRef.keydownEvents()
           .pipe(filter(event => event.key === 'Escape'))
-          .subscribe(() => {
+          .subscribe((event) => {
+            event.stopPropagation();
             this.close();
           });
     }
@@ -35,7 +36,6 @@ export class PopoverRef<T = any> {
     this.overlayRef.dispose();
   }
 
-  // noinspection JSUnusedGlobalSymbols
   afterClosed(): Observable<T> {
     return this.afterClosed$.asObservable();
   }

@@ -53,6 +53,7 @@ import {UserCollectionsListComponent} from '@app/components/user-collections-lis
 import {UserCollectionEditorComponent} from '@app/components/user-collection-editor/user-collection-editor.component';
 import {PopoverModule} from '@app/popover/popover.module';
 import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
+import {HelpService} from '@app/services/help.service';
 
 @NgModule({
   declarations: [
@@ -117,7 +118,8 @@ import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-p
     {provide: TABIUS_CATALOG_BROWSER_STORE_TOKEN, useClass: CatalogBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
     BrowserStateService,
-    PwaUpdaterService,
+    HelpService,
+    PwaUpdaterService
   ],
   bootstrap: [AppComponent]
 })

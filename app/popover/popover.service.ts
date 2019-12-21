@@ -34,7 +34,7 @@ export class PopoverService {
   open<D = any>(componentOrTemplate: ComponentType<any>|TemplateRef<any>,
                 target: FlexibleConnectedPositionStrategyOrigin|null,
                 config: Partial<PopoverConfig> = {}): PopoverRef<D> {
-    const popoverConfig: PopoverConfig = Object.assign({}, defaultConfig, config);
+    const popoverConfig: PopoverConfig = {...defaultConfig, ...config};
 
     const arrowSize = popoverConfig.arrowSize;
     const arrowOffset = popoverConfig.arrowOffset;

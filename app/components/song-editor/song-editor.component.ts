@@ -185,6 +185,7 @@ export class SongEditorComponent implements OnInit, OnDestroy {
         this.update();
       }
     } else if (event.key === 'Escape') {
+      // todo: ask about closing confirmation
       if (!this.isChanged()) {
         this.close({type: 'canceled'});
       }
