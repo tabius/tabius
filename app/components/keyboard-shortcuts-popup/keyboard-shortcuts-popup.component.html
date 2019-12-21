@@ -1,8 +1,58 @@
-<h2>Управление с клавиатуры</h2>
-<div *ngIf="page==='song'">
-    TODO: показать shortcuts.
-</div>
+<div class="dialog">
 
-<div class="buttons-row">
-    <button class="btn btn-flat-white" (click)="popover.close()">Закрыть</button>
+    <h1>Горячие клавиши</h1>
+
+    <div *ngIf="page === 'song'" class="shortcuts-list">
+
+        <div class="shortcut-line">
+            <div class="label">Предыдущая песня</div>
+            <div class="shortcut">SHIFT + ⇦</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Следующая песня</div>
+            <div class="shortcut">SHIFT + ⇨</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Транспонировать на тон выше</div>
+            <div class="shortcut">SHIFT + ⇧</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Транспонировать на тон ниже</div>
+            <div class="shortcut">SHIFT + ⇩</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Отменить транспонирование</div>
+            <div class="shortcut">) (SHIFT + 0)</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Изменить подбор</div>
+            <div class="shortcut">E (SHIFT + e)</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Сохранить изменения (в режиме редактирования)</div>
+            <div class="shortcut">CTRL + Enter</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Показать горячие кнопки</div>
+            <div class="shortcut">/ (SHIFT + ?)</div>
+        </div>
+
+        <div class="shortcut-line">
+            <div class="label">Закрыть диалог / отменить редактирование</div>
+            <div class="shortcut">ESCAPE</div>
+        </div>
+
+    </div>
+
+    <div class="buttons-row">
+        <button class="btn btn-flat-white" (click)="popover.close()">Закрыть</button>
+    </div>
+
 </div>

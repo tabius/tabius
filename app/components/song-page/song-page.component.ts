@@ -154,10 +154,14 @@ export class SongPageComponent implements OnInit, OnDestroy {
         this.transpose(1);
       } else if (event.code === 'Digit0') {
         this.transpose(0);
-      } else if (event.code === 'Slash/TODO') {
-        this.popover.open(this.keyboardShortcuts, null, {data: '?'});
+      } else if (event.code === 'Slash') {
+        this.showKeyboardShortcuts();
       }
     }
+  }
+
+  showKeyboardShortcuts(): void {
+    this.popover.open(this.keyboardShortcuts, null, {data: '?'});
   }
 
   transpose(steps: number): void {

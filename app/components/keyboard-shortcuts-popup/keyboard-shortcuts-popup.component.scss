@@ -1,3 +1,49 @@
+.dialog {
+  width: calc(80vw);
+  max-width: 800px;
+  margin: 5px 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 3rem;
+  color: #0d0d0d;
+}
+
+.shortcuts-list {
+  margin-top: 10px;
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 2.1rem;
+
+  .shortcut-line {
+    display: flex;
+    justify-content: space-between;
+
+    white-space: nowrap;
+    border-top: 1px solid #0000001a;
+    padding: 8px;
+    line-height: 30px;
+
+    .label {
+      color: #606060;
+      min-width: 300px;
+      font-size: 18px;
+    }
+
+    .shortcut {
+      color: #0d0d0d;
+      font-size: 20px;
+      margin-left: 30px;
+      min-width: 150px;
+      font-family: "Ubuntu Mono", monospace;
+      align-items: center;
+    }
+  }
+}
+
 .buttons-row {
-  margin-top: 20px;
+  border-top: solid 1px #0000001a;
+  padding-top: 25px;
+  text-align: right;
 }
