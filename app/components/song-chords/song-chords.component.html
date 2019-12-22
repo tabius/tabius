@@ -1,5 +1,20 @@
 <div *ngIf="chordLayouts.length > 0">
-    <h3>Аккорды:</h3>
+    <h3 [ngClass]="{'with-controls' : showControls}">
+        Аккорды:
+        <span class="controls-block" *ngIf="showControls">
+            <button class="btn btn-flat-white" (click)="onTransposeClicked(-1)" title="Транспонировать на тон ниже">
+                ↓
+            </button>
+
+            <button class="btn btn-flat-white" (click)="onTransposeClicked(+1)" title="Транспонировать на тон выше">
+                ↑
+            </button>
+
+            <button class="btn btn-flat-white" (click)="onTransposeClicked(0)" title="Оригинальная тональность">
+                ⨉
+            </button>
+        </span>
+    </h3>
     <gt-chord-image *ngFor="let layout of chordLayouts"
                     [layout]="layout"
                     [h4Si]="h4Si"

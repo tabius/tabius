@@ -6,14 +6,9 @@
         <div (click)="printSong()" class="icon print-icon" title="Распечатать текст и аккорды">
             <gt-svg-icon icon="printer"></gt-svg-icon>
         </div>
-        <div (click)="toggleSettings()" class="icon settings-icon" title="Настроить отображение текста и аккордов">
+        <div (click)="showKeyboardShortcuts()" class="icon settings-icon" title="Показать горячие клавиши">
             <gt-svg-icon icon="song-setting"></gt-svg-icon>
         </div>
     </div>
-
-    <gt-inline-song-settings *ngIf="settingsVisible"
-                             [songId]="song.id"
-                             (closeCallback)="this.closeSettings()">
-    </gt-inline-song-settings>
 
 </ng-container>

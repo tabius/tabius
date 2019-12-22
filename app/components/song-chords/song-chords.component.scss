@@ -1,3 +1,20 @@
+h3 {
+  &.with-controls {
+    margin-bottom: 10px;
+  }
+}
+
 .chord-image {
   display: inline-block;
+}
+
+.controls-block {
+
+  button {
+    line-height: 16px;
+    font-size: 18px;
+    margin-left: 12px;
+    padding: 1px 10px 7px;
+  }
+
 }

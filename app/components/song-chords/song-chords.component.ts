@@ -1,12 +1,13 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
-import {ChordRenderingOptions, renderChord} from '@app/utils/chords-renderer';
+import {ChordRenderingOptions, renderChord, TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserService} from '@app/services/user.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {combineLatest, ReplaySubject, Subject} from 'rxjs';
 import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
 import {CatalogService} from '@app/services/catalog.service';
+import {newDefaultUserSongSettings} from '@common/user-model';
 
 @Component({
   selector: 'gt-song-chords',
@@ -18,10 +19,11 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   private readonly destroyed$ = new Subject();
 
   @Input() songId!: number;
+  @Input() showControls = false;
 
   chordLayouts: ChordLayout[] = [];
 
-  private transpose = 0;
+  private songSettings = newDefaultUserSongSettings(0);
   private h4Si = false;
   private content = '';
 
@@ -41,7 +43,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
     combineLatest([songSettings$, h4Si$, details$])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(([songSettings, h4Si, details]) => {
-          this.transpose = songSettings.transpose;
+          this.songSettings = songSettings;
           this.h4Si = h4Si;
           this.content = details ? details.content : '';
           this.updateChordsList();
@@ -59,7 +61,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
 
   private updateChordsList() {
     const chordLocations = parseChords(this.content);
-    const options: ChordRenderingOptions = {useH: this.h4Si, transpose: this.transpose};
+    const options: ChordRenderingOptions = {useH: this.h4Si, transpose: this.songSettings.transpose};
     const orderedChordNames: string[] = [];
     const chordsSet = new Set<string>();
     for (const location of chordLocations) {
@@ -74,5 +76,10 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
         .filter(defined)
         .map(({chord}) => getChordLayout(chord))
         .filter(defined) as ChordLayout[];
+  }
+
+  onTransposeClicked(steps: number): void {
+    const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
+    this.uds.setUserSongSettings({...this.songSettings!, transpose});
   }
 }

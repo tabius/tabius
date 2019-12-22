@@ -20,7 +20,6 @@ import {TunerPageComponent} from '@app/components/tuner-page/tuner-page.componen
 import {LoadingIndicatorComponent} from '@app/components/loading-indicator/loading-indicator.component';
 import {CollectionBreadcrumbComponent} from '@app/components/collection-breadcrumb/collection-breadcrumb.component';
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
-import {InlineSongSettingsComponent} from '@app/components/inline-song-settings/inline-song-settings.component';
 import {SettingsPageComponent} from '@app/components/settings-page/settings-page.component';
 import {APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -63,7 +62,6 @@ import {HelpService} from '@app/services/help.service';
     CollectionPageComponent,
     ChordImageComponent,
     FooterComponent,
-    InlineSongSettingsComponent,
     LoadingIndicatorComponent,
     NavbarComponent,
     Page404Component,

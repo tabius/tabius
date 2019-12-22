@@ -1,6 +1,7 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Collection, Song} from '@common/catalog-model';
 import {getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
+import {HelpService} from '@app/services/help.service';
 
 export type SongHeaderTitleFormat = 'song'|'song-and-collection';
 
@@ -20,12 +21,10 @@ export class SongHeaderComponent implements OnChanges {
 
   @Input() showControls = true;
 
-  settingsVisible = false;
-
   title: string = '';
 
-  constructor(
-      private readonly cd: ChangeDetectorRef,
+  constructor(private readonly cd: ChangeDetectorRef,
+              private readonly helpService: HelpService,
   ) {
   }
 
@@ -35,26 +34,12 @@ export class SongHeaderComponent implements OnChanges {
     }
   }
 
-  toggleSettings() {
-    this.settingsVisible = !this.settingsVisible;
-  }
-
-  closeSettings(): void {
-    if (this.settingsVisible) {
-      this.settingsVisible = false;
-      this.cd.detectChanges();
-    }
-  }
-
   printSong(): void {
     const printPageUrl = getSongPrintPageLink(this.collection.mount, this.song.mount);
     window.open(printPageUrl, '_blank');
   }
 
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.code === 'Escape') {
-      this.closeSettings();
-    }
+  showKeyboardShortcuts(): void {
+    this.helpService.showKeyboardShortcuts();
   }
 }
