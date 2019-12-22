@@ -136,8 +136,15 @@ function getSongPageUrl(collectionMount: string, songMount: string): string {
   return `https://tabius.ru/song/${collectionMount}/${songMount}`;
 }
 
+const MIN_NODEBB_TOPIC_TITLE_LENGTH = 3;
+
 async function syncSongTopic(song: SongTopicRow, connection: any, collectionById: Map<number, CollectionRow>): Promise<void> {
   const topic = song.forum_topic_id === 0 ? 'Not found' : await getTopic(song.forum_topic_id);
+
+  const toSafeSongTitle = (title: string): string => {
+    return title.length >= MIN_NODEBB_TOPIC_TITLE_LENGTH ? title : `"${title}"`;
+  };
+
   if (typeof topic === 'string') { // not found
     const collection = collectionById.get(song.collection_id);
     if (collection === undefined) {
@@ -155,7 +162,7 @@ async function syncSongTopic(song: SongTopicRow, connection: any, collectionById
       },
       form: {
         cid: collection.forum_category_id,
-        title: song.title,
+        title: toSafeSongTitle(song.title),
         content: `В этой теме обсуждаем и улучшаем подбор аккордов для песни ` +
             `[«${song.title}»](${getSongPageUrl(collection.mount, song.mount)}), ` +
             `${collectionTypeName}: [${getNameFirstFormArtistName(collection)}](${getCollectionPageUrl(collection.mount)})`,
