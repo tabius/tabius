@@ -68,9 +68,16 @@ export interface UpdateSongResponse {
   songs: Song[];
 }
 
-export interface DeleteSongResponse {
+export interface DeleteSongResponseCollectionInfo {
   collectionId: number;
+
+  /** List of all songs in the collection. */
   songs: Song[];
+}
+
+export interface DeleteSongResponse {
+  /** Updated listing for the primary and all secondary song collections. */
+  updatedCollections: DeleteSongResponseCollectionInfo[];
 }
 
 

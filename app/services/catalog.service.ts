@@ -194,13 +194,14 @@ export class CatalogService {
     if (!isValidId(songId)) {
       return;
     }
-    const {collectionId, songs} = await this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`).pipe(take(1)).toPromise();
-    //todo: fix secondary collections listing that had the deleted song!
+    const {updatedCollections} = await this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`).pipe(take(1)).toPromise();
     await Promise.all([
       this.store.remove<Song>(getSongDetailsKey(songId)),
       this.store.remove<SongDetails>(getSongDetailsKey(songId))
     ]);
-    await this.updateCollectionSongsOnFetch(collectionId, songs, true);
+    const collectionsUpdate$$ =
+        updatedCollections.map(({collectionId, songs}) => this.updateCollectionSongsOnFetch(collectionId, songs, true));
+    await Promise.all(collectionsUpdate$$);
   }
 
   async createListedCollection(createCollectionRequest: CreateListedCollectionRequest): Promise<Collection> {

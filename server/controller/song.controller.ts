@@ -143,11 +143,12 @@ export class SongController {
       }
     }
 
+    const allSongCollectionIds = await this.songDbi.getPrimaryAndSecondarySongCollectionIds(songId);
     await this.songDbi.delete(songId);
-    const songs = await this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId);
+    const songs$$: Promise<Song[]>[] = allSongCollectionIds.map(collectionId => this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId));
+    const songs: Song[][] = await Promise.all(songs$$); //same order with allSongCollectionIds
     return {
-      collectionId: collectionId,
-      songs,
+      updatedCollections: songs.map((songs, index) => ({collectionId: allSongCollectionIds[index], songs}))
     };
   }
 

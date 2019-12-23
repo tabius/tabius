@@ -26,7 +26,7 @@
             <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Исправить подбор »</a>
 
             <gt-song-editor *ngIf="editorIsOpen"
-                            (closeRequest)="toggleEditor()"
+                            (closeRequest)="closeEditor($event)"
                             [songId]="song.id"
             ></gt-song-editor>
         </div>

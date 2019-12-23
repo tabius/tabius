@@ -15,6 +15,7 @@ import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRI
 import {getSongForumTopicLink} from '@app/utils/url-utils';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserSongSettings} from '@common/user-model';
+import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 
 @Component({
   selector: 'gt-song-page',
@@ -42,6 +43,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
   loaded = false;
   notFound = false;
 
+  collectionMount?: string;
+
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               readonly cd: ChangeDetectorRef,
@@ -58,20 +61,20 @@ export class SongPageComponent implements OnInit, OnDestroy {
     this.uds.syncSessionStateAsync();
 
     const params = this.route.snapshot.params;
-    const collectionMount = params[PARAM_COLLECTION_MOUNT];
+    this.collectionMount = params[PARAM_COLLECTION_MOUNT];
     let primaryCollectionMount = params[PARAM_PRIMARY_COLLECTION_MOUNT];
     const songMount = params[PARAM_SONG_MOUNT];
 
-    if (collectionMount === primaryCollectionMount) {
+    if (this.collectionMount === primaryCollectionMount) {
       this.loaded = true;
       switchToNotFoundMode(this); // TODO: use permanent redirect to the primary song page?
       return;
     }
 
     if (primaryCollectionMount === undefined) {
-      primaryCollectionMount = collectionMount;
+      primaryCollectionMount = this.collectionMount;
     }
-    const collectionId$ = this.cds.getCollectionIdByMount(collectionMount);
+    const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
     const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
     const collection$ = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
     const primaryCollection$ = primaryCollectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
@@ -86,12 +89,10 @@ export class SongPageComponent implements OnInit, OnDestroy {
         .subscribe(([collection, primaryCollection, song, songDetails, user]) => {
           this.loaded = true;
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
-          if (this.song !== undefined && song === undefined) { // song was removed (deleted by user) -> return to the user/collection page.
-            if (this.isUserCollection) {
-              this.router.navigate([MOUNT_STUDIO]).catch(err => console.error(err));
-            } else {
-              this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
-            }
+          const hadSongBefore = this.song !== undefined;
+          const haveSongNow = song !== undefined && songDetails !== undefined;
+          if (hadSongBefore && !haveSongNow) { // song was removed (deleted by user) -> return to the user/collection page.
+            this.handleSongRemoval();
             return;
           }
           if (collection === undefined || primaryCollection === undefined || song === undefined || songDetails === undefined) {
@@ -113,6 +114,14 @@ export class SongPageComponent implements OnInit, OnDestroy {
     ).subscribe(songSettings => {
       this.songSettings = songSettings;
     });
+  }
+
+  private handleSongRemoval(): void {
+    if (this.isUserCollection) {
+      this.router.navigate([MOUNT_STUDIO]).catch(err => console.error(err));
+    } else {
+      this.router.navigate([MOUNT_COLLECTION_PREFIX + this.collectionMount!]).catch(err => console.error(err));
+    }
   }
 
   ngOnDestroy(): void {
@@ -141,6 +150,15 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   toggleEditor(): void {
     this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
+    this.cd.detectChanges();
+  }
+
+  closeEditor(closeResult: SongEditResult): void {
+    if (closeResult.type === 'deleted') {
+      this.handleSongRemoval();
+      return;
+    }
+    this.editorIsOpen = false;
     this.cd.detectChanges();
   }
 

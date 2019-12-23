@@ -122,6 +122,19 @@ export class SongDbi {
         .query(`DELETE FROM secondary_song_collections WHERE collection_id = ?`,
             [secondaryCollectionId]);
   }
+
+  private query(sql: string, params?: any[]): any {
+    return this.db.pool.promise().query(sql, params);
+  }
+
+  async getPrimaryAndSecondarySongCollectionIds(songId: number): Promise<number[]> {
+    const primary$$: Promise<number[]> = this.query(`SELECT collection_id AS id FROM song WHERE id = ?`, [songId])
+        .then(([rows]: [IdRow[]]) => rows.map(r => r.id));
+    const secondary$$: Promise<number[]> = this.query(`SELECT collection_id AS id FROM secondary_song_collections WHERE song_id = ?`, [songId])
+        .then(([rows]: [IdRow[]]) => rows.map(r => r.id));
+    const [primary, secondary] = await Promise.all([primary$$, secondary$$]);
+    return [...primary, ...secondary];
+  }
 }
 
 function row2Song(row: SongRow): Song {
