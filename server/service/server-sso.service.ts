@@ -63,7 +63,14 @@ export class ServerSsoService implements NestInterceptor {
       this.ssoConfig = value as NodeBbSsoConfig;
       const {mongo} = this.ssoConfig;
       //TODO: move DB initialization do a separate injectable service & handle connection errors correctly!
-      const options: MongoClientOptions = {auth: {user: mongo.user, password: mongo.password}, useNewUrlParser: true};
+      const options: MongoClientOptions = {
+        auth: {
+          user: mongo.user,
+          password: mongo.password,
+        },
+        useNewUrlParser: true,
+        reconnectTries: Number.MAX_VALUE,
+      };
       MongoClient.connect(mongo.url, options)
           .then(client => {
             this.logger.log('Successfully connected to MongoDB');
