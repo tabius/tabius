@@ -1,10 +1,12 @@
-const DEFAULT_TABIUS_CONFIG_DIR = '/opt/tabius/';
-
 export interface TabiusServerConfig {
+  /**  e.g. 'tabius.ru' . */
+  serverHost: string;
   serverPort: number;
   corsOriginWhitelist: string[];
   sessionCookieName: string;
   ssoConfig: any;
+  /** MariaDB/MySQL connector config. */
+  dbConfig: any;
 }
 
 const CONFIG_FROM_FILE = require(getConfigFilePath('server-config.json'));
@@ -18,6 +20,9 @@ export const SERVER_CONFIG: Readonly<TabiusServerConfig> = {
 
 /** Returns active configuration directory. */
 export function getConfigFilePath(fileOrSubdirPath: string): string {
-  const configDir = process.env.TABIUS_CONFIG_DIR || DEFAULT_TABIUS_CONFIG_DIR;
+  const configDir = process.env.TABIUS_CONFIG_DIR;
+  if (!configDir) {
+    throw new Error('No TABIUS_CONFIG_DIR environment variable found!');
+  }
   return configDir + fileOrSubdirPath;
 }

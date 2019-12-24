@@ -1,9 +1,9 @@
 import {promisify} from 'util';
-import {readDbConfig} from '@server/db/db-config';
 import {get, post, put} from 'request';
 import {getNameFirstFormArtistName} from '@common/util/misc-utils';
 import {CollectionType} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
+import {SERVER_CONFIG} from '@server/util/server-config';
 
 const FORUM_URL = process.env.TABIUS_FORUM_URL;
 if (FORUM_URL === undefined) {
@@ -57,7 +57,7 @@ interface ForumTopic {
 }
 
 async function main() {
-  const connection = await mysql.createConnection(readDbConfig());
+  const connection = await mysql.createConnection(SERVER_CONFIG.dbConfig);
   try {
     // check that all collections have valid category
     const [collectionsRows] = await connection.execute('SELECT id, name, mount, type, forum_category_id FROM collection ' +

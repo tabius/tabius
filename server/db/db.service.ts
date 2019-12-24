@@ -1,6 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {createPool, Pool} from 'mysql2';
-import {readDbConfig} from '@server/db/db-config';
+import {SERVER_CONFIG} from '@server/util/server-config';
 
 @Injectable()
 export class DbService {
@@ -10,7 +10,7 @@ export class DbService {
   public pool: Pool;
 
   constructor() {
-    const dbConfig = readDbConfig();
+    const dbConfig = SERVER_CONFIG.dbConfig;
     this.logger.log(`Connecting to database: ${dbConfig.database}`);
     this.pool = createPool(dbConfig);
   }

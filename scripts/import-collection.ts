@@ -1,9 +1,9 @@
-import {readDbConfig} from '@server/db/db-config';
 import {MIN_COLLECTION_MOUNT_LENGTH, MIN_SONG_MOUNT_LENGTH} from '@common/catalog-model';
 import {promisify} from 'util';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {INVALID_ID} from '@common/common-constants';
 import {packMediaLinks} from '@server/db/song-dbi.service';
+import {SERVER_CONFIG} from '@server/util/server-config';
 
 const fs = require('fs');
 const mysql = require('mysql2/promise');
@@ -32,7 +32,7 @@ async function main() {
   const songs = await loadSongs(dir);
   console.log(`Found ${songs.length} songs`);
 
-  const connection = await mysql.createConnection(readDbConfig());
+  const connection = await mysql.createConnection(SERVER_CONFIG.dbConfig);
   try {
     assignMounts(collection, songs);
     await validateImportDataAndAssignCollectionId(collection, songs, connection);

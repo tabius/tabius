@@ -1,10 +1,10 @@
-import {readDbConfig} from '@server/db/db-config';
 import {toArrayOfInts} from '@common/util/misc-utils';
+import {SERVER_CONFIG} from '@server/util/server-config';
 
 const mysql = require('mysql2/promise');
 
 async function syncSecondaryCollectionsForBands() {
-  const connection = await mysql.createConnection(readDbConfig());
+  const connection = await mysql.createConnection(SERVER_CONFIG.dbConfig);
   try {
     const [collectionRows] = await connection.execute('SELECT id, band_ids FROM collection WHERE band_ids !=\'\'');
     console.info(`Found ${collectionRows.length} collections with band ids`);
