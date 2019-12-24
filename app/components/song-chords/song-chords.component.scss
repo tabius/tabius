@@ -12,7 +12,12 @@ h3 {
   button {
     border: 0;
     font-size: 18px;
-    margin-left: 12px;
-    padding: 1px 10px 7px;
+    margin-left: 10px;
+    
+    gt-svg-icon {
+      width: 14px;
+      height: 14px;
+      fill: #333;
+    }
   }
 }

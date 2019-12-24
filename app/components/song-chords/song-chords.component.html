@@ -3,15 +3,15 @@
         Аккорды:
         <span class="controls-block" *ngIf="showControls">
             <button class="btn btn-flat-white" (click)="onTransposeClicked(-1)" title="Транспонировать на тон ниже">
-                ↓
+                <gt-svg-icon icon="arrow-down"></gt-svg-icon>
             </button>
 
             <button class="btn btn-flat-white" (click)="onTransposeClicked(+1)" title="Транспонировать на тон выше">
-                ↑
+            <gt-svg-icon icon="arrow-up"></gt-svg-icon>
             </button>
 
             <button class="btn btn-flat-white" (click)="onTransposeClicked(0)" title="Оригинальная тональность">
-                ⨉
+                <gt-svg-icon icon="arrow-x"></gt-svg-icon>
             </button>
         </span>
     </h3>
