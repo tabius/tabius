@@ -2,78 +2,63 @@
 
     <h1>Горячие клавиши</h1>
 
-    <div *ngIf="page === 'song'" class="shortcuts-list">
+    <table *ngIf="page === 'song'" class="shortcuts-list">
+        <tr>
+            <td>Предыдущая песня</td>
+            <td>SHIFT + ⇦</td>
+        </tr>
+        <tr>
+            <td>Следующая песня</td>
+            <td>SHIFT + ⇨</td>
+        </tr>
+        <tr>
+            <td>Транспонировать на тон выше</td>
+            <td>SHIFT + ⇧</td>
+        </tr>
+        <tr>
+            <td>Транспонировать на тон ниже</td>
+            <td>SHIFT + ⇩</td>
+        </tr>
+        <tr>
+            <td>Отменить транспонирование</td>
+            <td>SHIFT + 0</td>
+        </tr>
+        <tr>
+            <td>Изменить подбор</td>
+            <td>SHIFT + e</td>
+        </tr>
+        <tr>
+            <td>Сохранить изменения (в режиме редактирования)</td>
+            <td>CTRL + Enter</td>
+        </tr>
+        <tr>
+            <td>Показать этот диалог</td>
+            <td>?</td>
+        </tr>
+    </table>
 
-        <div class="shortcut-line">
-            <div class="label">Предыдущая песня</div>
-            <div class="shortcut">SHIFT + ⇦</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Следующая песня</div>
-            <div class="shortcut">SHIFT + ⇨</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Транспонировать на тон выше</div>
-            <div class="shortcut">SHIFT + ⇧</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Транспонировать на тон ниже</div>
-            <div class="shortcut">SHIFT + ⇩</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Отменить транспонирование</div>
-            <div class="shortcut">SHIFT + 0</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Изменить подбор</div>
-            <div class="shortcut">SHIFT + e</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Сохранить изменения (в режиме редактирования)</div>
-            <div class="shortcut">CTRL + Enter</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Показать этот диалог</div>
-            <div class="shortcut">?</div>
-        </div>
-
-    </div>
-
-    <div *ngIf="page === 'collection'" class="shortcuts-list">
-
-        <div class="shortcut-line">
-            <div class="label">Предыдущая песня</div>
-            <div class="shortcut">SHIFT + ⇦</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Следующая песня</div>
-            <div class="shortcut">SHIFT + ⇨</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Добавить песню</div>
-            <div class="shortcut">SHIFT + a</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Сохранить изменения (в режиме редактирования)</div>
-            <div class="shortcut">CTRL + Enter</div>
-        </div>
-
-        <div class="shortcut-line">
-            <div class="label">Показать этот диалог</div>
-            <div class="shortcut">?</div>
-        </div>
-
-    </div>
+    <table *ngIf="page === 'collection'" class="shortcuts-list">
+        <tr>
+            <td>Предыдущая песня</td>
+            <td>SHIFT + ⇦</td>
+        </tr>
+        <tr>
+            <td>Следующая песня</td>
+            <td>SHIFT + ⇨</td>
+        </tr>
+        <tr>
+            <td>Добавить песню</td>
+            <td>SHIFT + a</td>
+        </tr>
+        <tr>
+            <td>Сохранить изменения (в режиме редактирования)</td>
+            <td>CTRL + Enter</td>
+        </tr>
+        <tr>
+            <td>Показать этот диалог</td>
+            <td>?</td>
+        </tr>
+    </table>
 
     <div class="buttons-row">
         <button class="btn btn-flat-white" (click)="popover.close()">Закрыть</button>

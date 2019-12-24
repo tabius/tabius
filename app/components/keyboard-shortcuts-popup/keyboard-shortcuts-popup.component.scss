@@ -1,7 +1,11 @@
+:host {
+  overflow: auto;
+}
+
 .dialog {
   width: calc(80vw);
   max-width: 800px;
-  margin: 5px 20px;
+  margin: 10px 15px 2px 25px;
 }
 
 h1 {
@@ -10,40 +14,46 @@ h1 {
   color: #0d0d0d;
 }
 
-.shortcuts-list {
+
+$shortcuts-list-padding: 8px;
+$shortcuts-list-border-size: 1px;
+$shortcuts-list-border-style: $shortcuts-list-border-size solid #0000001a;
+
+table.shortcuts-list {
   margin-top: 10px;
   font-size: 1.4rem;
-  font-weight: 400;
-  line-height: 2.1rem;
+  width: 100%;
 
-  .shortcut-line {
-    display: flex;
-    justify-content: space-between;
+  tr {
+    td {
+      border-top: $shortcuts-list-border-style;
+      padding: $shortcuts-list-padding;
+      white-space: nowrap;
+      line-height: 30px;
 
-    white-space: nowrap;
-    border-top: 1px solid #0000001a;
-    padding: 8px;
-    line-height: 30px;
+      &:nth-of-type(1) {
+        color: #606060;
+        font-size: 18px;
+      }
 
-    .label {
-      color: #606060;
-      min-width: 300px;
-      font-size: 18px;
+      &:nth-of-type(2) {
+        color: #0d0d0d;
+        font-size: 20px;
+        margin-left: 30px;
+        font-family: "Ubuntu Mono", monospace;
+      }
     }
 
-    .shortcut {
-      color: #0d0d0d;
-      font-size: 20px;
-      margin-left: 30px;
-      min-width: 150px;
-      font-family: "Ubuntu Mono", monospace;
-      align-items: center;
+    &:last-of-type {
+      td {
+        border-bottom: $shortcuts-list-border-style;
+        padding-bottom: $shortcuts-list-padding + $shortcuts-list-border-size;
+      }
     }
   }
 }
 
 .buttons-row {
-  border-top: solid 1px #0000001a;
-  padding-top: 25px;
+  padding: 10px 0;
   text-align: right;
 }
