@@ -16,6 +16,7 @@ import {getSongForumTopicLink} from '@app/utils/url-utils';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserSongSettings} from '@common/user-model';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
+import {HelpService} from '@app/services/help.service';
 
 @Component({
   selector: 'gt-song-page',
@@ -53,11 +54,13 @@ export class SongPageComponent implements OnInit, OnDestroy {
               readonly title: Title,
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
+              private readonly helpService: HelpService,
   ) {
   }
 
   ngOnInit() {
     enableLoadingIndicator(this);
+    this.helpService.setActiveHelpPage('song');
     this.uds.syncSessionStateAsync();
 
     const params = this.route.snapshot.params;

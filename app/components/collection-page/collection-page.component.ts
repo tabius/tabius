@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, CollectionDetails, isBand, isCompilation, Song} from '@common/catalog-model';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -7,7 +7,7 @@ import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
@@ -15,6 +15,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 import {LINK_CATALOG, LINK_STUDIO, PARAM_COLLECTION_MOUNT} from '@common/mounts';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {getCollectionImageUrl} from '@app/utils/url-utils';
+import {HelpService} from '@app/services/help.service';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -66,11 +67,13 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
               readonly meta: Meta,
               private readonly router: Router,
               private readonly navHelper: RoutingNavigationHelper,
+              private readonly helpService: HelpService,
   ) {
   }
 
   ngOnInit() {
     enableLoadingIndicator(this);
+    this.helpService.setActiveHelpPage('collection');
     this.uds.syncSessionStateAsync();
 
     const collectionMount = this.route.snapshot.params[PARAM_COLLECTION_MOUNT];
@@ -167,6 +170,14 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
     }
     this.cd.detectChanges();
   }
+
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent): void {
+    if (event.shiftKey && !isInputEvent(event) && event.code === 'KeyA') {
+      this.openSongEditor();
+    }
+  }
+
 }
 
 function getFirstSongsNames(songs: Song[]): string {

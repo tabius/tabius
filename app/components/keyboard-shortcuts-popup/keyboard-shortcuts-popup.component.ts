@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {PopoverRef} from '@app/popover/popover-ref';
-
-export type KeyboardShortcutsPage = 'song';
+import {HelpPageType} from '@app/services/help.service';
 
 @Component({
   selector: 'gt-keyboard-shortcuts-popup',
@@ -10,6 +9,6 @@ export type KeyboardShortcutsPage = 'song';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KeyboardShortcutsPopupComponent {
-  @Input() page!: KeyboardShortcutsPage;
+  @Input() page!: HelpPageType;
   @Input() popover!: PopoverRef;
 }
