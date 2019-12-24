@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Directive, HostBinding} from '@angular/core';
+import {ChangeDetectorRef, Directive, HostBinding, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 
 import {PopoverRef} from './popover-ref';
@@ -9,10 +9,10 @@ import {PopoverRef} from './popover-ref';
 @Directive({
   selector: '[gt-popoverArrow]'
 })
-export class PopoverArrowDirective {
+export class PopoverArrowDirective implements OnInit {
   @HostBinding('style.width.px')
   @HostBinding('style.height.px')
-  arrowSize: number;
+  arrowSize: number|null = null;
 
   @HostBinding('style.top.px')
   offsetTop: number|null = null;
@@ -26,22 +26,30 @@ export class PopoverArrowDirective {
   @HostBinding('style.left.px')
   offsetLeft: number|null = null;
 
-  private readonly subscription = new Subscription();
+  @HostBinding('style.display')
+  display: string|null = null;
+
+  private subscription!: Subscription;
 
   constructor(private readonly popoverRef: PopoverRef,
               private readonly cd: ChangeDetectorRef) {
+  }
 
-    this.arrowSize = popoverRef.config.arrowSize;
+  ngOnInit(): void {
+    this.arrowSize = this.popoverRef.config.arrowSize;
+    if (this.arrowSize === 0) {
+      this.display = 'none';
+    }
 
-    this.subscription = popoverRef.positionChanges().subscribe(p => {
-      const {offsetX, offsetY} = p.connectionPair;
-      if (!!offsetX && !!offsetY) {
-        this.offsetTop = offsetY >= 0 ? offsetY * -1 : null;
-        this.offsetLeft = offsetX < 0 ? offsetX * -1 : null;
-        this.offsetBottom = offsetY < 0 ? offsetY : null;
-        this.offsetRight = offsetX >= 0 ? offsetX : null;
-        this.cd.detectChanges();
-      }
+    this.subscription = this.popoverRef.positionChanges().subscribe(p => {
+      let {offsetX, offsetY} = p.connectionPair;
+      [offsetX, offsetY] = [offsetX || 0, offsetY || 0]; // use 0 as default value.
+      this.offsetTop = offsetY >= 0 ? offsetY * -1 : null;
+      this.offsetLeft = offsetX < 0 ? offsetX * -1 : null;
+      this.offsetBottom = offsetY < 0 ? offsetY : null;
+      this.offsetRight = offsetX >= 0 ? offsetX : null;
+      this.cd.detectChanges();
+
     });
   }
 

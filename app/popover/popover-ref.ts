@@ -41,10 +41,8 @@ export class PopoverRef<T = any> {
   }
 
   positionChanges(): Observable<ConnectedOverlayPositionChange> {
-    if (this.positionStrategy instanceof FlexibleConnectedPositionStrategy) {
-      return this.positionStrategy.positionChanges;
-    } else {
-      return of();
-    }
+    return this.positionStrategy instanceof FlexibleConnectedPositionStrategy
+        ? this.positionStrategy.positionChanges
+        : of();
   }
 }

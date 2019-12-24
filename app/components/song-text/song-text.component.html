@@ -4,6 +4,21 @@
      [ngStyle]="userSongStyle"
      [class.two-column-mode]="is2ColumnMode()"
      [class.three-column-mode]="is3ColumnMode()">
-    <div *ngIf="isBrowser" [innerHTML]="getSongHtml() | safeHtml"></div>
+
+    <div *ngIf="isBrowser"
+         [innerHTML]="getSongHtml() | safeHtml"
+         (click)="onClick($event)"
+    ></div>
+
     <div *ngIf="!isBrowser">{{song.content}}</div>
 </div>
+
+<ng-template #chordPopover let-data let-popover="popover">
+    <gt-chord-image *ngIf="popoverChordLayout"
+                    [layout]="popoverChordLayout!"
+                    [h4Si]="h4Si"
+                    size="4"
+                    (click)="popover.close()"
+                    class="chord-popover"
+    ></gt-chord-image>
+</ng-template>

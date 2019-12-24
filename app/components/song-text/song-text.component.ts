@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID, SimpleChanges, TemplateRef, ViewChild} from '@angular/core';
 import {SongDetails} from '@common/catalog-model';
 import {combineLatest, Subject} from 'rxjs';
 import {takeUntil, tap} from 'rxjs/operators';
@@ -9,6 +9,10 @@ import {REQUEST} from '@nguniversal/express-engine/tokens';
 import {isSmallScreenDevice} from '@common/util/misc-utils';
 import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/common-constants';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings} from '@common/user-model';
+import {PopoverService} from '@app/popover/popover.service';
+import {PopoverRef} from '@app/popover/popover-ref';
+import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
+import {parseChord} from '@app/utils/chords-parser';
 
 /** Heuristic used to enable multicolumn mode. */
 const MIN_SONG_LINES_FOR_2_COLUMN_MODE = 30;
@@ -50,10 +54,17 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   /** Used for server-side rendering only. */
   private readonly widthFromUserAgent;
 
+  @ViewChild('chordPopover', {static: true}) chordPopoverTemplate!: TemplateRef<{}>;
+
+  private chordPopoverRef?: PopoverRef;
+
+  private popoverChordLayout?: ChordLayout;
+
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserService,
               @Inject(PLATFORM_ID) platformId: string,
               @Optional() @Inject(REQUEST) private request: any,
+              private readonly popover: PopoverService,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     if (!this.isBrowser) {
@@ -180,6 +191,31 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.userSongStyle['fontSize'] = `${this.songFontSize}px`;
     this.resetCachedSongStats();
+  }
+
+  onClick(event: MouseEvent): void {
+    this.closeChordPopover();
+    const element = event.target as HTMLElement|undefined;
+    if (element && element.tagName.toLowerCase() === CHORDS_TAG) {
+      const chordLocation = parseChord(element.innerText);
+      this.popoverChordLayout = chordLocation ? getChordLayout(chordLocation.chord) : undefined;
+      if (this.popoverChordLayout) {
+        this.chordPopoverRef = this.popover.open(this.chordPopoverTemplate, element, {
+          data: element.innerText,
+          backdropClass: 'c-popover-backdrop',
+          panelClass: 'c-popover-panel',
+        });
+        this.chordPopoverRef.afterClosed().subscribe(() => {
+          this.chordPopoverRef = undefined;
+        });
+      }
+    }
+  }
+
+  private closeChordPopover(): void {
+    if (this.chordPopoverRef) {
+      this.chordPopoverRef.close();
+    }
   }
 }
 

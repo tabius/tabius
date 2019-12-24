@@ -69,6 +69,31 @@ c {
   display: inline;
   font-weight: 400;
   color: #1c889b;
+  cursor: pointer;
+}
+
+@mixin c-popover-panel-border {
+  border: 1px solid #ccc;
+}
+
+.help-popover-panel {
+  gt-popover {
+    overflow: auto;
+  }
+}
+
+.c-popover-panel {
+  gt-popover {
+    @include c-popover-panel-border();
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
+
+    .arrow {
+      @include c-popover-panel-border();
+    }
+  }
+}
+
+.c-popover-backdrop {
 }
 
 .toast-overlay {

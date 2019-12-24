@@ -2,36 +2,38 @@
   position: relative;
   background: white;
   border-radius: 4px;
-  padding: 20px;
-  overflow: auto;
 }
 
 .arrow {
   position: absolute;
   background: inherit;
-  z-index: -1;
+  transform-origin: center center;
 }
 
 :host-context(.center) .arrow {
   left: 50%;
 }
 
+// Note: the post +-1px translation below is a hardcoded border width.
+// Without this fix the arrow will have extra lines inside of the content block.
+// The hardcoded '1' works only for arrows with no borders or for border-width = 1.
+
 :host-context(.top.left, .top.center) .arrow {
-  transform-origin: top left;
-  transform: rotate(45deg);
+  transform: translate(-50%, 0) rotate(45deg) translate(0, -1px);
+  clip-path: polygon(0% 100%, 100% 0%, 0% 0%);
 }
 
 :host-context(.top.right) .arrow {
-  transform-origin: top right;
-  transform: rotate(-45deg);
+  transform: translate(50%, 0) rotate(-45deg) translate(0, -1px);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
 }
 
 :host-context(.bottom.left, .bottom.center) .arrow {
-  transform-origin: bottom left;
-  transform: rotate(-45deg);
+  transform: translate(-50%, 0) rotate(-45deg) translate(0, 1px);
+  clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
 }
 
 :host-context(.bottom.right) .arrow {
-  transform-origin: bottom right;
-  transform: rotate(45deg);
+  transform: rotate(45deg) translate(0, 1px);
+  clip-path: polygon(100% 0%, 0% 100%, 100% 100%);
 }

@@ -34,10 +34,65 @@ export class PopoverService {
   open<D = any>(componentOrTemplate: ComponentType<any>|TemplateRef<any>,
                 target: FlexibleConnectedPositionStrategyOrigin|null,
                 config: Partial<PopoverConfig> = {}): PopoverRef<D> {
-    const popoverConfig: PopoverConfig = {...defaultConfig, ...config};
 
-    const arrowSize = popoverConfig.arrowSize;
-    const arrowOffset = popoverConfig.arrowOffset;
+    // Disable arrow rendering if there is no target element.
+    const arrowSize = !!target ? config.arrowSize || defaultConfig.arrowSize : 0;
+    const popoverConfig: PopoverConfig = {...defaultConfig, ...config, arrowSize};
+    const positionStrategy = this.buildPositionStrategy(target, popoverConfig);
+
+    const overlayRef = this.overlay.create({
+      hasBackdrop: true,
+      backdropClass: config.backdropClass,
+      panelClass: config.panelClass,
+      positionStrategy,
+      scrollStrategy: this.overlay.scrollStrategies.reposition()
+    });
+
+    const popoverRef = new PopoverRef(overlayRef, positionStrategy, popoverConfig);
+
+    const popover = overlayRef.attach(new ComponentPortal(
+        PopoverComponent,
+        null,
+        new PortalInjector(this.injector, new WeakMap<any, any>([[PopoverRef, popoverRef]]))
+    )).instance;
+
+    if (componentOrTemplate instanceof TemplateRef) {
+      // rendering a provided template dynamically
+      popover.attachTemplatePortal(
+          new TemplatePortal(
+              componentOrTemplate,
+              null!, //TODO
+              {
+                $implicit: config.data,
+                popover: popoverRef
+              }
+          )
+      );
+    } else {
+      // rendering a provided component dynamically
+      popover.attachComponentPortal(
+          new ComponentPortal(
+              componentOrTemplate,
+              null,
+              new PortalInjector(
+                  this.injector,
+                  new WeakMap<any, any>([[POPOVER_DATA, config.data], [PopoverRef, popoverRef]])
+              )
+          )
+      );
+    }
+
+    return popoverRef;
+  }
+
+  private buildPositionStrategy(target: FlexibleConnectedPositionStrategyOrigin|null, popoverConfig: PopoverConfig): PositionStrategy {
+    if (target === null) {
+      return this.overlay.position()
+          .global()
+          .centerHorizontally()
+          .centerVertically();
+    }
+    const {arrowSize, arrowOffset} = popoverConfig;
     const panelOffset = arrowSize / 2;
 
     // preferred positions, in order of priority
@@ -102,60 +157,6 @@ export class PopoverService {
       }
     ];
 
-    const positionStrategy = this.buildPositionStrategy(target, positions);
-
-    const overlayRef = this.overlay.create({
-      hasBackdrop: true,
-      backdropClass: config.backdropClass,
-      panelClass: config.panelClass,
-      positionStrategy,
-      scrollStrategy: this.overlay.scrollStrategies.reposition()
-    });
-
-    const popoverRef = new PopoverRef(overlayRef, positionStrategy, popoverConfig);
-
-    const popover = overlayRef.attach(new ComponentPortal(
-        PopoverComponent,
-        null,
-        new PortalInjector(this.injector, new WeakMap<any, any>([[PopoverRef, popoverRef]]))
-    )).instance;
-
-    if (componentOrTemplate instanceof TemplateRef) {
-      // rendering a provided template dynamically
-      popover.attachTemplatePortal(
-          new TemplatePortal(
-              componentOrTemplate,
-              null!, //TODO
-              {
-                $implicit: config.data,
-                popover: popoverRef
-              }
-          )
-      );
-    } else {
-      // rendering a provided component dynamically
-      popover.attachComponentPortal(
-          new ComponentPortal(
-              componentOrTemplate,
-              null,
-              new PortalInjector(
-                  this.injector,
-                  new WeakMap<any, any>([[POPOVER_DATA, config.data], [PopoverRef, popoverRef]])
-              )
-          )
-      );
-    }
-
-    return popoverRef;
-  }
-
-  private buildPositionStrategy(target: FlexibleConnectedPositionStrategyOrigin|null, positions: ConnectionPositionPair[]): PositionStrategy {
-    if (target === null) {
-      return this.overlay.position()
-          .global()
-          .centerHorizontally()
-          .centerVertically();
-    }
     return this.overlay
         .position()
         .flexibleConnectedTo(target)

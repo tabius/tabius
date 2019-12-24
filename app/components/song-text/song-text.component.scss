@@ -24,6 +24,11 @@ $column-separator-style: 1px solid #e8e8e8;
   column-rule: $column-separator-style;
 }
 
+.chord-popover {
+  padding-bottom: 10px;
+  display: block;
+}
+
 @media only screen and (min-width: $hires-desktop-width) {
   .song-text {
     font-size: 20px;

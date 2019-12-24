@@ -26,7 +26,10 @@ export class HelpService {
       return;
     }
 
-    this.helpPopoverRef = this.popover.open(this.keyboardShortcutsTemplate, null, {data: this.activeHelpPage});
+    this.helpPopoverRef = this.popover.open(this.keyboardShortcutsTemplate, null, {
+      data: this.activeHelpPage,
+      panelClass: 'help-popover-panel'
+    });
 
     this.helpPopoverRef.afterClosed().subscribe(() => {
       this.helpPopoverRef = undefined;
