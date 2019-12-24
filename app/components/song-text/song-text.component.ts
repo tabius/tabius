@@ -193,6 +193,12 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     this.resetCachedSongStats();
   }
 
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(): void {
+    this.closeChordPopover();
+  }
+
+  @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent): void {
     this.closeChordPopover();
     const element = event.target as HTMLElement|undefined;
