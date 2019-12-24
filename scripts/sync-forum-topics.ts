@@ -10,10 +10,7 @@ if (FORUM_URL === undefined) {
   throw new Error('TABIUS_FORUM_URL is required.');
 }
 
-const BACKEND_URL = process.env.TABIUS_FORUM_URL;
-if (BACKEND_URL === undefined) {
-  throw new Error('TABIUS_BACKEND_URL is required.');
-}
+const BACKEND_URL = `https://${SERVER_CONFIG.serverHost}`;
 
 const forumAuthToken = process.env.TABIUS_NODE_BB_AUTH_TOKEN;
 if (forumAuthToken === undefined) {
