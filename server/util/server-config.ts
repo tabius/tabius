@@ -24,5 +24,5 @@ export function getConfigFilePath(fileOrSubdirPath: string): string {
   if (!configDir) {
     throw new Error('No TABIUS_CONFIG_DIR environment variable found!');
   }
-  return configDir + fileOrSubdirPath;
+  return `${configDir}/${fileOrSubdirPath}`;
 }
