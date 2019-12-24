@@ -105,6 +105,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.closeChordPopover();
     this.destroyed$.next();
   }
 
