@@ -108,9 +108,9 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   getSongHtml(): string {
     if (this.songHtml === '') {
-      const {transpose, hideChords} = this.songSettings;
+      const {transpose} = this.songSettings;
       let songHtml = this.song && this.isBrowser
-          ? renderChords(this.song.content, {tag: CHORDS_TAG, transpose, hideChords, useH: this.h4Si})
+          ? renderChords(this.song.content, {tag: CHORDS_TAG, transpose, hideChords: false, useH: this.h4Si})
           : '';
       if (this.multiColumnMode) {
         songHtml = preserveBlocksOnColumnBreak(songHtml);
