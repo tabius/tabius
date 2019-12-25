@@ -57,7 +57,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('chordPopover', {static: true}) chordPopoverTemplate!: TemplateRef<{}>;
 
   private chordPopoverRef?: PopoverRef;
-
+  private lastClickedChordElement?: Element;
   private popoverChordLayout?: ChordLayout;
 
   constructor(private readonly cd: ChangeDetectorRef,
@@ -201,9 +201,11 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent): void {
-    this.closeChordPopover();
     const element = event.target as HTMLElement|undefined;
-    if (element && element.tagName.toLowerCase() === CHORDS_TAG) {
+    const isSameChordClickedTwice = !!element && element == this.lastClickedChordElement && this.chordPopoverRef !== undefined;
+    this.closeChordPopover();
+    if (!isSameChordClickedTwice && element && element.tagName.toLowerCase() === CHORDS_TAG) {
+      this.lastClickedChordElement = element;
       const chordLocation = parseChord(element.innerText);
       this.popoverChordLayout = chordLocation ? getChordLayout(chordLocation.chord) : undefined;
       if (this.popoverChordLayout) {
@@ -222,6 +224,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   private closeChordPopover(): void {
     if (this.chordPopoverRef) {
       this.chordPopoverRef.close();
+      this.chordPopoverRef = undefined;
     }
   }
 }
