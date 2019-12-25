@@ -13,7 +13,7 @@
 
     <ng-container *ngIf="mode !== 'PrintMode'">
         <gt-song-header [song]="song" [collection]="collection" [titleFormat]="mode === 'SongPageMode' ? 'song' : 'song-and-collection'"></gt-song-header>
-        <gt-song-video [songDetails]="songDetails"></gt-song-video>
+        <gt-song-video [title]="song.title" [mediaLinks]="songDetails.mediaLinks"></gt-song-video>
         <gt-song-text [song]="songDetails"></gt-song-text>
         <gt-song-chords [songId]="song.id" showControls="true"></gt-song-chords>
     </ng-container>

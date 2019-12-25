@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
-import {SongDetails} from '@common/catalog-model';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
 
@@ -11,7 +10,8 @@ import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
 })
 export class SongVideoComponent implements OnChanges {
 
-  @Input() songDetails?: SongDetails;
+  @Input() title: string|null = null;
+  @Input() mediaLinks?: string[];
   onLine = true;
   youtubeId?: string;
 
@@ -20,8 +20,8 @@ export class SongVideoComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.onLine = this.bss.isOnline();
-    if (this.songDetails) {
-      this.youtubeId = getFirstYoutubeVideoIdFromLinks(this.songDetails.mediaLinks);
+    if (this.mediaLinks) {
+      this.youtubeId = getFirstYoutubeVideoIdFromLinks(this.mediaLinks);
     }
   }
 
