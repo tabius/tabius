@@ -36,15 +36,15 @@ server {
     # Redirects for old resources and API calls.
     location ~ ^/images/artists/(.*) {
         return 301 /images/collection/$1;
-    }   
+    }
 
     location ~ ^/api/artist/(.*) {
         return 301 /api/collection/$1;
-    }   
+    }
 
     location ~ ^/artist/(.*) {
         return 301 /chords/$1;
-    }   
+    }
 
     #    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     server_tokens off;
@@ -53,7 +53,7 @@ server {
     gzip_types text/plain application/xml application/json text/xml text/css application/javascript text/javascript;
     gzip_min_length 1000;
 
-    listen 443 ssl; # managed by Certbot
+    listen 443 ssl http2; # managed by Certbot
     ssl_certificate /etc/letsencrypt/live/tabius.org/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/tabius.org/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
