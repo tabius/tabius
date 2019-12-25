@@ -1,5 +1,5 @@
 import {BasePortalOutlet, CdkPortalOutlet, ComponentPortal, TemplatePortal} from '@angular/cdk/portal';
-import {Component, ComponentRef, EmbeddedViewRef, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ComponentRef, EmbeddedViewRef, ViewChild} from '@angular/core';
 
 /**
  * Internal component that wraps user-provided popover content.
@@ -7,7 +7,8 @@ import {Component, ComponentRef, EmbeddedViewRef, ViewChild} from '@angular/core
 @Component({
   selector: 'gt-popover',
   templateUrl: './popover.component.html',
-  styleUrls: ['./popover.component.scss']
+  styleUrls: ['./popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PopoverComponent extends BasePortalOutlet {
   @ViewChild(CdkPortalOutlet, {static: true}) portalOutlet!: CdkPortalOutlet;

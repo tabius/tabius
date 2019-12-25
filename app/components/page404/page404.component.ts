@@ -1,10 +1,11 @@
-import {Component, Inject, Optional} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, Optional} from '@angular/core';
 import {RESPONSE} from '@nguniversal/express-engine/tokens';
 import {addStatus404ToResponse} from '@app/utils/component-utils';
 
 @Component({
   selector: 'gt-page-404',
   template: `<p>Страница не найдена!</p>`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Page404Component {
 

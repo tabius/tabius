@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
@@ -24,6 +24,7 @@ enum NavSection {
   selector: 'gt-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
 
