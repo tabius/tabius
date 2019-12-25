@@ -11,7 +11,7 @@ server {
         # remove headers we do not want to expose
         proxy_hide_header X-Powered-By;
 
-        if ($request_uri ~* \.(css|js|jpg|jpeg|png|gif)$) {
+        if ($request_uri ~* \.(css|js|jpg|jpeg|png|gif|svg)$) {
             expires 28d;
         }
     }
