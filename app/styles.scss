@@ -85,7 +85,8 @@ c {
 .c-popover-panel {
   gt-popover {
     @include c-popover-panel-border();
-    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2));
+    border-radius: 0;
 
     .arrow {
       @include c-popover-panel-border();
