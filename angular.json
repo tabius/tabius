@@ -59,6 +59,7 @@
               "sourceMap": true
             },
             "tabius-org": {
+              "index": "app/index-org.html",
               "fileReplacements": [
                 {
                   "replace": "app/environments/environment.ts",

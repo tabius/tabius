@@ -9,11 +9,12 @@
     "server": "nodemon",
     "sitemap": "ts-node scripts/generate-sitemap.ts",
     "ssr:dev": "npm run update-version && ng build && ng run tabius:ssr",
-    "ssr:prod-org": "npm run update-version && ng build -c tabius-org && ng run tabius:ssr:tabius-org",
+    "ssr:prod-org": "npm run update-version && ng build -c tabius-org && ng run tabius:ssr:tabius-org && npm run fix-org-index",
     "ssr:prod-ru": "npm run update-version && ng build -c tabius-ru && ng run tabius:ssr:tabius-ru",
     "start": "npm run update-version && ng serve",
     "test": "npm run update-version && ng test",
-    "update-version": "node scripts/update-build-version.js"
+    "update-version": "node scripts/update-build-version.js",
+    "fix-org-index": "mv dist/browser/index-org.html dist/browser/index.html"
   },
   "private": true,
   "dependencies": {
