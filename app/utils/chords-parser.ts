@@ -9,7 +9,7 @@ export function isAlpha(char: string): boolean {
   return ALPHA_EN.test(char) || ALPHA_RU.test(char);
 }
 
-export function isWordChar(char: string): boolean {
+function isWordChar(char: string): boolean {
   return isAlpha(char) || char === '’';
 }
 

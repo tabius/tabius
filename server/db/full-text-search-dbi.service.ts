@@ -3,6 +3,7 @@ import {FullTextSongSearchResult, FullTextSongSearchResultMatchType, MAX_FULL_TE
 import {take} from 'rxjs/operators';
 import {AxiosResponse} from 'axios';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
+import {isAlpha, isDigit} from '@app/utils/chords-parser';
 
 const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 
@@ -55,8 +56,15 @@ interface SphinxSearchResult {
 
 type SphinxMatch = [number, string, string, string, string, string]; // id, snippet, song title, collection name, collection mount, song mount
 
+/** Converts user input into Sphinx safe search text. */
 function toSafeSearchText(text: string): string {
-  return text.replace(/'/g, '').replace('"', '');
+  let safeText = '';
+  for (const c of text) {
+    if (isAlpha(c) || isDigit(c)) {
+      safeText += c;
+    }
+  }
+  return safeText;
 }
 
 function buildSphinxQuery(fieldName: string, text: string, maxResults: number): string {
