@@ -10,9 +10,25 @@
         {{domain}}
     </span>
 
-    <div class="version" title="Текущая версия приложения">
-        <a href="https://github.com/tabius/tabius/commits/master" target="_blank" rel="noopener" title="Посмотреть последние изменения">
-            v{{version}}
+    <div class="version" title="">
+        <a href="https://github.com/tabius/tabius/commits/master" target="_blank" rel="noopener"
+           title="Текущая версия приложения.
+Посмотреть последние изменения">
+            <table>
+                <tr>
+                    <td>
+                        <div>
+                            {{month}}
+                        </div>
+                        <div>
+                            {{day}}
+                        </div>
+                    </td>
+                    <td>
+                        <gt-svg-icon icon="github"></gt-svg-icon>
+                    </td>
+                </tr>
+            </table>
         </a>
     </div>
 </div>

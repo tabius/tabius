@@ -10,7 +10,8 @@ import {Router} from '@angular/router';
 })
 export class FooterComponent {
 
-  readonly version = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(2);
+  readonly month = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(4, 6);
+  readonly day = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(6, 8);
 
   readonly footerClass = `c${1 + Date.now() % 5}`;
 

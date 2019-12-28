@@ -31,26 +31,49 @@
   top: 0;
   left: 0;
 
-  gt-svg-icon {
-    width: 22px;
-    height: 22px;
-    padding-top: 11px;
-    padding-left: 5px;
-    fill: #AAAAAA;
+  a {
+    display: block;
+    height: $footer-height;
+    padding-top: 6px;
+    padding-left: 10px;
+    padding-right: 5px;
+
+    gt-svg-icon {
+      width: 22px;
+      height: 22px;
+      fill: #AAAAAA;
+    }
   }
 }
 
 .version {
   position: absolute;
   top: 0;
-  right: 5px;
-  padding-top: 8px;
+  right: 0;
+  line-height: 10px;
   font-size: 10px;
   color: #999;
   font-style: italic;
 
   a {
+    display: block;
+    height: $footer-height;
+    padding-top: 6px;
+    padding-right: 8px;
     text-decoration: none;
     color: #999;
+
+    td {
+      div {
+        margin-top: 2px;
+        padding-right: 3px;
+      }
+    }
+
+    gt-svg-icon {
+      width: 22px;
+      height: 22px;
+      fill: #BBB;
+    }
   }
 }
