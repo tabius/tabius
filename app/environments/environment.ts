@@ -5,6 +5,7 @@ const APP_DOMAIN = 'localhost';
 
 /** Default development environment. */
 export const environment: TabiusEnv = {
+  domain: APP_DOMAIN,
   production: false,
   backendUrl: `http://${APP_DOMAIN}:4001`,
   ssrBackendUrl: `http://${APP_DOMAIN}:4001`,

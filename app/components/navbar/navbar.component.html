@@ -4,35 +4,35 @@
         <div class="item" style="justify-content: center;">
             <a routerLink="/">
                 <div class="logo">tabius</div>
-                <div class="logo2">табы для гитары</div>
+                <div class="logo2" i18n="@@logo2">табы для гитары</div>
             </a>
         </div>
         <div class="item forum" [class.active]="getActiveSection() === NavSection.Forum">
             <a href="{{forumLink}}">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="forum"></gt-svg-icon>
-                <div class="title">ФОРУМ</div>
+                <div class="title" i18n="@@forum">ФОРУМ</div>
             </a>
         </div>
         <div class="item catalog" [class.active]="getActiveSection() === NavSection.Catalog">
             <a routerLink="{{catalogLink}}" (click)="resetCollectionPageScroll()">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="artist"></gt-svg-icon>
-                <div class="title">КАТАЛОГ</div>
+                <div class="title" i18n="@@catalog">КАТАЛОГ</div>
             </a>
         </div>
         <div class="item studio" [class.active]="getActiveSection()=== NavSection.Studio">
             <a routerLink="{{studioLink}}">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="studio"></gt-svg-icon>
-                <div class="title">СТУДИЯ</div>
+                <div class="title" i18n="@@studio">СТУДИЯ</div>
             </a>
         </div>
         <div class="item tuner" [class.active]="getActiveSection() === NavSection.Tuner">
             <a routerLink="{{tunerLink}}">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="tuner"></gt-svg-icon>
-                <div class="title">ТЮНЕР</div>
+                <div class="title" i18n="@@tuner">ТЮНЕР</div>
             </a>
         </div>
         <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
@@ -40,7 +40,7 @@
                 <div *ngIf="user" class="user-icon-desktop" title="Аккаунт: {{user.username}}" (click)="showUserInfo()">{{getUserIconText()}}</div>
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="settings"></gt-svg-icon>
-                <div class="title">НАСТРОЙКИ</div>
+                <div class="title" i18n="@@settings">НАСТРОЙКИ</div>
             </a>
         </div>
     </nav>
@@ -81,38 +81,38 @@
         <div class="item forum">
             <a href="{{forumLink}}" (click)="close()">
                 <gt-svg-icon icon="forum"></gt-svg-icon>
-                <div class="title">ФОРУМ</div>
+                <div class="title" i18n="@@forum">ФОРУМ</div>
             </a>
         </div>
         <div class="item catalog">
             <a routerLink="{{catalogLink}}" (click)="close()">
                 <gt-svg-icon icon="artist"></gt-svg-icon>
-                <div class="title">КАТАЛОГ</div>
+                <div class="title" i18n="@@catalog">КАТАЛОГ</div>
             </a>
         </div>
         <div class="item studio">
             <a routerLink="{{studioLink}}" (click)="close()">
                 <gt-svg-icon icon="studio"></gt-svg-icon>
-                <div class="title">СТУДИЯ</div>
+                <div class="title" i18n="@@studio">СТУДИЯ</div>
             </a>
         </div>
         <div class="item tuner">
             <a routerLink="{{tunerLink}}" (click)="close()">
                 <gt-svg-icon icon="tuner"></gt-svg-icon>
-                <div class="title">ТЮНЕР</div>
+                <div class="title" i18n="@@tuner">ТЮНЕР</div>
             </a>
         </div>
         <div class="item settings">
             <a routerLink="{{settingsLink}}" (click)="close()">
                 <gt-svg-icon icon="settings"></gt-svg-icon>
-                <div class="title">НАСТРОЙКИ</div>
+                <div class="title" i18n="@@settings">НАСТРОЙКИ</div>
             </a>
         </div>
 
         <div class="item no-sleep" title="Режим всегда включенного экрана">
             <a (click)="toggleNoSleep(); close()">
                 <gt-svg-icon icon="no-sleep"></gt-svg-icon>
-                <div class="title">БЛОК. СНА</div>
+                <div class="title" i18n="@@no-sleep">БЛОК. СНА</div>
             </a>
         </div>
 

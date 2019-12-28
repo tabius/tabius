@@ -5,6 +5,7 @@ const APP_DOMAIN = 'tabius.org';
 
 // noinspection JSUnusedGlobalSymbols
 export const environment: TabiusEnv = {
+  domain: APP_DOMAIN,
   production: true,
   backendUrl: `https://${APP_DOMAIN}`,
   ssrBackendUrl: 'http://localhost:24001',

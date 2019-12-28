@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="ru" datatype="plaintext" original="ng2.template" target-language="en">
+    <body>
+      <trans-unit id="logo2" datatype="html">
+        <source>табы для гитары</source>
+        <target state="new">chords &amp; tabs</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="forum" datatype="html">
+        <source>ФОРУМ</source>
+        <target>FORUM</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="catalog" datatype="html">
+        <source>КАТАЛОГ</source>
+        <target>CATALOG</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="studio" datatype="html">
+        <source>СТУДИЯ</source>
+        <target>STUDIO</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="tuner" datatype="html">
+        <source>ТЮНЕР</source>
+        <target>TUNER</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings" datatype="html">
+        <source>НАСТРОЙКИ</source>
+        <target>SETTINGS</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="no-sleep" datatype="html">
+        <source>БЛОК. СНА</source>
+        <target state="new">NO SLEEP</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/navbar/navbar.component.html</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -14,6 +14,8 @@ export class FooterComponent {
 
   readonly footerClass = `c${1 + Date.now() % 5}`;
 
+  readonly domain = environment.domain;
+
   constructor(readonly router: Router) {
   }
 }
