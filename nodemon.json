@@ -5,6 +5,7 @@
   ],
   "ext": "ts",
   "ignore": [
+    "common/**/*.spec.ts",
     "server/**/*.spec.ts"
   ],
   "exec": "ts-node -r tsconfig-paths/register server/main.ts"

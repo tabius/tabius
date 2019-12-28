@@ -1,20 +1,8 @@
 import {Chord, CHORD_TONES, CHORD_TYPE_BY_RAW_NAME, ChordLocation, ChordTone, ChordType, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
-import {defined} from '@common/util/misc-utils';
-
-const ALPHA_EN = /^[A-Z]+$/i;
-const ALPHA_RU = /^[А-ЯЁ]+$/i;
-const DIGIT = /^\d$/;
-
-export function isAlpha(char: string): boolean {
-  return ALPHA_EN.test(char) || ALPHA_RU.test(char);
-}
+import {defined, isAlpha, isDigit} from '@common/util/misc-utils';
 
 function isWordChar(char: string): boolean {
   return isAlpha(char) || char === '’';
-}
-
-export function isDigit(char: string): boolean {
-  return DIGIT.test(char);
 }
 
 export function parseChords(text: string): ChordLocation[] {

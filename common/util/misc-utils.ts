@@ -192,3 +192,28 @@ export function isInputElement(element: HTMLElement|undefined): boolean {
   const tagName = element ? element.tagName.toLowerCase() : '';
   return tagName === 'textarea' || tagName === 'input';
 }
+
+const ALPHA_EN = /^[A-Z]+$/i;
+const ALPHA_RU = /^[А-ЯЁ]+$/i;
+const DIGIT = /^\d$/;
+
+export function isAlpha(char: string): boolean {
+  return ALPHA_EN.test(char) || ALPHA_RU.test(char);
+}
+
+export function isDigit(char: string): boolean {
+  return DIGIT.test(char);
+}
+
+/** Converts user input into Sphinx safe search text. */
+export function toSafeSearchText(text: string): string {
+  let safeText = '';
+  for (const c of text) {
+    if (isAlpha(c) || isDigit(c)) {
+      safeText += c;
+    } else if (!safeText.endsWith(' ')) {
+      safeText += ' ';
+    }
+  }
+  return safeText.trim();
+}

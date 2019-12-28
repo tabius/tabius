@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {FullTextSongSearchRequest, FullTextSongSearchResponse, FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
-import {getSongPageLink} from '@common/util/misc-utils';
+import {getSongPageLink, toSafeSearchText} from '@common/util/misc-utils';
 import {getSongTextWithNoChords} from '@app/components/song-page/song-page.component';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 
@@ -32,7 +32,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.clearResults();
-    if (this.searchText.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH) {
+    if (this.searchText.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH && toSafeSearchText(this.searchText).length > 0) {
       const fullTextSearchRequest: FullTextSongSearchRequest = {text: this.searchText};
       this.loading = true;
       //todo: handle concurrent requests
