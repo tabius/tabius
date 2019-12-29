@@ -1,13 +1,16 @@
-import {MIN_COLLECTION_MOUNT_LENGTH, MIN_SONG_MOUNT_LENGTH} from '@common/catalog-model';
 import {promisify} from 'util';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {INVALID_ID} from '@common/common-constants';
-import {packMediaLinks} from '@server/db/song-dbi.service';
 import {SERVER_CONFIG} from '@server/util/server-config';
+import {INVALID_ID} from '@common/common-constants';
+import {MIN_COLLECTION_MOUNT_LENGTH, MIN_SONG_MOUNT_LENGTH} from '@common/catalog-model';
+import {packMediaLinks} from '@server/db/song-dbi.service';
+import {isValidId} from '@common/util/misc-utils';
 
 const fs = require('fs');
 const mysql = require('mysql2/promise');
-const [readDirAsync, readFileAsync] = [fs.readdir, fs.readFile].map(promisify);
+
+const readDirAsync = promisify(fs.readdir);
+const readFileAsync = promisify(fs.readFile);
 
 interface CollectionImport {
   id: number;
@@ -17,6 +20,7 @@ interface CollectionImport {
 }
 
 interface SongImport {
+  id: number;
   name: string;
   text: string;
   media: string;
@@ -36,12 +40,13 @@ async function main() {
   try {
     assignMounts(collection, songs);
     await validateImportDataAndAssignCollectionId(collection, songs, connection);
-    if (collection.id === INVALID_ID) {
+    if (!isValidId(collection.id)) {
       await createCollection(collection, connection);
     } else {
       console.log(`Adding song to the existing collection: ${collection.id}/${collection.mount}`);
     }
     await createSongs(collection, songs, connection);
+    await moveImage(dir, `${collection.mount}.jpg`);
   } finally {
     connection.end();
   }
@@ -62,13 +67,13 @@ async function readJsonFromFile<T>(path: string): Promise<T> {
 }
 
 async function loadCollection(dir: string): Promise<CollectionImport> {
-  return await readJsonFromFile<CollectionImport>(dir + '/index.json');
+  return await readJsonFromFile<CollectionImport>(`${dir}/index.json`);
 }
 
 async function loadSongs(dir: string): Promise<SongImport[]> {
   const files = await readDirAsync(dir);
   return Promise.all(
-      files.filter(f => f !== 'index.json')
+      files.filter(f => f !== 'index.json' && !f.endsWith('.jpg'))
           .map(async (f) => await readJsonFromFile<SongImport>(`${dir}/${f}`))
   );
 }
@@ -86,7 +91,7 @@ async function validateImportDataAndAssignCollectionId(collection: CollectionImp
   }
 
   if (collection.mount.length < MIN_COLLECTION_MOUNT_LENGTH) {
-    throw new Error('Invalid collection mount: ' + JSON.stringify(collection));
+    throw new Error(`Invalid collection mount: ${JSON.stringify(collection)}`);
   }
 
   const [collectionIdRows] = await connection.execute(`SELECT id FROM collection WHERE mount = '${collection.mount}'`);
@@ -94,13 +99,11 @@ async function validateImportDataAndAssignCollectionId(collection: CollectionImp
 
   for (const song of songs) {
     if (collection.mount.length < MIN_SONG_MOUNT_LENGTH) {
-      throw new Error('Invalid song mount: ' + JSON.stringify(song));
+      throw new Error(`Invalid song mount: ${JSON.stringify(song)}`);
     }
     if (collection.id !== INVALID_ID) {
       const [songIdRow] = await connection.execute(`SELECT id FROM song WHERE collection_id = ${collection.id} AND mount = '${song.mount}'`);
-      if (songIdRow.length > 0 && songIdRow[0].id > 0) {
-        throw new Error(`Duplicate song mount in the DB: ${songIdRow[0].id}, song: ${song.mount}`);
-      }
+      song.id = songIdRow.length === 1 ? songIdRow[0].id || INVALID_ID : INVALID_ID;
     }
   }
 }
@@ -114,8 +117,24 @@ async function createCollection(collection: CollectionImport, connection: any): 
 
 async function createSongs(collection: CollectionImport, songs: SongImport[], connection: any): Promise<void> {
   for (const song of songs) {
-    console.log('create song: ' + song.name + '/' + song.mount);
+    if (isValidId(song.id)) {
+      console.log(`Skipping existing song: ${song.name}/${song.mount}`);
+      continue;
+    }
+    console.log(`Creating song: ${song.name}/${song.mount}`);
     await connection.execute('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
         [collection.id, song.mount, song.name, song.text, packMediaLinks([song.media])]);
+  }
+}
+
+/** Moves image from the import dir to its final location. */
+async function moveImage(importDir: string, resultImageFileName: string): Promise<void> {
+  const files: string[] = await readDirAsync(importDir);
+  const imageFile = files.find(f => !f.endsWith('.jpg'));
+  if (imageFile) {
+    console.log(`Moving song image: ${resultImageFileName}`);
+    const dstDir = `${SERVER_CONFIG.resourcesDir}/images/collection/profile/`;
+    fs.mkdirSync(dstDir, {recursive: true, mode: 0o755});
+    fs.copyFileSync(`${importDir}/${imageFile}`, `${dstDir}/${resultImageFileName}`);
   }
 }

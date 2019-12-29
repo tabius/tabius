@@ -2,6 +2,8 @@ export interface TabiusServerConfig {
   /**  e.g. 'tabius.ru' . */
   serverHost: string;
   serverPort: number;
+  /** e.g. /opt/tabius... */
+  resourcesDir: string;
   corsOriginWhitelist: string[];
   sessionCookieName: string;
   ssoConfig: any;
