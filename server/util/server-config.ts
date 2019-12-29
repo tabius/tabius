@@ -9,6 +9,9 @@ export interface TabiusServerConfig {
   ssoConfig: any;
   /** MariaDB/MySQL connector config. */
   dbConfig: any;
+
+  /** Name of the song index in Sphinx.*/
+  sphinxSongIndex: string;
 }
 
 const CONFIG_FROM_FILE = require(getConfigFilePath('server-config.json'));

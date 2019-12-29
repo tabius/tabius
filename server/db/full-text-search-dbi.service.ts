@@ -4,6 +4,7 @@ import {take} from 'rxjs/operators';
 import {AxiosResponse} from 'axios';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {toSafeSearchText} from '@common/util/misc-utils';
+import {SERVER_CONFIG} from '@server/util/server-config';
 
 const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 
@@ -56,8 +57,10 @@ interface SphinxSearchResult {
 
 type SphinxMatch = [number, string, string, string, string, string]; // id, snippet, song title, collection name, collection mount, song mount
 
+const SONG_INDEX = SERVER_CONFIG.sphinxSongIndex;
+
 function buildSphinxQuery(fieldName: string, text: string, maxResults: number): string {
-  return `SELECT id, SNIPPET(${fieldName}, '${text}'), title, collection_name, collection_mount, song_mount FROM song_index WHERE MATCH('@${fieldName} ${text}') LIMIT ${maxResults}`;
+  return `SELECT id, SNIPPET(${fieldName}, '${text}'), title, collection_name, collection_mount, song_mount FROM ${SONG_INDEX} WHERE MATCH('@${fieldName} ${text}') LIMIT ${maxResults}`;
 }
 
 function addResults(sphinxMatches: SphinxMatch[], result: FullTextSongSearchResult[], matchType: FullTextSongSearchResultMatchType): void {
