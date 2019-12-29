@@ -71,6 +71,48 @@
           <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="add-to-collection-header" datatype="html">
+        <source>Добавить в коллекцию:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="goto-collection" datatype="html">
+        <source>перейти »</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="goto-collection-title" datatype="html">
+        <source>Перейти на страницу коллекции</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="add-to-collection-title-registered" datatype="html">
+        <source>Добавить песню в коллекцию «<x id="INTERPOLATION" equiv-text="{{collection.name}}"/>»</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="favorite" datatype="html">
+        <source>Избранное</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="add-to-collection-title-not-registered" datatype="html">
+        <source>Добавить песню в коллекцию</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

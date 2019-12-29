@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="logo2" datatype="html">
         <source>табы для гитары</source>
-        <target state="new">chords &amp; tabs</target>
+        <target>chords &amp; tabs</target>
         <context-group purpose="location">
           <context context-type="sourcefile">components/navbar/navbar.component.html</context>
           <context context-type="linenumber">7</context>
@@ -72,10 +72,58 @@
       </trans-unit>
       <trans-unit id="no-sleep" datatype="html">
         <source>БЛОК. СНА</source>
-        <target state="new">NO SLEEP</target>
+        <target>NO SLEEP</target>
         <context-group purpose="location">
           <context context-type="sourcefile">components/navbar/navbar.component.html</context>
           <context context-type="linenumber">115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="add-to-collection-header" datatype="html">
+        <source>Добавить в коллекцию:</source>
+        <target>Add to collection:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="goto-collection" datatype="html">
+        <source>перейти »</source>
+        <target>open »</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="goto-collection-title" datatype="html">
+        <source>Перейти на страницу коллекции</source>
+        <target>Open collection page</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="add-to-collection-title-registered" datatype="html">
+        <source>Добавить песню в коллекцию «<x id="INTERPOLATION" equiv-text="{{collection.name}}"/>»</source>
+        <target >Add song to «<x id="INTERPOLATION" equiv-text="{{collection.name}}"/>»</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="favorite" datatype="html">
+        <source>Избранное</source>
+        <target>Favorite</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="add-to-collection-title-not-registered" datatype="html">
+        <source>Добавить песню в коллекцию</source>
+        <target state="new">Add song to favorites</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
     </body>
