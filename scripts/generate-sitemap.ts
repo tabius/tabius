@@ -1,6 +1,6 @@
 import {promisify} from 'util';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {getConfigFilePath, SERVER_CONFIG} from '@server/util/server-config';
+import {SERVER_CONFIG} from '@server/util/server-config';
 
 const mysql = require('mysql2/promise');
 const fs = require('fs');
@@ -30,7 +30,7 @@ async function generateSitemap() {
   } finally {
     connection.end();
   }
-  const sitemapFileName = getConfigFilePath('www/sitemap-1.txt');
+  const sitemapFileName = `${SERVER_CONFIG.resourcesDir}/www/sitemap-1.txt`;
   await writeFile(sitemapFileName, sitemap);
   await exec(`gzip -f ${sitemapFileName}`);
 }
