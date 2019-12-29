@@ -11,5 +11,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     studio: 'STUDIO',
     tuner: 'TUNER',
     userIconTitle: (username: string) => `Account: ${username}`,
+  },
+  page404: {
+    message: 'Page not found!',
   }
+
 };

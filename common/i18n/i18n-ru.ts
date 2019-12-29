@@ -11,5 +11,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     studio: 'СТУДИЯ',
     tuner: 'ТЮНЕР',
     userIconTitle: (username: string) => `Аккаунт: ${username}`
+  },
+  page404: {
+    message: 'Страница не найдена!',
   }
 };

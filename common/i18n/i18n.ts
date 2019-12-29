@@ -18,5 +18,8 @@ export interface I18n {
     studio: string;
     tuner: string;
     userIconTitle(username: string): string;
+  },
+  page404: {
+    message: string;
   }
 }
