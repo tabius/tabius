@@ -1,5 +1,8 @@
 export interface TabiusEnv {
 
+  /** Language: en, ru.. */
+  lang: string,
+
   /** Build type: production or not. */
   production: boolean;
 

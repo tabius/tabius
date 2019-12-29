@@ -3,8 +3,8 @@ import {TabiusEnv} from '@app/environments';
 
 const APP_DOMAIN = 'localhost';
 
-/** Default development environment. */
 export const environment: TabiusEnv = {
+  lang: 'ru',
   domain: APP_DOMAIN,
   production: false,
   backendUrl: `http://${APP_DOMAIN}:4001`,

@@ -14,8 +14,7 @@
     "start": "npm run update-version && ng serve",
     "test": "npm run update-version && ng test",
     "update-version": "node scripts/update-build-version.js",
-    "fix-org-index": "mv dist/browser/index-org.html dist/browser/index.html",
-    "i18n": "ng xi18n -c tabius-org && xliffmerge --profile i18n/xliffmerge.json"
+    "fix-org-index": "mv dist/browser/index-org.html dist/browser/index.html"
   },
   "private": true,
   "dependencies": {
@@ -75,7 +74,6 @@
     "karma-coverage-istanbul-reporter": "2.1.1",
     "karma-jasmine": "2.0.1",
     "karma-jasmine-html-reporter": "1.5.1",
-    "ngx-i18nsupport": "0.17.1",
     "node-sass": "4.13.0",
     "nodemon": "2.0.2",
     "protractor": "5.4.2",

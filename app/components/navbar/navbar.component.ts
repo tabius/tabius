@@ -10,6 +10,7 @@ import {ToastService} from '@app/toast/toast.service';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {LocationStrategy} from '@angular/common';
 import {NODE_BB_URL} from '@app/app-constants';
+import {I18N} from '@app/app-i18n';
 
 enum NavSection {
   Home = 1,
@@ -41,6 +42,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   readonly NavSection = NavSection;
   readonly noSleepMode$: Observable<boolean>;
+  readonly i18n = I18N.navbar;
 
   constructor(private readonly uds: UserService,
               private readonly router: Router,

@@ -75,9 +75,7 @@
               "outputHashing": "all",
               "serviceWorker": true,
               "sourceMap": true,
-              "i18nFile": "i18n/messages.en.xlf",
-              "i18nLocale": "en",
-              "i18nMissingTranslation": "error"
+              "i18nLocale": "en"
             }
           }
         },
@@ -139,16 +137,6 @@
             "devServerTarget": "tabius:serve"
           }
         },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "configurations": {
-            "tabius-org": {
-              "browserTarget": "tabius:build:tabius-org",
-              "i18nLocale": "ru",
-              "outFile": "../i18n/messages.xlf"
-            }
-          }
-        }
       }
     }
   },
