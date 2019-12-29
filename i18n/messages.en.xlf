@@ -2,6 +2,120 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="ru" datatype="plaintext" original="ng2.template" target-language="en">
     <body>
+      <trans-unit id="catalog-title" datatype="html">
+        <source>Каталог</source>
+        <target>Catalog</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="loading-catalog-message" datatype="html">
+        <source>Загружаем каталог…</source>
+        <target>Loading catalog…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="search-input-placeholder" datatype="html">
+        <source>поиск по имени и тексту</source>
+        <target>search by name or text</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="search-input-title" datatype="html">
+        <source>Поиск по имени артиста или тексту песни</source>
+        <target>Search by artist name or song text</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reset-filter-button" datatype="html">
+        <source>
+                    Очистить
+                </source>
+        <target>Clear</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reset-filter-button-title" datatype="html">
+        <source>Очистить фильтр</source>
+        <target>Reset filter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="show-all-button" datatype="html">
+        <source>ВСЕ</source>
+        <target>ALL</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="show-all-button-title" datatype="html">
+        <source>Показать все коллекции</source>
+        <target>Show all collections</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="search-results" datatype="html">
+        <source>
+                Результаты поиска для «<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span>"/><x id="INTERPOLATION" equiv-text="{{searchValue}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/>»:
+            </source>
+        <target>
+                Results for «<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span>"/><x id="INTERPOLATION" equiv-text="{{searchValue}}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/>»:
+            </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="artists" datatype="html">
+        <source>Артисты</source>
+        <target>Artists</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="artists-not-fount-message" datatype="html">
+        <source>
+                Артисты не найдены
+            </source>
+        <target>
+                Artists not found
+            </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="songs" datatype="html">
+        <source>Песни</source>
+        <target>Songs</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="add-new-collection-title" datatype="html">
+        <source>Добавить нового исполнителя или сборник в каталог</source>
+        <target>Add new artists or collection to the catalog</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">components/catalog-page/catalog-page.component.html</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="logo2" datatype="html">
         <source>табы для гитары</source>
         <target>chords &amp; tabs</target>
@@ -104,7 +218,7 @@
       </trans-unit>
       <trans-unit id="add-to-collection-title-registered" datatype="html">
         <source>Добавить песню в коллекцию «<x id="INTERPOLATION" equiv-text="{{collection.name}}"/>»</source>
-        <target >Add song to «<x id="INTERPOLATION" equiv-text="{{collection.name}}"/>»</target>
+        <target>Add song to «<x id="INTERPOLATION" equiv-text="{{collection.name}}"/>»</target>
         <context-group purpose="location">
           <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
           <context context-type="linenumber">6</context>
@@ -120,7 +234,7 @@
       </trans-unit>
       <trans-unit id="add-to-collection-title-not-registered" datatype="html">
         <source>Добавить песню в коллекцию</source>
-        <target state="new">Add song to favorites</target>
+        <target>Add song to favorites</target>
         <context-group purpose="location">
           <context context-type="sourcefile">components/add-song-to-collection/add-song-to-collection.component.html</context>
           <context context-type="linenumber">18</context>
