@@ -17,19 +17,19 @@ server {
     }
 
     location /images {
-        alias /opt/tabius/images;
+        alias /opt/tabius-org/images;
     }
 
     location /robots.txt {
-        alias /opt/tabius/www/robots.txt;
+        alias /opt/tabius-org/www/robots.txt;
     }
 
     location /sitemap.xml {
-        alias /opt/tabius/www/sitemap.xml;
+        alias /opt/tabius-org/www/sitemap.xml;
     }
 
     location ~ ^/sitemap-([0-9]+).txt.gz {
-        alias /opt/tabius/www/sitemap-$1.txt.gz;
+        alias /opt/tabius-org/www/sitemap-$1.txt.gz;
     }
 
 
