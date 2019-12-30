@@ -2,7 +2,7 @@ import {Observable, of, ReplaySubject} from 'rxjs';
 import {KV, StoreAdapter} from '@app/store/store-adapter';
 import {makeStateKey, TransferState} from '@angular/platform-browser';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {catchError, shareReplay, switchMap, take} from 'rxjs/operators';
+import {catchError, shareReplay, switchMap, take, tap} from 'rxjs/operators';
 import {FetchFn, NeedUpdateFn, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 
 const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
@@ -89,8 +89,8 @@ export class ObservableStoreImpl implements ObservableStore {
       const valueFromStore = await store.get<T>(key);
       if (valueFromStore) { // emit the value from store and check if refresh is needed.
         rs$.next(this.freezeFn(valueFromStore));
-        await this.refresh(key, fetchFn, refreshMode, needUpdateFn);
-      } else { // there is no value in the store -> fetch.
+        this.runAsyncRefresh(key, fetchFn, refreshMode, needUpdateFn);
+      } else { // there is no value in the store -> fetch initial value.
         const valueFromFetch = fetchFn ? await this.doFetch(fetchFn, key) : undefined;
         await this.set(key, valueFromFetch, needUpdateFn);
       }
@@ -107,15 +107,21 @@ export class ObservableStoreImpl implements ObservableStore {
                                      needUpdateFn: NeedUpdateFn<T>): Observable<T|undefined> {
     const initOp = this.inFlightInitRxOps.get(key);
     const initOp$: Observable<unknown> = initOp ? fromPromise(initOp.promise) : of(undefined);
-    return initOp$.pipe( // wait until first get is completed.
-        switchMap(() => fromPromise(this.refresh(key, fetchFn, refreshMode, needUpdateFn))), // do refresh
+
+    // Wait until first get is completed and call refresh next.
+    return initOp$.pipe(
+        tap(() => this.runAsyncRefresh(key, fetchFn, refreshMode, needUpdateFn)), // do refresh
         take(1),
         switchMap(() => rs$), // return the rs$
     );
   }
 
   // refresh action is performed async (non-blocking).
-  private async refresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): Promise<void> {
+  private runAsyncRefresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): void {
+    fromPromise(this._refresh(key, fetchFn, refreshMode, needUpdateFn)).pipe(take(1));
+  }
+
+  private async _refresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): Promise<void> {
     if (!fetchFn || refreshMode === RefreshMode.DoNotRefresh) {
       return;
     }
