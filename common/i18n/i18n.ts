@@ -57,4 +57,10 @@ export interface I18n {
   chordImage: {
     chordsLayoutTitleSuffix: string;
   },
+  collectionBreadcrumb: {
+    catalogLink: string,
+    catalogLinkTitle: string,
+    studioLink: string,
+    studioLinkTitle: string,
+  },
 }

@@ -1,10 +1,10 @@
-<a *ngIf="showCatalogLink" routerLink="{{catalogLink}}" title="Перейти в каталог">
-    Каталог
+<a *ngIf="showCatalogLink" routerLink="{{catalogLink}}" title="{{i18n.catalogLinkTitle}}">
+    {{i18n.catalogLink}}
     <gt-svg-icon *ngIf="!showCollectionLink" icon="level-up"></gt-svg-icon>
 </a>
 
-<a *ngIf="showStudioLink" routerLink="{{studioLink}}" title="Перейти к списку своих коллекций">
-    Студия
+<a *ngIf="showStudioLink" routerLink="{{studioLink}}" title="{{i18n.studioLinkTitle}}">
+    {{i18n.studioLink}}
     <gt-svg-icon *ngIf="!showCollectionLink" icon="level-up"></gt-svg-icon>
 </a>
 

@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} fro
 import {Collection} from '@common/catalog-model';
 import {LINK_CATALOG, LINK_STUDIO} from '@common/mounts';
 import {getCollectionPageLink, isValidUserId} from '@common/util/misc-utils';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-collection-breadcrumb',
@@ -18,6 +19,8 @@ export class CollectionBreadcrumbComponent implements OnChanges {
   readonly catalogLink = LINK_CATALOG;
 
   readonly studioLink = LINK_STUDIO;
+
+  readonly i18n = I18N.collectionBreadcrumb;
 
   showCatalogLink = false;
 
@@ -36,6 +39,5 @@ export class CollectionBreadcrumbComponent implements OnChanges {
       this.collectionPageLink = '';
     }
   }
-
 
 }

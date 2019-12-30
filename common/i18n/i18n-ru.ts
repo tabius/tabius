@@ -52,4 +52,10 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   chordImage: {
     chordsLayoutTitleSuffix: ', аппликатура аккорда',
   },
+  collectionBreadcrumb: {
+    catalogLink: 'Каталог',
+    catalogLinkTitle: 'Перейти в каталог',
+    studioLink: 'Студия',
+    studioLinkTitle: 'Перейти к списку своих коллекций',
+  },
 };

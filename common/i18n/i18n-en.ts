@@ -52,4 +52,10 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   chordImage: {
     chordsLayoutTitleSuffix: ', chord layout',
   },
+  collectionBreadcrumb: {
+    catalogLink: 'Catalog',
+    catalogLinkTitle: 'Go to catalog',
+    studioLink: 'Studio',
+    studioLinkTitle: 'Go to personal collections',
+  },
 };
