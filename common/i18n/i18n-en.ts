@@ -14,6 +14,13 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   },
   page404: {
     message: 'Page not found!',
-  }
-
+  },
+  addSongToCollection: {
+    title: 'Add to collection:',
+    addToCollectionCheckboxTitle: (collectionName) => `Add song to «${collectionName}»`,
+    gotoCollection: 'open »',
+    gotoCollectionTitle: 'Open collection page',
+    addToFavoritesCheckboxTitle: 'Add song to Favorites',
+    favorites: 'Favorites',
+  },
 };

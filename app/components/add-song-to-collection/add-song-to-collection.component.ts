@@ -9,6 +9,7 @@ import {User} from '@common/user-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, Song} from '@common/catalog-model';
 import {MSG_UNEXPECTED_ERROR} from '@common/messages';
+import {I18N} from '@app/app-i18n';
 
 interface ComponentCollectionData extends Collection {
   isSongInCollection: boolean;
@@ -30,6 +31,7 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
   showRegistrationPrompt = false;
 
   readonly trackById = trackById;
+  readonly i18n = I18N.addSongToCollection;
 
   private songSubscription?: Subscription;
   private readonly destroyed$ = new Subject();

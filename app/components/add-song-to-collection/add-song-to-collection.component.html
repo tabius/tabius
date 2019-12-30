@@ -1,21 +1,21 @@
 <div *ngIf="!user || collections.length > 0">
-    <h3>Добавить в коллекцию:</h3>
+    <h3>{{i18n.title}}</h3>
 
     <div class="collections-list">
         <div *ngFor="let collection of collections; trackBy: trackById" class="collection-item">
-            <label class="checkbox" title="Добавить песню в коллекцию «{{collection.name}}»">
+            <label class="checkbox" [title]="i18n.addToCollectionCheckboxTitle(collection.name)">
                 <input type="checkbox" [checked]="collection.isSongInCollection" (change)="toggleCollection(collection, $event.target)">
                 <span>{{collection.name}} <a [routerLink]="collection.routerLink"
                                              class='goto-collection-link btn btn-flat-white'
-                                             title="Перейти на страницу коллекции"
-                >перейти »</a></span>
+                                             title="{{i18n.gotoCollectionTitle}}"
+                >{{i18n.gotoCollection}}</a></span>
             </label>
         </div>
 
         <div *ngIf="!user" class="collection-item">
-            <label class="checkbox" title="Добавить песню в коллекцию">
+            <label class="checkbox" title="{{i18n.addToFavoritesCheckboxTitle}}">
                 <input type="checkbox" (change)="toggleRegistrationPrompt($event.target)">
-                <span>Избранное</span>
+                <span>{{i18n.favorites}}</span>
             </label>
             <div *ngIf="showRegistrationPrompt" class="register-prompt">
                 <gt-user-registration-prompt></gt-user-registration-prompt>

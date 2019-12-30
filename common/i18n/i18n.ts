@@ -21,5 +21,13 @@ export interface I18n {
   },
   page404: {
     message: string;
-  }
+  },
+  addSongToCollection: {
+    title: string,
+    addToCollectionCheckboxTitle: (collectionName: string) => string,
+    gotoCollection: string,
+    gotoCollectionTitle: string,
+    addToFavoritesCheckboxTitle: string,
+    favorites: string,
+  },
 }

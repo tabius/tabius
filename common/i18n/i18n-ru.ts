@@ -14,5 +14,13 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   page404: {
     message: 'Страница не найдена!',
-  }
+  },
+  addSongToCollection: {
+    title: 'Добавить в коллекцию:',
+    addToCollectionCheckboxTitle: (collectionName) => `Добавить песню в коллекцию «${collectionName}»`,
+    gotoCollection: 'перейти »',
+    gotoCollectionTitle: 'Перейти на страницу коллекции',
+    addToFavoritesCheckboxTitle: 'Добавить песню в коллекцию',
+    favorites: 'Избранное',
+  },
 };
