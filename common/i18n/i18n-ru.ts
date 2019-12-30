@@ -1,6 +1,11 @@
 import {I18n} from '@common/i18n/i18n';
 
+const FAVORITES_COLLECTION_NAME = 'Избранное';
+
 export const TRANSLATIONS_MAP_RU: I18n = {
+  common: {
+    favoritesCollectionName: FAVORITES_COLLECTION_NAME,
+  },
   navbar: {
     catalog: 'КАТАЛОГ',
     forum: 'ФОРУМ',
@@ -21,6 +26,6 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     gotoCollection: 'перейти »',
     gotoCollectionTitle: 'Перейти на страницу коллекции',
     addToFavoritesCheckboxTitle: 'Добавить песню в коллекцию',
-    favorites: 'Избранное',
+    favorites: FAVORITES_COLLECTION_NAME,
   },
 };

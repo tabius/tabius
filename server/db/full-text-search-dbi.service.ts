@@ -4,7 +4,7 @@ import {take} from 'rxjs/operators';
 import {AxiosResponse} from 'axios';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {toSafeSearchText} from '@common/util/misc-utils';
-import {SERVER_CONFIG} from '@server/util/server-config';
+import {SERVER_CONFIG} from '@server/server-config';
 
 const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 

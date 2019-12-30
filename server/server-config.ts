@@ -12,6 +12,8 @@ export interface TabiusServerConfig {
 
   /** Name of the song index in Sphinx.*/
   sphinxSongIndex: string;
+  /** 'en', 'ru'... See I18n interface. */
+  lang: string;
 }
 
 const CONFIG_FROM_FILE = require(getConfigFilePath('server-config.json'));

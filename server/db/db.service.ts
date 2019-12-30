@@ -1,6 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {createPool, Pool} from 'mysql2';
-import {SERVER_CONFIG} from '@server/util/server-config';
+import {SERVER_CONFIG} from '@server/server-config';
 
 @Injectable()
 export class DbService {

@@ -3,7 +3,7 @@ import {get, post, put} from 'request';
 import {getNameFirstFormArtistName} from '@common/util/misc-utils';
 import {CollectionType} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
-import {SERVER_CONFIG} from '@server/util/server-config';
+import {SERVER_CONFIG} from '@server/server-config';
 
 const FORUM_URL = process.env.TABIUS_FORUM_URL;
 if (FORUM_URL === undefined) {

@@ -8,7 +8,7 @@ import {CollectionDbi} from '@server/db/collection-dbi.service';
 import {isValidId} from '@common/util/misc-utils';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {map} from 'rxjs/operators';
-import {SERVER_CONFIG} from '@server/util/server-config';
+import {SERVER_CONFIG} from '@server/server-config';
 import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';

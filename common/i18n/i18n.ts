@@ -8,6 +8,9 @@ export function getI18n(lang: string): DeepReadonly<I18n> {
 }
 
 export interface I18n {
+  common: {
+    favoritesCollectionName: string,
+  },
   navbar: {
     catalog: string;
     forum: string;

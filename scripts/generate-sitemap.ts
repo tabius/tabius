@@ -1,6 +1,6 @@
 import {promisify} from 'util';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {SERVER_CONFIG} from '@server/util/server-config';
+import {SERVER_CONFIG} from '@server/server-config';
 
 const mysql = require('mysql2/promise');
 const fs = require('fs');

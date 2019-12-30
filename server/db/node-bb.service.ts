@@ -3,7 +3,7 @@ import {isValidId} from '@common/util/misc-utils';
 import {promisify} from 'util';
 
 import {del} from 'request';
-import {getConfigFilePath} from '@server/util/server-config';
+import {getConfigFilePath} from '@server/server-config';
 
 const [delAsync] = [del].map(promisify);
 

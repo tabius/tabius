@@ -1,5 +1,5 @@
 import {toArrayOfInts} from '@common/util/misc-utils';
-import {SERVER_CONFIG} from '@server/util/server-config';
+import {SERVER_CONFIG} from '@server/server-config';
 
 const mysql = require('mysql2/promise');
 

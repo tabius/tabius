@@ -3,8 +3,9 @@ import {DbService} from './db.service';
 import {Collection, CollectionDetails, CollectionType} from '@common/catalog-model';
 import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
-import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_NAME, USER_FAV_COLLECTION_SUFFIX} from '@common/common-constants';
+import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_SUFFIX} from '@common/common-constants';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
+import {I18N} from '@server/server-i18n';
 
 interface CollectionRow {
   id: number;
@@ -81,7 +82,7 @@ export class CollectionDbi {
     const collectionMount = generateCollectionMountForUser(user, USER_FAV_COLLECTION_SUFFIX);
     const result = await this.db.pool.promise()
         .query('INSERT IGNORE INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
-            [USER_FAV_COLLECTION_NAME, CollectionType.Compilation, collectionMount, 0, user.id])
+            [I18N.common.favoritesCollectionName, CollectionType.Compilation, collectionMount, 0, user.id])
         .then(([result]) => result);
 
     let collectionId = result.insertId;
