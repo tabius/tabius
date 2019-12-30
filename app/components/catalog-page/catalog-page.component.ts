@@ -7,13 +7,14 @@ import {BehaviorSubject, Subject, timer} from 'rxjs';
 import {enableLoadingIndicator} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canCreateNewPublicCollection, getCollectionPageLink, isInputEvent} from '@common/util/misc-utils';
+import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {MIN_DESKTOP_WIDTH, MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {User} from '@common/user-model';
 import {I18N} from '@app/app-i18n';
+import {environment} from '@app/environments/environment';
 
 interface LetterBlock {
   letter: string,
@@ -87,7 +88,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
             takeUntil(this.destroyed$),
         )
         .subscribe(collections => {
-          this.letterBlocks = toLetterBlocks(collections);
+          this.letterBlocks = toLetterBlocks(collections, environment.lang === 'ru');
           this.loaded = true;
           this.cd.detectChanges();
           this.bringFocusToTheSearchField();
@@ -196,14 +197,16 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   }
 }
 
-function toLetterBlocks(collections: readonly Collection[]): LetterBlock[] {
+function toLetterBlocks(collections: readonly Collection[], mergeLatinWordsIntoSingleBlock: boolean): LetterBlock[] {
   const blocksByLetter = new Map<string, LetterBlock>();
   for (const collection of collections) {
     let letter = collection.name.charAt(0);
-    if ('0123456789'.includes(letter)) {
+    if (!isAlpha(letter)) {
       letter = '0-9';
-    } else if (letter > 'A' && letter < 'z') {
+    } else if (mergeLatinWordsIntoSingleBlock && letter >= 'A' && letter <= 'z') {
       letter = 'A-Z';
+    } else {
+      letter = letter.toUpperCase();
     }
     const letterBlock = blocksByLetter.get(letter) || {letter, collections: []};
     letterBlock.collections.push({...collection, lcName: collection.name.toLocaleLowerCase()});
