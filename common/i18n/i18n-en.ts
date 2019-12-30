@@ -58,4 +58,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     studioLink: 'Studio',
     studioLinkTitle: 'Go to personal collections',
   },
+  footer: {
+    twitterLinkTitle: 'Read the latest site news in Twitter.',
+    githubLinkTitle: 'Current version.\nClick to see the latest changes.',
+    homePageLinkTitle: 'Home',
+  },
 };

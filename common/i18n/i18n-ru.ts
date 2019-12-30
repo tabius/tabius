@@ -58,4 +58,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     studioLink: 'Студия',
     studioLinkTitle: 'Перейти к списку своих коллекций',
   },
+  footer: {
+    twitterLinkTitle: 'Последние новости сервиса в Твиттер.',
+    githubLinkTitle: 'Текущая версия приложения.\nПосмотреть последние изменения',
+    homePageLinkTitle: 'Перейти на главную страницу сайта.',
+  },
 };

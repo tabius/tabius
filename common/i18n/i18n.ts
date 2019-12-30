@@ -63,4 +63,9 @@ export interface I18n {
     studioLink: string,
     studioLinkTitle: string,
   },
+  footer: {
+    twitterLinkTitle: string;
+    githubLinkTitle: string;
+    homePageLinkTitle: string;
+  },
 }

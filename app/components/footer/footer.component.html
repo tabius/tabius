@@ -1,28 +1,22 @@
 <div [ngClass]="footerClass">
 
-    <div class="twitter">
-        <a href="https://twitter.com/tratatabius" target="_blank" rel="noopener" title="Последние новости сервиса в Твиттер.">
+    <div class="twitter" *ngIf="twitterLink">
+        <a href="{{twitterLink}}" target="_blank" rel="noopener" title="{{i18n.twitterLinkTitle}}">
             <gt-svg-icon icon="twitter"></gt-svg-icon>
         </a>
     </div>
 
-    <span (click)="router.navigate(['/'])" style="cursor:pointer;" title="Перейти на главную страницу сайта.">
+    <span (click)="router.navigate(['/'])" style="cursor:pointer;" title="{{i18n.homePageLinkTitle}}">
         {{domain}}
     </span>
 
     <div class="version" title="">
-        <a href="https://github.com/tabius/tabius/commits/master" target="_blank" rel="noopener"
-           title="Текущая версия приложения.
-Посмотреть последние изменения">
+        <a href="{{githubLink}}" target="_blank" rel="noopener" title="{{i18n.githubLinkTitle}}">
             <table>
                 <tr>
                     <td>
-                        <div>
-                            {{day}}
-                        </div>
-                        <div>
-                            {{month}}
-                        </div>
+                        <div>{{day}}</div>
+                        <div>{{month}}</div>
                     </td>
                     <td>
                         <gt-svg-icon icon="github"></gt-svg-icon>
