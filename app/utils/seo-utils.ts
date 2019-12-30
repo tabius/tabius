@@ -1,4 +1,5 @@
 import {Meta, Title} from '@angular/platform-browser';
+import {DeepReadonly} from '@common/typescript-extras';
 
 export interface PageMetadata {
   title: string,
@@ -7,7 +8,7 @@ export interface PageMetadata {
   image?: string
 }
 
-export function updatePageMetadata(title: Title, meta: Meta, page: PageMetadata) {
+export function updatePageMetadata(title: Title, meta: Meta, page: DeepReadonly<PageMetadata>) {
   title.setTitle(page.title);
   meta.addTag({name: 'og:title', content: page.title});
   meta.addTag({name: 'twitter:title', content: page.title});

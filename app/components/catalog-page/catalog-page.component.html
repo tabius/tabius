@@ -1,7 +1,7 @@
-<h1>Каталог</h1>
+<h1>{{i18n.title}}</h1>
 
 <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
-    <div class="message">Загружаем каталог…</div>
+    <div class="message">{{i18n.loadingMessage}}</div>
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
@@ -13,10 +13,10 @@
                 <input #searchField type="text"
                        [value]="searchValue"
                        [formControl]="collectionFilterControl"
-                       placeholder="поиск по имени и тексту"
-                       title="Поиск по имени артиста или тексту песни"
+                       placeholder="{{i18n.searchInputPlaceholder}}"
+                       title="{{i18n.searchInputTitle}}"
                 >
-                <button (click)="activateLetter(null)" class="btn" title="Очистить фильтр">Очистить</button>
+                <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">{{i18n.clear}}</button>
             </div>
 
             <div class="letters-navigator-root">
@@ -29,7 +29,7 @@
                         <a class="letter-link">{{letterBlock.letter}}</a>
                     </div>
                     <div class="letter-link-block">
-                        <a (click)="activateLetter(null)" class="letter-link" title="Показать все коллекции">ВСЕ</a>
+                        <a (click)="activateLetter(null)" class="letter-link" title="{{i18n.showAllCollectionsTitle}}">{{i18n.showAllCollections}}</a>
                     </div>
                 </div>
             </div>
@@ -50,13 +50,13 @@
         <div *ngIf="searchValue.length > 0" class="filtered-collections-block">
 
             <div class="search-results-message">
-                Результаты поиска для «<span class="search-text">{{searchValue}}</span>»:
+                {{i18n.searchResultsPrefix}} «<span class="search-text">{{searchValue}}</span>»:
             </div>
 
-            <h2>Артисты</h2>
+            <h2>{{i18n.artistsHeader}}</h2>
 
             <div *ngIf="filteredCollections.length === 0" class="collection-not-found-message">
-                Артисты не найдены
+                {{i18n.noArtistsFound}}
             </div>
 
             <div *ngFor="let collection of filteredCollections; trackBy: trackByCollectionId">
@@ -64,7 +64,7 @@
             </div>
 
             <ng-container *ngIf="useFullTextSearch()" class="filtered-collections-block">
-                <h2>Песни</h2>
+                <h2>{{i18n.songsHeader}}</h2>
                 <gt-song-full-text-search-results-panel [searchText]="searchValue"></gt-song-full-text-search-results-panel>
             </ng-container>
         </div>
@@ -77,7 +77,7 @@
         <button *ngIf="!collectionEditorIsOpen"
                 (click)="toggleCollectionsEditor()"
                 class="btn btn-info"
-                title="Добавить нового исполнителя или сборник в каталог">Добавить
+                title="{{i18n.addNewArtistTitle}}">{{i18n.addNewArtist}}
         </button>
 
         <gt-collection-editor *ngIf="collectionEditorIsOpen && canCreateNewPublicCollection"

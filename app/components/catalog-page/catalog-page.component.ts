@@ -13,6 +13,7 @@ import {UserService} from '@app/services/user.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {MIN_DESKTOP_WIDTH, MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {User} from '@common/user-model';
+import {I18N} from '@app/app-i18n';
 
 interface LetterBlock {
   letter: string,
@@ -39,6 +40,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   readonly destroyed$ = new Subject();
   readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   readonly getCollectionPageLink = getCollectionPageLink;
+  readonly i18n = I18N.catalogPage;
 
   @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
   loaded = false;
@@ -132,11 +134,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
   }
 
   updateMeta() {
-    updatePageMetadata(this.title, this.meta, {
-      title: 'Каталог: все исполнители и коллекции песен',
-      description: 'Поиск аккордов по названию и тексту песни.',
-      keywords: ['табы', 'аккорды', 'гитара', 'список артистов', 'поиск песни по тексту'],
-    });
+    updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 
   trackByLetter(idx: number, block: LetterBlock): string {

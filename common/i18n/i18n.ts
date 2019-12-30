@@ -26,11 +26,32 @@ export interface I18n {
     message: string;
   },
   addSongToCollection: {
-    title: string,
-    addToCollectionCheckboxTitle: (collectionName: string) => string,
-    gotoCollection: string,
-    gotoCollectionTitle: string,
-    addToFavoritesCheckboxTitle: string,
-    favorites: string,
+    title: string;
+    addToCollectionCheckboxTitle: (collectionName: string) => string;
+    gotoCollection: string;
+    gotoCollectionTitle: string;
+    addToFavoritesCheckboxTitle: string;
+    favorites: string;
+  },
+  catalogPage: {
+    title: string;
+    loadingMessage: string;
+    searchInputPlaceholder: string;
+    searchInputTitle: string;
+    clearButtonTitle: string;
+    clear: string;
+    showAllCollections:string;
+    showAllCollectionsTitle: string;
+    artistsHeader: string;
+    noArtistsFound: string;
+    songsHeader: string;
+    addNewArtist: string;
+    addNewArtistTitle: string;
+    searchResultsPrefix: string;
+    meta: {
+      title: string;
+      description: string;
+      keywords: string[];
+    }
   },
 }
