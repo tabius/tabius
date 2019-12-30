@@ -3,6 +3,7 @@ import {ChordImagePainter} from '@app/utils/chord-image-painter';
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {isPlatformBrowser} from '@angular/common';
 import {ChordTone, VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-chord-image',
@@ -17,6 +18,8 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
 
   width = 70;
   height = 90;
+
+  readonly i18n = I18N.chordImage;
 
   private readonly isBrowser: boolean;
   private painter!: ChordImagePainter;

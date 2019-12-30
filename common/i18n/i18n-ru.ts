@@ -49,4 +49,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       keywords: ['табы', 'аккорды', 'гитара', 'список артистов', 'поиск песни по тексту'],
     },
   },
+  chordImage: {
+    chordsLayoutTitleSuffix: ', аппликатура аккорда',
+  },
 };

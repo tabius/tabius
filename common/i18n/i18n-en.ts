@@ -49,4 +49,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       keywords: ['tabs', 'chords', 'guitar', 'artists list', 'search song by text'],
     },
   },
+  chordImage: {
+    chordsLayoutTitleSuffix: ', chord layout',
+  },
 };

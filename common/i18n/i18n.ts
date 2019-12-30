@@ -40,7 +40,7 @@ export interface I18n {
     searchInputTitle: string;
     clearButtonTitle: string;
     clear: string;
-    showAllCollections:string;
+    showAllCollections: string;
     showAllCollectionsTitle: string;
     artistsHeader: string;
     noArtistsFound: string;
@@ -53,5 +53,8 @@ export interface I18n {
       description: string;
       keywords: string[];
     }
+  },
+  chordImage: {
+    chordsLayoutTitleSuffix: string;
   },
 }
