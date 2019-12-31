@@ -5,6 +5,7 @@ const FAVORITES_COLLECTION_NAME = 'Избранное';
 export const TRANSLATIONS_MAP_RU: I18n = {
   common: {
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
+    error: (message: string) => `Ошибка: ${message}`,
   },
   navbar: {
     catalog: 'КАТАЛОГ',
@@ -63,4 +64,15 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     githubLinkTitle: 'Текущая версия приложения.\nПосмотреть последние изменения',
     homePageLinkTitle: 'Перейти на главную страницу сайта.',
   },
+  collectionEditor: {
+    header: 'Добавление коллекции',
+    collectionName: 'Имя коллекции',
+    collectionMount: 'Адрес страницы',
+    collectionType: 'Тип коллекции',
+    person: 'Персона',
+    band: 'Группа',
+    compilation: 'Сборник',
+    create: 'Создать',
+    close: 'Закрыть',
+  }
 };

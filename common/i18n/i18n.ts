@@ -9,7 +9,8 @@ export function getI18n(lang: string): DeepReadonly<I18n> {
 
 export interface I18n {
   common: {
-    favoritesCollectionName: string,
+    favoritesCollectionName: string;
+    error: (message: string) => string;
   },
   navbar: {
     catalog: string;
@@ -68,4 +69,15 @@ export interface I18n {
     githubLinkTitle: string;
     homePageLinkTitle: string;
   },
+  collectionEditor: {
+    header: string;
+    collectionName: string;
+    collectionMount: string;
+    collectionType: string;
+    person: string;
+    band: string;
+    compilation: string;
+    create: string;
+    close: string;
+  }
 }

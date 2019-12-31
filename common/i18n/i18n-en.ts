@@ -5,6 +5,7 @@ const FAVORITES_COLLECTION_NAME = 'Favorites';
 export const TRANSLATIONS_MAP_EN: I18n = {
   common: {
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
+    error: (message: string) => `Error: ${message}`,
   },
   navbar: {
     catalog: 'CATALOG',
@@ -63,4 +64,15 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     githubLinkTitle: 'Current version.\nClick to see the latest changes.',
     homePageLinkTitle: 'Home',
   },
+  collectionEditor: {
+    header: 'Add collection',
+    collectionName: 'Name',
+    collectionMount: 'Mount',
+    collectionType: 'Type',
+    person: 'Person',
+    band: 'Band',
+    compilation: 'Compilation',
+    create: 'Create',
+    close: 'Close',
+  }
 };
