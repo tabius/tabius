@@ -130,7 +130,7 @@ async function createSongs(collection: CollectionImport, songs: SongImport[], co
 /** Moves image from the import dir to its final location. */
 async function moveImage(importDir: string, resultImageFileName: string): Promise<void> {
   const files: string[] = await readDirAsync(importDir);
-  const imageFile = [...files.find(f => f.endsWith('.jpg')), 0][0];
+  const imageFile = files.find(f => f.endsWith('.jpg'));
   if (imageFile) {
     console.log(`Moving song image: ${resultImageFileName}`);
     const dstDir = `${SERVER_CONFIG.resourcesDir}/images/collection/profile/`;
