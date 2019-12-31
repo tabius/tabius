@@ -19,7 +19,7 @@
         <gt-song [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song>
 
         <div class="user-controls">
-            <gt-add-song-to-collection [song]="song"></gt-add-song-to-collection>
+            <gt-add-song-to-collection *ngIf="isBrowser" [song]="song"></gt-add-song-to-collection>
         </div>
 
         <div *ngIf="hasEditRight" class="edit-song-block">
@@ -35,7 +35,7 @@
             <a href="{{getSongForumTopicLink(song)}}">Обсудить подбор на форуме »</a>
         </div>
 
-        <gt-song-prev-next-navigator [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song-prev-next-navigator>
+        <gt-song-prev-next-navigator *ngIf="isBrowser" [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song-prev-next-navigator>
 
     </div>
 

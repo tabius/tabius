@@ -17,6 +17,7 @@ import {TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserSongSettings} from '@common/user-model';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {HelpService} from '@app/services/help.service';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
   selector: 'gt-song-page',
@@ -46,6 +47,8 @@ export class SongPageComponent implements OnInit, OnDestroy {
 
   collectionMount?: string;
 
+  readonly isBrowser: boolean;
+
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               readonly cd: ChangeDetectorRef,
@@ -55,7 +58,9 @@ export class SongPageComponent implements OnInit, OnDestroy {
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
+              private readonly bss: BrowserStateService,
   ) {
+    this.isBrowser = bss.isBrowser;
   }
 
   ngOnInit() {
