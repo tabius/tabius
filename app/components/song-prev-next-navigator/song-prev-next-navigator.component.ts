@@ -42,6 +42,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   // TODO: handle changes & re-subscribe!
   ngOnInit(): void {
+    this.updateViewDimensions();
     const collection$ = this.cds.getCollectionById(this.activeCollectionId);
     // list of all collection songs sorted by id.
     const allSongs$ = collection$.pipe(
@@ -97,7 +98,6 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   ngAfterViewInit(): void {
     this.installHammer();
-    this.updateViewDimensions();
   }
 
   ngOnDestroy(): void {
