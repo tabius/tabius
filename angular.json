@@ -22,6 +22,7 @@
             "main": "app/main.ts",
             "polyfills": "app/polyfills.ts",
             "tsConfig": "app/tsconfig.json",
+            "extractCss": true,
             "assets": [
               {
                 "glob": "**/*",
