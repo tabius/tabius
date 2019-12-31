@@ -1,12 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
-import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
-import {enableLoadingIndicator} from '@app/utils/component-utils';
+import {combineLatest} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
 import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
+import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'
@@ -24,7 +24,7 @@ export type SongEditResult = {
   styleUrls: ['./song-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongEditorComponent implements OnInit, OnDestroy {
+export class SongEditorComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
 
   /** Id of the edited song.*/
   @Input() songId!: number;
@@ -40,10 +40,6 @@ export class SongEditorComponent implements OnInit, OnDestroy {
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter<SongEditResult>();
 
-  readonly destroyed$ = new Subject();
-
-  loaded = false;
-  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
   content = '';
   title = '';
   mediaLinks = '';
@@ -58,8 +54,9 @@ export class SongEditorComponent implements OnInit, OnDestroy {
 
   constructor(private readonly cds: CatalogService,
               private readonly toastService: ToastService,
-              readonly cd: ChangeDetectorRef,
+              injector: Injector,
   ) {
+    super(injector);
   }
 
   ngOnInit(): void {
@@ -71,7 +68,6 @@ export class SongEditorComponent implements OnInit, OnDestroy {
       this.loaded = true;
       this.updateUIOnLoadedState();
     } else {
-      enableLoadingIndicator(this);
       combineLatest([this.cds.getSongById(this.songId), this.cds.getSongDetailsById(this.songId)])
           .pipe(takeUntil(this.destroyed$))
           .subscribe(([song, details]) => {

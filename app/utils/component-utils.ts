@@ -1,20 +1,5 @@
-import {Subject, timer} from 'rxjs';
 import {ChangeDetectorRef} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
-
-interface ComponentWithLoadingIndicator {
-  indicatorIsAllowed$: Subject<boolean>;
-  loaded: boolean;
-}
-
-/** Sends true to indicatorIsAllowed$ if component is not loaded after 800ms. */
-export function enableLoadingIndicator(component: ComponentWithLoadingIndicator): void {
-  timer(800).subscribe(() => {
-    if (!component.loaded) {
-      component.indicatorIsAllowed$.next(true);
-    }
-  });
-}
 
 interface PageWithNotFoundFlag {
   notFound: boolean;

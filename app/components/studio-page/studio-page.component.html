@@ -1,5 +1,5 @@
 <div class="content">
-    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+    <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
         <div class="message">Загружаем …</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>

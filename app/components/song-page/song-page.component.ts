@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
-import {BehaviorSubject, combineLatest, of, Subject} from 'rxjs';
+import {combineLatest, of} from 'rxjs';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
-import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
+import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
@@ -17,7 +17,7 @@ import {TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserSongSettings} from '@common/user-model';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {HelpService} from '@app/services/help.service';
-import {BrowserStateService} from '@app/services/browser-state.service';
+import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 
 @Component({
   selector: 'gt-song-page',
@@ -25,10 +25,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
   styleUrls: ['./song-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongPageComponent implements OnInit, OnDestroy {
-  readonly destroyed$ = new Subject();
-  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
-
+export class SongPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
   song?: Song;
   songDetails?: SongDetails;
   activeCollection?: Collection;
@@ -42,31 +39,28 @@ export class SongPageComponent implements OnInit, OnDestroy {
   readonly hasValidForumTopic = hasValidForumTopic;
   readonly getSongForumTopicLink = getSongForumTopicLink;
 
-  loaded = false;
   notFound = false;
 
   collectionMount?: string;
 
-  readonly isBrowser: boolean;
-
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
-              readonly cd: ChangeDetectorRef,
               private readonly router: Router,
               private readonly route: ActivatedRoute,
               readonly title: Title,
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
-              private readonly bss: BrowserStateService,
+              injector: Injector,
   ) {
-    this.isBrowser = bss.isBrowser;
+    super(injector);
   }
 
   ngOnInit() {
-    enableLoadingIndicator(this);
     this.helpService.setActiveHelpPage('song');
-    this.uds.syncSessionStateAsync();
+    if (this.isBrowser) {
+      this.uds.syncSessionStateAsync(); //TODO: find a better place to do it for every page. Sync state every N seconds??
+    }
 
     const params = this.route.snapshot.params;
     this.collectionMount = params[PARAM_COLLECTION_MOUNT];

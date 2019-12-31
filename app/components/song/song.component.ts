@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
-import {enableLoadingIndicator} from '@app/utils/component-utils';
+import {ChangeDetectionStrategy, Component, Injector, Input, OnChanges, OnDestroy} from '@angular/core';
+import {combineLatest, Subscription} from 'rxjs';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {flatMap, takeUntil} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
+import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 
 @Component({
   selector: 'gt-song',
@@ -13,10 +13,7 @@ import {UserService} from '@app/services/user.service';
   styleUrls: ['./song.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongComponent implements OnInit, OnDestroy, OnChanges {
-
-  readonly destroyed$ = new Subject();
-  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+export class SongComponent extends ComponentWithLoadingIndicator implements OnDestroy, OnChanges {
 
   @Input() songId!: number;
   @Input() activeCollectionId?: number;
@@ -34,8 +31,9 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
-              readonly cd: ChangeDetectorRef,
+              injector: Injector,
   ) {
+    super(injector);
   }
 
   ngOnChanges(): void {
@@ -49,7 +47,7 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
     const song$ = this.cds.getSongById(this.songId);
     const songDetails$ = this.cds.getSongDetailsById(this.songId);
     const collection$ = !!this.activeCollectionId ? this.cds.getCollectionById(this.activeCollectionId)
-        : song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
+                                                  : song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
     const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song && song.id)));
     this.songSubscription = combineLatest([song$, songDetails$, collection$, songSettings$])
         .pipe(takeUntil(this.destroyed$))
@@ -63,10 +61,6 @@ export class SongComponent implements OnInit, OnDestroy, OnChanges {
           this.songSettings = songSettings;
           this.cd.detectChanges();
         });
-  }
-
-  ngOnInit() {
-    enableLoadingIndicator(this);
   }
 
   ngOnDestroy(): void {

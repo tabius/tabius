@@ -1,10 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {enableLoadingIndicator} from '@app/utils/component-utils';
+import {ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
 import {UserService} from '@app/services/user.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {User} from '@common/user-model';
-import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
 import {Song} from '@common/catalog-model';
@@ -12,6 +11,7 @@ import {sortSongsAndMounts} from '@app/components/collection-page/collection-pag
 import {combineLatest0, defined, getSongPageLink} from '@common/util/misc-utils';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {Router} from '@angular/router';
+import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 
 @Component({
   selector: 'gt-studio-page',
@@ -19,12 +19,8 @@ import {Router} from '@angular/router';
   styleUrls: ['./studio-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StudioPageComponent implements OnInit, OnDestroy {
+export class StudioPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
 
-  readonly destroyed$ = new Subject();
-  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
-
-  loaded = false;
   user?: User;
 
   /** Personal pick-ups. */
@@ -37,16 +33,16 @@ export class StudioPageComponent implements OnInit, OnDestroy {
 
   constructor(private readonly uds: UserService,
               private readonly cds: CatalogService,
-              readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,
               private readonly router: Router,
+              injector: Injector,
   ) {
+    super(injector);
   }
 
 
   ngOnInit() {
-    enableLoadingIndicator(this);
     this.uds.syncSessionStateAsync();
 
     const user$ = this.uds.getUser();

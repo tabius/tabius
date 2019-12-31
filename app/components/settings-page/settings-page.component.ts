@@ -1,12 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '@app/services/user.service';
 import {getDefaultUserSongFontSize, User, UserDeviceSettings} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
-import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
+import {combineLatest} from 'rxjs';
 import {SongDetails} from '@common/catalog-model';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
 import {RefreshMode} from '@app/store/observable-store';
-import {enableLoadingIndicator} from '@app/utils/component-utils';
+import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 
 export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;
@@ -17,7 +17,7 @@ export const MIN_SONG_FONT_SIZE = 8;
   styleUrls: ['./settings-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsPageComponent implements OnInit, OnDestroy {
+export class SettingsPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
 
   deviceSettings!: UserDeviceSettings;
   user?: User;
@@ -26,21 +26,19 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   readonly loginLink = NODE_BB_LOGIN_URL;
   readonly registrationLink = NODE_BB_REGISTRATION_URL;
 
-  readonly destroyed$ = new Subject();
   readonly defaultFontSize = getDefaultUserSongFontSize();
   readonly settingsDemoSong = SETTINGS_DEMO_SONG;
 
-  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
-  loaded = false;
-
-  constructor(readonly cd: ChangeDetectorRef,
-              private readonly uds: UserService,
+  constructor(private readonly uds: UserService,
+              injector: Injector,
   ) {
+    super(injector);
   }
 
   ngOnInit() {
-    enableLoadingIndicator(this);
-    this.uds.syncSessionStateAsync();
+    if (this.isBrowser) {
+      this.uds.syncSessionStateAsync();
+    }
 
     combineLatest([
       this.uds.getUser(),

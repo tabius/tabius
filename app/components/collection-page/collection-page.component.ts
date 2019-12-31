@@ -1,21 +1,21 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, CollectionDetails, isBand, isCompilation, Song} from '@common/catalog-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
-import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
-import {enableLoadingIndicator, switchToNotFoundMode} from '@app/utils/component-utils';
+import {combineLatest, Observable} from 'rxjs';
+import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
-import {BrowserStateService} from '@app/services/browser-state.service';
 import {LINK_CATALOG, LINK_STUDIO, PARAM_COLLECTION_MOUNT} from '@common/mounts';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {getCollectionImageUrl} from '@app/utils/url-utils';
 import {HelpService} from '@app/services/help.service';
+import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -40,9 +40,7 @@ export class CollectionViewModel {
   styleUrls: ['./collection-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CollectionPageComponent implements OnInit, OnDestroy {
-  readonly destroyed$ = new Subject();
-  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+export class CollectionPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
   readonly getCollectionPageLink = getCollectionPageLink;
 
   collectionViewModel?: CollectionViewModel;
@@ -53,26 +51,24 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
   songEditorIsOpen = false;
   collectionEditorIsOpen = false;
   private songDetailsPrefetched = false;
-  loaded = false;
   notFound = false;
 
   hasImageLoadingError = false;
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
-              private readonly bss: BrowserStateService,
-              readonly cd: ChangeDetectorRef,
               private readonly route: ActivatedRoute,
               readonly title: Title,
               readonly meta: Meta,
               private readonly router: Router,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
+              injector: Injector
   ) {
+    super(injector);
   }
 
   ngOnInit() {
-    enableLoadingIndicator(this);
     this.helpService.setActiveHelpPage('collection');
     this.uds.syncSessionStateAsync();
 
@@ -119,7 +115,7 @@ export class CollectionPageComponent implements OnInit, OnDestroy {
           this.navHelper.restoreScrollPosition();
 
           // heuristic: prefetch song details.
-          if (!this.songDetailsPrefetched && this.bss.isBrowser) {
+          if (!this.songDetailsPrefetched && this.isBrowser) {
             this.songDetailsPrefetched = true;
             songs.forEach(s => this.cds.getSongDetailsById(s.id, false));
           }

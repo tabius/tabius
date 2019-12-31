@@ -1,20 +1,19 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Collection} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {FormControl} from '@angular/forms';
 import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
-import {BehaviorSubject, Subject, timer} from 'rxjs';
-import {enableLoadingIndicator} from '@app/utils/component-utils';
+import {timer} from 'rxjs';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {UserService} from '@app/services/user.service';
-import {BrowserStateService} from '@app/services/browser-state.service';
 import {MIN_DESKTOP_WIDTH, MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {User} from '@common/user-model';
 import {I18N} from '@app/app-i18n';
 import {environment} from '@app/environments/environment';
+import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 
 interface LetterBlock {
   letter: string,
@@ -37,14 +36,11 @@ let letterBlockFilters: string[] = [];
   styleUrls: ['./catalog-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CatalogPageComponent implements OnInit, OnDestroy {
-  readonly destroyed$ = new Subject();
-  readonly indicatorIsAllowed$ = new BehaviorSubject(false);
+export class CatalogPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
   readonly getCollectionPageLink = getCollectionPageLink;
   readonly i18n = I18N.catalogPage;
 
   @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
-  loaded = false;
   letterBlocks: LetterBlock[] = [];
   searchValue: string = '';
 
@@ -56,16 +52,15 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
-              private readonly bss: BrowserStateService,
-              readonly cd: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
+              injector: Injector,
   ) {
+    super(injector);
   }
 
   ngOnInit() {
-    enableLoadingIndicator(this);
     this.uds.syncSessionStateAsync();
     this.uds.getUser()
         .pipe(takeUntil(this.destroyed$))
@@ -110,7 +105,7 @@ export class CatalogPageComponent implements OnInit, OnDestroy {
 
   private bringFocusToTheSearchField(): void {
     // do not focus: 1) During SSR, 2) On touch device to avoid virtual keyboard to be opened, 3) On non-default scrolling position to avoid re-scroll.
-    if (this.bss.isBrowser && window.innerWidth >= MIN_DESKTOP_WIDTH && window.pageYOffset === 0) {
+    if (this.isBrowser && window.innerWidth >= MIN_DESKTOP_WIDTH && window.pageYOffset === 0) {
       setTimeout(() => {
         if (this.searchField && this.searchField.nativeElement) {
           this.searchField.nativeElement.focus();

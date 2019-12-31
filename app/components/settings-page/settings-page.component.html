@@ -1,7 +1,7 @@
 <div>
     <h1>Персональные настройки</h1>
 
-    <div *ngIf="!loaded && (indicatorIsAllowed$|async)" class="indicator">
+    <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
         <div class="message">Загружаем настройки …</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
