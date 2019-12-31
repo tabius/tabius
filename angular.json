@@ -22,7 +22,6 @@
             "main": "app/main.ts",
             "polyfills": "app/polyfills.ts",
             "tsConfig": "app/tsconfig.json",
-            "extractCss": true,
             "assets": [
               {
                 "glob": "**/*",
@@ -51,7 +50,6 @@
               ],
               "aot": true,
               "buildOptimizer": true,
-              "extractCss": true,
               "ngswConfigPath": "ngsw-config.json",
               "optimization": true,
               "outputHashing": "all",
@@ -69,7 +67,6 @@
               ],
               "aot": true,
               "buildOptimizer": true,
-              "extractCss": true,
               "ngswConfigPath": "ngsw-config.json",
               "optimization": true,
               "outputHashing": "all",
