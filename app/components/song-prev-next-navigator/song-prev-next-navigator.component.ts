@@ -1,11 +1,12 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
-import {combineLatest, of, Subject} from 'rxjs';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, defined, getCollectionPageLink, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
+import {Collection, Song} from '@common/catalog-model';
 
 const Hammer: HammerStatic = require('hammerjs');
 
@@ -44,23 +45,14 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   ngOnInit(): void {
     this.updateViewDimensions();
     const collection$ = this.cds.getCollectionById(this.activeCollectionId);
-    // list of all collection songs sorted by id.
-    const allSongs$ = collection$.pipe(
-        flatMap(collection => collection ? this.cds.getSongIdsByCollection(collection.id) : of([])),
-        flatMap(songIds => combineLatest0((songIds || []).map(id => this.cds.getSongById(id)))),
-        map(songs => sortSongsAlphabetically(songs.filter(defined))),
-    );
+    const allSongs$ = getAllSongsInCollectionsSorted(collection$, this.cds);
     combineLatest([collection$, allSongs$])
         .pipe(
             flatMap(([collection, allSongs]) => {
               if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined, undefined, undefined]);
               }
-              const songIdx = this.songId === undefined ? -1 : allSongs.findIndex(song => song.id === this.songId);
-              const prevSongIdx = songIdx === -1 ? allSongs.length - 1 : songIdx - 1;
-              const prevSong = prevSongIdx === -1 ? undefined : allSongs[prevSongIdx];
-              const nextSongIdx = songIdx === -1 ? 0 : songIdx + 1;
-              const nextSong = nextSongIdx >= allSongs.length ? undefined : allSongs[nextSongIdx];
+              const {prevSong, nextSong} = findPrevAndNextSongs(this.songId, allSongs);
               return combineLatest([
                 of(collection),
                 of(prevSong),
@@ -153,3 +145,22 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     }
   }
 }
+
+export function getAllSongsInCollectionsSorted(collection$: Observable<Collection|undefined>, cds: CatalogService) {
+  // list of all collection songs sorted by id.
+  return collection$.pipe(
+      flatMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
+      flatMap(songIds => combineLatest0((songIds || []).map(id => cds.getSongById(id)))),
+      map(songs => sortSongsAlphabetically(songs.filter(defined))),
+  );
+}
+
+export function findPrevAndNextSongs(songId: number|undefined, allSongs: Song[]): { prevSong?: Song, nextSong?: Song } {
+  const songIdx = songId === undefined ? -1 : allSongs.findIndex(song => song.id === songId);
+  const prevSongIdx = songIdx === -1 ? allSongs.length - 1 : songIdx - 1;
+  const prevSong = prevSongIdx === -1 ? undefined : allSongs[prevSongIdx];
+  const nextSongIdx = songIdx === -1 ? 0 : songIdx + 1;
+  const nextSong = nextSongIdx >= allSongs.length ? undefined : allSongs[nextSongIdx];
+  return {prevSong, nextSong};
+}
+

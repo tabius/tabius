@@ -3,12 +3,12 @@ import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {combineLatest, of} from 'rxjs';
-import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
+import {flatMap, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, getNameFirstFormArtistName, hasValidForumTopic, isInputEvent} from '@common/util/misc-utils';
+import {canManageCollectionContent, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -18,6 +18,7 @@ import {UserSongSettings} from '@common/user-model';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
+import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
 
 @Component({
   selector: 'gt-song-page',
@@ -42,6 +43,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   notFound = false;
 
   collectionMount?: string;
+
+  private isRoutingOnSongRemovalInFlight = false;
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
@@ -119,11 +122,27 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   private handleSongRemoval(): void {
-    if (this.isUserCollection) {
-      this.router.navigate([MOUNT_STUDIO]).catch(err => console.error(err));
-    } else {
-      this.router.navigate([MOUNT_COLLECTION_PREFIX + this.collectionMount!]).catch(err => console.error(err));
-    }
+    // Try to go to the next or prev song in the current collection. Fall-back to collection/studio page.
+    this.isRoutingOnSongRemovalInFlight = true;
+    const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
+    const collection$ = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
+    getAllSongsInCollectionsSorted(collection$, this.cds)
+        .pipe(
+            take(1),
+            takeUntil(this.destroyed$)
+        ).subscribe(songs => {
+      const {collectionMount, song, primaryCollection} = this;
+      const {prevSong, nextSong} = findPrevAndNextSongs(song && song.id, songs);
+      const targetSong = nextSong || prevSong;
+      if (targetSong && collectionMount && primaryCollection) {
+        const link = getSongPageLink(collectionMount, targetSong.mount, primaryCollection.mount);
+        this.router.navigate([link]).catch(err => console.error(err));
+      } else if (this.isUserCollection) {
+        this.router.navigate([MOUNT_STUDIO]).catch(err => console.error(err));
+      } else {
+        this.router.navigate([MOUNT_COLLECTION_PREFIX + this.collectionMount!]).catch(err => console.error(err));
+      }
+    });
   }
 
   ngOnDestroy(): void {
