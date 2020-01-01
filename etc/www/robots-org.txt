@@ -6,3 +6,4 @@ Sitemap: https://tabius.org/sitemap.xml
 
 # User collections
 Disallow: /chords/u*--*
+Disallow: /song/u*--*
