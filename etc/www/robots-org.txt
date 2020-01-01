@@ -3,3 +3,6 @@ User-agent: *
 
 Host: https://tabius.org
 Sitemap: https://tabius.org/sitemap.xml
+
+# User collections
+Disallow: /chords/u*--*
