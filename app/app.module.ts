@@ -53,16 +53,22 @@ import {UserCollectionEditorComponent} from '@app/components/user-collection-edi
 import {PopoverModule} from '@app/popover/popover.module';
 import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 import {HelpService} from '@app/services/help.service';
+import {HeadContributorDirective} from '@app/directives/head-contributor.directive';
 
 @NgModule({
   declarations: [
+    AddSongToCollectionComponent,
     AppComponent,
-    CollectionBreadcrumbComponent,
     CatalogPageComponent,
-    CollectionPageComponent,
     ChordImageComponent,
+    CollectionBreadcrumbComponent,
+    CollectionEditorComponent,
+    CollectionPageComponent,
     FooterComponent,
+    HeadContributorDirective,
+    KeyboardShortcutsPopupComponent,
     LoadingIndicatorComponent,
+    ModeratorPromptComponent,
     NavbarComponent,
     Page404Component,
     ResourceNotFoundComponent,
@@ -76,6 +82,7 @@ import {HelpService} from '@app/services/help.service';
     SongEditorComponent,
     SongFullTextSearchResultsPanelComponent,
     SongHeaderComponent,
+    SongListComponent,
     SongPageComponent,
     SongPrevNextNavigatorComponent,
     SongPrintPageComponent,
@@ -85,14 +92,9 @@ import {HelpService} from '@app/services/help.service';
     StudioPageComponent,
     SvgIconComponent,
     TunerPageComponent,
-    CollectionEditorComponent,
-    SongListComponent,
-    UserRegistrationPromptComponent,
-    ModeratorPromptComponent,
-    AddSongToCollectionComponent,
-    UserCollectionsListComponent,
     UserCollectionEditorComponent,
-    KeyboardShortcutsPopupComponent,
+    UserCollectionsListComponent,
+    UserRegistrationPromptComponent,
   ],
   imports: [
     BrowserAnimationsModule,

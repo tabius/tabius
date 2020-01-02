@@ -8,7 +8,7 @@ import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent} from '@common/util/misc-utils';
+import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -19,6 +19,7 @@ import {SongEditResult} from '@app/components/song-editor/song-editor.component'
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
+import {HeadElementData} from '@app/directives/head-contributor.directive';
 
 @Component({
   selector: 'gt-song-page',
@@ -32,6 +33,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   activeCollection?: Collection;
   primaryCollection?: Collection;
   songSettings?: UserSongSettings;
+  canonicalPageUrlData?: HeadElementData;
 
   hasEditRight = false;
   editorIsOpen = false;
@@ -150,9 +152,17 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   updateMeta() {
-    if (!this.song || !this.activeCollection || !this.songDetails) {
+    if (!this.song || !this.activeCollection || !this.songDetails || !this.primaryCollection) {
       return;
     }
+    this.canonicalPageUrlData = {
+      tag: 'link',
+      attributes: new Map<string, string>([
+        ['rel', 'canonical'],
+        ['href', getFullLink(getSongPageLink(this.primaryCollection.mount, this.song.mount))]
+      ]),
+    };
+
     const titlePrefix = `${this.song.title}, ${getNameFirstFormArtistName(this.activeCollection)} | `;
     const titleSuffix = titlePrefix.length > 50 ? 'аккорды' : titlePrefix.length > 35 ? 'текст и аккорды' : 'текст песни и аккорды';
     updatePageMetadata(this.title, this.meta, {

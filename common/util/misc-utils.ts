@@ -5,6 +5,7 @@ import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import {fromPromise} from 'rxjs/internal-compatibility';
+import {environment} from '@app/environments/environment';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length === 0) {
@@ -76,6 +77,10 @@ export function getSongPageLink(collectionMount: string, songMount: string, prim
 
 export function getSongPrintPageLink(collectionMount: string, songMount: string): string {
   return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${MOUNT_PRINT_SUFFIX}`;
+}
+
+export function getFullLink(localLink: string): string {
+  return environment.url + localLink;
 }
 
 /**

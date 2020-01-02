@@ -7,6 +7,7 @@ const APP_DOMAIN = 'tabius.ru';
 export const environment: TabiusEnv = {
   lang: 'ru',
   domain: APP_DOMAIN,
+  url: `https//:${APP_DOMAIN}`,
   production: true,
   backendUrl: `https://${APP_DOMAIN}`,
   ssrBackendUrl: 'http://localhost:4001',
