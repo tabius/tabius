@@ -1,6 +1,7 @@
 import {TRANSLATIONS_MAP_RU} from './i18n-ru';
 import {TRANSLATIONS_MAP_EN} from './i18n-en';
 import {DeepReadonly} from '@common/typescript-extras';
+import {CollectionType} from '@common/catalog-model';
 
 export function getI18n(lang: string): DeepReadonly<I18n> {
   // Note: for the new & incomplete translations we can use deep-mere with EN.
@@ -79,5 +80,18 @@ export interface I18n {
     compilation: string;
     create: string;
     close: string;
+  },
+  collectionPage: {
+    collectionNotFound: string;
+    loadingSongList: string;
+    addSong: string;
+    collectionsSettings: string;
+    supportLink: string;
+    supportLinkTitle: string;
+    meta: {
+      title: (name: string, type: CollectionType) => string;
+      description: (name: string, firstSongs: string) => string;
+      keywords: (name: string) => string[];
+    }
   }
 }

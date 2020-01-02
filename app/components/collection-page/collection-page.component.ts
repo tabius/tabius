@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
-import {Collection, CollectionDetails, isBand, isCompilation, Song} from '@common/catalog-model';
+import {Collection, CollectionDetails, Song} from '@common/catalog-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {combineLatest, Observable} from 'rxjs';
@@ -16,6 +16,7 @@ import {SongEditResult} from '@app/components/song-editor/song-editor.component'
 import {getCollectionImageUrl} from '@app/utils/url-utils';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
+import {I18N} from '@app/app-i18n';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -42,6 +43,7 @@ export class CollectionViewModel {
 })
 export class CollectionPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
   readonly getCollectionPageLink = getCollectionPageLink;
+  readonly i18n = I18N.collectionPage;
 
   collectionViewModel?: CollectionViewModel;
 
@@ -133,11 +135,10 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     }
     const name = collectionViewModel.displayName;
     const {type} = collectionViewModel.collection;
-    const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');
     updatePageMetadata(this.title, this.meta, {
-      title: `${name}${typeInfo} — тексты песен и аккорды для гитары`,
-      description: `${name} — песни и аккорды для гитары: ${getFirstSongsNames(songs)}`,
-      keywords: [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `текст ${name}`, `песни ${name}`],
+      title: this.i18n.meta.title(name, type),
+      description: this.i18n.meta.description(name, getFirstSongsNames(songs)),
+      keywords: this.i18n.meta.keywords(name),
       image: collectionViewModel.imgSrc,
     });
   }

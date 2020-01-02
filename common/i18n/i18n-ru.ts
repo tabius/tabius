@@ -1,4 +1,5 @@
 import {I18n} from '@common/i18n/i18n';
+import {CollectionType, isBand, isCompilation} from '@common/catalog-model';
 
 const FAVORITES_COLLECTION_NAME = 'Избранное';
 
@@ -74,5 +75,21 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     compilation: 'Сборник',
     create: 'Создать',
     close: 'Закрыть',
+  },
+  collectionPage: {
+    collectionNotFound: 'Коллекция не найдена',
+    loadingSongList: 'Загружаем список песен…',
+    addSong: 'Добавить песню',
+    collectionsSettings: 'Настроить',
+    supportLink: 'Поддержать артиста »',
+    supportLinkTitle: 'Поддержать исполнителя и купить его официальный диск.',
+    meta: {
+      title: (name: string, type: CollectionType) => {
+        const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');
+        return `${name}${typeInfo} — тексты песен и аккорды для гитары`;
+      },
+      description: (name: string, firstSongs: string) => `${name} — песни и аккорды для гитары: ${firstSongs}`,
+      keywords: (name: string) => [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `текст ${name}`, `песни ${name}`],
+    },
   }
 };

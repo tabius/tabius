@@ -2,12 +2,12 @@
 
     <!-- Loading indicator -->
     <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-        <div class="message">Загружаем список песен…</div>
+        <div class="message">{{i18n.loadingSongList}}</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
     <!-- Not found block -->
-    <gt-resource-not-found *ngIf="notFound" message="Ресурс не найден"></gt-resource-not-found>
+    <gt-resource-not-found *ngIf="notFound" message="{{i18n.collectionNotFound}}"></gt-resource-not-found>
 
     <!-- Main content block -->
     <div *ngIf="loaded && collectionViewModel">
@@ -46,8 +46,8 @@
 
         <div class="editors-block">
             <div *ngIf="!songEditorIsOpen && !collectionEditorIsOpen" class="buttons-line">
-                <button class="btn btn-info" (click)="openSongEditor()">Добавить песню</button>
-                <button *ngIf="canEditCollection" class="btn" (click)="toggleCollectionEditor()">Настроить</button>
+                <button class="btn btn-info" (click)="openSongEditor()">{{i18n.addSong}}</button>
+                <button *ngIf="canEditCollection" class="btn" (click)="toggleCollectionEditor()">{{i18n.collectionsSettings}}</button>
             </div>
 
             <!-- Song editor -->
@@ -69,10 +69,10 @@
 
         <div *ngIf="collectionViewModel.listed" class="pg-search-block">
             <a href="https://priceguard.ru/search?g=digital&q={{collectionViewModel.displayName}}"
-               title="Поддержать исполнителя и купить его официальный диск."
+               title="{{i18n.supportLinkTitle}}"
                target="_blank"
                rel="noopener">
-                Поддержать артиста »
+                {{i18n.supportLink}}
             </a>
         </div>
 

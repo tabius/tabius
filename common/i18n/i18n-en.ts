@@ -1,4 +1,5 @@
 import {I18n} from '@common/i18n/i18n';
+import {CollectionType, isBand, isCompilation} from '@common/catalog-model';
 
 const FAVORITES_COLLECTION_NAME = 'Favorites';
 
@@ -74,5 +75,21 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     compilation: 'Compilation',
     create: 'Create',
     close: 'Close',
+  },
+  collectionPage: {
+    collectionNotFound: 'Collection not found',
+    loadingSongList: 'Loading list of songs …',
+    addSong: 'Add song',
+    collectionsSettings: 'Settings',
+    supportLink: 'Support artist »',
+    supportLinkTitle: 'Support artist and buy official records.',
+    meta: {
+      title: (name: string, type: CollectionType) => {
+        const typeInfo = isCompilation(type) ? ', collection ' : (isBand(type) ? ', band' : '');
+        return `${name}${typeInfo} — songs, chords and tabs for guitar`;
+      },
+      description: (name: string, firstSongs: string) => `${name} — songs and chords for guitar: ${firstSongs}`,
+      keywords: (name: string) => [`${name} chords`, `${name} tabs`, `${name} lyrics`, `${name} songs`],
+    },
   }
 };
