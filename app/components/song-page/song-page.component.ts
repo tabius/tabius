@@ -19,7 +19,7 @@ import {SongEditResult} from '@app/components/song-editor/song-editor.component'
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
-import {HeadElementData} from '@app/directives/head-contributor.directive';
+import {HeadElementData} from '@app/components/head-contributor/head-contributor.component';
 
 @Component({
   selector: 'gt-song-page',

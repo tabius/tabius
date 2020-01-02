@@ -53,7 +53,7 @@ import {UserCollectionEditorComponent} from '@app/components/user-collection-edi
 import {PopoverModule} from '@app/popover/popover.module';
 import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 import {HelpService} from '@app/services/help.service';
-import {HeadContributorDirective} from '@app/directives/head-contributor.directive';
+import {HeadContributorComponent} from './components/head-contributor/head-contributor.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +65,7 @@ import {HeadContributorDirective} from '@app/directives/head-contributor.directi
     CollectionEditorComponent,
     CollectionPageComponent,
     FooterComponent,
-    HeadContributorDirective,
+    HeadContributorComponent,
     KeyboardShortcutsPopupComponent,
     LoadingIndicatorComponent,
     ModeratorPromptComponent,
