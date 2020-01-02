@@ -10,7 +10,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   navbar: {
     catalog: 'КАТАЛОГ',
     forum: 'ФОРУМ',
-    logo2: 'табы для гитары',
+    logo2: 'табы и аккорды',
     noSleep: 'БЛОК. СНА',
     noSleepTitle: 'Режим всегда включенного экрана',
     settings: 'НАСТРОЙКИ',
