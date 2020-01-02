@@ -15,8 +15,7 @@ import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {parseChord} from '@app/utils/chords-parser';
 
 /** Heuristic used to enable multicolumn mode. */
-const MIN_SONG_LINES_FOR_2_COLUMN_MODE = 30;
-const MIN_SONG_LINES_FOR_3_COLUMN_MODE = 60;
+const IDEAL_SONG_LINES_PER_COLUMN = 17; // (4 chords + 4 text lines) * 2 + 1 line between
 
 const CHORDS_TAG = 'c';
 
@@ -122,8 +121,8 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     if (this.songHtml === '') {
       const {transpose} = this.songSettings;
       let songHtml = this.song && this.isBrowser
-          ? renderChords(this.song.content, {tag: CHORDS_TAG, transpose, hideChords: false, useH: this.h4Si})
-          : '';
+                     ? renderChords(this.song.content, {tag: CHORDS_TAG, transpose, hideChords: false, useH: this.h4Si})
+                     : '';
       if (this.multiColumnMode) {
         songHtml = preserveBlocksOnColumnBreak(songHtml);
       }
@@ -153,14 +152,20 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   is2ColumnMode(): boolean {
     const {lineCount, maxLineWidth} = this.getSongStats();
-    return lineCount > MIN_SONG_LINES_FOR_2_COLUMN_MODE &&
+    return lineCount > IDEAL_SONG_LINES_PER_COLUMN &&
         !this.is3ColumnMode() && (this.availableWidth / (1 + maxLineWidth) >= 2);
   }
 
   is3ColumnMode(): boolean {
     const {lineCount, maxLineWidth} = this.getSongStats();
-    return lineCount > MIN_SONG_LINES_FOR_3_COLUMN_MODE &&
-        (this.availableWidth / (1 + maxLineWidth) >= 3);
+    return lineCount > 2 * IDEAL_SONG_LINES_PER_COLUMN &&
+        !this.is4ColumnMode() && (this.availableWidth / (1 + maxLineWidth) >= 3);
+  }
+
+  is4ColumnMode(): boolean {
+    const {lineCount, maxLineWidth} = this.getSongStats();
+    return lineCount > 3 * IDEAL_SONG_LINES_PER_COLUMN &&
+        (this.availableWidth / (1 + maxLineWidth) >= 4);
   }
 
   private getSongStats(): SongStats {

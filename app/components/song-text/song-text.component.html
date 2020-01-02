@@ -3,8 +3,9 @@
      [attr.data-id]="song.id"
      [ngStyle]="userSongStyle"
      [class.two-column-mode]="is2ColumnMode()"
-     [class.three-column-mode]="is3ColumnMode()">
-
+     [class.three-column-mode]="is3ColumnMode()"
+     [class.four-column-mode]="is4ColumnMode()"
+>
     <div *ngIf="isBrowser" [innerHTML]="getSongHtml() | safeHtml"></div>
     <div *ngIf="!isBrowser">{{song.content}}</div>
 </div>

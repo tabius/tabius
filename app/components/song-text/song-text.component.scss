@@ -2,8 +2,6 @@
 @import "app/styles/fonts";
 @import "app/styles/dimensions";
 
-$column-separator-style: 1px solid #e8e8e8;
-
 .song-text {
   font-family: $font-family-mono;
   max-width: 90vw;
@@ -12,16 +10,24 @@ $column-separator-style: 1px solid #e8e8e8;
   line-height: initial;
 }
 
+@mixin multi-column-mode-style {
+  column-gap: 50px;
+  column-rule: 1px solid #e8e8e8;
+}
+
 .two-column-mode {
   column-count: 2;
-  column-gap: 50px;
-  column-rule: $column-separator-style;
+  @include multi-column-mode-style();
 }
 
 .three-column-mode {
   column-count: 3;
-  column-gap: 50px;
-  column-rule: $column-separator-style;
+  @include multi-column-mode-style();
+}
+
+.four-column-mode {
+  column-count: 4;
+  @include multi-column-mode-style();
 }
 
 .chord-popover {
