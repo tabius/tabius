@@ -105,7 +105,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'sus2': 'Asus2', // Suspended 2nd
   'sus2sus4': 'Asus24, Asus42', // Suspended 2nd Suspended 4th
   'sus2B5': 'Asus2b5, A2-5, Asus2-5',
-  'sus4': 'Asus4, Asus, A4, Aadd4', // Suspended 4th
+  'sus4': 'Asus4, Asus, A4, Aadd4, Amsus4', // Suspended 4th
 };
 
 /** List of chord types by 1st char: s => [sus2,sus24,sus2B5...]. */
