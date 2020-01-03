@@ -9,6 +9,9 @@
     <!-- Not found block -->
     <gt-resource-not-found *ngIf="notFound" message="{{i18n.collectionNotFound}}"></gt-resource-not-found>
 
+    <!-- Do not index user collections   -->
+    <gt-head-meta *ngIf='!!collectionViewModel?.collection.userId' [attrs]="{name: 'robots', content: 'noindex'}"></gt-head-meta>
+
     <!-- Main content block -->
     <div *ngIf="loaded && collectionViewModel">
         <gt-collection-breadcrumb [collection]="collectionViewModel ? collectionViewModel.collection : null"

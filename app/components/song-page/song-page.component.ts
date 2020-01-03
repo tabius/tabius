@@ -19,7 +19,6 @@ import {SongEditResult} from '@app/components/song-editor/song-editor.component'
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
-import {HeadElementData} from '@app/components/head-contributor/head-contributor.component';
 
 @Component({
   selector: 'gt-song-page',
@@ -33,7 +32,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   activeCollection?: Collection;
   primaryCollection?: Collection;
   songSettings?: UserSongSettings;
-  canonicalPageUrlData?: HeadElementData;
+  canonicalPageUrl?: string;
 
   hasEditRight = false;
   editorIsOpen = false;
@@ -155,14 +154,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     if (!this.song || !this.activeCollection || !this.songDetails || !this.primaryCollection) {
       return;
     }
-    this.canonicalPageUrlData = {
-      tag: 'link',
-      attributes: new Map<string, string>([
-        ['rel', 'canonical'],
-        ['href', getFullLink(getSongPageLink(this.primaryCollection.mount, this.song.mount))]
-      ]),
-    };
-
+    this.canonicalPageUrl = getFullLink(getSongPageLink(this.primaryCollection.mount, this.song.mount));
     const titlePrefix = `${this.song.title}, ${getNameFirstFormArtistName(this.activeCollection)} | `;
     const titleSuffix = titlePrefix.length > 50 ? 'аккорды' : titlePrefix.length > 35 ? 'текст и аккорды' : 'текст песни и аккорды';
     updatePageMetadata(this.title, this.meta, {

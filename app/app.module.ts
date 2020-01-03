@@ -53,12 +53,13 @@ import {UserCollectionEditorComponent} from '@app/components/user-collection-edi
 import {PopoverModule} from '@app/popover/popover.module';
 import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 import {HelpService} from '@app/services/help.service';
-import {HeadContributorComponent} from './components/head-contributor/head-contributor.component';
+import {CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent} from './components/head-contributor/head-contributor.component';
 
 @NgModule({
   declarations: [
     AddSongToCollectionComponent,
     AppComponent,
+    CanonicalLinkHeadContributorComponent,
     CatalogPageComponent,
     ChordImageComponent,
     CollectionBreadcrumbComponent,
@@ -67,7 +68,9 @@ import {HeadContributorComponent} from './components/head-contributor/head-contr
     FooterComponent,
     HeadContributorComponent,
     KeyboardShortcutsPopupComponent,
+    LinkHeadContributorComponent,
     LoadingIndicatorComponent,
+    MetaHeadContributorComponent,
     ModeratorPromptComponent,
     NavbarComponent,
     Page404Component,
