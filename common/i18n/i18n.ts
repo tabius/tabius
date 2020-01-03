@@ -93,5 +93,22 @@ export interface I18n {
       description: (name: string, firstSongs: string) => string;
       keywords: (name: string) => string[];
     }
+  },
+  shortcuts: {
+    title: string;
+    prevSong: string;
+    nextSong: string;
+    showHelp: string;
+    saveSong: string;
+    collectionPage: {
+      addSong: string;
+
+    };
+    songPage: {
+      transposeUp: string;
+      transposeDown: string;
+      resetTranspose: string;
+      editSong: string;
+    };
   }
 }

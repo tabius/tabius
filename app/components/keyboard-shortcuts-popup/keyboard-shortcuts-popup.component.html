@@ -1,61 +1,61 @@
 <div class="dialog">
 
-    <h1>Горячие клавиши</h1>
+    <h1>{{i18n.title}}</h1>
 
     <table *ngIf="page === 'song'" class="shortcuts-list">
         <tr>
-            <td>Предыдущая песня</td>
+            <td>{{i18n.prevSong}}</td>
             <td>SHIFT + ⇦</td>
         </tr>
         <tr>
-            <td>Следующая песня</td>
+            <td>{{i18n.nextSong}}</td>
             <td>SHIFT + ⇨</td>
         </tr>
         <tr>
-            <td>Транспонировать на тон выше</td>
+            <td>{{i18n.songPage.transposeUp}}</td>
             <td>SHIFT + ⇧</td>
         </tr>
         <tr>
-            <td>Транспонировать на тон ниже</td>
+            <td>{{i18n.songPage.transposeDown}}</td>
             <td>SHIFT + ⇩</td>
         </tr>
         <tr>
-            <td>Отменить транспонирование</td>
+            <td>{{i18n.songPage.resetTranspose}}</td>
             <td>SHIFT + 0</td>
         </tr>
         <tr>
-            <td>Изменить подбор</td>
+            <td>{{i18n.songPage.editSong}}</td>
             <td>SHIFT + e</td>
         </tr>
         <tr>
-            <td>Сохранить изменения (в режиме редактирования)</td>
+            <td>{{i18n.saveSong}}</td>
             <td>CTRL + Enter</td>
         </tr>
         <tr>
-            <td>Показать этот диалог</td>
+            <td>{{i18n.showHelp}}</td>
             <td>?</td>
         </tr>
     </table>
 
     <table *ngIf="page === 'collection'" class="shortcuts-list">
         <tr>
-            <td>Предыдущая песня</td>
+            <td>{{i18n.prevSong}}</td>
             <td>SHIFT + ⇦</td>
         </tr>
         <tr>
-            <td>Следующая песня</td>
+            <td>{{i18n.nextSong}}</td>
             <td>SHIFT + ⇨</td>
         </tr>
         <tr>
-            <td>Добавить песню</td>
+            <td>{{i18n.collectionPage.addSong}}</td>
             <td>SHIFT + a</td>
         </tr>
         <tr>
-            <td>Сохранить изменения (в режиме редактирования)</td>
+            <td>{{i18n.saveSong}}</td>
             <td>CTRL + Enter</td>
         </tr>
         <tr>
-            <td>Показать этот диалог</td>
+            <td>{{i18n.showHelp}}</td>
             <td>?</td>
         </tr>
     </table>

@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {HelpPageType} from '@app/services/help.service';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-keyboard-shortcuts-popup',
@@ -11,4 +12,7 @@ import {HelpPageType} from '@app/services/help.service';
 export class KeyboardShortcutsPopupComponent {
   @Input() page!: HelpPageType;
   @Input() popover!: PopoverRef;
+
+  readonly i18n = I18N.shortcuts;
 }
+

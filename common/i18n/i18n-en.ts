@@ -91,5 +91,21 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       description: (name: string, firstSongs: string) => `${name} — songs and chords for guitar: ${firstSongs}`,
       keywords: (name: string) => [`${name} chords`, `${name} tabs`, `${name} lyrics`, `${name} songs`],
     },
+  },
+  shortcuts: {
+    title: 'Hot keys',
+    nextSong: 'Next song',
+    prevSong: 'Previous song',
+    saveSong: 'Save song (in edit mode)',
+    showHelp: 'Show this dialog',
+    collectionPage: {
+      addSong: 'Add song'
+    },
+    songPage: {
+      editSong: 'Edit song',
+      resetTranspose: 'Reset transpose',
+      transposeDown: 'Transpose 1 tone down',
+      transposeUp: 'Transpose 1 tone up'
+    },
   }
 };

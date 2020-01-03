@@ -91,5 +91,22 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       description: (name: string, firstSongs: string) => `${name} — песни и аккорды для гитары: ${firstSongs}`,
       keywords: (name: string) => [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `текст ${name}`, `песни ${name}`],
     },
+  },
+  shortcuts: {
+    title: 'Горячие клавиши',
+    nextSong: 'Следующая песня',
+    prevSong: 'Предыдущая песня',
+    saveSong: 'Сохранить изменения (в режиме редактирования)',
+    showHelp: 'Показать этот диалог',
+    collectionPage: {
+      addSong: 'Добавить песню'
+    },
+    songPage: {
+      editSong: 'Изменить подбор',
+      resetTranspose: 'Отменить транспонирование',
+      transposeDown: 'Транспонировать на тон ниже',
+      transposeUp: 'Транспонировать на тон выше'
+    },
   }
+
 };
