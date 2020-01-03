@@ -12,7 +12,7 @@ export interface I18n {
   common: {
     favoritesCollectionName: string;
     error: (message: string) => string;
-  },
+  };
   navbar: {
     catalog: string;
     forum: string;
@@ -23,10 +23,10 @@ export interface I18n {
     studio: string;
     tuner: string;
     userIconTitle(username: string): string;
-  },
+  };
   page404: {
     message: string;
-  },
+  };
   addSongToCollection: {
     title: string;
     addToCollectionCheckboxTitle: (collectionName: string) => string;
@@ -34,7 +34,7 @@ export interface I18n {
     gotoCollectionTitle: string;
     addToFavoritesCheckboxTitle: string;
     favorites: string;
-  },
+  };
   catalogPage: {
     title: string;
     loadingMessage: string;
@@ -55,21 +55,21 @@ export interface I18n {
       description: string;
       keywords: string[];
     }
-  },
+  };
   chordImage: {
     chordsLayoutTitleSuffix: string;
-  },
+  };
   collectionBreadcrumb: {
     catalogLink: string,
     catalogLinkTitle: string,
     studioLink: string,
     studioLinkTitle: string,
-  },
+  };
   footer: {
     twitterLinkTitle: string;
     githubLinkTitle: string;
     homePageLinkTitle: string;
-  },
+  };
   collectionEditor: {
     header: string;
     collectionName: string;
@@ -80,7 +80,7 @@ export interface I18n {
     compilation: string;
     create: string;
     close: string;
-  },
+  };
   collectionPage: {
     collectionNotFound: string;
     loadingSongList: string;
@@ -93,7 +93,7 @@ export interface I18n {
       description: (name: string, firstSongs: string) => string;
       keywords: (name: string) => string[];
     }
-  },
+  };
   shortcuts: {
     title: string;
     prevSong: string;
@@ -110,5 +110,11 @@ export interface I18n {
       resetTranspose: string;
       editSong: string;
     };
+  };
+  moderatorPrompt: {
+    youAreNotModerator: string;
+    but: string;
+    howToBecomeModeratorHtml: string;
+    forumLink: string;
   }
 }

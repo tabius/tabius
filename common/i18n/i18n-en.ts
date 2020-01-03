@@ -99,13 +99,20 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     saveSong: 'Save song (in edit mode)',
     showHelp: 'Show this dialog',
     collectionPage: {
-      addSong: 'Add song'
+      addSong: 'Add song',
     },
     songPage: {
       editSong: 'Edit song',
       resetTranspose: 'Reset transpose',
       transposeDown: 'Transpose 1 tone down',
-      transposeUp: 'Transpose 1 tone up'
+      transposeUp: 'Transpose 1 tone up',
     },
-  }
+  },
+  moderatorPrompt: {
+    youAreNotModerator: 'You are not moderator and can\'t change the public catalog :(',
+    but: 'But!',
+    howToBecomeModeratorHtml: 'It is not hard to become a moderator:<br>suggest chords to a couple of songs on the forum first.',
+    forumLink: 'Open forum »',
+  },
+
 };

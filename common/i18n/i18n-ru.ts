@@ -99,14 +99,19 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     saveSong: 'Сохранить изменения (в режиме редактирования)',
     showHelp: 'Показать этот диалог',
     collectionPage: {
-      addSong: 'Добавить песню'
+      addSong: 'Добавить песню',
     },
     songPage: {
       editSong: 'Изменить подбор',
       resetTranspose: 'Отменить транспонирование',
       transposeDown: 'Транспонировать на тон ниже',
-      transposeUp: 'Транспонировать на тон выше'
+      transposeUp: 'Транспонировать на тон выше',
     },
-  }
-
+  },
+  moderatorPrompt: {
+    youAreNotModerator: 'Вы не модератор и не можете изменять публичный каталог :(',
+    but: 'Однако!',
+    howToBecomeModeratorHtml: 'Роль модератора не сложно получить:<br>предложите несколько своих подборов на форуме.',
+    forumLink: 'Перейти на форум »',
+  },
 };
