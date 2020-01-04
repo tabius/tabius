@@ -1,5 +1,5 @@
 import {HttpService, Injectable, Logger} from '@nestjs/common';
-import {FullTextSongSearchResult, FullTextSongSearchResultMatchType, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
+import {FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
 import {take} from 'rxjs/operators';
 import {AxiosResponse} from 'axios';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
@@ -21,16 +21,51 @@ export class FullTextSearchDbi {
     if (safeSearchText.length < MIN_LEN_FOR_FULL_TEXT_SEARCH) {
       return [];
     }
-    const titleQuery = buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS);
-    const contentQuery = buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS);
-    const [titleResults, contentResults]: SphinxSearchResult[] = await Promise.all([this.query(titleQuery), this.query(contentQuery)]);
-    const result = [];
-    addResults(titleResults.matches, result, 'title');
-    addResults(contentResults.matches, result, 'content');
-    return result;
+    // Using 'default' mode unless quoted.
+    const exact = isQuoted(text.trim());
+    const titleQuery = buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS, exact ? 'exact' : 'default');
+    const contentQuery = buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, exact ? 'exact' : 'default');
+    // 'default' vs 'infix':
+    //  'default' can search different word-forms, but can't search by prefix/infix/suffix
+    //  'infix' does not know about word-forms, but can search by prefix/infix/suffix.
+    // We use 'infix' results only if there are not enough 'default' results.
+    const infixTitleQuery = exact ? '' : buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS, 'infix');
+    const infixContentQuery = exact ? '' : buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, 'infix');
+    const queries = [this.query(titleQuery), this.query(contentQuery), this.query(infixTitleQuery), this.query(infixContentQuery)];
+    const [titleResults, contentResults, infixTitleResults, infixContentResults]: SphinxSearchResult[] = await Promise.all(queries);
+    const titles: FullTextSongSearchResult[] = [];
+    const contents: FullTextSongSearchResult[] = [];
+    const titleSongIds = new Set<number>();
+    const contentSongIds = new Set<number>();
+    for (const match of titleResults.matches) {
+      const result = createFullTextResultFromMatch(match, 'title');
+      titles.push(result);
+      titleSongIds.add(result.songId);
+    }
+    for (const match of contentResults.matches) {
+      const result = createFullTextResultFromMatch(match, 'content');
+      contents.push(result);
+      contentSongIds.add(result.songId);
+    }
+    for (let i = 0; i < infixTitleResults.matches.length && titles.length < MAX_FULL_TEXT_SEARCH_TITLE_RESULTS; i++) {
+      const result = createFullTextResultFromMatch(infixTitleResults.matches[i], 'title');
+      if (!titleSongIds.has(result.songId)) {
+        titles.push(result);
+      }
+    }
+    for (let i = 0; i < infixContentResults.matches.length && contents.length < MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS; i++) {
+      const result = createFullTextResultFromMatch(infixContentResults.matches[i], 'content');
+      if (!contentSongIds.has(result.songId)) {
+        contents.push(result);
+      }
+    }
+    return [...titles, ...contents];
   }
 
   private async query(query: string): Promise<SphinxSearchResult> {
+    if (query.length == 0) {
+      return {matches: []};
+    }
     const encodedQuery = encodeURIComponent(query);
     const params = `query=${encodedQuery}`;
     try {
@@ -42,7 +77,6 @@ export class FullTextSearchDbi {
       this.logger.error(`Error querying sphinx: ${e}`);
       return {matches: []};
     }
-
   }
 }
 
@@ -59,21 +93,43 @@ type SphinxMatch = [number, string, string, string, string, string]; // id, snip
 
 const SONG_INDEX = SERVER_CONFIG.sphinxSongIndex;
 
-function buildSphinxQuery(fieldName: string, text: string, maxResults: number): string {
-  return `SELECT id, SNIPPET(${fieldName}, '${text}'), title, collection_name, collection_mount, song_mount FROM ${SONG_INDEX} WHERE MATCH('@${fieldName} ${text}') LIMIT ${maxResults}`;
+export type MatchMode = 'default'|'exact'|'infix';
+
+function buildSphinxQuery(fieldName: string, text: string, maxResults: number, matchMode: MatchMode): string {
+  let query = text;
+  let snippetQuery = text;
+  switch (matchMode) {
+    case 'exact':
+      query = `"${text}"`;
+      break;
+    case 'infix':
+      query = snippetQuery = `*${text}*`;
+      break;
+  }
+  // Snippet params: http://sphinxsearch.com/docs/current/api-func-buildexcerpts.html
+  const snippet = `SNIPPET(${fieldName}, '${snippetQuery}', 'limit=200, around=10, exact_phrase=${matchMode === 'exact'}')`;
+  const match = `MATCH('@${fieldName} ${query}')`;
+  return `SELECT id, ${snippet}, title, collection_name, collection_mount, song_mount FROM ${SONG_INDEX} WHERE ${match} LIMIT ${maxResults}`;
 }
 
-function addResults(sphinxMatches: SphinxMatch[], result: FullTextSongSearchResult[], matchType: FullTextSongSearchResultMatchType): void {
-  for (const match of sphinxMatches) {
-    result.push({
-      songId: match[0],
-      snippet: match[1],
-      songTitle: match[2],
-      collectionName: match[3],
-      collectionMount: match[4],
-      songMount: match[5],
-      matchType,
-    });
-  }
+/** Converts match returned by sphinx engine to FullTextSongSearchResult structure. */
+function createFullTextResultFromMatch(match: [number, string, string, string, string, string], matchType: 'title'|'content'): FullTextSongSearchResult {
+  return {
+    songId: match[0],
+    snippet: match[1],
+    songTitle: match[2],
+    collectionName: match[3],
+    collectionMount: match[4],
+    songMount: match[5],
+    matchType,
+  };
+}
+
+/** Returns true if the text is quoted. Both single or double quote characters are checked. */
+function isQuoted(text: string): boolean {
+  return text.length > 1
+      && ((text.startsWith('"') && text.endsWith('"'))
+          || (text.startsWith('\'')) && text.endsWith('\'')
+      );
 }
 

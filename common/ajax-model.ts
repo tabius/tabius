@@ -108,7 +108,7 @@ export interface RemoveSongFromSecondaryCollectionResponse {
 }
 
 export const MAX_FULL_TEXT_SEARCH_TITLE_RESULTS = 50;
-export const MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS = 100;
+export const MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS = 50;
 
 export type FullTextSongSearchResultMatchType = 'title'|'content';
 
