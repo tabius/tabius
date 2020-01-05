@@ -7,6 +7,7 @@ import {SongDetails} from '@common/catalog-model';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
 import {RefreshMode} from '@app/store/observable-store';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
+import {I18N} from '@app/app-i18n';
 
 export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;
@@ -18,6 +19,8 @@ export const MIN_SONG_FONT_SIZE = 8;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+
+  readonly i18n = I18N.settingsPage;
 
   deviceSettings!: UserDeviceSettings;
   user?: User;
@@ -82,13 +85,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
 
 const SETTINGS_DEMO_SONG: SongDetails = {
   id: 0,
-  content:
-      'Bm                           D\n' +
-      'Песен, еще не написанных, сколько?\n' +
-      '           A   Em\n' +
-      'Скажи, кукушка,\n' +
-      '   Bm\n' +
-      'Пропой.\n',
+  content: I18N.settingsPage.demoSongText,
   mediaLinks: [],
   version: 0
 };

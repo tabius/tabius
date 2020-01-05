@@ -114,4 +114,28 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     howToBecomeModeratorHtml: 'Роль модератора не сложно получить:<br>предложите несколько своих подборов на форуме.',
     forumLink: 'Перейти на форум »',
   },
+  resourceNotFoundComponent: {
+    tryToReloadPagePrompt: 'Попробуйте перегрузить страницу в режиме Онлайн'
+  },
+  settingsPage: {
+    pageHeader: 'Персональные настройки',
+    loadingText: 'Загружаем настройки …',
+    songRenderingSettingsHeader: 'Отображение песен',
+    fontSize: 'Размер шрифта',
+    h4Si: 'Отображать Си как',
+    example: 'Пример:',
+    notSignedInPrompt: {
+      register: 'Зарегистрируйтесь',
+      or: 'или',
+      signIn: 'войдите',
+      toGetAccess: ', чтобы получить доступ к расширенным настройкам.',
+    },
+    demoSongText:
+        'Bm                           D\n' +
+        'Песен, еще не написанных, сколько?\n' +
+        '           A   Em\n' +
+        'Скажи, кукушка,\n' +
+        '   Bm\n' +
+        'Пропой.\n'
+  },
 };

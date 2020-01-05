@@ -1,5 +1,5 @@
 <div class="message">{{message}}</div>
 
 <div *ngIf="bss.isBrowser && !bss.isOnline()" class="offline-notice">
-    Попробуйте перегрузить страницу в режиме Онлайн
+    {{i18n.tryToReloadPagePrompt}}
 </div>

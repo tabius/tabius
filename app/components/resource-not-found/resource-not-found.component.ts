@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-resource-not-found',
@@ -10,6 +11,8 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 export class ResourceNotFoundComponent {
 
   @Input() message!: string;
+
+  readonly i18n = I18N.resourceNotFoundComponent;
 
   constructor(readonly bss: BrowserStateService) {
   }

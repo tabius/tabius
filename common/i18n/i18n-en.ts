@@ -114,5 +114,30 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     howToBecomeModeratorHtml: 'It is not hard to become a moderator:<br>suggest chords to a couple of songs on the forum first.',
     forumLink: 'Open forum »',
   },
-
+  resourceNotFoundComponent: {
+    tryToReloadPagePrompt: 'Try to reload the page when Online',
+  },
+  settingsPage: {
+    pageHeader: 'Personal settings',
+    loadingText: 'Loading settings …',
+    songRenderingSettingsHeader: 'Song rendering',
+    fontSize: 'Font size',
+    h4Si: 'Render Si like ',
+    example: 'Example:',
+    notSignedInPrompt: {
+      register: 'Register',
+      or: 'or',
+      signIn: 'Sign In',
+      toGetAccess: ' to get access to all settings.',
+    },
+    demoSongText:
+        'F\n' +
+        'Yesterday\n' +
+        'Em7        A7              Dm Dm/C\n' +
+        'Love was such an easy game to play\n' +
+        'Hb             C              F\n' +
+        'Now I need a place to hide away\n' +
+        '   Dm       G   Hb     F\n' +
+        'Oh I believe in yesterday',
+  },
 };

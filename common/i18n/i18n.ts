@@ -116,5 +116,23 @@ export interface I18n {
     but: string;
     howToBecomeModeratorHtml: string;
     forumLink: string;
-  }
+  };
+  resourceNotFoundComponent: {
+    tryToReloadPagePrompt;
+  };
+  settingsPage: {
+    pageHeader: string;
+    loadingText: string;
+    songRenderingSettingsHeader: string;
+    fontSize: string;
+    h4Si: string;
+    example: string;
+    notSignedInPrompt: {
+      register: string;
+      or: string;
+      signIn: string;
+      toGetAccess: string;
+    },
+    demoSongText: string;
+  };
 }
