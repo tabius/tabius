@@ -2,9 +2,11 @@ import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} fro
 import {Song} from '@common/catalog-model';
 import {getSongPageLink, trackById} from '@common/util/misc-utils';
 
-interface SongViewModel {
+/** Song item model used by the component. */
+interface SongItem {
   id: number,
   title: string,
+  titleAttribute: string;
   link: string,
 }
 
@@ -33,7 +35,7 @@ export class SongListComponent implements OnChanges {
   /** Text of the empty notice. Used only if 'showEmptyNotice' is true. */
   @Input() emptyListMessage = 'Нет песен';
 
-  songItems: SongViewModel[] = [];
+  songItems: SongItem[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['songs'] || changes['primarySongCollectionMounts'] || changes['collectionMount']) {
@@ -51,6 +53,7 @@ export class SongListComponent implements OnChanges {
         this.songItems.push({
           id: song.id,
           title: song.title,
+          titleAttribute: song.title + ' — смотреть текст песни и аккорды',
           link: getSongPageLink(collectionMount, song.mount, primaryCollectionMount),
         });
       }

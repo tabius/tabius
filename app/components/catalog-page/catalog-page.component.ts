@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Collection} from '@common/catalog-model';
+import {Collection, isBand, isPerson} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {FormControl} from '@angular/forms';
 import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
@@ -21,6 +21,8 @@ interface LetterBlock {
 }
 
 interface CollectionListItem extends Collection {
+  link: string;
+  titleAttribute: string;
   lcName: string;
 }
 
@@ -37,7 +39,6 @@ let letterBlockFilters: string[] = [];
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
-  readonly getCollectionPageLink = getCollectionPageLink;
   readonly i18n = I18N.catalogPage;
 
   @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
@@ -45,7 +46,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   searchValue: string = '';
 
   collectionFilterControl = new FormControl();
-  filteredCollections: Collection[] = [];
+  filteredCollections: CollectionListItem[] = [];
   collectionEditorIsOpen = false;
   canCreateNewPublicCollection = false;
   user?: User;
@@ -169,8 +170,8 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
     }
   }
 
-  private getFilteredCollections(): Collection[] {
-    const result: Collection[] = [];
+  private getFilteredCollections(): CollectionListItem[] {
+    const result: CollectionListItem[] = [];
     const filterLcTokens = this.searchValue.toLocaleLowerCase().split(' ');
     for (const letterBlock of this.letterBlocks) {
       letterBlock.collections
@@ -192,6 +193,16 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   }
 }
 
+function createListItemFromCollection(collection: Collection): CollectionListItem {
+  const type = isPerson(collection.type) ? 'артиста' : isBand(collection.type) ? 'группы' : ' коллекции';
+  return {
+    ...collection,
+    lcName: collection.name.toLocaleLowerCase(),
+    link: getCollectionPageLink(collection),
+    titleAttribute: `${collection.name} — перейти к списку песен ${type}`,
+  };
+}
+
 function toLetterBlocks(collections: readonly Collection[], mergeLatinWordsIntoSingleBlock: boolean): LetterBlock[] {
   const blocksByLetter = new Map<string, LetterBlock>();
   for (const collection of collections) {
@@ -204,7 +215,7 @@ function toLetterBlocks(collections: readonly Collection[], mergeLatinWordsIntoS
       letter = letter.toUpperCase();
     }
     const letterBlock = blocksByLetter.get(letter) || {letter, collections: []};
-    letterBlock.collections.push({...collection, lcName: collection.name.toLocaleLowerCase()});
+    letterBlock.collections.push(createListItemFromCollection(collection));
     blocksByLetter.set(letter, letterBlock);
   }
   blocksByLetter.forEach(block => block.collections.sort((a1, a2) => a1.name.localeCompare(a2.name)));

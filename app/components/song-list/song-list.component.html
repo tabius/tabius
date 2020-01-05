@@ -5,6 +5,6 @@
     </div>
 
     <div *ngFor="let songItem of songItems; trackBy: trackById">
-        <a [routerLink]="songItem.link">{{songItem.title}}</a>
+        <a [routerLink]="songItem.link" [title]="songItem.titleAttribute">{{songItem.title}}</a>
     </div>
 </div>
