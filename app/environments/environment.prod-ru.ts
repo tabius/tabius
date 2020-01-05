@@ -12,5 +12,6 @@ export const environment: TabiusEnv = {
   backendUrl: `https://${APP_DOMAIN}`,
   ssrBackendUrl: 'http://localhost:4001',
   nodeBbUrl: `https://forum.${APP_DOMAIN}`,
+  nodeBbChordsDiscussionTopicId: 19999,
   buildInfo,
 };

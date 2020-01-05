@@ -21,5 +21,8 @@ export interface TabiusEnv {
   /** NodeBB (forum) URL. */
   nodeBbUrl: string,
 
+  /** Topic id where chord fingering is discussed. */
+  nodeBbChordsDiscussionTopicId?: number,
+
   buildInfo: { buildDate: number; },
 }

@@ -83,6 +83,10 @@ export function getFullLink(localLink: string): string {
   return environment.url + localLink;
 }
 
+export function getChordsDiscussionUrl(): string {
+  return `${environment.nodeBbUrl}/topic/${environment.nodeBbChordsDiscussionTopicId}`;
+}
+
 /**
  *  Returns true if userAgent is a known mobile (small screen) device user agent.
  *  Used in server side rendering to select correct layout (when needed) to avoid flickering on re-render on the client.
