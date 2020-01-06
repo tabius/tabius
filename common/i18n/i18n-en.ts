@@ -140,4 +140,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
         '   Dm       G   Hb     F\n' +
         'Oh I believe in yesterday',
   },
+  signinSignoutButton: {
+    signIn: 'Sign in',
+    signOut: 'Sign out',
+  },
 };

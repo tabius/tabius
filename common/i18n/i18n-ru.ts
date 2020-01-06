@@ -138,4 +138,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
         '   Bm\n' +
         'Пропой.\n'
   },
+  signinSignoutButton: {
+    signIn: 'Вход',
+    signOut: 'Выход',
+  },
 };

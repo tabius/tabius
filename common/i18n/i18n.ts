@@ -135,4 +135,8 @@ export interface I18n {
     },
     demoSongText: string;
   };
+  signinSignoutButton: {
+    signIn: string;
+    signOut: string;
+  };
 }

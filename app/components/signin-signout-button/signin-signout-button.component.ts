@@ -3,6 +3,7 @@ import {AuthService} from '@app/services/auth.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {UserService} from '@app/services/user.service';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-signin-signout-button',
@@ -13,6 +14,8 @@ import {UserService} from '@app/services/user.service';
 export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
 
   username?: string;
+
+  readonly i18n = I18N.signinSignoutButton;
 
   private readonly destroyed$ = new Subject();
 
