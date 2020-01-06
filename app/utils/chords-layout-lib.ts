@@ -210,17 +210,17 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'G#min7dim5': '454474',
 
   // 9th, Dominant 9th
-  'Adom9': 'x02423&f=x01312',
-  'A#dom9': 'x1011x',
+  'Adom9': 'x05600',
+  'A#dom9': 'x10111',
   'Bdom9': 'x2122x',
   'Cdom9': 'x32330',
   'C#dom9': 'x4344x',
-  'Ddom9': 'x5455x',
-  'D#dom9': 'xx1021',
+  'Ddom9': 'x54550',
+  'D#dom9': 'x6566x',
   'Edom9': '020102',
-  'Fdom9': '101011',
+  'Fdom9': '131213',
   'F#dom9': '242324',
-  'Gdom9': '353435',
+  'Gdom9': '300201',
   'G#dom9': '464546',
 
   //  Major 9th
