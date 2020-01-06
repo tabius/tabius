@@ -99,7 +99,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
 
   // Minor 6th
   'Amin6': 'x02212',
-  'A#min6': 'x13021',
+  'A#min6': 'x13023',
   'Bmin6': 'x20102',
   'Cmin6': 'x31213',
   'C#min6': 'x42324',
@@ -107,9 +107,9 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'D#min6': 'xx1312',
   'Emin6': '022020',
   'Fmin6': '133131',
-  'F#min6': '20122x',
-  'Gmin6': '310030',
-  'G#min6': 'xxx101',
+  'F#min6': '244242',
+  'Gmin6': '355353',
+  'G#min6': '466464',
 
   // 7th, Dominant 7th
   'Adom7': 'x02020',
