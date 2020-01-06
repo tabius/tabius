@@ -10,6 +10,9 @@ export interface PageMetadata {
 
 export function updatePageMetadata(title: Title, meta: Meta, page: DeepReadonly<PageMetadata>) {
   title.setTitle(page.title);
+
+  meta.addTag({name: 'twitter:card', content: 'summary'});
+
   meta.addTag({name: 'og:title', content: page.title});
   meta.addTag({name: 'twitter:title', content: page.title});
 

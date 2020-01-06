@@ -12,7 +12,7 @@ import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, get
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
-import {getSongForumTopicLink} from '@app/utils/url-utils';
+import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserSongSettings} from '@common/user-model';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
@@ -161,6 +161,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       title: titlePrefix + titleSuffix,
       description: getSongTextWithNoChords(this.songDetails.content, 5, true),
       keywords: [`подбор ${this.song.title}`, this.activeCollection.name, 'табы', 'аккорды', 'текст песни', 'стихи', 'аппликатура', 'гитара'],
+      image: getCollectionImageUrl(this.activeCollection.mount),
     });
   }
 
