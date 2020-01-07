@@ -137,7 +137,7 @@ export class ChordImagePainter {
     const percent = 0.8;
     this.fretFontSize = Math.max(this.fretWidth / percent, 12);
     this.fingerFontSize = Math.max(this.fretWidth * 0.8, 12);
-    this.nameFontSize = Math.max(Math.round(this.fretWidth * 1.7) / percent, 20);
+    this.nameFontSize = Math.max(Math.round(this.fretWidth * 1.5) / percent, 20);
     this.superScriptFontSize = Math.max(0.7 * this.nameFontSize, 10);
     this.xStart = this.fretWidth;
     this.yStart = Math.round(0.2 * this.superScriptFontSize + this.nameFontSize + this.nutHeight + 1.7 * this.markerWidth);
