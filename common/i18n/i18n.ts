@@ -139,4 +139,19 @@ export interface I18n {
     signIn: string;
     signOut: string;
   };
+  homePage: {
+    titleLevel2: string;
+    newsLink: string;
+    catalogLink: string;
+    studioLink: string;
+    interestingFacts: string;
+    worksWithNoInternetFact: string;
+    noAdsFact: string
+    openSourceFact: {
+      tabiusSourceCode: string;
+      isOpenOnGithub: string;
+      useAndImprove: string;
+    };
+    forMusicLoversFact: string;
+  };
 }

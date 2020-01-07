@@ -142,4 +142,19 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     signIn: 'Вход',
     signOut: 'Выход',
   },
+  homePage: {
+    titleLevel2: 'табы и аккорды популярных песен для гитары',
+    newsLink: 'НОВОСТИ',
+    catalogLink: 'КАТАЛОГ',
+    studioLink: 'СТУДИЯ',
+    interestingFacts: 'Интересные факты о Tabius',
+    worksWithNoInternetFact: 'Tabius работает без Интернет! Все однажды открытые песни доступны оффлайн.',
+    noAdsFact: 'У нас нет рекламы. Только ссылки на официальные диски. Это благодарность авторам.',
+    openSourceFact: {
+      tabiusSourceCode: 'Исходный код Tabius',
+      isOpenOnGithub: 'открыт на GitHub',
+      useAndImprove: 'Используйте его для себя и улучшайте Tabius!',
+    },
+    forMusicLoversFact: 'В первую очередь этот сайт сделан для музыки и её любителей. Это не поменяется.',
+  },
 };

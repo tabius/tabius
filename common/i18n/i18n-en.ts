@@ -144,4 +144,19 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     signIn: 'Sign in',
     signOut: 'Sign out',
   },
+  homePage: {
+    titleLevel2: 'guitar chords and tabs for songs you love',
+    newsLink: 'NEWS',
+    catalogLink: 'CATALOG',
+    studioLink: 'STUDIO',
+    interestingFacts: 'Facts about Tabius',
+    worksWithNoInternetFact: 'You don\'t need to be online to use Tabius! All songs opened when online are available offline.',
+    noAdsFact: 'We have no ads. Only links to the official media. This is our gratitude for authors.',
+    openSourceFact: {
+      tabiusSourceCode: 'Tabius source code',
+      isOpenOnGithub: 'is open on Github',
+      useAndImprove: 'Help us to improve Tabius or use it for your own needs',
+    },
+    forMusicLoversFact: 'This site is is free and open for everyone who loves music. It won\'t change',
+  },
 };

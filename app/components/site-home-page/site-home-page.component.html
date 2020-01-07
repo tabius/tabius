@@ -1,32 +1,28 @@
 <div class="content">
     <div class="head">
         <h1>tabius</h1>
-
-        <h2>табы и аккорды популярных песен для гитары</h2>
+        <h2>{{i18n.titleLevel2}}</h2>
     </div>
 
     <div class="buttons-row">
-        <a href="{{forumNewsLink}}" class="btn" style="color: #8d7244">НОВОСТИ</a>
-        <a routerLink="{{catalogLink}}" class="btn" style="color: #1c889b">КАТАЛОГ</a>
-        <a routerLink="{{studioLink}}" class="btn" style="color: #28816a">СТУДИЯ</a>
+        <a href="{{forumNewsLink}}" class="btn" style="color: #8d7244">{{i18n.newsLink}}</a>
+        <a routerLink="{{catalogLink}}" class="btn" style="color: #1c889b">{{i18n.catalogLink}}</a>
+        <a routerLink="{{studioLink}}" class="btn" style="color: #28816a">{{i18n.studioLink}}</a>
     </div>
 
     <div class="feature-list">
-        <h3>Интересные факты о Tabius</h3>
+        <h3>{{i18n.interestingFacts}}</h3>
         <ul>
+            <li>{{i18n.worksWithNoInternetFact}}</li>
+            <li>{{i18n.noAdsFact}}</li>
             <li>
-                Tabius работает без Интернет! Все однажды открытые песни доступны оффлайн.
+                {{i18n.openSourceFact.tabiusSourceCode}}
+                <a href="https://github.com/tabius/tabius" target="_blank" rel="noopener">
+                    {{i18n.openSourceFact.isOpenOnGithub}}
+                </a>.
+                {{i18n.openSourceFact.useAndImprove}}
             </li>
-            <li>
-                У нас нет рекламы. Только ссылки на официальные диски. Это благодарность авторам.
-            </li>
-            <li>
-                Исходный код Tabius <a href="https://github.com/tabius/tabius" target="_blank" rel="noopener">открыт на GitHub</a>.
-                Используйте его для себя и улучшайте Tabius!
-            </li>
-            <li>
-                В первую очередь этот сайт сделан для музыки и её любителей. Это не поменяется.
-            </li>
+            <li>{{i18n.forMusicLoversFact}}</li>
         </ul>
     </div>
 
