@@ -102,7 +102,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'mM7B5': 'AmM7b5',
   'mM7B9': 'AmM7b9, Am#7b9',
   'Mx11': 'AM+11',
-  'sus2': 'Asus2', // Suspended 2nd
+  'sus2': 'Asus2, Amsus2', // Suspended 2nd
   'sus2sus4': 'Asus24, Asus42', // Suspended 2nd Suspended 4th
   'sus2B5': 'Asus2b5, A2-5, Asus2-5',
   'sus4': 'Asus4, Asus, A4, Aadd4, Amsus4', // Suspended 4th
