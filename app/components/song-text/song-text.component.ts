@@ -6,17 +6,17 @@ import {UserService} from '@app/services/user.service';
 import {isPlatformBrowser} from '@angular/common';
 import {renderChords} from '@app/utils/chords-renderer';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
-import {getChordsDiscussionUrl, isSmallScreenDevice} from '@common/util/misc-utils';
+import {isSmallScreenDevice} from '@common/util/misc-utils';
 import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/common-constants';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings} from '@common/user-model';
-import {PopoverService} from '@app/popover/popover.service';
-import {PopoverRef} from '@app/popover/popover-ref';
-import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
+import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {parseChord} from '@app/utils/chords-parser';
+import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
 
 /** Heuristic used to enable multicolumn mode. */
 const IDEAL_SONG_LINES_PER_COLUMN = 17; // (4 chords + 4 text lines) * 2 + 1 line between
 
+/** Note: must be lower-case! */
 const CHORDS_TAG = 'c';
 
 export const SONG_PRINT_FONT_SIZE = 14;
@@ -47,24 +47,20 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   private h4Si?: boolean;
   private songFontSize?: number;
   private availableWidth = 0;
-  readonly chordDiscussionUrl = getChordsDiscussionUrl();
 
   private songStats?: SongStats;
 
   /** Used for server-side rendering only. */
   private readonly widthFromUserAgent;
 
-  @ViewChild('chordPopover', {static: true}) chordPopoverTemplate!: TemplateRef<{}>;
+  popoverChordLayout?: ChordLayout;
 
-  private chordPopoverRef?: PopoverRef;
-  private lastClickedChordElement?: Element;
-  private popoverChordLayout?: ChordLayout;
+  @ViewChild('chordPopover', {static: true}) chordPopoverTemplate!: TemplateRef<{}>;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserService,
               @Inject(PLATFORM_ID) platformId: string,
               @Optional() @Inject(REQUEST) private request: any,
-              private readonly popover: PopoverService,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     if (!this.isBrowser) {
@@ -105,7 +101,6 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.closeChordPopover();
     this.destroyed$.next();
   }
 
@@ -200,36 +195,16 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     this.resetCachedSongStats();
   }
 
-  @HostListener('document:keydown', ['$event'])
-  onKeydown(): void {
-    this.closeChordPopover();
-  }
-
-  @HostListener('document:click', ['$event'])
-  onClick(event: MouseEvent): void {
+  getChordInfo(event: MouseEvent): ChordClickInfo {
     const element = event.target as HTMLElement|undefined;
-    const isSameChordClickedTwice = !!element && element == this.lastClickedChordElement && this.chordPopoverRef !== undefined;
-    this.closeChordPopover();
-    if (!isSameChordClickedTwice && element && element.tagName.toLowerCase() === CHORDS_TAG) {
-      this.lastClickedChordElement = element;
-      const chordLocation = parseChord(element.innerText);
-      this.popoverChordLayout = chordLocation ? getChordLayout(chordLocation.chord) : undefined;
-      this.chordPopoverRef = this.popover.open(this.chordPopoverTemplate, element, {
-        data: element.innerText,
-        backdropClass: 'c-popover-backdrop',
-        panelClass: 'c-popover-panel',
-      });
-      this.chordPopoverRef.afterClosed().subscribe(() => {
-        this.chordPopoverRef = undefined;
-      });
+    if (!element) {
+      return undefined;
     }
-  }
-
-  private closeChordPopover(): void {
-    if (this.chordPopoverRef) {
-      this.chordPopoverRef.close();
-      this.chordPopoverRef = undefined;
+    if (element.tagName.toLowerCase() !== CHORDS_TAG) {
+      return undefined;
     }
+    const chordLocation = parseChord(element.innerText);
+    return chordLocation ? {element, chord: chordLocation.chord} : undefined;
   }
 }
 

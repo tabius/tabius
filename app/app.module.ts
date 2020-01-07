@@ -54,6 +54,8 @@ import {PopoverModule} from '@app/popover/popover.module';
 import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 import {HelpService} from '@app/services/help.service';
 import {CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent} from './components/head-contributor/head-contributor.component';
+import {ChordPopoverComponent} from './components/chord-popover/chord-popover.component';
+import {ShowChordPopoverOnClickDirective} from './directives/show-chord-popover-on-click.directive';
 
 @NgModule({
   declarations: [
@@ -98,6 +100,8 @@ import {CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHea
     UserCollectionEditorComponent,
     UserCollectionsListComponent,
     UserRegistrationPromptComponent,
+    ChordPopoverComponent,
+    ShowChordPopoverOnClickDirective,
   ],
   imports: [
     BrowserAnimationsModule,

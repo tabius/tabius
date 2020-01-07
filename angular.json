@@ -153,7 +153,9 @@
     },
     "@schematics/angular:directive": {
       "spec": false,
-      "prefix": "gt"
+      "prefix": "gt",
+      "changeDetection": "OnPush",
+      "module": "app"
     },
     "@schematics/angular:guard": {
       "spec": false

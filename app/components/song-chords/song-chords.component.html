@@ -15,9 +15,20 @@
             </button>
         </span>
     </h3>
+
     <gt-chord-image *ngFor="let layout of chordLayouts"
                     [layout]="layout"
                     [h4Si]="h4Si"
-                    class="chord-image">
+                    class="chord-image"
+                    gtChordPopoverOnClick
+                    [gtChordPopoverOnClick_chord]="layout.chord"
+                    [gtChordPopoverOnClick_popoverTemplate]="chordPopover"
+                    [gtChordPopoverOnClick_getChordInfo]="getChordInfo"
+                    (gtChordPopoverOnClick_onChordLayoutChanged)="popoverChordLayout = $event"
+    >
+        <ng-template #chordPopover let-popover="popover">
+            <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si" [popover]="popover"></gt-chord-popover>
+        </ng-template>
     </gt-chord-image>
+
 </div>

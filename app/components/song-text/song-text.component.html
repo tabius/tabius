@@ -5,30 +5,15 @@
      [class.two-column-mode]="is2ColumnMode()"
      [class.three-column-mode]="is3ColumnMode()"
      [class.four-column-mode]="is4ColumnMode()"
+     gtChordPopoverOnClick
+     [gtChordPopoverOnClick_popoverTemplate]="chordPopover"
+     [gtChordPopoverOnClick_getChordInfo]="getChordInfo"
+     (gtChordPopoverOnClick_onChordLayoutChanged)="this.popoverChordLayout = $event"
 >
     <div *ngIf="isBrowser" [innerHTML]="getSongHtml() | safeHtml"></div>
     <div *ngIf="!isBrowser">{{song.content}}</div>
 </div>
 
-<ng-template #chordPopover let-data let-popover="popover">
-    <div class="chord-popover">
-        <div *ngIf="popoverChordLayout" class="chord-layout-found-block">
-            <gt-chord-image [layout]="popoverChordLayout!"
-                            [h4Si]="h4Si"
-                            size="4"
-                            (click)="popover.close()"
-            ></gt-chord-image>
-            <div class="link-block">
-                <a href="{{chordDiscussionUrl}}" title="Перейти на страницу с обсуждением аппликатур аккордов" target="_blank">обсудить »</a>
-            </div>
-        </div>
-        <div *ngIf="!popoverChordLayout" class="chord-layout-not-found-block">
-            <p>
-                К сожалению Tabius не знает аппликатуру для этого аккорда.
-            </p>
-            <p>
-                Вы можете помочь и <a href="{{chordDiscussionUrl}}" title="Добавить свою аппликатуру аккорда" target="_blank">добавить</a> свою!
-            </p>
-        </div>
-    </div>
+<ng-template #chordPopover let-popover="popover">
+    <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si" [popover]="popover"></gt-chord-popover>
 </ng-template>

@@ -30,32 +30,6 @@
   @include multi-column-mode-style();
 }
 
-.chord-popover {
-  padding-bottom: 10px;
-  display: block;
-
-  .chord-layout-found-block {
-    div {
-      text-align: center;
-      margin-top: 3px;
-    }
-  }
-
-  .chord-layout-not-found-block {
-    text-align: center;
-    padding: 10px;
-    max-width: 200px;
-    line-height: 22px;
-
-    p {
-      margin-top: 10px;
-      a {
-        font-weight: bold;
-      }
-    }
-  }
-}
-
 @media only screen and (min-width: $hires-desktop-width) {
   .song-text {
     font-size: 20px;

@@ -8,6 +8,8 @@ import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
 import {CatalogService} from '@app/services/catalog.service';
 import {newDefaultUserSongSettings} from '@common/user-model';
+import {Chord} from '@app/utils/chords-parser-lib';
+import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
 
 @Component({
   selector: 'gt-song-chords',
@@ -28,6 +30,8 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   private content = '';
 
   private readonly songId$ = new ReplaySubject<number>(1);
+
+  popoverChordLayout?: ChordLayout;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserService,
@@ -58,6 +62,11 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyed$.next();
   }
+
+  getChordInfo(event: MouseEvent, chord: Chord|undefined): ChordClickInfo {
+    return {element: event.target as HTMLElement, chord: chord!};
+  }
+
 
   private updateChordsList() {
     const chordLocations = parseChords(this.content);
