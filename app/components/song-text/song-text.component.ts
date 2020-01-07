@@ -214,16 +214,14 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
       this.lastClickedChordElement = element;
       const chordLocation = parseChord(element.innerText);
       this.popoverChordLayout = chordLocation ? getChordLayout(chordLocation.chord) : undefined;
-      if (this.popoverChordLayout) {
-        this.chordPopoverRef = this.popover.open(this.chordPopoverTemplate, element, {
-          data: element.innerText,
-          backdropClass: 'c-popover-backdrop',
-          panelClass: 'c-popover-panel',
-        });
-        this.chordPopoverRef.afterClosed().subscribe(() => {
-          this.chordPopoverRef = undefined;
-        });
-      }
+      this.chordPopoverRef = this.popover.open(this.chordPopoverTemplate, element, {
+        data: element.innerText,
+        backdropClass: 'c-popover-backdrop',
+        panelClass: 'c-popover-panel',
+      });
+      this.chordPopoverRef.afterClosed().subscribe(() => {
+        this.chordPopoverRef = undefined;
+      });
     }
   }
 
