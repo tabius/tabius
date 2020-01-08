@@ -110,6 +110,7 @@ export interface I18n {
       resetTranspose: string;
       editSong: string;
     };
+    close: string;
   };
   moderatorPrompt: {
     youAreNotModerator: string;

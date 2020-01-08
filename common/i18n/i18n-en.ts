@@ -107,6 +107,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       transposeDown: 'Transpose 1 tone down',
       transposeUp: 'Transpose 1 tone up',
     },
+    close: 'Close',
   },
   moderatorPrompt: {
     youAreNotModerator: 'You are not moderator and can\'t change the public catalog :(',

@@ -107,6 +107,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       transposeDown: 'Транспонировать на тон ниже',
       transposeUp: 'Транспонировать на тон выше',
     },
+    close: 'Закрыть',
   },
   moderatorPrompt: {
     youAreNotModerator: 'Вы не модератор и не можете изменять публичный каталог :(',
