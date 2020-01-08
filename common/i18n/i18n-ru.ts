@@ -158,4 +158,15 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     },
     forMusicLoversFact: 'В первую очередь этот сайт сделан для музыки и её любителей. Это не поменяется.',
   },
+  chordPopover: {
+    discussionLink: 'обсудить »',
+    discussionLinkTitle: 'Перейти на страницу с обсуждением аппликатур аккордов',
+    tabiusHasNoChordLayout: 'К сожалению Tabius не знает аппликатуру для этого аккорда.',
+    forumLink: {
+      title: 'Добавить свою аппликатуру аккорда',
+      prefix: 'Вы можете помочь и',
+      link: 'добавить',
+      suffix: 'свою!',
+    },
+  },
 };

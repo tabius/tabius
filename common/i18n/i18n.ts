@@ -155,4 +155,15 @@ export interface I18n {
     };
     forMusicLoversFact: string;
   };
+  chordPopover: {
+    discussionLink: string;
+    discussionLinkTitle: string;
+    tabiusHasNoChordLayout: string;
+    forumLink: {
+      title: string;
+      prefix: string;
+      link: string;
+      suffix: string;
+    };
+  };
 }

@@ -160,4 +160,15 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     },
     forMusicLoversFact: 'This site is is free and open for everyone who loves music. It won\'t change',
   },
+  chordPopover: {
+    discussionLink: 'improve »',
+    discussionLinkTitle: 'Go to the chords discussion page',
+    tabiusHasNoChordLayout: 'Unfortunately Tabius does not have a visual layout for this chord.',
+    forumLink: {
+      title: 'Add visual layout for the chord',
+      prefix: 'You can help Tabius and',
+      link: 'add',
+      suffix: 'layout for the chord!',
+    },
+  },
 };

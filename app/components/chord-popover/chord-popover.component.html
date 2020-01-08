@@ -6,15 +6,19 @@
                         (click)="popover.close()"
         ></gt-chord-image>
         <div class="link-block">
-            <a href="{{chordDiscussionUrl}}" title="Перейти на страницу с обсуждением аппликатур аккордов" target="_blank">обсудить »</a>
+            <a href="{{chordDiscussionUrl}}" title="{{i18n.discussionLinkTitle}}" target="_blank">{{i18n.discussionLink}}</a>
         </div>
     </div>
     <div *ngIf="!chordLayout" class="chord-layout-not-found-block">
         <p>
-            К сожалению Tabius не знает аппликатуру для этого аккорда.
+            {{i18n.tabiusHasNoChordLayout}}
         </p>
         <p>
-            Вы можете помочь и <a href="{{chordDiscussionUrl}}" title="Добавить свою аппликатуру аккорда" target="_blank">добавить</a> свою!
+            {{i18n.forumLink.prefix}}
+            <a href="{{chordDiscussionUrl}}" title="{{i18n.forumLink.title}}" target="_blank">
+                {{i18n.forumLink.link}}
+            </a>
+            {{i18n.forumLink.suffix}}
         </p>
     </div>
 </div>
