@@ -8,7 +8,7 @@ describe('Chords parser, parseChord', () => {
   it('should recognize simple chords', () => {
     expect(parseChord('A', 0, 1)).toEqual({chord: c('A', 'maj'), startIdx: 0, endIdx: 1});
     expect(parseChord('Am Dm', 0, 10)).toEqual({chord: c('A', 'min'), startIdx: 0, endIdx: 2});
-    expect(parseChord('C#m(III)', 0, 10)).toEqual({chord: c('C#', 'min'), startIdx: 0, endIdx: 3});
+    expect(parseChord('C#m(III)', 0, 10)).toEqual({chord: c('C#', 'min'), startIdx: 0, endIdx: 8});
   });
 
   it('should recognize chords with suffixes', () => {
@@ -142,6 +142,16 @@ describe('Chords parser, parseChords', () => {
     expect(parseChords('A\tB')).toEqual([
       {chord: c('A', 'maj'), startIdx: 0, endIdx: 1},
       {chord: c('B', 'maj'), startIdx: 2, endIdx: 3}
+    ]);
+  });
+
+  it('should recognize braces after chord', () => {
+    expect(parseChords('A(III)')).toEqual([
+      {chord: c('A', 'maj'), startIdx: 0, endIdx: 6},
+    ]);
+    expect(parseChords('A(5) B(II)')).toEqual([
+      {chord: c('A', 'maj'), startIdx: 0, endIdx: 4},
+      {chord: c('B', 'maj'), startIdx: 5, endIdx: 10}
     ]);
   });
 

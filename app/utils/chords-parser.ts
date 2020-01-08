@@ -123,6 +123,7 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
   let parsedType: ChordType|undefined = undefined;
   idx += tone.length;
   let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
+  // loop until inside a chord.
   while (idx < maxIdx) {
     const c = text.charAt(idx);
     if (chord.tone.length === 1 && c === '#' || c === 'b') {
@@ -150,7 +151,8 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
     }
     break;
   }
-  return {chord, startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx};
+  const suffixLenInBracesAfterChord = skipTextInBracesAfterChord(text, idx, 4);
+  return {chord, startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx + suffixLenInBracesAfterChord};
 }
 
 function findPrefixToken(text: string, idx: number, tokens: readonly string[]): string|undefined {
@@ -171,3 +173,22 @@ function isKnownTypeAndTextConflict(c: string, text: string, idx: number): boole
 function isWhitespaceOrChordExtender(c: string): boolean {
   return c === ' ' || c === '\n' || c === '/' || c === '(';
 }
+
+/**
+ * Returns number of symbols + 2 (for braces) in braces if text starts with opening brace '(' and has a closing brace: ')'.
+ * Returns 0 if no braces found or if closing brace is not within maxLenInBraces.
+ */
+
+function skipTextInBracesAfterChord(text: string, idx: number, maxLenInBraces: number): number {
+  if (text.charAt(idx) !== '(') {
+    return 0;
+  }
+  let len = 1;
+  for (const max = Math.min(idx + 2 + maxLenInBraces, text.length); idx + len < max; len++) {
+    if (text.charAt(idx + len) === ')') {
+      return len + 1;
+    }
+  }
+  return 0;
+}
+
