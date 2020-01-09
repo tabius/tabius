@@ -13,13 +13,14 @@ async function generateSitemap() {
   const connection = await mysql.createConnection(SERVER_CONFIG.dbConfig);
   let sitemap = '';
   try {
-    const [collectionRows] = await connection.execute('SELECT id, mount FROM collection');
+    const [collectionRows] = await connection.execute('SELECT id, mount FROM collection WHERE user_id IS NULL');
     const collectionMountById = new Map<number, string>();
     for (const row of collectionRows) {
       collectionMountById.set(+row.id, row.mount);
       sitemap += `${SITE_URL}/${MOUNT_COLLECTION_PREFIX}${row.mount}\n`;
     }
-    const [songRows] = await connection.execute('SELECT collection_id, mount FROM song');
+    const songSql = 'SELECT s.collection_id, s.mount FROM song s, collection c WHERE s.collection_id = c.id AND c.user_id IS NULL';
+    const [songRows] = await connection.execute(songSql);
     for (const row of songRows) {
       const collectionMount = collectionMountById.get(+row.collection_id);
       if (!collectionMount) {
