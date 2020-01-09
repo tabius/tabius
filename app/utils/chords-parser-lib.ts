@@ -57,8 +57,8 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'augmaj7': 'A+M7, A+M, AM7+5, AM+5, AaugM7',
   'augmaj9': 'A+M9, AaugM9',
   'B5': 'Ab5, AMb5, AM-5',
-  'dim': 'Adim, Amb5, Amo5, Am5-, ADiminished', // Diminished
-  'dim7': 'Adim7', // Diminished 7th
+  'dim': 'Adim, Amb5, Amo5, Am5-, ADiminished', // Diminished: [root, m3, d5]
+  'dim7': 'Adim7', // Diminished 7th: [root, m3, d5, d7]
   'dim7B9': 'Adim7b9',
   'dim9': 'Adim9, Adim7/9, Adim7add2, Adim7add9, Am7b5add2', // Diminished 9th
   'dimB9': 'Adimb9',
@@ -93,7 +93,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   'min13': 'Am13',
   'min6': 'Am6, A6m', // Minor 6th
   'min7': 'Am7', // Minor 7th
-  'min7dim5': 'Am7b5, Am7dim5, AØ, AØ7, Am7-5, Am7/5-, Am75-, Am75b, Am7+5', // Minor 7th Flat 5th
+  'min7dim5': 'Am7b5, Am7dim5, AØ, AØ7, Am7-5, Am7/5-, Am75-, Am75b, Am7+5', // Minor 7th Flat 5th or half-diminished seventh chord [root, m3, d5, m7]
   'min9': 'Am9',
   'minmaj11': 'AmM11',
   'minmaj13': 'AmM13',

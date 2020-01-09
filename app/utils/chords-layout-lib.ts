@@ -177,8 +177,8 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'D#dim7': 'xx1212',
   'Edim7': '012020',
   'Fdim7': '123131',
-  'F#dim7': '201212',
-  'Gdim7': '312020',
+  'F#dim7': '234242',
+  'Gdim7': '345353',
   'G#dim7': '456464',
 
   // Augmented 7th
