@@ -224,9 +224,6 @@ const NON_BREAKING_TAG_END = '</div>';
  */
 function preserveBlocksOnColumnBreak(songHtml: string): string {
   const blocks = songHtml.replace(/[^\S\n]+$/gm, '').split('\n\n');
-  if (blocks.length === 1) {
-    return songHtml;
-  }
   let blockIsOpen = false;
   let songHtmlWithBlocks = '';
   for (const block of blocks) {
