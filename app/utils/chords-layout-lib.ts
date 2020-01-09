@@ -182,18 +182,18 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'G#dim7': '456464',
 
   // Augmented 7th
-  'Aaug7': 'x03021',
-  'A#aug7': 'x10132',
+  'Aaug7': 'x03020',
+  'A#aug7': 'x14131',
   'Baug7': 'x21203',
-  'Caug7': 'x36354',
-  'C#aug7': 'x47465',
+  'Caug7': 'xx6556',
+  'C#aug7': 'xx7667',
   'Daug7': 'xx0312',
   'D#aug7': 'xx1423',
-  'Eaug7': '030110',
-  'Faug7': '101221',
-  'F#aug7': '210330',
-  'Gaug7': '321001',
-  'G#aug7': '141221',
+  'Eaug7': 'xx0110',
+  'Faug7': 'xx1221',
+  'F#aug7': 'xx2332',
+  'Gaug7': 'xx1001',
+  'G#aug7': 'xx2112',
 
   // Minor 7th Flat 5th
   'Amin7dim5': 'x01013', // or 'x01213',
