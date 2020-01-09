@@ -185,7 +185,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
 
   private useFullTextSearch(): boolean {
     return this.searchValue.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH
-        && this.searchValue.replace(' ', '').length >= MIN_LEN_FOR_FULL_TEXT_SEARCH;
+        && this.searchValue.replace(/ /g, '').length >= MIN_LEN_FOR_FULL_TEXT_SEARCH;
   }
 
   toggleCollectionsEditor() {

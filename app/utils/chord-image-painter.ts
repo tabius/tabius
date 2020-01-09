@@ -117,8 +117,7 @@ export class ChordImagePainter {
   private baseFret = 0;
 
   constructor(name: string, positions: string, fingers: string, size: number) {
-    // parse chord name
-    this.chordName = !name ? '' : name.replace(' ', '');
+    this.chordName = name || '';
 
     this.parsePositions(positions);
 
