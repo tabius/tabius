@@ -104,8 +104,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     songPage: {
       editSong: 'Edit song',
       resetTranspose: 'Reset transpose',
-      transposeDown: 'Transpose 1 tone down',
-      transposeUp: 'Transpose 1 tone up',
+      transposeDown: 'Transpose a half-tone down',
+      transposeUp: 'Transpose a half-tone up',
     },
     close: 'Close',
   },
@@ -170,5 +170,14 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       link: 'add',
       suffix: 'layout for the chord!',
     },
+  },
+  songComponent: {
+    loadingMessage: 'Loading song…',
+  },
+  songChordsComponent: {
+    chordsTitle: 'Chords:',
+    transposeUp: 'Transpose a half-tone up',
+    transposeDown: 'Transpose a half-tone down',
+    originalKey: 'Original key',
   },
 };

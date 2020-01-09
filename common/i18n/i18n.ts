@@ -166,4 +166,13 @@ export interface I18n {
       suffix: string;
     };
   };
+  songComponent: {
+    loadingMessage: string;
+  };
+  songChordsComponent: {
+    chordsTitle: string;
+    transposeUp: string;
+    transposeDown: string;
+    originalKey: string;
+  };
 }

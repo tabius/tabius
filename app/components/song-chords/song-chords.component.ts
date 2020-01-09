@@ -10,6 +10,7 @@ import {CatalogService} from '@app/services/catalog.service';
 import {newDefaultUserSongSettings} from '@common/user-model';
 import {Chord} from '@app/utils/chords-parser-lib';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-song-chords',
@@ -18,10 +19,12 @@ import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.direct
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
-  private readonly destroyed$ = new Subject();
-
   @Input() songId!: number;
   @Input() showControls = false;
+
+  readonly i18n = I18N.songChordsComponent;
+
+  private readonly destroyed$ = new Subject();
 
   chordLayouts: ChordLayout[] = [];
 

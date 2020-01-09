@@ -1,5 +1,5 @@
 <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-    <div class="message">Загружаем текст песни…</div>
+    <div class="message">{{i18n.loadingMessage}}</div>
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 

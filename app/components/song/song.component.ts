@@ -6,6 +6,7 @@ import {flatMap, takeUntil} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-song',
@@ -18,6 +19,8 @@ export class SongComponent extends ComponentWithLoadingIndicator implements OnDe
   @Input() songId!: number;
   @Input() activeCollectionId?: number;
   @Input() mode: SongComponentMode = 'SongPageMode';
+
+  readonly i18n = I18N.songComponent;
 
   song?: Song;
   songDetails?: SongDetails;

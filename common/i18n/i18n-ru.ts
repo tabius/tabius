@@ -104,8 +104,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     songPage: {
       editSong: 'Изменить подбор',
       resetTranspose: 'Отменить транспонирование',
-      transposeDown: 'Транспонировать на тон ниже',
-      transposeUp: 'Транспонировать на тон выше',
+      transposeDown: 'Транспонировать на полутон ниже',
+      transposeUp: 'Транспонировать на полутон выше',
     },
     close: 'Закрыть',
   },
@@ -168,5 +168,14 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       link: 'добавить',
       suffix: 'свою!',
     },
+  },
+  songComponent: {
+    loadingMessage: 'Загружаем текст песни…',
+  },
+  songChordsComponent: {
+    chordsTitle: 'Аккорды:',
+    transposeUp: 'Транспонировать на половину тона выше',
+    transposeDown: 'Транспонировать на половину тона ниже',
+    originalKey: 'Оригинальная тональность',
   },
 };
