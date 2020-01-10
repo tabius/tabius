@@ -7,6 +7,7 @@ import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
 import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
+import {I18N} from '@app/app-i18n';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'
@@ -39,6 +40,8 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
 
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter<SongEditResult>();
+
+  readonly i18n = I18N.songEditorComponent;
 
   content = '';
   title = '';
@@ -112,15 +115,15 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
       return;
     }
     if (this.title.length === 0) {
-      this.toastService.warning('Необходимо указать название песни');
+      this.toastService.warning(this.i18n.toasts.songTitleIsRequired);
       return;
     }
     if (this.content.length === 0) {
-      this.toastService.warning('Текст песни не может быть пуст');
+      this.toastService.warning(this.i18n.toasts.songTextIsRequired);
       return;
     }
     this.createImpl().catch((err: Error) => {
-      this.toastService.warning(`Не удалось создать песню: ${err.message}`);
+      this.toastService.warning(`${this.i18n.toasts.failedToCreateSongPrefix}${err.message}`);
     });
   }
 
@@ -139,11 +142,11 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     this.updateImpl()
         .then(changedAndSaved => {
           if (changedAndSaved) {
-            this.toastService.info('Изменения сохранены');
+            this.toastService.info(this.i18n.toasts.saved);
           }
         })
         .catch((err: Error) => {
-          this.toastService.warning(`Изменения не сохранены: ${err.message}`);
+          this.toastService.warning(`${this.i18n.toasts.failedToSavePrefix}${err.message}`);
         });
   }
 
@@ -220,16 +223,16 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
 
   async delete(): Promise<void> {
     if (!this.deleteConfirmationFlag) {
-      this.toastService.warning('Необходимо подтвердить действие!');
+      this.toastService.warning(this.i18n.toasts.deleteConfirmationIsRequired);
       return;
     }
     try {
       await this.cds.deleteSong(this.songId);
     } catch (err) {
-      this.toastService.warning('Ошибка при удалении песни!');
+      this.toastService.warning(this.i18n.toasts.failedToDeleteSong);
       return;
     }
-    this.toastService.info('Песня удалена.');
+    this.toastService.info(this.i18n.toasts.songWasDeleted);
     this.close({type: 'deleted'});
   }
 }

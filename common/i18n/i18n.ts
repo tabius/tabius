@@ -175,4 +175,27 @@ export interface I18n {
     transposeDown: string;
     originalKey: string;
   };
+  songEditorComponent: {
+    loadingMessage: string;
+    titlePlaceholder: string;
+    textPlaceholder: string;
+    youtubeLinkPlaceholder: string;
+    create: string;
+    update: string;
+    cancel:string;
+    delete:string;
+    deleteConfirmationTitle: string;
+    deleteTitle: string;
+    deleteRequiresConfirmationTitle: string;
+    toasts: {
+      songTitleIsRequired: string;
+      songTextIsRequired: string;
+      failedToCreateSongPrefix: string;
+      saved: string;
+      failedToSavePrefix: string;
+      deleteConfirmationIsRequired: string;
+      failedToDeleteSong: string;
+      songWasDeleted: string;
+    }
+  };
 }
