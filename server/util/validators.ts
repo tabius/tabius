@@ -1,9 +1,11 @@
 import {isValidId} from '@common/util/misc-utils';
 import {UserSongSettings} from '@common/user-model';
-import {eachItem, equals, isArray, isNumber, isString, maxLength, min, minLength, Validator} from 'typed-validation';
+import {eachItem, equals, error, isArray, isNumber, isString, maxLength, min, minLength, success, Validator} from 'typed-validation';
 import {CreateListedCollectionRequest, CreateUserCollectionRequest} from '@common/ajax-model';
 import {CollectionType, MAX_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_COLLECTION_MOUNT_LENGTH, MIN_COLLECTION_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/catalog-model';
 import {INVALID_ID} from '@common/common-constants';
+import {getTranslitLowerCase} from '@common/util/seo-translit';
+import {ValidationResult} from 'typed-validation/validation-result';
 
 export function paramToId(value: string): number {
   const id = +value;
@@ -26,12 +28,21 @@ export function paramToArrayOfNumericIds(value: string): number[] {
   return result;
 }
 
+const end = (v) => success(v);
+type Next<T> = (arg: T) => ValidationResult<T>
+
 export const isVersion = () => min(0);
 export const isNumericId = () => min(1);
-export const checkStringLength = (minLen: number, maxLen: number) => isString(minLength(minLen, maxLength(maxLen)));
-export const isSongMount = () => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH);
+export const checkStringLength = (minLen: number, maxLen: number, next: Next<string> = end) =>
+    isString(minLength(minLen, maxLength(maxLen, next)));
+export const isSongMount = () => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
+export const isNewSongMount = () => checkStringLength(0, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
 export const isCollectionMount = () => checkStringLength(MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
 export const isCollectionType = () => equals(CollectionType.Band, CollectionType.Person, CollectionType.Compilation);
+
+export function isTranslitLowerCase(next: Next<string> = end): (arg: string) => ValidationResult<string> {
+  return (arg: string): ValidationResult<string> => arg == getTranslitLowerCase(arg) ? next(arg) : error('', '');
+}
 
 export const UserSongSettingsValidator: Validator<UserSongSettings> = {
   songId: isNumericId(),
@@ -51,7 +62,7 @@ export const NewSongValidator: Validator<Song> = {
   ...SongValidator,
   id: equals(INVALID_ID),
   version: equals(0),
-  mount: equals(''),
+  mount: isNewSongMount(),
   tid: equals(INVALID_ID),
 };
 
