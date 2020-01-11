@@ -1,19 +1,19 @@
 <div *ngIf="loading">
-    Поиск в тексте песен...
+    {{i18n.searchingInSongText}}
 </div>
 
 <div *ngIf="!loading">
 
     <div class="title-result-block">
         <h3>
-            В имени:
+            {{i18n.titleResults}}
             <span class="top-results-message">
                 <ng-container *ngIf="titleResults.length === maxTitleResults">/ первые {{maxTitleResults}}</ng-container>
                 <ng-container *ngIf="titleResults.length !== maxTitleResults">/ всего {{titleResults.length}}</ng-container>
             </span>
         </h3>
         <div *ngIf="titleResults.length === 0" class="no-results-message">
-            нет результатов
+            {{i18n.noResults}}
         </div>
         <div *ngFor="let searchResult of titleResults">
             <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}}
@@ -24,15 +24,15 @@
 
     <div class="content-result-block">
         <h3>
-            В тексте:
+            {{i18n.textResults}}
             <span class="top-results-message">
-                <ng-container *ngIf="contentResults.length === maxContentResults">/ первые {{maxContentResults}}</ng-container>
-                <ng-container *ngIf="contentResults.length !== maxContentResults">/ всего {{contentResults.length}}</ng-container>
+                <ng-container *ngIf="contentResults.length === maxContentResults">/ {{i18n.first}} {{maxContentResults}}</ng-container>
+                <ng-container *ngIf="contentResults.length !== maxContentResults">/ {{i18n.total}} {{contentResults.length}}</ng-container>
             </span>
         </h3>
 
         <div *ngIf="contentResults.length === 0" class="no-results-message">
-            нет результатов
+            {{i18n.noResults}}
         </div>
         <div *ngFor="let searchResult of contentResults" class="content-result-item">
             <div>

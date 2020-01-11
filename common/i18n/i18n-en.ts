@@ -203,4 +203,12 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       songWasDeleted: 'Song was deleted.',
     },
   },
+  fullTextSearchResultsComponent: {
+    searchingInSongText: 'Searching in songs..',
+    titleResults: 'Song name:',
+    textResults: 'Song text:',
+    first: 'first',
+    total: 'total',
+    noResults: 'no results',
+  },
 };

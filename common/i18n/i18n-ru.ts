@@ -201,4 +201,12 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       songWasDeleted: 'Песня удалена.',
     },
   },
+  fullTextSearchResultsComponent: {
+    searchingInSongText: 'Поиск в тексте песен...',
+    titleResults: 'В имени:',
+    textResults: 'В тексте:',
+    first: 'первые',
+    total: 'всего',
+    noResults: 'нет результатов',
+  },
 };

@@ -4,6 +4,7 @@ import {FullTextSongSearchRequest, FullTextSongSearchResponse, FullTextSongSearc
 import {getSongPageLink, toSafeSearchText} from '@common/util/misc-utils';
 import {getSongTextWithNoChords} from '@app/components/song-page/song-page.component';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
+import {I18N} from '@app/app-i18n';
 
 // TODO unify listing styles with other components.
 
@@ -17,6 +18,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
 
   @Input() searchText!: string;
 
+  readonly i18n = I18N.fullTextSearchResultsComponent;
   readonly maxTitleResults = MAX_FULL_TEXT_SEARCH_TITLE_RESULTS;
   readonly maxContentResults = MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS;
 

@@ -182,8 +182,8 @@ export interface I18n {
     youtubeLinkPlaceholder: string;
     create: string;
     update: string;
-    cancel:string;
-    delete:string;
+    cancel: string;
+    delete: string;
     deleteConfirmationTitle: string;
     deleteTitle: string;
     deleteRequiresConfirmationTitle: string;
@@ -196,6 +196,14 @@ export interface I18n {
       deleteConfirmationIsRequired: string;
       failedToDeleteSong: string;
       songWasDeleted: string;
-    }
+    };
+  };
+  fullTextSearchResultsComponent: {
+    searchingInSongText: string;
+    titleResults: string;
+    textResults: string;
+    first: string;
+    total: string;
+    noResults: string;
   };
 }
