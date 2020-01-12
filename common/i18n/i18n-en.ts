@@ -183,6 +183,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   songEditorComponent: {
     loadingMessage: 'Loading song details…',
     titlePlaceholder: 'Song title',
+    mountPlaceholder: 'Song link',
     textPlaceholder: 'Song text with chords',
     youtubeLinkPlaceholder: 'YouTube link',
     create: 'Create',

@@ -181,6 +181,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   songEditorComponent: {
     loadingMessage: 'Загружаем детали песни…',
     titlePlaceholder: 'Название песни',
+    mountPlaceholder: 'Адрес песни',
     textPlaceholder: 'Текст песни с аккордами',
     youtubeLinkPlaceholder: 'Ссылка на YouTube',
     create: 'Создать',

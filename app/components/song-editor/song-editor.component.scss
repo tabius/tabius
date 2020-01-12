@@ -1,4 +1,10 @@
+@import "app/styles/dimensions";
 @import "app/styles/fonts";
+
+@mixin text-field {
+  font-size: 18px;
+  font-family: $font-family-mono;
+}
 
 :host {
   margin-top: 10px;
@@ -11,50 +17,82 @@
   input, textarea {
     box-sizing: border-box;
   }
-}
 
-.song-title {
-  width: 100%;
-  font-size: 18px;
-  font-family: $font-family-mono;
-}
-
-textarea.song-content {
-  margin-top: 10px;
-  width: 100%;
-  min-height: 50%;
-  font-size: 18px;
-  line-height: 20px;
-  font-family: $font-family-mono;
-  padding: 7px;
-}
-
-.media-links-block {
-  margin-top: 5px;
-
-  input {
+  .song-title {
+    @include text-field();
     width: 100%;
   }
-}
 
-.buttons-row {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
+  .song-mount-block {
+    display: flex;
+    flex-direction: column;
+  }
 
-  .left-side-block {
-    white-space: nowrap;
+  textarea.song-content {
+    @include text-field();
+    margin-top: 10px;
+    width: 100%;
+    min-height: 50%;
+    line-height: 20px;
+    padding: 7px;
+  }
 
-    > button {
-      &:not(:first-child) {
-        margin-left: 10px;
+  .media-links-block {
+    margin-top: 5px;
+
+    input {
+      width: 100%;
+    }
+  }
+
+  .song-mount-block {
+    margin-top: 5px;
+
+    .song-mount {
+      @include text-field();
+      min-width: 250px;
+      width: 100%;
+    }
+
+    .url-demo {
+      word-break: break-all;
+      padding-right: 5px;
+      line-height: 28px;
+      color: #999999;
+    }
+  }
+
+  .buttons-row {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+
+    .left-side-block {
+      white-space: nowrap;
+
+      > button {
+        &:not(:first-child) {
+          margin-left: 10px;
+        }
       }
     }
   }
+
+  .delete-button-group {
+    white-space: nowrap;
+    margin-left: 10px;
+    float: right;
+  }
 }
 
-.delete-button-group {
-  white-space: nowrap;
-  margin-left: 10px;
-  float: right;
+@media only screen and (min-width: $min-desktop-width) {
+  .editor-block {
+    .song-mount-block {
+      flex-direction: row;
+
+      .url-demo {
+        word-break: normal;
+      }
+    }
+  }
 }

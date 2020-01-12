@@ -1,13 +1,14 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {bound, countOccurrences, isValidId, scrollToView} from '@common/util/misc-utils';
+import {flatMap, takeUntil} from 'rxjs/operators';
+import {bound, countOccurrences, getCurrentNavbarHeight, getFullLink, getSongPageLink, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
-import {DESKTOP_NAV_HEIGHT, INVALID_ID, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
+import {INVALID_ID} from '@common/common-constants';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
+import {getTranslitLowerCase} from '@common/util/seo-translit';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'
@@ -41,10 +42,15 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter<SongEditResult>();
 
+  /** Emitted when song mount is changed right before the song is updated in DB and the editor is closed. */
+  @Output() onMountChangeBeforeUpdate = new EventEmitter<string>();
+
   readonly i18n = I18N.songEditorComponent;
 
   content = '';
   title = '';
+  mount = '';
+  songUrlPrefix = '';
   mediaLinks = '';
   createMode = false;
 
@@ -68,20 +74,34 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
       if (!isValidId(this.collectionId)) {
         throw new Error('Collection id not provided!');
       }
-      this.loaded = true;
-      this.updateUIOnLoadedState();
-    } else {
-      combineLatest([this.cds.getSongById(this.songId), this.cds.getSongDetailsById(this.songId)])
+      const collection$ = this.cds.getCollectionById(this.collectionId);
+      collection$
           .pipe(takeUntil(this.destroyed$))
-          .subscribe(([song, details]) => {
-            if (song === undefined || details === undefined) {
-              return; // todo:
+          .subscribe(collection => {
+            if (!collection) {
+              return; // todo: show error
+            }
+            this.songUrlPrefix = getFullLink(`${getSongPageLink(collection.mount, '')}`);
+            this.loaded = true;
+            this.updateUIOnLoadedState();
+          });
+    } else {
+      const song$ = this.cds.getSongById(this.songId);
+      const songDetails$ = this.cds.getSongDetailsById(this.songId);
+      const collection$ = song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
+      combineLatest([song$, songDetails$, collection$])
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe(([song, details, collection]) => {
+            if (!song || !details || !collection) {
+              return; // todo: show error
             }
             this.song = song;
             this.details = details;
             this.title = song.title;
             this.content = details ? details.content : '?';
             this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
+            this.mount = song.mount;
+            this.songUrlPrefix = getFullLink(`${getSongPageLink(collection.mount, '')}`);
             this.loaded = true;
             this.updateUIOnLoadedState();
             this.cd.detectChanges();
@@ -128,7 +148,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   }
 
   private async createImpl(): Promise<void> {
-    const song: Song = {id: INVALID_ID, version: 0, mount: '', title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
+    const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
     const songDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
     const createdSong = await this.cds.createSong(song, songDetails);
     this.close({type: 'created', song: createdSong});
@@ -155,14 +175,19 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     if (this.createMode || !this.song || !this.details) {
       return false;
     }
-    const changed = this.isChanged();
-    if (changed) {
-      const updatedSong: Song = {...this.song, title: this.title};
-      const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
-      await this.cds.updateSong(updatedSong, updatedDetails);
+    if (!this.isChanged()) {
+      this.close({type: 'canceled'});
+      return false;
     }
-    this.close({type: changed ? 'updated' : 'canceled'});
-    return changed;
+    if (this.mount !== this.song.mount) {
+      this.onMountChangeBeforeUpdate.emit(this.mount);
+    }
+    const updatedSong: Song = {...this.song, title: this.title, mount: this.mount};
+    const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
+    // wait until the update is finished with no errors before closing the editor.
+    await this.cds.updateSong(updatedSong, updatedDetails);
+    this.close({type: 'updated'});
+    return true;
   }
 
   private isChanged(): boolean {
@@ -172,7 +197,10 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     if (!this.song || !this.details) {
       return false;
     }
-    return this.song.title !== this.title || this.details.content !== this.content || this.details.mediaLinks.join(' ') !== this.mediaLinks;
+    return this.song.title !== this.title
+        || this.details.content !== this.content
+        || this.details.mediaLinks.join(' ') !== this.mediaLinks
+        || this.song.mount !== this.mount;
   }
 
   @HostListener('document:keypress', ['$event'])
@@ -185,7 +213,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
       }
     } else if (event.key === 'Escape') {
       // todo: ask about closing confirmation
-      if (!this.isChanged()) {
+      if (!this.isChanged() || this.createMode) {
         this.close({type: 'canceled'});
       }
     }
@@ -193,19 +221,22 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
 
   getContentRowsCount(): number {
     // simple heuristic that works (can be improved later if needed).
-    const headerHeight = window.innerWidth >= MIN_DESKTOP_WIDTH ? DESKTOP_NAV_HEIGHT : MOBILE_NAV_HEIGHT;
+    const headerHeight = getCurrentNavbarHeight();
     const titleInputHeight = 28;
-    const linksRowHeight = 28;
+    const mediaLinksRowHeight = 28;
+    const mountRowHeight = 28;
     const buttonsRowHeight = 28;
     const textAreaLineHeight = 20;
     const textAreaPadding = 7;
     const header2TitleMargin = 10;
     const title2ContentMargin = 10;
     const content2LinksMargin = 10;
-    const links2ButtonsMargin = 10;
+    const mediaLinks2MountMargin = 5;
+    const mount2ButtonsMargin = 5;
     const buttons2BottomMargin = 10;
-    const availableHeight = window.innerHeight - (headerHeight + header2TitleMargin + titleInputHeight + title2ContentMargin +
-        content2LinksMargin + linksRowHeight + links2ButtonsMargin + buttonsRowHeight + buttons2BottomMargin);
+    const availableHeight = window.innerHeight -
+        (headerHeight + header2TitleMargin + titleInputHeight + title2ContentMargin +
+            content2LinksMargin + mediaLinksRowHeight + mediaLinks2MountMargin + mountRowHeight + mount2ButtonsMargin + buttonsRowHeight + buttons2BottomMargin);
     return bound(8, countOccurrences(this.content, '\n') + 1, (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
   }
 
@@ -234,5 +265,9 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     }
     this.toastService.info(this.i18n.toasts.songWasDeleted);
     this.close({type: 'deleted'});
+  }
+
+  onTitleChanged(): void {
+    this.mount = getTranslitLowerCase(this.title);
   }
 }

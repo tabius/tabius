@@ -43,6 +43,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   notFound = false;
 
+  songMountBeforeUpdate?: string;
   collectionMount?: string;
 
   private isRoutingOnSongRemovalInFlight = false;
@@ -97,8 +98,13 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           const hadSongBefore = this.song !== undefined;
           const haveSongNow = song !== undefined && songDetails !== undefined;
-          if (hadSongBefore && !haveSongNow) { // song was removed (deleted by user) -> return to the user/collection page.
-            this.handleSongRemoval();
+          if (hadSongBefore && !haveSongNow) {
+            // handle song removal or mount update
+            if (this.songMountBeforeUpdate !== songMount) {
+              this.handleMountUpdate();
+            } else {
+              this.handleSongRemoval();
+            }
             return;
           }
           if (collection === undefined || primaryCollection === undefined || song === undefined || songDetails === undefined) {
@@ -120,6 +126,15 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     ).subscribe(songSettings => {
       this.songSettings = songSettings;
     });
+  }
+
+  private handleMountUpdate(): void {
+    if (!this.collectionMount || !this.songMountBeforeUpdate) {
+      return;
+    }
+    const params = this.route.snapshot.params;
+    const link = getSongPageLink(this.collectionMount, this.songMountBeforeUpdate, params[PARAM_PRIMARY_COLLECTION_MOUNT]);
+    this.router.navigate([link]).catch(err => console.error(err));
   }
 
   private handleSongRemoval(): void {
@@ -178,11 +193,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   closeEditor(closeResult: SongEditResult): void {
+    this.editorIsOpen = false;
     if (closeResult.type === 'deleted') {
       this.handleSongRemoval();
       return;
     }
-    this.editorIsOpen = false;
     this.cd.detectChanges();
   }
 
@@ -206,6 +221,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
   }
 
+  onMountChangeBeforeUpdate(mountBeforeUpdate: string): void {
+    this.songMountBeforeUpdate = mountBeforeUpdate;
+  }
 }
 
 function isServiceLineChar(c: string): boolean {

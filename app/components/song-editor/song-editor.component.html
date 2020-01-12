@@ -7,6 +7,7 @@
     <div>
         <input #firstFormElement type="text" [(ngModel)]="title"
                (keydown)="handleKeyboardEvent($event)"
+               (ngModelChange)="onTitleChanged()"
                class="song-title"
                placeholder="{{i18n.titlePlaceholder}}">
     </div>
@@ -22,6 +23,14 @@
                (keydown)="handleKeyboardEvent($event)"
                type="text"
                placeholder="{{i18n.youtubeLinkPlaceholder}}">
+    </div>
+    <div class="song-mount-block">
+        <div class="url-demo">{{songUrlPrefix}}</div>
+        <input [(ngModel)]="mount"
+               (keydown)="handleKeyboardEvent($event)"
+               class="song-mount"
+               type="text"
+               placeholder="{{i18n.mountPlaceholder}}">
     </div>
     <div class="buttons-row">
         <div class="left-side-block">

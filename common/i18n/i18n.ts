@@ -178,6 +178,7 @@ export interface I18n {
   songEditorComponent: {
     loadingMessage: string;
     titlePlaceholder: string;
+    mountPlaceholder: string;
     textPlaceholder: string;
     youtubeLinkPlaceholder: string;
     create: string;

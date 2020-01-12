@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Song, SongDetails} from '@common/catalog-model';
 import {DbService} from './db.service';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
+import {INVALID_ID} from '@common/common-constants';
 
 interface SongRow {
   id: number;
@@ -84,10 +85,14 @@ export class SongDbi {
         .then(([result]) => result.insertId);
   }
 
-  async update(title: string, details: SongDetails): Promise<void> {
+  async update(song: Song, details: SongDetails): Promise<void> {
+    const songIdWithTheSameMount = await this.getSongIdByMountFromTheSameCollection(song.id, song.mount);
+    if (songIdWithTheSameMount !== undefined && songIdWithTheSameMount !== details.id) {
+      throw new Error(`Mount is already in use: ${song.mount}`);
+    }
     await this.db.pool.promise()
-        .query('UPDATE song SET title = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
-            [title, details.content, packMediaLinks(details.mediaLinks), details.id]);
+        .query('UPDATE song SET title = ?, mount = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
+            [song.title, song.mount, details.content, packMediaLinks(details.mediaLinks), details.id]);
   }
 
   async delete(songId: number): Promise<void> {
@@ -95,6 +100,16 @@ export class SongDbi {
       this.db.pool.promise().query('DELETE FROM song WHERE id = ?', [songId]),
       this.db.pool.promise().query('DELETE FROM secondary_song_collections WHERE song_id = ?', [songId]),
     ]);
+  }
+
+  async getSongIdByMountFromTheSameCollection(songId: number, mount: string): Promise<number|undefined> {
+    const collectionId: number|undefined = await this.query('SELECT collection_id FROM song WHERE id = ?', [songId])
+        .then(([rows]) => rows.length > 0 ? rows[0].collection_id : undefined);
+    if (!collectionId) {
+      return INVALID_ID;
+    }
+    return await this.query('SELECT id FROM song WHERE collection_id = ? AND mount = ?', [collectionId, mount])
+        .then(([rows]) => rows.length > 0 ? rows[0].id : undefined);
   }
 
   async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
@@ -166,11 +181,15 @@ function unpackLinks(packedLinks: string): string[] {
   return packedLinks.length === 0 ? [] : packedLinks.split('\n');
 }
 
-async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> {
-  const allMounts = await con$$.query('SELECT mount FROM song WHERE collection_id = ?', [song.collectionId])
+async function getAllSingMountsInCollection(con$$: any, song: Song): Promise<string[]> {
+  return await con$$.query('SELECT mount FROM song WHERE collection_id = ?', [song.collectionId])
       .then(([rows]) => rows.map(row => row.mount));
+}
+
+async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> {
+  const allMounts = await getAllSingMountsInCollection(con$$, song);
   const allMountsSet = new Set<string>(allMounts);
-  let baseMount = getTranslitLowerCase(song.title);
+  let baseMount = song.mount.length > 0 ? song.mount : getTranslitLowerCase(song.title);
   if (baseMount.length === 0) {
     throw new Error(`Failed to generate song mount for song: ${song.title}`);
   }

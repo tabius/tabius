@@ -29,6 +29,7 @@
 
             <gt-song-editor *ngIf="editorIsOpen"
                             (closeRequest)="closeEditor($event)"
+                            (onMountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
                             [songId]="song.id"
             ></gt-song-editor>
         </div>

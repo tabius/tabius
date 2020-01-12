@@ -1,7 +1,7 @@
 import {Collection, CollectionType, Song} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
-import {DESKTOP_NAV_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
+import {DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
 import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import {fromPromise} from 'rxjs/internal-compatibility';
@@ -68,6 +68,7 @@ export function getCollectionPageLink(collectionOrMount: string|{ mount: string 
   return `/${MOUNT_COLLECTION_PREFIX}${mount}`;
 }
 
+/** Returns local song page link. If song-mount is empty, returns prefix of the link. */
 export function getSongPageLink(collectionMount: string, songMount: string, primaryCollectionMount?: string): string {
   if (!!primaryCollectionMount && primaryCollectionMount !== collectionMount) {
     return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${primaryCollectionMount}`;
@@ -134,13 +135,11 @@ export function bound(min: number, value: number, max: number): number {
   return value <= min ? min : value >= max ? max : value;
 }
 
-
-export function scrollToView(element?: HTMLElement): void {
+export function scrollToView(element: HTMLElement|undefined, paddingTop = 10): void {
   if (!element) {
     return;
   }
-  const headerHeight = window.innerWidth >= MIN_DESKTOP_WIDTH ? DESKTOP_NAV_HEIGHT + 10 : MOBILE_NAV_HEIGHT + 5;
-  window.scroll({left: window.scrollX, top: element.offsetTop - headerHeight, behavior: 'smooth'});
+  window.scroll({left: window.scrollX, top: element.offsetTop - getCurrentNavbarHeight() - paddingTop, behavior: 'smooth'});
 }
 
 export function canManageCollectionContent(user: User|undefined, collection: Collection): user is User {
@@ -226,3 +225,10 @@ export function toSafeSearchText(text: string): string {
   }
   return safeText.trim();
 }
+
+export function getCurrentNavbarHeight(): number {
+  return window.innerWidth >= MIN_DESKTOP_WIDTH
+         ? window.innerHeight < HIRES_DESKTOP_HEIGHT
+           ? DESKTOP_LOW_HEIGHT_NAV_HEIGHT : DESKTOP_NAV_HEIGHT : MOBILE_NAV_HEIGHT;
+}
+

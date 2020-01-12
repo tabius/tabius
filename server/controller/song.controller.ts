@@ -104,7 +104,7 @@ export class SongController {
     if (!vr2.success) {
       throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
     }
-    await this.songDbi.update(request.song.title, request.details);
+    await this.songDbi.update(request.song, request.details);
     return this.getSongUpdateResponse(request.song.id, request.song.collectionId);
   }
 
@@ -134,7 +134,6 @@ export class SongController {
       throw new HttpException(`Song is not found ${idParam}`, HttpStatus.NOT_FOUND);
     }
     const song = songsArray[0];
-    const collectionId = song.collectionId;
     if (isValidId(song.tid)) {
       try {
         await this.nodeBBService.deleteTopic(song.tid);
