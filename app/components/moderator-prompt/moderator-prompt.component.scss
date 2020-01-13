@@ -13,4 +13,14 @@
   .link-block {
     margin-top: 7px;
   }
+
+  .close-button-block {
+    margin-top: 10px;
+    text-align: center;
+
+    a {
+      cursor: pointer;
+      color: #999;
+    }
+  }
 }

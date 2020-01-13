@@ -14,7 +14,7 @@ import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.s
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
-import {UserSongSettings} from '@common/user-model';
+import {User, UserSongSettings} from '@common/user-model';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
@@ -33,6 +33,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   primaryCollection?: Collection;
   songSettings?: UserSongSettings;
   canonicalPageUrl?: string;
+  user?: User;
 
   hasEditRight = false;
   editorIsOpen = false;
@@ -115,6 +116,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.songDetails = songDetails;
           this.activeCollection = collection;
           this.primaryCollection = primaryCollection;
+          this.user = user;
           this.updateMeta();
           this.hasEditRight = canManageCollectionContent(user, primaryCollection);
           this.cd.detectChanges();
@@ -182,18 +184,26 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent): void {
-    if (this.hasEditRight && !this.editorIsOpen && event.shiftKey && !isInputEvent(event) && event.code === 'KeyE') {
+    if (!this.editorIsOpen && event.shiftKey && !isInputEvent(event) && event.code === 'KeyE') {
       this.toggleEditor();
     }
   }
 
   toggleEditor(): void {
-    this.editorIsOpen = !this.editorIsOpen && this.hasEditRight;
+    this.editorIsOpen = !this.editorIsOpen;
     this.cd.detectChanges();
   }
 
-  closeEditor(closeResult: SongEditResult): void {
+  openEditor(): void {
+    this.editorIsOpen = true;
+    this.cd.detectChanges();
+  }
+
+  closeEditor(closeResult: SongEditResult = {type: 'canceled'}): void {
     this.editorIsOpen = false;
+    if (!closeResult) {
+      return;
+    }
     if (closeResult.type === 'deleted') {
       this.handleSongRemoval();
       return;

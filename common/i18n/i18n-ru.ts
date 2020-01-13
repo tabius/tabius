@@ -114,6 +114,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     but: 'Однако!',
     howToBecomeModeratorHtml: 'Роль модератора не сложно получить:<br>предложите несколько своих подборов на форуме.',
     forumLink: 'Перейти на форум »',
+    close: 'закрыть',
   },
   resourceNotFoundComponent: {
     tryToReloadPagePrompt: 'Попробуйте перегрузить страницу в режиме Онлайн'

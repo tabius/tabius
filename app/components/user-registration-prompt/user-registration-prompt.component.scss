@@ -6,6 +6,15 @@
   padding: 20px;
   border: solid 1px #ccc;
   background-color: #fefbf7;
+
+  .close-button-block {
+    margin-top: 10px;
+    text-align: center;
+    a {
+      cursor: pointer;
+      color: #999;
+    }
+  }
 }
 
 @media only screen and (min-width: $min-desktop-width) {

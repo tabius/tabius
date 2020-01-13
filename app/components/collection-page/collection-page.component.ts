@@ -149,7 +149,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     this.cd.detectChanges();
   }
 
-  closeSongEditor(editResult: SongEditResult): void {
+  closeSongEditor(editResult: SongEditResult = {type: 'canceled'}): void {
     this.songEditorIsOpen = false;
     this.cd.detectChanges();
     if (editResult.type === 'created') {

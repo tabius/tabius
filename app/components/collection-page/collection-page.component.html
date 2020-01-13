@@ -54,8 +54,14 @@
             </div>
 
             <!-- Song editor -->
-            <gt-user-registration-prompt *ngIf="songEditorIsOpen && !user" class="register-prompt"></gt-user-registration-prompt>
-            <gt-moderator-prompt *ngIf="songEditorIsOpen && !!user && !canAddSongs" class="has-no-rights-prompt"></gt-moderator-prompt>
+            <gt-user-registration-prompt *ngIf="songEditorIsOpen && !user"
+                                         (closeRequest)="closeSongEditor()"
+                                         class="register-prompt">
+            </gt-user-registration-prompt>
+            <gt-moderator-prompt *ngIf="songEditorIsOpen && !!user && !canAddSongs"
+                                 (closeRequest)="closeSongEditor()"
+                                 class="has-no-rights-prompt">
+            </gt-moderator-prompt>
             <gt-song-editor *ngIf="songEditorIsOpen && canAddSongs"
                             (closeRequest)="closeSongEditor($event)"
                             [songId]="-1"

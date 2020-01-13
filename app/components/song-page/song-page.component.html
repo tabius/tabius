@@ -24,17 +24,25 @@
             <gt-add-song-to-collection *ngIf="isBrowser" [song]="song"></gt-add-song-to-collection>
         </div>
 
-        <div *ngIf="hasEditRight" class="edit-song-block">
-            <gt-song-editor *ngIf="editorIsOpen"
+        <div *ngIf="editorIsOpen" class="edit-song-block">
+            <gt-user-registration-prompt *ngIf="!user"
+                                         (closeRequest)="closeEditor()"
+                                         class="register-prompt">
+            </gt-user-registration-prompt>
+            <gt-moderator-prompt *ngIf="!!user && !hasEditRight"
+                                 (closeRequest)="closeEditor()"
+                                 class="has-no-rights-prompt">
+            </gt-moderator-prompt>
+            <gt-song-editor *ngIf="hasEditRight"
                             (closeRequest)="closeEditor($event)"
                             (onMountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
                             [songId]="song.id"
             ></gt-song-editor>
         </div>
 
-        <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen">
+        <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen && isBrowser">
             <div class="button-item">
-                <a class="btn btn-info" (click)="toggleEditor()" title="Исправить подбор песни (Shift + E)">
+                <a class="btn btn-info" (click)="openEditor()" title="Исправить подбор песни (Shift + E)">
                     <span class="desktop-only">Исправить подбор</span>
                     <span class="mobile-only">Исправить</span>
                 </a>

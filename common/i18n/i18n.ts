@@ -117,6 +117,7 @@ export interface I18n {
     but: string;
     howToBecomeModeratorHtml: string;
     forumLink: string;
+    close: string;
   };
   resourceNotFoundComponent: {
     tryToReloadPagePrompt;

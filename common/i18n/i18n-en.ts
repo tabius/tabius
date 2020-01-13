@@ -114,6 +114,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     but: 'But!',
     howToBecomeModeratorHtml: 'It is not hard to become a moderator:<br>suggest chords to a couple of songs on the forum first.',
     forumLink: 'Open forum »',
+    close: "close",
   },
   resourceNotFoundComponent: {
     tryToReloadPagePrompt: 'Try to reload the page when Online',

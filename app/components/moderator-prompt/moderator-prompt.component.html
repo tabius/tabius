@@ -3,4 +3,8 @@
     <p class="but-block">{{i18n.but}}</p>
     <p [innerHTML]="i18n.howToBecomeModeratorHtml"></p>
     <p class="link-block"><a href="{{addNewCategoryLink}}" target="_blank" rel="noopener">{{i18n.forumLink}}</a></p>
+
+    <div class="close-button-block">
+        <a (click)="close()">{{i18n.close}}</a>
+    </div>
 </div>
