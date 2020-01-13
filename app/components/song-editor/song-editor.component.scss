@@ -1,11 +1,6 @@
 @import "app/styles/dimensions";
 @import "app/styles/fonts";
 
-@mixin text-field {
-  font-size: 18px;
-  font-family: $font-family-mono;
-}
-
 :host {
   margin-top: 10px;
   display: block;
@@ -16,10 +11,11 @@
 
   input, textarea {
     box-sizing: border-box;
+    font-size: 16px;
+    font-family: $font-family-mono;
   }
 
   .song-title {
-    @include text-field();
     width: 100%;
   }
 
@@ -29,7 +25,6 @@
   }
 
   textarea.song-content {
-    @include text-field();
     margin-top: 10px;
     width: 100%;
     min-height: 50%;
@@ -49,12 +44,12 @@
     margin-top: 5px;
 
     .song-mount {
-      @include text-field();
       min-width: 250px;
       width: 100%;
     }
 
     .url-demo {
+      font-size: 16px;
       word-break: break-all;
       padding-right: 5px;
       line-height: 28px;
@@ -87,10 +82,16 @@
 
 @media only screen and (min-width: $min-desktop-width) {
   .editor-block {
+
+    input, textarea {
+      font-size: 18px;
+    }
+
     .song-mount-block {
       flex-direction: row;
 
       .url-demo {
+        font-size: 18px;
         word-break: normal;
         white-space: nowrap;
       }
