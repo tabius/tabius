@@ -116,3 +116,22 @@ input[type=text] {
   padding-left: 5px;
   padding-right: 5px;
 }
+
+.mobile-only {
+  display: initial;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: initial;
+  }
+
+}

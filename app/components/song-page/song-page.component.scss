@@ -28,8 +28,14 @@
       margin-top: 40px;
     }
 
-    .forum-link-block {
+    .bottom-action-buttons-block {
       margin-top: 20px;
+      display: flex;
+
+      .button-item {
+        display: inline-block;
+        margin-right: 15px;
+      }
     }
 
     .edit-song-block {
@@ -42,5 +48,12 @@
   :host {
     padding-left: $sticky-sidebar-width;
     padding-right: $sticky-sidebar-width;
+
+    .content {
+      .bottom-action-buttons-block {
+        .button-item {
+        }
+      }
+    }
   }
 }

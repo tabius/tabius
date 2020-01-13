@@ -25,8 +25,6 @@
         </div>
 
         <div *ngIf="hasEditRight" class="edit-song-block">
-            <a *ngIf="!editorIsOpen" href="javascript:" (click)="toggleEditor()">Исправить подбор »</a>
-
             <gt-song-editor *ngIf="editorIsOpen"
                             (closeRequest)="closeEditor($event)"
                             (onMountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
@@ -34,8 +32,20 @@
             ></gt-song-editor>
         </div>
 
-        <div *ngIf="hasValidForumTopic(song)" class="forum-link-block">
-            <a href="{{getSongForumTopicLink(song)}}">Обсудить подбор на форуме »</a>
+        <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen">
+            <div class="button-item">
+                <a class="btn btn-info" (click)="toggleEditor()" title="Исправить подбор песни (Shift + E)">
+                    <span class="desktop-only">Исправить подбор</span>
+                    <span class="mobile-only">Исправить</span>
+                </a>
+
+            </div>
+            <div class="button-item" *ngIf="hasValidForumTopic(song)">
+                <a class="btn" href="{{getSongForumTopicLink(song)}}" title="Обсудить подбор песни на форуме">
+                    <span class="desktop-only">Обсудить на форуме</span>
+                    <span class="mobile-only">Обсудить</span>
+                </a>
+            </div>
         </div>
 
         <gt-song-prev-next-navigator *ngIf="isBrowser" [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song-prev-next-navigator>
