@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output} from '@angular/core';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
 import {scrollToView} from '@common/util/misc-utils';
 
@@ -14,6 +14,9 @@ export class UserRegistrationPromptComponent implements AfterViewInit {
 
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
+
+  constructor(private readonly el: ElementRef) {
+  }
 
   close(): void {
     this.closeRequest.next({});
