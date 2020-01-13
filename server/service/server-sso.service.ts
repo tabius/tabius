@@ -13,7 +13,7 @@ import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';
 
-type SsoMode = 'nodebb'|'mock-user'
+type SsoMode = 'nodebb'|'mock-user'|'mock-no-user'
 
 interface SsoServiceConfig {
   mode: SsoMode,
@@ -51,14 +51,18 @@ export class ServerSsoService implements NestInterceptor {
   private mongoDb?: Db;
   private readonly mockUser?: MockUserSsoConfig;
   private readonly ssoConfig?: NodeBbSsoConfig;
+  private readonly ssoMode!: SsoMode;
 
   constructor(private readonly userDbi: UserDbi,
               private readonly collectionDbi: CollectionDbi,
   ) {
     const {mode, value} = SERVER_CONFIG.ssoConfig as SsoServiceConfig;
+    this.ssoMode = mode;
     if (mode === 'mock-user') {
       this.mockUser = value as MockUserSsoConfig;
       this.logger.warn(`Using test user: ${JSON.stringify(this.mockUser)}`);
+    } else if (mode === 'mock-no-user') {
+      this.logger.warn(`Using anonymous user account`);
     } else {
       this.ssoConfig = value as NodeBbSsoConfig;
       const {mongo} = this.ssoConfig;
@@ -83,7 +87,7 @@ export class ServerSsoService implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest();
     let user = this.mockUser;
-    if (!user) {
+    if (this.ssoMode === 'nodebb') {
       const ssoConfig = this.ssoConfig!;
       const nodeBbSessionCookie = req.cookies[ssoConfig.cookieName];
       const ssoSessionId = nodeBbSessionCookie ? cookieParser.signedCookie(nodeBbSessionCookie, ssoConfig.cookieSecret) : undefined;
