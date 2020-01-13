@@ -3,10 +3,10 @@
 <ng-container *ngIf="showControls">
 
     <div class="icons-block">
-        <div (click)="printSong()" class="icon print-icon" title="Распечатать текст и аккорды">
+        <div (click)="printSong()" class="icon print-icon" title="{{i18n.printTitle}}">
             <gt-svg-icon icon="printer"></gt-svg-icon>
         </div>
-        <div (click)="showKeyboardShortcuts()" class="icon settings-icon" title="Показать горячие клавиши">
+        <div (click)="showKeyboardShortcuts()" class="icon settings-icon" title="{{i18n.showShortcutsTitle}}">
             <gt-svg-icon icon="song-setting"></gt-svg-icon>
         </div>
     </div>

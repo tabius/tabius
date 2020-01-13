@@ -212,4 +212,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     total: 'total',
     noResults: 'no results',
   },
+  songHeaderComponent: {
+    printTitle: 'Print song with chords',
+    showShortcutsTitle: 'Show keyboard shortcuts',
+  },
 };

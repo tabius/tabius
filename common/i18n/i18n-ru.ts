@@ -210,4 +210,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     total: 'всего',
     noResults: 'нет результатов',
   },
+  songHeaderComponent: {
+    printTitle: 'Распечатать текст и аккорды',
+    showShortcutsTitle: 'Показать горячие клавиши',
+  },
 };

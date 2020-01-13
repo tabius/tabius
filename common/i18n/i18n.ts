@@ -207,4 +207,8 @@ export interface I18n {
     total: string;
     noResults: string;
   };
+  songHeaderComponent: {
+    printTitle: string;
+    showShortcutsTitle: string
+  };
 }

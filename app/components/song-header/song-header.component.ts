@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 import {Collection, Song} from '@common/catalog-model';
 import {getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
 import {HelpService} from '@app/services/help.service';
+import {I18N} from '@app/app-i18n';
 
 export type SongHeaderTitleFormat = 'song'|'song-and-collection';
 
@@ -21,7 +22,9 @@ export class SongHeaderComponent implements OnChanges {
 
   @Input() showControls = true;
 
-  title: string = '';
+  readonly i18n = I18N.songHeaderComponent;
+
+  title = '';
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly helpService: HelpService,
