@@ -34,7 +34,7 @@
                                  class="has-no-rights-prompt">
             </gt-moderator-prompt>
             <gt-song-editor *ngIf="hasEditRight"
-                            (closeRequest)="closeEditor($event)"
+                            (closeRequest)="closeEditor()"
                             (onMountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
                             [songId]="song.id"
             ></gt-song-editor>

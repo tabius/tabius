@@ -15,7 +15,6 @@ import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRI
 import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
 import {User, UserSongSettings} from '@common/user-model';
-import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
@@ -46,8 +45,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   songMountBeforeUpdate?: string;
   collectionMount?: string;
-
-  private isRoutingOnSongRemovalInFlight = false;
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
@@ -101,7 +98,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           const haveSongNow = song !== undefined && songDetails !== undefined;
           if (hadSongBefore && !haveSongNow) {
             // handle song removal or mount update
-            if (this.songMountBeforeUpdate !== songMount) {
+            if (!!this.songMountBeforeUpdate && this.songMountBeforeUpdate !== songMount) {
               this.handleMountUpdate();
             } else {
               this.handleSongRemoval();
@@ -141,7 +138,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   private handleSongRemoval(): void {
     // Try to go to the next or prev song in the current collection. Fall-back to collection/studio page.
-    this.isRoutingOnSongRemovalInFlight = true;
     const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
     const collection$ = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
     getAllSongsInCollectionsSorted(collection$, this.cds)
@@ -185,13 +181,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent): void {
     if (!this.editorIsOpen && event.shiftKey && !isInputEvent(event) && event.code === 'KeyE') {
-      this.toggleEditor();
+      this.openEditor();
     }
-  }
-
-  toggleEditor(): void {
-    this.editorIsOpen = !this.editorIsOpen;
-    this.cd.detectChanges();
   }
 
   openEditor(): void {
@@ -199,16 +190,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     this.cd.detectChanges();
   }
 
-  closeEditor(closeResult: SongEditResult = {type: 'canceled'}): void {
+  closeEditor(): void {
     this.editorIsOpen = false;
-    if (!closeResult) {
-      return;
-    }
-    if (closeResult.type === 'deleted') {
-      this.handleSongRemoval();
-      return;
-    }
-    this.cd.detectChanges();
   }
 
   @HostListener('document:keydown', ['$event'])
