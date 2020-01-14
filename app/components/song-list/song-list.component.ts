@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Song} from '@common/catalog-model';
 import {getSongPageLink, trackById} from '@common/util/misc-utils';
+import {I18N} from '@app/app-i18n';
 
 /** Song item model used by the component. */
 interface SongItem {
@@ -20,6 +21,8 @@ export class SongListComponent implements OnChanges {
 
   readonly trackById = trackById;
 
+  readonly i18n = I18N.songListComponent;
+
   /** Active collection mount. If not defined, the primary song collection mount is used. */
   @Input() collectionMount?: string;
 
@@ -33,7 +36,7 @@ export class SongListComponent implements OnChanges {
   @Input() showEmptyNotice = false;
 
   /** Text of the empty notice. Used only if 'showEmptyNotice' is true. */
-  @Input() emptyListMessage = 'Нет песен';
+  @Input() emptyListMessage = this.i18n.listIsEmpty;
 
   songItems: SongItem[] = [];
 
@@ -53,7 +56,7 @@ export class SongListComponent implements OnChanges {
         this.songItems.push({
           id: song.id,
           title: song.title,
-          titleAttribute: song.title + ' — смотреть текст песни и аккорды',
+          titleAttribute: song.title + this.i18n.titleSuffix,
           link: getSongPageLink(collectionMount, song.mount, primaryCollectionMount),
         });
       }

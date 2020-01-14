@@ -212,4 +212,8 @@ export interface I18n {
     printTitle: string;
     showShortcutsTitle: string
   };
+  songListComponent: {
+    listIsEmpty: string;
+    titleSuffix: string;
+  };
 }

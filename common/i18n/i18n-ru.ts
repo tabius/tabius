@@ -215,4 +215,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     printTitle: 'Распечатать текст и аккорды',
     showShortcutsTitle: 'Показать горячие клавиши',
   },
+  songListComponent: {
+    listIsEmpty: 'Нет песен',
+    titleSuffix: ' — текст песни и аккорды',
+  },
 };
