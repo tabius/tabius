@@ -4,12 +4,12 @@
 
     <!-- Loading indicator -->
     <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-        <div class="message">Загружаем текст песни…</div>
+        <div class="message">{{i18n.loadingSong}}</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
     <!-- Not found block -->
-    <gt-resource-not-found *ngIf="notFound" message="Песня не найдена"></gt-resource-not-found>
+    <gt-resource-not-found *ngIf="notFound" message="{{i18n.songNotFound}}"></gt-resource-not-found>
 
     <!-- Main content -->
     <div *ngIf="song">
@@ -42,16 +42,15 @@
 
         <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen && isBrowser">
             <div class="button-item">
-                <a class="btn btn-info" (click)="openEditor()" title="Исправить подбор песни (Shift + E)">
-                    <span class="desktop-only">Исправить подбор</span>
-                    <span class="mobile-only">Исправить</span>
+                <a class="btn btn-info" (click)="openEditor()" title="{{i18n.editSongButtonTitle}}">
+                    <span class="desktop-only">{{i18n.editSongButtonDesktop}}</span>
+                    <span class="mobile-only">{{i18n.editSongButtonMobile}}</span>
                 </a>
-
             </div>
             <div class="button-item" *ngIf="hasValidForumTopic(song)">
-                <a class="btn" href="{{getSongForumTopicLink(song)}}" title="Обсудить подбор песни на форуме">
-                    <span class="desktop-only">Обсудить на форуме</span>
-                    <span class="mobile-only">Обсудить</span>
+                <a class="btn" href="{{getSongForumTopicLink(song)}}" title="{{i18n.discussSongButtonTitle}}">
+                    <span class="desktop-only">{{i18n.discussSongButtonDesktop}}</span>
+                    <span class="mobile-only">{{i18n.discussSongButtonModule}}</span>
                 </a>
             </div>
         </div>

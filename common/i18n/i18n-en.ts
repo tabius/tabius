@@ -221,4 +221,26 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     listIsEmpty: 'No songs found',
     titleSuffix: ' — song text and chords',
   },
+  songPage: {
+    titleSuffix: (titlePrefix: string) => titlePrefix.length > 50 ? 'chords' : titlePrefix.length > 35 ? 'text and chords' : 'song text and chords',
+    keywords: (collectionName: string, songTitle: string) => [
+      `chords ${songTitle}`,
+      collectionName,
+      'tabs',
+      'chords',
+      'song text',
+      'lyrics',
+      'fingering',
+      'guitar',
+    ],
+    loadingSong: 'Loading song text…',
+    songNotFound: 'Song not found',
+    editSongButtonTitle: 'Open song editor (Shift + E)',
+    editSongButtonDesktop: 'Edit song',
+    editSongButtonMobile: 'Edit',
+    discussSongButtonTitle: 'Discuss song chords on forum',
+    discussSongButtonDesktop: 'Discuss on forum',
+    discussSongButtonModule: 'Discuss',
+
+  },
 };

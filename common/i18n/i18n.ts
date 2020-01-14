@@ -216,4 +216,16 @@ export interface I18n {
     listIsEmpty: string;
     titleSuffix: string;
   };
+  songPage: {
+    titleSuffix: (titlePrefix: string) => string;
+    keywords: (collectionName: string, songTitle: string) => string[];
+    loadingSong: string;
+    songNotFound: string;
+    editSongButtonTitle: string;
+    editSongButtonDesktop: string;
+    editSongButtonMobile: string;
+    discussSongButtonTitle: string;
+    discussSongButtonDesktop:string
+    discussSongButtonModule:string
+  };
 }

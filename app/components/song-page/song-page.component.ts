@@ -18,6 +18,7 @@ import {User, UserSongSettings} from '@common/user-model';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-song-page',
@@ -26,6 +27,9 @@ import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/compone
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+
+  readonly i18n = I18N.songPage;
+
   song?: Song;
   songDetails?: SongDetails;
   activeCollection?: Collection;
@@ -169,11 +173,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
     this.canonicalPageUrl = getFullLink(getSongPageLink(this.primaryCollection.mount, this.song.mount));
     const titlePrefix = `${this.song.title}, ${getNameFirstFormArtistName(this.activeCollection)} | `;
-    const titleSuffix = titlePrefix.length > 50 ? 'аккорды' : titlePrefix.length > 35 ? 'текст и аккорды' : 'текст песни и аккорды';
+    const titleSuffix = this.i18n.titleSuffix(titlePrefix);
     updatePageMetadata(this.title, this.meta, {
       title: titlePrefix + titleSuffix,
       description: getSongTextWithNoChords(this.songDetails.content, 5, true),
-      keywords: [`подбор ${this.song.title}`, this.activeCollection.name, 'табы', 'аккорды', 'текст песни', 'стихи', 'аппликатура', 'гитара'],
+      keywords: this.i18n.keywords(this.activeCollection.name, this.song.title),
       image: getCollectionImageUrl(this.activeCollection.mount),
     });
   }
