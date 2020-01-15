@@ -46,6 +46,11 @@ server {
         return 301 /chords/$1;
     }
 
+    location ~* .(png|ico|gif|jpg|jpeg|css|js|map)$ {
+        root /opt/tabius-org/browser;
+        expires 28d;
+    }
+
     #    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     server_tokens off;
 
@@ -58,7 +63,6 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/tabius.org/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
 }
 
 server {
@@ -68,7 +72,6 @@ server {
 
 
     server_name tabius.org;
-
     listen 80;
     return 404; # managed by Certbot
 }

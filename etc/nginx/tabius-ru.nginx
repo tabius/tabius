@@ -50,6 +50,11 @@ server {
         return 301 /chords/$1;
     }
 
+    location ~* .(png|ico|gif|jpg|jpeg|css|js|map)$ {
+        root /opt/tabius/browser;
+        expires 28d;
+    }
+
     #    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     server_tokens off;
 
