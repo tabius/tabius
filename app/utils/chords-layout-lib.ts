@@ -336,18 +336,18 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'G#sus2sus4': '446646',
 
   // Suspended 4th
-  'Asus4': 'x00230',
-  'A#sus4': 'x11341',
-  'Bsus4': 'x22452',
+  'Asus4': 'x02230',
+  'A#sus4': 'x13341',
+  'Bsus4': 'x24452',
   'Csus4': 'x33011',
-  'C#sus4': 'x44122',
+  'C#sus4': 'x46674',
   'Dsus4': 'xx0233',
   'D#sus4': 'xx1344',
-  'Esus4': '002200',
+  'Esus4': '022200',
   'Fsus4': '113311',
   'F#sus4': '224422',
-  'Gsus4': '330033',
-  'G#sus4': '446644',
+  'Gsus4': '330013',
+  'G#sus4': '466644',
 
   // 7th Suspended 2nd
   'A7sus2': 'x02000',
