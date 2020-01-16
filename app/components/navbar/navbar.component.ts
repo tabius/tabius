@@ -11,6 +11,7 @@ import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.s
 import {LocationStrategy} from '@angular/common';
 import {NODE_BB_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
+import {USER_COLLECTION_MOUNT_SEPARATOR} from '@common/common-constants';
 
 enum NavSection {
   Home = 1,
@@ -69,6 +70,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.user = user;
           this.cd.detectChanges();
         });
+
+    this.router.events
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(() => {
+          this.cd.markForCheck();
+        });
+
   }
 
   ngOnDestroy(): void {
@@ -81,6 +89,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (url.startsWith(LINK_TUNER)) {
       return NavSection.Tuner;
     } else if (url.startsWith(LINK_CATALOG) || url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
+      if (url.includes(USER_COLLECTION_MOUNT_SEPARATOR)) {
+        return NavSection.Studio;
+      }
       return NavSection.Catalog;
     } else if (url.startsWith(LINK_STUDIO)) {
       return NavSection.Studio;
