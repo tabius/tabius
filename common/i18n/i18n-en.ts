@@ -209,6 +209,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       failedToDeleteSong: 'Failed to delete song!',
       songWasDeleted: 'Song was deleted.',
     },
+    errors: {
+      failedToParseYoutubeId: 'Failed to parse YouTube link!',
+    },
   },
   fullTextSearchResultsComponent: {
     searchingInSongText: 'Searching in songs..',

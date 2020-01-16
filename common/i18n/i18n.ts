@@ -204,6 +204,9 @@ export interface I18n {
       failedToDeleteSong: string;
       songWasDeleted: string;
     };
+    errors: {
+      failedToParseYoutubeId: string;
+    };
   };
   fullTextSearchResultsComponent: {
     searchingInSongText: string;

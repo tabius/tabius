@@ -9,6 +9,7 @@ import {INVALID_ID} from '@common/common-constants';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
+import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'
@@ -149,13 +150,20 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
 
   private async createImpl(): Promise<void> {
     const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
-    const songDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
+    const songDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError()};
     const createdSong = await this.cds.createSong(song, songDetails);
     this.close({type: 'created', song: createdSong});
   }
 
-  private getMediaLinksAsArray(): string[] {
-    return this.mediaLinks.split(' ').filter(l => l.length > 0);
+  private getMediaLinksAsArrayOrThrowError(): string[] {
+    if (this.mediaLinks.trim().length === 0) {
+      return [];
+    }
+    const youtubeId = getFirstYoutubeVideoIdFromLinks([this.mediaLinks]);
+    if (!youtubeId) {
+      throw new Error(this.i18n.errors.failedToParseYoutubeId);
+    }
+    return [youtubeId];
   }
 
   update(): void {
@@ -183,7 +191,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
       this.onMountChangeBeforeUpdate.emit(this.mount);
     }
     const updatedSong: Song = {...this.song, title: this.title, mount: this.mount};
-    const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArray()};
+    const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError()};
     // wait until the update is finished with no errors before closing the editor.
     await this.cds.updateSong(updatedSong, updatedDetails);
     this.close({type: 'updated'});

@@ -207,6 +207,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       failedToDeleteSong: 'Ошибка при удалении песни!',
       songWasDeleted: 'Песня удалена.',
     },
+    errors: {
+      failedToParseYoutubeId: 'Некорректная ссылка на видео в YouTube!',
+    },
   },
   fullTextSearchResultsComponent: {
     searchingInSongText: 'Поиск в тексте песен...',
