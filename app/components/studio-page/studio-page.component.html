@@ -1,6 +1,6 @@
 <div class="content">
     <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-        <div class="message">Загружаем …</div>
+        <div class="message">{{i18n.loading}}</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
@@ -11,27 +11,27 @@
         <div *ngIf="user" class="collection-block">
             <div>
                 <div>
-                    <h1>Коллекции</h1>
+                    <h1>{{i18n.collections}}</h1>
                     <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
                 </div>
                 <div class="song-list-block">
-                    <h1>Подборы</h1>
+                    <h1>{{i18n.songs}}</h1>
 
                     <gt-song-list
                             *ngIf="!editorIsOpen"
                             [songs]="songs"
                             [primarySongCollectionMounts]="primarySongCollectionMounts"
                             [showEmptyNotice]="true"
-                            [emptyListMessage]="'Нет своих подборов'"
+                            [emptyListMessage]="i18n.songsListIsEmpty"
                     ></gt-song-list>
 
                     <div class="add-song-block">
                         <button *ngIf="!editorIsOpen"
                                 (click)="openEditor()"
                                 class="btn btn-info"
-                                title="Добавить новую песню в персональную коллекцию"
+                                title="{{i18n.addNewSongIntoPersonalCollection}}"
                         >
-                            Добавить
+                            {{i18n.addSong}}
                         </button>
                         <gt-song-editor *ngIf="editorIsOpen"
                                         (closeRequest)="closeEditor($event)"

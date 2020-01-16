@@ -256,4 +256,17 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     toCollectionNext: 'To collection »',
     toCollectionTitle: 'To collection',
   },
+  studioPage: {
+    addSong: 'Add song',
+    addNewSongIntoPersonalCollection: 'Add new song into personal collection',
+    collections: 'Collections',
+    loading: 'Loading …',
+    songs: 'Songs',
+    songsListIsEmpty: 'Songs list is empty',
+    meta: {
+      title: 'Studio: personal songs & collections',
+      description: 'Studio page contains personal user\'s songs and collection.',
+      keywords: ['chords', 'tabs', 'guitar', 'playlist'],
+    },
+  },
 };

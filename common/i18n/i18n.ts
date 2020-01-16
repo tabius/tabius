@@ -242,4 +242,17 @@ export interface I18n {
     toCollectionNext: string;
     toCollectionTitle: string;
   };
+  studioPage: {
+    addSong: string;
+    loading: string;
+    collections: string;
+    songs: string;
+    songsListIsEmpty: string;
+    addNewSongIntoPersonalCollection: string;
+    meta: {
+      title: string;
+      description: string;
+      keywords: string[];
+    }
+  };
 }

@@ -12,6 +12,7 @@ import {combineLatest0, defined, getSongPageLink} from '@common/util/misc-utils'
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {Router} from '@angular/router';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-studio-page',
@@ -20,6 +21,7 @@ import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-i
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StudioPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+  readonly i18n = I18N.studioPage;
 
   user?: User;
 
@@ -101,11 +103,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
   }
 
   updateMeta() {
-    updatePageMetadata(this.title, this.meta, {
-      title: 'Студия: мои подборы',
-      description: 'Список персональных подборов.',
-      keywords: ['табы', 'гитара', 'аккорды', 'плейлист'],
-    });
+    updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 
   openEditor(): void {

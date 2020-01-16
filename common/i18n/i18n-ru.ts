@@ -254,4 +254,17 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     toCollectionNext: 'В коллекцию »',
     toCollectionTitle: 'В коллекцию',
   },
+  studioPage: {
+    addSong: 'Добавить',
+    addNewSongIntoPersonalCollection: 'Добавить новую песню в персональную коллекцию',
+    collections: 'Коллекции',
+    loading: 'Загружаем …',
+    songs: 'Подборы',
+    songsListIsEmpty: 'Нет своих подборов',
+    meta: {
+      title: 'Студия: мои подборы',
+      description: 'Список персональных подборов.',
+      keywords: ['табы', 'гитара', 'аккорды', 'плейлист'],
+    },
+  },
 };
