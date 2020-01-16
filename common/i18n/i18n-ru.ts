@@ -88,7 +88,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
         const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');
         return `${name}${typeInfo} — тексты песен и аккорды для гитары`;
       },
-      description: (name: string, firstSongs: string) => `${name} — песни и аккорды для гитары: ${firstSongs}`,
+      description: (firstSongs: string) => `Список песен с аккордами: ${firstSongs}`,
       keywords: (name: string) => [`${name} аккорды`, `табы ${name}`, `подбор ${name}`, `текст ${name}`, `песни ${name}`],
     },
   },

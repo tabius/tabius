@@ -90,7 +90,7 @@ export interface I18n {
     supportLinkTitle: string;
     meta: {
       title: (name: string, type: CollectionType) => string;
-      description: (name: string, firstSongs: string) => string;
+      description: (firstSongs: string) => string;
       keywords: (name: string) => string[];
     }
   };

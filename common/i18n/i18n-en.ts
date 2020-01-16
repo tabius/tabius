@@ -88,7 +88,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
         const typeInfo = isCompilation(type) ? ', collection ' : (isBand(type) ? ', band' : '');
         return `${name}${typeInfo} — songs, chords and tabs for guitar`;
       },
-      description: (name: string, firstSongs: string) => `${name} — songs and chords for guitar: ${firstSongs}`,
+      description: (firstSongs: string) => `Songs with tabs and chords: ${firstSongs}`,
       keywords: (name: string) => [`${name} chords`, `${name} tabs`, `${name} lyrics`, `${name} songs`],
     },
   },

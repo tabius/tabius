@@ -137,7 +137,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     const {type} = collectionViewModel.collection;
     updatePageMetadata(this.title, this.meta, {
       title: this.i18n.meta.title(name, type),
-      description: this.i18n.meta.description(name, getFirstSongsNames(songs)),
+      description: this.i18n.meta.description(getFirstSongsNames(songs)),
       keywords: this.i18n.meta.keywords(name),
       image: collectionViewModel.imgSrc,
     });
@@ -186,7 +186,7 @@ function getFirstSongsNames(songs: Song[]): string {
     const song = songs[i];
     res += ` ${song.title}.`;
   }
-  return res;
+  return res.trim();
 }
 
 export function sortSongsAndMounts(songs: Song[], primarySongCollectionMounts: (string|undefined)[]): ([Song[], (string|undefined)[]]) {
