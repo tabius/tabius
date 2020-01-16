@@ -2,6 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmit
 import {NODE_BB_ADD_NEW_CATEGORY_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
 import {scrollToView} from '@common/util/misc-utils';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
   selector: 'gt-moderator-prompt',
@@ -16,11 +17,12 @@ export class ModeratorPromptComponent implements AfterViewInit {
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
-  constructor(private readonly el: ElementRef) {
+  constructor(private readonly el: ElementRef,
+              private readonly bss: BrowserStateService,
+  ) {
   }
 
   close(): void {
-    console.log('CLOSE!');
     this.closeRequest.next({});
   }
 
@@ -32,8 +34,10 @@ export class ModeratorPromptComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      scrollToView(this.el.nativeElement);
-    }, 200);
+    if (this.bss.isBrowser) {
+      setTimeout(() => {
+        scrollToView(this.el.nativeElement);
+      }, 200);
+    }
   }
 }

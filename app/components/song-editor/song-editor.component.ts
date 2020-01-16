@@ -110,7 +110,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   }
 
   private updateUIOnLoadedState(): void {
-    if (this.scrollIntoView) {
+    if (this.scrollIntoView && this.isBrowser) {
       setTimeout(() => {
         if (this.contentRef && this.contentRef.nativeElement) {
           if (this.initialFocusMode === 'text') {

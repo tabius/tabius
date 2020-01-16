@@ -7,6 +7,7 @@ import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
 import {Router} from '@angular/router';
 import {scrollToView} from '@common/util/misc-utils';
 import {I18N} from '@app/app-i18n';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
   selector: 'gt-collection-editor',
@@ -43,11 +44,12 @@ export class CollectionEditorComponent implements OnInit {
   constructor(private readonly cds: CatalogService,
               private readonly toastService: ToastService,
               private readonly router: Router,
+              private readonly bss: BrowserStateService,
   ) {
   }
 
   ngOnInit(): void {
-    if (this.scrollIntoViewAndFocus) {
+    if (this.scrollIntoViewAndFocus && this.bss.isBrowser) {
       setTimeout(() => {
         if (this.editorBlockRef && this.editorBlockRef.nativeElement) {
           scrollToView(this.editorBlockRef.nativeElement);

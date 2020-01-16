@@ -1,6 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output} from '@angular/core';
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
 import {scrollToView} from '@common/util/misc-utils';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
   selector: 'gt-user-registration-prompt',
@@ -15,7 +16,9 @@ export class UserRegistrationPromptComponent implements AfterViewInit {
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
-  constructor(private readonly el: ElementRef) {
+  constructor(private readonly el: ElementRef,
+              private readonly bss: BrowserStateService,
+  ) {
   }
 
   close(): void {
@@ -30,8 +33,10 @@ export class UserRegistrationPromptComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      scrollToView(this.el.nativeElement);
-    }, 200);
+    if (this.bss.isBrowser) {
+      setTimeout(() => {
+        scrollToView(this.el.nativeElement);
+      }, 200);
+    }
   }
 }
