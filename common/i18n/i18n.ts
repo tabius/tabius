@@ -115,8 +115,13 @@ export interface I18n {
   moderatorPrompt: {
     youAreNotModerator: string;
     but: string;
-    howToBecomeModeratorHtml: string;
-    forumLink: string;
+    butLine1: string;
+    butLine2: string;
+    butForum: string;
+    also: string;
+    alsoLine1: string;
+    alsoLine2: string;
+    alsoStudio: string;
     close: string;
   };
   resourceNotFoundComponent: {

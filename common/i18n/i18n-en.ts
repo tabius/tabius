@@ -110,10 +110,15 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     close: 'Close',
   },
   moderatorPrompt: {
-    youAreNotModerator: 'You are not moderator and can\'t change the public catalog :(',
+    youAreNotModerator: 'You are not moderator and can\'t change public catalog :(',
     but: 'But!',
-    howToBecomeModeratorHtml: 'It is not hard to become a moderator:<br>suggest chords to a couple of songs on the forum first.',
-    forumLink: 'Open forum »',
+    butLine1: 'It is not hard to become a moderator:',
+    butLine2: 'suggest chords to a couple of songs on the',
+    butForum: 'FORUM',
+    also: 'And...',
+    alsoLine1: 'Anyone can create collections and add songs',
+    alsoLine2: 'in their personal ',
+    alsoStudio: 'STUDIO',
     close: 'close',
   },
   resourceNotFoundComponent: {

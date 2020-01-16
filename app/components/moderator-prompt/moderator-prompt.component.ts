@@ -3,6 +3,7 @@ import {NODE_BB_ADD_NEW_CATEGORY_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
 import {scrollToView} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {LINK_STUDIO} from '@common/mounts';
 
 @Component({
   selector: 'gt-moderator-prompt',
@@ -11,7 +12,8 @@ import {BrowserStateService} from '@app/services/browser-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModeratorPromptComponent implements AfterViewInit {
-  readonly addNewCategoryLink = NODE_BB_ADD_NEW_CATEGORY_URL;
+  readonly forumLink = NODE_BB_ADD_NEW_CATEGORY_URL;
+  readonly studioLink = LINK_STUDIO;
   readonly i18n = I18N.moderatorPrompt;
 
   /** Emitted when panel wants to be closed. */

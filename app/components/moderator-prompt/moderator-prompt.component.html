@@ -1,8 +1,21 @@
 <div class="content">
     <p>{{i18n.youAreNotModerator}}</p>
+
     <p class="but-block">{{i18n.but}}</p>
-    <p [innerHTML]="i18n.howToBecomeModeratorHtml"></p>
-    <p class="link-block"><a href="{{addNewCategoryLink}}" target="_blank" rel="noopener">{{i18n.forumLink}}</a></p>
+
+    <p>
+        {{i18n.butLine1}}
+        <br>
+        {{i18n.butLine2}} <a href="{{forumLink}}" target="_blank" rel="noopener">{{i18n.butForum}}</a>
+    </p>
+
+    <p class="also-block">{{i18n.also}}</p>
+
+    <p>
+        {{i18n.alsoLine1}}
+        <br>
+        {{i18n.alsoLine2}} <a routerLink="{{studioLink}}">{{i18n.alsoStudio}}</a>
+    </p>
 
     <div class="close-button-block">
         <a (click)="close()">{{i18n.close}}</a>

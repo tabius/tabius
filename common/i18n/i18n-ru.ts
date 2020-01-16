@@ -112,8 +112,13 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   moderatorPrompt: {
     youAreNotModerator: 'Вы не модератор и не можете изменять публичный каталог :(',
     but: 'Однако!',
-    howToBecomeModeratorHtml: 'Роль модератора не сложно получить:<br>предложите несколько своих подборов на форуме.',
-    forumLink: 'Перейти на форум »',
+    butLine1: 'Роль модератора не сложно получить:',
+    butLine2: 'предложите несколько своих подборов на',
+    butForum: 'ФОРУМЕ',
+    also: 'И ещё!',
+    alsoLine1: 'Можно создавать любые коллекции и подборы',
+    alsoLine2: 'у себя в ',
+    alsoStudio: 'СТУДИИ',
     close: 'закрыть',
   },
   resourceNotFoundComponent: {
