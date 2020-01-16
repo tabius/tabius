@@ -225,7 +225,16 @@ export interface I18n {
     editSongButtonDesktop: string;
     editSongButtonMobile: string;
     discussSongButtonTitle: string;
-    discussSongButtonDesktop:string
-    discussSongButtonModule:string
+    discussSongButtonDesktop: string
+    discussSongButtonModule: string
+  };
+  songPrevNextNavigator: {
+    nextSong: string;
+    nextSongTitle: string;
+    prevSong: string;
+    prevSongTitle: string;
+    toCollectionPrev: string;
+    toCollectionNext: string;
+    toCollectionTitle: string;
   };
 }

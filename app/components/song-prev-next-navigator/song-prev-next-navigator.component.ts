@@ -7,6 +7,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 import {Collection, Song} from '@common/catalog-model';
+import {I18N} from '@app/app-i18n';
 
 const Hammer: HammerStatic = require('hammerjs');
 
@@ -19,6 +20,8 @@ const Hammer: HammerStatic = require('hammerjs');
 export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
+
+  readonly i18n = I18N.songPrevNextNavigator;
 
   /** Current song. undefined => no song is shown (used for collection page). */
   @Input() songId?: number;

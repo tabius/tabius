@@ -240,4 +240,13 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     discussSongButtonDesktop: 'Обсудить на форуме',
     discussSongButtonModule: 'Обсудить',
   },
+  songPrevNextNavigator: {
+    nextSong: 'След. песня »',
+    nextSongTitle: 'Перейти к следующей песне',
+    prevSong: '« Пред. песня',
+    prevSongTitle: 'Перейти к предыдущей песне',
+    toCollectionPrev: '« В коллекцию',
+    toCollectionNext: 'В коллекцию »',
+    toCollectionTitle: 'В коллекцию',
+  },
 };

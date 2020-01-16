@@ -241,6 +241,14 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     discussSongButtonTitle: 'Discuss song chords on forum',
     discussSongButtonDesktop: 'Discuss on forum',
     discussSongButtonModule: 'Discuss',
-
+  },
+  songPrevNextNavigator: {
+    nextSong: 'Next. song »',
+    nextSongTitle: 'Open previous song',
+    prevSong: '« Prev. song',
+    prevSongTitle: 'Open next song',
+    toCollectionPrev: '« To collection',
+    toCollectionNext: 'To collection »',
+    toCollectionTitle: 'To collection',
   },
 };

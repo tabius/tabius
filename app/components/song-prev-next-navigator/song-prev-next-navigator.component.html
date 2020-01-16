@@ -1,16 +1,16 @@
 <div *ngIf="prevLink && nextLink && !isInitializing">
 
     <div class="prev-next-links-block" *ngIf="!isWideScreenMode">
-        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? "« В коллекцию" : "« Пред. песня"}}</a>
-        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? "В коллекцию »" : "След. песня »"}}</a>
+        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong}}</a>
+        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong}}</a>
     </div>
 
     <div *ngIf="isWideScreenMode" class="sticky-sidebar">
-        <div class="left-bar" (click)="navigate(prevLink)" title="{{prevLinkIsCollection ? 'В коллекцию' : 'Перейти к предыдущей песне'}}">
+        <div class="left-bar" (click)="navigate(prevLink)" title="{{prevLinkIsCollection ? i18n.toCollectionTitle : i18n.prevSongTitle}}">
             <gt-svg-icon icon="prev"></gt-svg-icon>
         </div>
 
-        <div class="right-bar" (click)="navigate(nextLink)" title="{{nextLinkIsCollection ? 'В коллекцию' : 'Перейти к следующей песне'}}">
+        <div class="right-bar" (click)="navigate(nextLink)" title="{{nextLinkIsCollection ? i18n.toCollectionTitle : i18n.nextSongTitle}}">
             <gt-svg-icon icon="next"></gt-svg-icon>
         </div>
     </div>
