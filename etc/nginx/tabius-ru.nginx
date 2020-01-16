@@ -21,7 +21,7 @@ server {
         }
     }
 
-    location /images {
+    location ^~ /images {
         alias /opt/tabius/images;
     }
 
@@ -37,19 +37,11 @@ server {
         alias /opt/tabius/www/sitemap-$1.txt.gz;
     }
 
-    # Redirects for old resources and API calls.
-    location ~ ^/images/artists/(.*) {
-        return 301 /images/collection/$1;
-    }
-
-    location ~ ^/api/artist/(.*) {
-        return 301 /api/collection/$1;
-    }
-
     location ~ ^/artist/(.*) {
         return 301 /chords/$1;
     }
 
+    # Build artifacts in root folder
     location ~* .(png|ico|gif|jpg|jpeg|css|js|map)$ {
         root /opt/tabius/browser;
         expires 28d;

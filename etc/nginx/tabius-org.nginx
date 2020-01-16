@@ -16,7 +16,7 @@ server {
         }
     }
 
-    location /images {
+    location ^~ /images {
         alias /opt/tabius-org/images;
     }
 
@@ -32,20 +32,11 @@ server {
         alias /opt/tabius-org/www/sitemap-$1.txt.gz;
     }
 
-
-    # Redirects for old resources and API calls.
-    location ~ ^/images/artists/(.*) {
-        return 301 /images/collection/$1;
-    }
-
-    location ~ ^/api/artist/(.*) {
-        return 301 /api/collection/$1;
-    }
-
     location ~ ^/artist/(.*) {
         return 301 /chords/$1;
     }
 
+    # Build artifacts in root folder
     location ~* .(png|ico|gif|jpg|jpeg|css|js|map)$ {
         root /opt/tabius-org/browser;
         expires 28d;
@@ -69,7 +60,6 @@ server {
     if ($host = tabius.org) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
-
 
     server_name tabius.org;
     listen 80;
