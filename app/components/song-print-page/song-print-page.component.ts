@@ -5,6 +5,7 @@ import {UserService} from '@app/services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
   selector: 'gt-song-print-page-component',
@@ -20,6 +21,7 @@ export class SongPrintPageComponent {
               readonly cd: ChangeDetectorRef,
               private readonly router: Router,
               private readonly activatedRoute: ActivatedRoute,
+              private readonly bss: BrowserStateService,
   ) {
   }
 
@@ -45,11 +47,12 @@ export class SongPrintPageComponent {
           }
           this.songId = song.id;
           this.cd.detectChanges();
-          setTimeout(() => {
-            window.print();
-            window.close();
-          }, 2000);
-
+          if (this.bss.isBrowser) {
+            setTimeout(() => {
+              window.print();
+              window.close();
+            }, 2000);
+          }
         });
   }
 
