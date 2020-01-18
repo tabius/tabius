@@ -2,5 +2,15 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "es2015"
-  }
+  },
+  "exclude": [
+    "**/*.d.ts",
+    "**/*.spec.ts",
+    "../common/**/*.spec.ts",
+    "./environments/environment.prod-org.ts",
+    "./environments/environment.prod-ru.ts",
+    "app.ssr.module.ts",
+    "main.ssr.ts",
+    "test.ts"
+  ]
 }

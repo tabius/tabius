@@ -5,5 +5,9 @@
   },
   "angularCompilerOptions": {
     "entryModule": "./app.ssr.module#AppServerModule"
-  }
+  },
+  "include": [
+    "app.ssr.module.ts",
+    "main.ssr.ts"
+  ]
 }

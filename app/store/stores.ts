@@ -1,4 +1,4 @@
-import {Inject, PLATFORM_ID} from '@angular/core';
+import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {TransferState} from '@angular/platform-browser';
 import {APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME} from '@app/app-constants';
 import {isPlatformBrowser} from '@angular/common';
@@ -9,6 +9,7 @@ import {CATALOG_STORE_SCHEMA_VERSION} from '@common/catalog-model';
 import {LocalStorageStoreAdapter} from '@app/store/local-storage-store-adapter';
 import {ObservableStoreImpl} from '@app/store/observable-store-impl';
 
+@Injectable()
 export class UserBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(USER_STORE_NAME, isPlatformBrowser(platformId),
@@ -19,6 +20,7 @@ export class UserBrowserStore extends ObservableStoreImpl {
 }
 
 /** Store with collections & songs. */
+@Injectable()
 export class CatalogBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(CATALOG_STORE_NAME, isPlatformBrowser(platformId),
@@ -29,6 +31,7 @@ export class CatalogBrowserStore extends ObservableStoreImpl {
 }
 
 /** Technical application specific data that must persist in the current browser between sessions. */
+@Injectable()
 export class AppBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(APP_STORE_NAME, isPlatformBrowser(platformId),

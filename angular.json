@@ -55,8 +55,7 @@
               "optimization": true,
               "outputHashing": "all",
               "serviceWorker": true,
-              "sourceMap": true,
-              "i18nLocale": "ru"
+              "sourceMap": true
             },
             "tabius-org": {
               "index": "app/index-org.html",
@@ -72,8 +71,7 @@
               "optimization": true,
               "outputHashing": "all",
               "serviceWorker": true,
-              "sourceMap": true,
-              "i18nLocale": "en"
+              "sourceMap": true
             }
           }
         },

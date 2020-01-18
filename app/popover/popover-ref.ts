@@ -1,9 +1,8 @@
-import {ConnectedOverlayPositionChange, FlexibleConnectedPositionStrategy, OverlayRef} from '@angular/cdk/overlay';
+import {ConnectedOverlayPositionChange, FlexibleConnectedPositionStrategy, OverlayRef, PositionStrategy} from '@angular/cdk/overlay';
 import {Observable, of, Subject} from 'rxjs';
 import {filter} from 'rxjs/operators';
 
 import {PopoverConfig} from './popover-config';
-import {PositionStrategy} from '@angular/cdk/overlay/typings/position/position-strategy';
 
 /**
  * Reference to a popover opened via the Popover service.
