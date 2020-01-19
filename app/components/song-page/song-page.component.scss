@@ -34,7 +34,10 @@
 
       .button-item {
         display: inline-block;
-        margin-right: 15px;
+
+        &:not(:last-of-type) {
+          margin-right: 15px;
+        }
       }
     }
 

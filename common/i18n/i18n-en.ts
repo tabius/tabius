@@ -98,7 +98,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     prevSong: 'Previous song',
     saveSong: 'Save song (in edit mode)',
     showHelp: 'Show this dialog',
-    gotoRandomSong: 'Goto random song',
+    gotoRandomSong: 'Go to random song',
     twice: 'twice',
     collectionPage: {
       addSong: 'Add song',
@@ -250,7 +250,10 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     editSongButtonMobile: 'Edit',
     discussSongButtonTitle: 'Discuss song chords on forum',
     discussSongButtonDesktop: 'Discuss on forum',
-    discussSongButtonModule: 'Discuss',
+    discussSongButtonMobile: 'Discuss',
+    gotoRandomSongButtonTitle: 'Go to random song',
+    gotoRandomSongButtonDesktop: 'Random song',
+    gotoRandomSongButtonMobile: 'Random',
   },
   songPrevNextNavigator: {
     nextSong: 'Next. song »',

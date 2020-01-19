@@ -19,6 +19,7 @@ import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
 import {I18N} from '@app/app-i18n';
+import {ShortcutsService} from '@app/services/shortcuts.service';
 
 @Component({
   selector: 'gt-song-page',
@@ -58,6 +59,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
+              private readonly ss: ShortcutsService,
               injector: Injector,
   ) {
     super(injector);
@@ -224,6 +226,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   onMountChangeBeforeUpdate(mountBeforeUpdate: string): void {
     this.songMountBeforeUpdate = mountBeforeUpdate;
+  }
+
+  gotoRandomSong(): void {
+    this.ss.gotoRandomSong();
   }
 }
 

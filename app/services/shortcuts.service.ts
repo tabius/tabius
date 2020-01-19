@@ -47,7 +47,7 @@ export class ShortcutsService {
         && event.code === this.lastEvent.code;
   }
 
-  private gotoRandomSong(): void {
+  gotoRandomSong(): void {
     const song$ = this.cds.getRandomSongId().pipe(flatMap(songId => this.cds.getSongById(songId)));
     const collection$ = song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
     combineLatest([song$, collection$]).pipe(take(1)).subscribe(([song, collection]) => {
