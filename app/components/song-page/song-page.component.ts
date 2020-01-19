@@ -193,6 +193,16 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       this.openEditor();
       return;
     }
+    if (event.shiftKey) {
+      if (event.code === 'ArrowDown') {
+        this.transpose(-1);
+      } else if (event.code === 'ArrowUp') {
+        this.transpose(1);
+      } else if (event.code === 'Digit0') {
+        this.transpose(0);
+      }
+      return;
+    }
   }
 
   openEditor(): void {
@@ -202,19 +212,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   closeEditor(): void {
     this.editorIsOpen = false;
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.shiftKey && ((event.target) as HTMLElement).tagName.toLowerCase() !== 'textarea') {
-      if (event.code === 'ArrowDown') {
-        this.transpose(-1);
-      } else if (event.code === 'ArrowUp') {
-        this.transpose(1);
-      } else if (event.code === 'Digit0') {
-        this.transpose(0);
-      }
-    }
   }
 
   transpose(steps: number): void {
