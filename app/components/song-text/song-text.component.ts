@@ -21,9 +21,11 @@ const CHORDS_TAG = 'c';
 
 export const SONG_PRINT_FONT_SIZE = 14;
 
+export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
+
 /** Отображает содежимое мести (текст) без заголовка и прочей мета-информации. */
 @Component({
-  selector: 'gt-song-text',
+  selector: SONG_TEXT_COMPONENT_NAME,
   templateUrl: './song-text.component.html',
   styleUrls: ['./song-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
