@@ -135,11 +135,24 @@ export function bound(min: number, value: number, max: number): number {
   return value <= min ? min : value >= max ? max : value;
 }
 
-export function scrollToView(element: HTMLElement|undefined, paddingTop = 10): void {
+export function scrollToView(element: HTMLElement|undefined, paddingTop = 0): void {
   if (!element) {
     return;
   }
   window.scroll({left: window.scrollX, top: element.offsetTop - getCurrentNavbarHeight() - paddingTop, behavior: 'smooth'});
+}
+
+// noinspection JSUnusedGlobalSymbols
+export function scrollToViewByEndPos(element: HTMLElement|undefined, paddingBottom = 0): void {
+  if (!element) {
+    return;
+  }
+  const footerHeight = 42;
+  const headerHeight = getCurrentNavbarHeight();
+  const visibleHeight = window.innerHeight - headerHeight - footerHeight - paddingBottom;
+  const elementRect = element.getBoundingClientRect();
+  const elementHeightToShow = Math.min(elementRect.height, visibleHeight);
+  scrollToView(element, -(elementRect.height - elementHeightToShow));
 }
 
 export function canManageCollectionContent(user: User|undefined, collection: Collection): user is User {

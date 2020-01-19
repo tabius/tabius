@@ -121,7 +121,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
           } else if (this.initialFocusMode === 'title') {
             this.titleElementRef.nativeElement.focus({preventScroll: true});
           }
-          scrollToView(this.titleElementRef.nativeElement);
+          scrollToView(this.titleElementRef.nativeElement, 10);
         }
       }, 200);
     }

@@ -52,7 +52,7 @@ export class CollectionEditorComponent implements OnInit {
     if (this.scrollIntoViewAndFocus && this.bss.isBrowser) {
       setTimeout(() => {
         if (this.editorBlockRef && this.editorBlockRef.nativeElement) {
-          scrollToView(this.editorBlockRef.nativeElement);
+          scrollToView(this.editorBlockRef.nativeElement, 10);
           if (this.collectionNameInputRef && this.collectionNameInputRef.nativeElement) {
             this.collectionNameInputRef.nativeElement.focus();
           }

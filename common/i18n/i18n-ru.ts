@@ -108,6 +108,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       resetTranspose: 'Отменить транспонирование',
       transposeDown: 'Транспонировать на полутон ниже',
       transposeUp: 'Транспонировать на полутон выше',
+      scrollPageUp: 'Скролл на одну страницу назад',
+      scrollPageDown: 'Скролл на одну страницу вперёд',
     },
     close: 'Закрыть'
   },

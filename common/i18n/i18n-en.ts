@@ -108,6 +108,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       resetTranspose: 'Reset transpose',
       transposeDown: 'Transpose a half-tone down',
       transposeUp: 'Transpose a half-tone up',
+      scrollPageUp: 'Scroll one page up',
+      scrollPageDown: 'Scroll one page down',
     },
     close: 'Close',
   },
