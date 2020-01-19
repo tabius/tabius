@@ -111,6 +111,7 @@ export interface I18n {
       transposeDown: string;
       resetTranspose: string;
       editSong: string;
+      scrollToSongStart: string;
       scrollPageUp: string;
       scrollPageDown: string;
     };

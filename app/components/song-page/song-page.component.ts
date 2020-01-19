@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
@@ -8,7 +8,7 @@ import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent} from '@common/util/misc-utils';
+import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -20,6 +20,7 @@ import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-i
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
 import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
+import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
 
 @Component({
   selector: 'gt-song-page',
@@ -60,6 +61,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
               private readonly ss: ShortcutsService,
+              private readonly elementRef: ElementRef,
               injector: Injector,
   ) {
     super(injector);
@@ -205,6 +207,15 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         break;
       case 'Digit0':
         this.transpose(0);
+        break;
+      case 'BracketLeft':
+      case 'BracketRight':
+        const songTextEl = (this.elementRef.nativeElement as HTMLElement).querySelector(SONG_TEXT_COMPONENT_NAME) as HTMLElement;
+        if (event.code === 'BracketLeft') {
+          scrollToView(songTextEl);
+        } else {
+          scrollToViewByEndPos(songTextEl);
+        }
         break;
     }
   }
