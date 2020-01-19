@@ -30,16 +30,16 @@ export class SongDbi {
   constructor(private readonly db: DbService) {
   }
 
-  getSongs(songIds: readonly number[]): Promise<Song[]> {
+  async getSongs(songIds: readonly number[]): Promise<Song[]> {
     const idList = songIds.join(',');
-    return this.db.pool.promise()
+    return await this.db.pool.promise()
         .query(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
         .then(([rows]: [SongRow[]]) => rows.map(row2Song));
   }
 
-  getSongsDetails(songIds: readonly number[]): Promise<SongDetails[]> {
+  async getSongsDetails(songIds: readonly number[]): Promise<SongDetails[]> {
     const idList = songIds.join(',');
-    return this.db.pool.promise()
+    return await this.db.pool.promise()
         .query(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
         .then(([rows]: [SongRow[]]) => rows.map(row2SongDetails));
   }
@@ -149,6 +149,13 @@ export class SongDbi {
         .then(([rows]: [IdRow[]]) => rows.map(r => r.id));
     const [primary, secondary] = await Promise.all([primary$$, secondary$$]);
     return [...primary, ...secondary];
+  }
+
+  async getRandomSongId(): Promise<number|undefined> {
+    const sql = `SELECT s.id FROM song s, collection c WHERE s.collection_id = c.id AND c.listed = 1 ORDER BY RAND() LIMIT 1`;
+    return await this.db.pool.promise()
+        .query(sql)
+        .then(([rows]: [SongRow[]]) => rows.length > 0 && rows[0].id);
   }
 }
 

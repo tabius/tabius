@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-model';
-import {flatMap, map, take} from 'rxjs/operators';
+import {flatMap, map, shareReplay, take} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
@@ -51,7 +51,7 @@ export class CatalogService {
         );
   }
 
-  getCollectionById(collectionId: number|undefined): Observable<(Collection|undefined)> {
+  getCollectionById(collectionId: number|undefined): Observable<Collection|undefined> {
     return this.store.get<Collection>(
         getCollectionKey(collectionId),
         () => this.httpClient.get<Collection[]>(`/api/collection/by-ids/${collectionId}`).pipe(mapToFirstInArray),
@@ -103,8 +103,8 @@ export class CatalogService {
 
     // noinspection ES6MissingAwait
     const listingUpdate$$ = updateCollectionSongList
-        ? this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare)
-        : Promise.resolve();
+                            ? this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare)
+                            : Promise.resolve();
 
     await Promise.all([
       ...songUpdatesArray$$,
@@ -126,7 +126,7 @@ export class CatalogService {
     );
   }
 
-  getSongById(songId: number|undefined): Observable<(Song|undefined)> {
+  getSongById(songId: number|undefined): Observable<Song|undefined> {
     return this.store.get<Song>(
         getSongKey(songId),
         () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
@@ -312,6 +312,12 @@ export class CatalogService {
       console.error(httpError);
       throw new Error('Ошибка при обращении к серверу.');
     }
+  }
+
+  /** Returns 1 random song from the public catalog. */
+  getRandomSongId(): Observable<number|undefined> {
+    return this.httpClient.get<number|undefined>(`/api/song/random-song-id`)
+        .pipe(shareReplay(1));
   }
 }
 

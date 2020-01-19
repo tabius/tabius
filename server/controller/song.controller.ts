@@ -25,10 +25,10 @@ export class SongController {
 
   /** Returns found songs  by ids. The order of results is not specified. */
   @Get('/by-ids/:ids')
-  getSongs(@Param('ids') idsParam: string): Promise<Song[]> {
+  async getSongs(@Param('ids') idsParam: string): Promise<Song[]> {
     this.logger.log(`by-ids: ${idsParam}`);
     const ids = paramToArrayOfNumericIds(idsParam);
-    return this.songDbi.getSongs(ids);
+    return await this.songDbi.getSongs(ids);
   }
 
   /** Returns list of songs in the collection. */
@@ -41,10 +41,10 @@ export class SongController {
 
   /** Returns found song details by ids. The order of results is not specified. */
   @Get('/details-by-ids/:ids')
-  getSongDetails(@Param('ids') idsParam: string): Promise<SongDetails[]> {
+  async getSongDetails(@Param('ids') idsParam: string): Promise<SongDetails[]> {
     this.logger.log(`details-by-ids: ${idsParam}`);
     const ids = paramToArrayOfNumericIds(idsParam);
-    return this.songDbi.getSongsDetails(ids);
+    return await this.songDbi.getSongsDetails(ids);
   }
 
   /** Returns found songs  by ids. The order of results is not specified. */
@@ -192,6 +192,13 @@ export class SongController {
     await this.songDbi.removeSongFromSecondaryCollection(songId, collectionId);
     const songIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collectionId);
     return {songIds};
+  }
+
+  /** Returns random song from public collection. */
+  @Get('/random-song-id')
+  async getRandomSong(): Promise<number|undefined> {
+    this.logger.log('random-song-id');
+    return await this.songDbi.getRandomSongId();
   }
 
 }

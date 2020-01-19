@@ -4,9 +4,7 @@ import {PopoverService} from '@app/popover/popover.service';
 
 export type HelpPageType = 'song'|'collection';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({providedIn: 'root'})
 export class HelpService {
 
   keyboardShortcutsTemplate?: TemplateRef<{}>;

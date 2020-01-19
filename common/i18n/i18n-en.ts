@@ -98,6 +98,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     prevSong: 'Previous song',
     saveSong: 'Save song (in edit mode)',
     showHelp: 'Show this dialog',
+    gotoRandomSong: 'Goto random song',
+    twice: 'twice',
     collectionPage: {
       addSong: 'Add song',
     },

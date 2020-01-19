@@ -100,6 +100,8 @@ export interface I18n {
     nextSong: string;
     showHelp: string;
     saveSong: string;
+    gotoRandomSong: string;
+    twice: string;
     collectionPage: {
       addSong: string;
 

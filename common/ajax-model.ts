@@ -130,3 +130,4 @@ export interface UserCollectionInfo {
 export interface GetUserCollectionsResponse {
   collectionInfos: UserCollectionInfo[];
 }
+

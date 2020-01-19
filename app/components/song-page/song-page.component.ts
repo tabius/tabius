@@ -184,8 +184,12 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent): void {
-    if (!this.editorIsOpen && event.shiftKey && !isInputEvent(event) && event.code === 'KeyE') {
+    if (isInputEvent(event)) {
+      return;
+    }
+    if (!this.editorIsOpen && event.shiftKey && event.code === 'KeyE') {
       this.openEditor();
+      return;
     }
   }
 

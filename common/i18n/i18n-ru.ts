@@ -98,6 +98,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     prevSong: 'Предыдущая песня',
     saveSong: 'Сохранить изменения (в режиме редактирования)',
     showHelp: 'Показать этот диалог',
+    gotoRandomSong: 'Случайная песня',
+    twice: '2 раза',
     collectionPage: {
       addSong: 'Добавить песню',
     },
@@ -107,7 +109,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       transposeDown: 'Транспонировать на полутон ниже',
       transposeUp: 'Транспонировать на полутон выше',
     },
-    close: 'Закрыть',
+    close: 'Закрыть'
   },
   moderatorPrompt: {
     youAreNotModerator: 'Вы не модератор и не можете изменять публичный каталог :(',

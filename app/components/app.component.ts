@@ -2,8 +2,8 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, OnInit,
 import {AuthService} from '@app/services/auth.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Observable} from 'rxjs';
-import {isInputEvent} from '@common/util/misc-utils';
 import {HelpService} from '@app/services/help.service';
+import {ShortcutsService} from '@app/services/shortcuts.service';
 
 @Component({
   selector: 'gt-app',
@@ -19,6 +19,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor(private readonly authService: AuthService,
               bss: BrowserStateService,
+              private readonly shortcutsService: ShortcutsService,
               private readonly helpService: HelpService,
   ) {
     this.printMode$ = bss.getPrintMode();
@@ -34,11 +35,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.shiftKey && !isInputEvent(event)) {
-      if (event.code === 'Slash') {
-        this.helpService.showKeyboardShortcuts();
-      }
-    }
+    this.shortcutsService.handleKeyboardEvent(event);
   }
 
 }
