@@ -265,4 +265,23 @@ export interface I18n {
       keywords: string[];
     }
   };
+  tunerPage: {
+    title: string;
+    tone: string;
+    toneClassic: string;
+    toneElectro: string;
+    repeat: string;
+    hotKeys: string;
+    stringByKeyDetails: string;
+    pauseOrPlay: string;
+    stringPrevNextKeyDetails: string;
+    toneSelectionDetails: string;
+    repeatModeDetails: string;
+    pauseButton: string;
+    meta: {
+      title: string;
+      description: string;
+      keywords: string[];
+    };
+  };
 }

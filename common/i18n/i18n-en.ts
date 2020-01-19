@@ -279,4 +279,23 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       keywords: ['chords', 'tabs', 'guitar', 'playlist'],
     },
   },
+  tunerPage: {
+    hotKeys: 'Shortcuts',
+    pauseOrPlay: 'pause/play',
+    repeat: 'repeat',
+    repeatModeDetails: 'repeat mode: on/off.',
+    stringByKeyDetails: 'string: by number',
+    stringPrevNextKeyDetails: 'string: previous/next',
+    title: 'Guitar tuner',
+    tone: 'Tone',
+    toneClassic: 'Classic',
+    toneElectro: 'Electro',
+    toneSelectionDetails: 'tone: Classic/Electro',
+    pauseButton: 'PAUSE',
+    meta: {
+      title: 'Guitar tuner',
+      description: 'Simple online guitar tune.',
+      keywords: ['guitar tuner', 'tuner', 'online tuner', 'guitar'],
+    },
+  }
 };

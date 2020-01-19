@@ -277,4 +277,24 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       keywords: ['табы', 'гитара', 'аккорды', 'плейлист'],
     },
   },
+  tunerPage: {
+    hotKeys: 'Горячие клавиши',
+    pauseOrPlay: 'пауза/старт',
+    repeat: 'повтор',
+    repeatModeDetails: 'режим повтора: вкл./выкл.',
+    stringByKeyDetails: 'соотвествующая струна',
+    stringPrevNextKeyDetails: 'выбор струны: пред./след.',
+    title: 'Тюнер для гитары',
+    tone: 'Тон',
+    toneClassic: 'Классика',
+    toneElectro: 'Электро',
+    toneSelectionDetails: 'выбор тона: Классика/Электро',
+    pauseButton: 'СТОП',
+    meta: {
+      title: 'Тюнер для гитары',
+      description: 'Простой и удобный тюнер для настройки гитары на слух.',
+      keywords: ['тюнер для гитары', 'тюнер', 'гитара', 'настройка гитары', 'настройка на слух'],
+    },
+  }
+
 };

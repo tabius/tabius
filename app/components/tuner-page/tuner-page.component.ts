@@ -5,6 +5,7 @@ import {Subject} from 'rxjs';
 import {UserService} from '@app/services/user.service';
 import {takeUntil} from 'rxjs/operators';
 import {newDefaultUserDeviceSettings, TunerToneType} from '@common/user-model';
+import {I18N} from '@app/app-i18n';
 
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
@@ -17,6 +18,8 @@ const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 export class TunerPageComponent implements OnInit, OnDestroy {
   private readonly destroyed$ = new Subject();
   private destroyed = false;
+
+  readonly i18n = I18N.tunerPage;
 
   @ViewChild('s1', {static: true}) private s1!: ElementRef;
   @ViewChild('s2', {static: true}) private s2!: ElementRef;
@@ -47,11 +50,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
           this.deviceSettings = deviceSettings;
           this.cd.detectChanges();
         });
-    updatePageMetadata(this.title, this.meta, {
-      title: 'Тюнер для гитары',
-      description: 'Простой и удобный тюнер для настройки гитары на слух.',
-      keywords: ['тюнер для гитары', 'тюнер', 'гитара', 'настройка гитары', 'настройка на слух'],
-    });
+    updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 
   ngOnDestroy(): void {
