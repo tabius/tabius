@@ -140,7 +140,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'G#maj7': '465544',
 
   // Minor 7th
-  'Amin7': 'x02013',
+  'Amin7': 'x02010',
   'A#min7': 'x13121',
   'Bmin7': 'x24232',
   'Cmin7': 'x35343',
