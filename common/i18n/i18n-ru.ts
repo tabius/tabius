@@ -252,7 +252,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     discussSongButtonTitle: 'Обсудить подбор песни на форуме',
     discussSongButtonDesktop: 'Обсудить на форуме',
     discussSongButtonMobile: 'Обсудить',
-    gotoRandomSongButtonTitle: 'Перейти к случайной песне',
+    gotoRandomSongButtonTitle: 'Перейти к случайной песне (правый SHIFT 2 раза)',
     gotoRandomSongButtonDesktop: 'Случайная песня',
     gotoRandomSongButtonMobile: 'Случайная',
   },

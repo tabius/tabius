@@ -254,7 +254,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     discussSongButtonTitle: 'Discuss song chords on forum',
     discussSongButtonDesktop: 'Discuss on forum',
     discussSongButtonMobile: 'Discuss',
-    gotoRandomSongButtonTitle: 'Go to random song',
+    gotoRandomSongButtonTitle: 'Go to random song (press right SHIFT twice)',
     gotoRandomSongButtonDesktop: 'Random song',
     gotoRandomSongButtonMobile: 'Random',
   },
