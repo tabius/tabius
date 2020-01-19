@@ -240,8 +240,14 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     this.songMountBeforeUpdate = mountBeforeUpdate;
   }
 
-  gotoRandomSong(): void {
+  gotoRandomSong(event?: MouseEvent): void {
     this.ss.gotoRandomSong();
+    if (event) {
+      // On Android the button text is selected and 'Search' footer appears.
+      // Preventing default to prevent this unwanted behavior.
+      event.stopPropagation();
+      event.preventDefault();
+    }
   }
 }
 
