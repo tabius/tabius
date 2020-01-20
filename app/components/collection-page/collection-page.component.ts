@@ -17,6 +17,7 @@ import {getCollectionImageUrl} from '@app/utils/url-utils';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
+import {ShortcutsService} from '@app/services/shortcuts.service';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -65,6 +66,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
               private readonly router: Router,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
+              private readonly ss: ShortcutsService,
               injector: Injector
   ) {
     super(injector);
@@ -172,6 +174,11 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
   keyEvent(event: KeyboardEvent): void {
     if (event.shiftKey && !isInputEvent(event) && event.code === 'KeyA') {
       this.openSongEditor();
+      return;
+    }
+    if (this.ss.isDoubleShiftRightPressEvent && this.collectionViewModel) {
+      this.ss.gotoRandomSong(this.collectionViewModel.collection.id);
+      return;
     }
   }
 

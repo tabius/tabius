@@ -1,3 +1,4 @@
+@import "app/styles/colors";
 @import "app/styles/dimensions";
 
 .prev-next-links-block {
@@ -13,6 +14,8 @@
     margin-right: 20px;
   }
 }
+
+$random-collection-icon-size: 52px;
 
 .sticky-sidebar {
   .left-bar, .right-bar {
@@ -31,6 +34,12 @@
       fill: #999;
       opacity: 0.33;
       width: $sticky-sidebar-width;
+      height: $sticky-sidebar-width;
+
+      &:hover, &:focus {
+        fill: $color-default-link;
+        opacity: 1;
+      }
     }
 
     &:hover, &:focus {
@@ -39,7 +48,18 @@
       gt-svg-icon {
         opacity: 1;
       }
+    }
 
+    .random-song-link {
+      position: fixed;
+      bottom: $footer-height + 5px;
+      width: $sticky-sidebar-width;
+      text-align: center;
+
+      gt-svg-icon {
+        height: $random-collection-icon-size;
+        width: $random-collection-icon-size;
+      }
     }
   }
 

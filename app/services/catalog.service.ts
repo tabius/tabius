@@ -314,9 +314,13 @@ export class CatalogService {
     }
   }
 
-  /** Returns 1 random song from the public catalog. */
-  getRandomSongId(): Observable<number|undefined> {
-    return this.httpClient.get<number|undefined>(`/api/song/random-song-id`)
+  /**
+   * Returns 1 random song from the given collection.
+   * If collection id is not valid or not defined returns a song from the whole public catalog.
+   */
+  getRandomSongId(collectionId?: number): Observable<number|undefined> {
+    const url = `/api/song/random-song-id/${isValidId(collectionId) ? collectionId : ''}`;
+    return this.httpClient.get<number|undefined>(url)
         .pipe(shareReplay(1));
   }
 }

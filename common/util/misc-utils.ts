@@ -245,3 +245,12 @@ export function getCurrentNavbarHeight(): number {
            ? DESKTOP_LOW_HEIGHT_NAV_HEIGHT : DESKTOP_NAV_HEIGHT : MOBILE_NAV_HEIGHT;
 }
 
+export function findParentOrSelfWithClass(el: Element|undefined|null, className: string): Element|undefined {
+  if (!el) {
+    return undefined;
+  }
+  if (el.classList.contains(className)) {
+    return el;
+  }
+  return findParentOrSelfWithClass(el.parentElement, className);
+}

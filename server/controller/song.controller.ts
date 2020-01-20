@@ -195,10 +195,14 @@ export class SongController {
   }
 
   /** Returns random song from public collection. */
-  @Get('/random-song-id')
-  async getRandomSong(): Promise<number|undefined> {
-    this.logger.log('random-song-id');
-    return await this.songDbi.getRandomSongId();
+  @Get(['/random-song-id', '/random-song-id/:collectionId'])
+  async getRandomSong(@Param('collectionId') collectionIdParam: string): Promise<number|undefined> {
+    this.logger.log(`random-song-id: ${collectionIdParam || '<catalog>'}`);
+    if (collectionIdParam) {
+      const collectionId = paramToId(collectionIdParam);
+      return await this.songDbi.getRandomSongFromCollection(collectionId);
+    }
+    return await this.songDbi.getRandomSongFromPublicCatalog();
   }
 
 }

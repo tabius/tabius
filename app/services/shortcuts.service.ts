@@ -13,7 +13,9 @@ export class ShortcutsService {
 
   private lastEvent: CachedKeyboardEvent = {time: 0, code: ''};
 
-  isDoubleControlPressEvent = false;
+  isDoubleShiftLeftPressEvent = false;
+  isDoubleShiftRightPressEvent = false;
+  isDoubleControlRightPressEvent = false;
 
   constructor(private readonly cds: CatalogService,
               private readonly router: Router,
@@ -26,13 +28,15 @@ export class ShortcutsService {
       return;
     }
     try {
-      this.isDoubleControlPressEvent = this.isCenterSongTextEvent(event);
+      this.isDoubleControlRightPressEvent = this.isDoublePressEvent(event, 'ControlRight');
+      this.isDoubleShiftLeftPressEvent = this.isDoublePressEvent(event, 'ShiftLeft');
+      this.isDoubleShiftRightPressEvent = this.isDoublePressEvent(event, 'ShiftRight');
 
       if (this.isShowHelpEvent(event)) {
         this.helpService.showKeyboardShortcuts();
         return;
       }
-      if (this.isGotoRandomSongEvent(event)) {
+      if (this.isDoubleShiftLeftPressEvent) {
         this.gotoRandomSong();
         return;
       }
@@ -45,20 +49,14 @@ export class ShortcutsService {
     return event.shiftKey && event.code === 'Slash';
   }
 
-  private isGotoRandomSongEvent(event: KeyboardEvent): boolean {
+  private isDoublePressEvent(event: KeyboardEvent, eventCode: string): boolean {
     return this.lastEvent.time > Date.now() - DOUBLE_PRESS_TIMEOUT_MILLIS
-        && this.lastEvent.code === 'ShiftRight'
+        && this.lastEvent.code === eventCode
         && event.code === this.lastEvent.code;
   }
 
-  private isCenterSongTextEvent(event: KeyboardEvent): boolean {
-    return this.lastEvent.time > Date.now() - DOUBLE_PRESS_TIMEOUT_MILLIS
-        && this.lastEvent.code === 'ControlRight'
-        && event.code === this.lastEvent.code;
-  }
-
-  gotoRandomSong(): void {
-    const song$ = this.cds.getRandomSongId().pipe(flatMap(songId => this.cds.getSongById(songId)));
+  gotoRandomSong(collectionId?: number): void {
+    const song$ = this.cds.getRandomSongId(collectionId).pipe(flatMap(songId => this.cds.getSongById(songId)));
     const collection$ = song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
     combineLatest([song$, collection$]).pipe(take(1)).subscribe(([song, collection]) => {
       if (!song || !collection) {

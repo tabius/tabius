@@ -151,10 +151,17 @@ export class SongDbi {
     return [...primary, ...secondary];
   }
 
-  async getRandomSongId(): Promise<number|undefined> {
+  async getRandomSongFromPublicCatalog(): Promise<number|undefined> {
     const sql = `SELECT s.id FROM song s, collection c WHERE s.collection_id = c.id AND c.listed = 1 ORDER BY RAND() LIMIT 1`;
     return await this.db.pool.promise()
         .query(sql)
+        .then(([rows]: [SongRow[]]) => rows.length > 0 && rows[0].id);
+  }
+
+  async getRandomSongFromCollection(collectionId: number): Promise<number|undefined> {
+    const sql = `SELECT s.id FROM song s WHERE s.collection_id = ? ORDER BY RAND() LIMIT 1`;
+    return await this.db.pool.promise()
+        .query(sql, [collectionId])
         .then(([rows]: [SongRow[]]) => rows.length > 0 && rows[0].id);
   }
 }

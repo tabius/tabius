@@ -6,12 +6,24 @@
     </div>
 
     <div *ngIf="isWideScreenMode" class="sticky-sidebar">
-        <div class="left-bar" (click)="navigate(prevLink)" title="{{prevLinkIsCollection ? i18n.toCollectionTitle : i18n.prevSongTitle}}">
+        <div class="left-bar"
+             (click)="onBarNavigationClick($event, prevLink)"
+             title="{{prevLinkIsCollection ? i18n.toCollectionTitle : i18n.prevSongTitle}}"
+        >
             <gt-svg-icon icon="prev"></gt-svg-icon>
+            <div (click)="gotoRandomSongInCatalog()" class="random-song-link" title="{{i18n.gotoRandomSongInCatalogTitle}}">
+                <gt-svg-icon icon="dice"></gt-svg-icon>
+            </div>
         </div>
 
-        <div class="right-bar" (click)="navigate(nextLink)" title="{{nextLinkIsCollection ? i18n.toCollectionTitle : i18n.nextSongTitle}}">
+        <div class="right-bar"
+             (click)="onBarNavigationClick($event, nextLink)"
+             title="{{nextLinkIsCollection ? i18n.toCollectionTitle : i18n.nextSongTitle}}"
+        >
             <gt-svg-icon icon="next"></gt-svg-icon>
+            <div (click)="gotoRandomSongInCollection()" class="random-song-link" title="{{i18n.gotoRandomSongInCollectionTitle}}">
+                <gt-svg-icon icon="dice"></gt-svg-icon>
+            </div>
         </div>
     </div>
 

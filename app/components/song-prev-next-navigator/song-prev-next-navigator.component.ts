@@ -2,12 +2,13 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Ho
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
-import {combineLatest0, defined, getCollectionPageLink, getSongPageLink, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {combineLatest0, defined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isInputElement, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 import {Collection, Song} from '@common/catalog-model';
 import {I18N} from '@app/app-i18n';
+import {ShortcutsService} from '@app/services/shortcuts.service';
 
 const Hammer: HammerStatic = require('hammerjs');
 
@@ -41,6 +42,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
               private readonly cd: ChangeDetectorRef,
               private readonly bss: BrowserStateService,
               private readonly router: Router,
+              private readonly ss: ShortcutsService,
   ) {
   }
 
@@ -132,7 +134,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.shiftKey && ((event.target) as HTMLElement).tagName.toLowerCase() !== 'textarea') {
+    if (event.shiftKey && !isInputElement(event.target as HTMLElement)) {
       if (event.code === 'ArrowLeft') {
         this.navigate(this.prevLink);
       } else if (event.code === 'ArrowRight') {
@@ -141,11 +143,27 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     }
   }
 
-
   navigate(link: string|undefined): void {
     if (link) {
       this.router.navigate([link]).catch(err => console.error(err));
     }
+  }
+
+  onBarNavigationClick(event: MouseEvent, link: string): void {
+    const clickedEl = event.target as HTMLElement;
+    //TODO: do not use (click) inside (click)
+    if (findParentOrSelfWithClass(clickedEl, 'random-song-link')) { // ignore -> this click will be handled separately
+      return;
+    }
+    this.navigate(link);
+  }
+
+  gotoRandomSongInCatalog(): void {
+    this.ss.gotoRandomSong();
+  }
+
+  gotoRandomSongInCollection(): void {
+    this.ss.gotoRandomSong(this.activeCollectionId);
   }
 }
 

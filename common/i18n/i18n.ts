@@ -100,8 +100,10 @@ export interface I18n {
     nextSong: string;
     showHelp: string;
     saveSong: string;
-    gotoRandomSong: string;
+    gotoRandomSongInCollection: string;
+    gotoRandomSongInCatalog: string;
     twice: string;
+    left: string;
     right: string;
     collectionPage: {
       addSong: string;
@@ -241,9 +243,9 @@ export interface I18n {
     discussSongButtonTitle: string;
     discussSongButtonDesktop: string
     discussSongButtonMobile: string
-    gotoRandomSongButtonTitle: string;
-    gotoRandomSongButtonDesktop: string
-    gotoRandomSongButtonMobile: string
+    gotoRandomSongInCatalogButtonTitle: string;
+    gotoRandomSongInCatalogButtonDesktop: string
+    gotoRandomSongInCatalogButtonMobile: string
   };
   songPrevNextNavigator: {
     nextSong: string;
@@ -253,6 +255,8 @@ export interface I18n {
     toCollectionPrev: string;
     toCollectionNext: string;
     toCollectionTitle: string;
+    gotoRandomSongInCollectionTitle: string;
+    gotoRandomSongInCatalogTitle: string;
   };
   studioPage: {
     addSong: string;
