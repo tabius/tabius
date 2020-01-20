@@ -23,13 +23,16 @@ export class SongListComponent implements OnChanges {
 
   readonly i18n = I18N.songListComponent;
 
-  /** Active collection mount. If not defined, the primary song collection mount is used. */
+  /** Active collection mount. If not defined, primarySongCollectionMounts[] must be defined and is used. */
   @Input() collectionMount?: string;
 
   /** List of primary and secondary songs for the collection. */
   @Input() songs!: Song[];
 
-  /** If present the list will add 'primaryCollectionMount' part to the song page url. */
+  /**
+   * If present and not equal to collectionMount the list will add 'primaryCollectionMount' part to the song page url.
+   * Used to optimize component rendering.
+   */
   @Input() primarySongCollectionMounts!: (string|undefined)[];
 
   /** If the collection is empty and 'showEmptyNotice' is true -> user will see an empty notice. */
@@ -50,8 +53,9 @@ export class SongListComponent implements OnChanges {
         const song = this.songs[i];
         const primaryCollectionMount = this.primarySongCollectionMounts[i];
         const collectionMount = this.collectionMount || primaryCollectionMount;
-        if (!primaryCollectionMount || !collectionMount) {
-          throw new Error(`Primary collection mount not specified. Index: ${i}`);
+        if (!collectionMount) {
+          console.error(`Collection mount is undefined! song: ${song.title}/${song.id}, p: ${primaryCollectionMount}, c: ${collectionMount}`);
+          continue;
         }
         this.songItems.push({
           id: song.id,

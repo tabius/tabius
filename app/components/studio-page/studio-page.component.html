@@ -17,12 +17,11 @@
                 <div class="song-list-block">
                     <h1>{{i18n.songs}}</h1>
 
-                    <gt-song-list
-                            *ngIf="!editorIsOpen"
-                            [songs]="songs"
-                            [primarySongCollectionMounts]="primarySongCollectionMounts"
-                            [showEmptyNotice]="true"
-                            [emptyListMessage]="i18n.songsListIsEmpty"
+                    <gt-song-list *ngIf="!editorIsOpen"
+                                  [songs]="songs"
+                                  [primarySongCollectionMounts]="primarySongCollectionMounts"
+                                  [showEmptyNotice]="true"
+                                  [emptyListMessage]="i18n.songsListIsEmpty"
                     ></gt-song-list>
 
                     <div class="add-song-block">
