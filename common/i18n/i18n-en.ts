@@ -303,5 +303,16 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       description: 'Simple online guitar tune.',
       keywords: ['guitar tuner', 'tuner', 'online tuner', 'guitar'],
     },
-  }
+  },
+  userCollectionEditorComponent: {
+    actionConfirmationPrompt: 'Please confirm collection removal!',
+    closeButton: 'Close',
+    collectionRemovalCheckboxTitle: 'Check to confirm action',
+    collectionSettings: 'Collection settings',
+    collectionWasRemoved: 'Collection was removed.',
+    deleteCollectionButtonNotConfirmedTitle: 'Please confirm collection removal by using checkbox on the left.',
+    deleteCollectionButtonTitle: 'Delete collection',
+    failedToRemoveCollection: 'Error while removing collection!',
+    removeButton: 'Delete'
+  },
 };

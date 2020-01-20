@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {ToastService} from '@app/toast/toast.service';
 import {CatalogService} from '@app/services/catalog.service';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-user-collection-editor',
@@ -14,6 +15,8 @@ export class UserCollectionEditorComponent {
 
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
+
+  readonly i18n = I18N.userCollectionEditorComponent;
 
   deleteConfirmationFlag = false;
 
@@ -32,16 +35,16 @@ export class UserCollectionEditorComponent {
 
   async delete(): Promise<void> {
     if (!this.deleteConfirmationFlag) {
-      this.toastService.warning('Необходимо подтвердить действие!');
+      this.toastService.warning(this.i18n.actionConfirmationPrompt);
       return;
     }
     try {
       await this.cds.deleteUserCollection(this.collectionId);
     } catch (err) {
-      this.toastService.warning('Ошибка при удалении коллекции!');
+      this.toastService.warning(this.i18n.failedToRemoveCollection);
       return;
     }
-    this.toastService.info('Коллекция удалена.');
+    this.toastService.info(this.i18n.collectionWasRemoved);
     this.close();
   }
 }

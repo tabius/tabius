@@ -301,6 +301,16 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       description: 'Простой и удобный тюнер для настройки гитары на слух.',
       keywords: ['тюнер для гитары', 'тюнер', 'гитара', 'настройка гитары', 'настройка на слух'],
     },
-  }
-
+  },
+  userCollectionEditorComponent: {
+    actionConfirmationPrompt: 'Необходимо подтвердить действие!',
+    closeButton: 'Закрыть',
+    collectionRemovalCheckboxTitle: 'Подтверждение удаления коллекции',
+    collectionSettings: 'Настройки коллекции',
+    collectionWasRemoved: 'Коллекция удалена.',
+    deleteCollectionButtonNotConfirmedTitle: 'Необходимо подтвердить удаление коллекции: поставьте отметку слева.',
+    deleteCollectionButtonTitle: 'Удалить коллекцию',
+    failedToRemoveCollection: 'Ошибка при удалении коллекции!',
+    removeButton: 'Удалить'
+  },
 };

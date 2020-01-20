@@ -290,4 +290,15 @@ export interface I18n {
       keywords: string[];
     };
   };
+  userCollectionEditorComponent: {
+    actionConfirmationPrompt: string;
+    closeButton: string;
+    collectionRemovalCheckboxTitle: string;
+    collectionSettings: string;
+    collectionWasRemoved: string;
+    deleteCollectionButtonNotConfirmedTitle: string;
+    deleteCollectionButtonTitle: string;
+    failedToRemoveCollection: string;
+    removeButton: string;
+  };
 }
