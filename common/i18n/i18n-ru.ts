@@ -100,6 +100,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     showHelp: 'Показать этот диалог',
     gotoRandomSong: 'Случайная песня',
     twice: '2 раза',
+    right: 'правый',
     collectionPage: {
       addSong: 'Добавить песню',
     },

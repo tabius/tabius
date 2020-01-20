@@ -100,6 +100,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     showHelp: 'Show this dialog',
     gotoRandomSong: 'Go to random song',
     twice: 'twice',
+    right: 'right',
     collectionPage: {
       addSong: 'Add song',
     },

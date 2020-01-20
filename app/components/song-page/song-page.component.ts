@@ -191,6 +191,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     if (isInputEvent(event)) {
       return;
     }
+    if (this.ss.isDoubleControlPressEvent) {
+      scrollToView(this.getSongTextElement());
+      return;
+    }
     if (!this.editorIsOpen && event.shiftKey && event.code === 'KeyE') {
       this.openEditor();
       return;
@@ -210,7 +214,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         break;
       case 'BracketLeft':
       case 'BracketRight':
-        const songTextEl = (this.elementRef.nativeElement as HTMLElement).querySelector(SONG_TEXT_COMPONENT_NAME) as HTMLElement;
+        const songTextEl = this.getSongTextElement();
         if (event.code === 'BracketLeft') {
           scrollToView(songTextEl);
         } else {
@@ -218,6 +222,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         }
         break;
     }
+  }
+
+  private getSongTextElement(): HTMLElement|undefined {
+    return (this.elementRef.nativeElement as HTMLElement).querySelector(SONG_TEXT_COMPONENT_NAME) as HTMLElement|undefined;
   }
 
   openEditor(): void {

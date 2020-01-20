@@ -13,6 +13,8 @@ export class ShortcutsService {
 
   private lastEvent: CachedKeyboardEvent = {time: 0, code: ''};
 
+  isDoubleControlPressEvent = false;
+
   constructor(private readonly cds: CatalogService,
               private readonly router: Router,
               private readonly helpService: HelpService,
@@ -24,6 +26,8 @@ export class ShortcutsService {
       return;
     }
     try {
+      this.isDoubleControlPressEvent = this.isCenterSongTextEvent(event);
+
       if (this.isShowHelpEvent(event)) {
         this.helpService.showKeyboardShortcuts();
         return;
@@ -44,6 +48,12 @@ export class ShortcutsService {
   private isGotoRandomSongEvent(event: KeyboardEvent): boolean {
     return this.lastEvent.time > Date.now() - DOUBLE_PRESS_TIMEOUT_MILLIS
         && this.lastEvent.code === 'ShiftRight'
+        && event.code === this.lastEvent.code;
+  }
+
+  private isCenterSongTextEvent(event: KeyboardEvent): boolean {
+    return this.lastEvent.time > Date.now() - DOUBLE_PRESS_TIMEOUT_MILLIS
+        && this.lastEvent.code === 'ControlRight'
         && event.code === this.lastEvent.code;
   }
 

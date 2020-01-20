@@ -102,6 +102,7 @@ export interface I18n {
     saveSong: string;
     gotoRandomSong: string;
     twice: string;
+    right: string;
     collectionPage: {
       addSong: string;
 
