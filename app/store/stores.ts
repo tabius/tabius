@@ -9,11 +9,17 @@ import {CATALOG_STORE_SCHEMA_VERSION} from '@common/catalog-model';
 import {LocalStorageStoreAdapter} from '@app/store/local-storage-store-adapter';
 import {ObservableStoreImpl} from '@app/store/observable-store-impl';
 
+function isIE11(): boolean {
+  return !!window['MSInputMethodContext'] && !!document['documentMode'];
+}
+
 @Injectable()
 export class UserBrowserStore extends ObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(USER_STORE_NAME, isPlatformBrowser(platformId),
-        (name, browser) => browser ? new IndexedDbStoreAdapter(name) : new InMemoryStoreAdapter()
+        (name, browser) => browser && !isIE11()
+                           ? new IndexedDbStoreAdapter(name) :
+                           new InMemoryStoreAdapter()
         , serverState, USERS_STORE_SCHEMA_VERSION
     );
   }

@@ -41,6 +41,11 @@ import 'classlist.js'; // Run `npm install --save classlist.js`.
  * Zone JS is required by default for Angular itself.
  */
 import 'zone.js/dist/zone'; // Included with Angular CLI.
+/***************************************************************************************************
+ * APPLICATION IMPORTS
+ */
+/** IE10 and IE11 requires the following for external source of SVG when using <use> tag */
+import * as svg4everybody from 'svg4everybody';
 
 /** IE10 and IE11 requires the following for the Reflect API. */
 // import 'core-js/proposals/reflect-metadata'
@@ -75,8 +80,4 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
  *  (window as any).__Zone_enable_cross_context_check = true;
  *
  */
-
-
-/***************************************************************************************************
- * APPLICATION IMPORTS
- */
+svg4everybody({ polyfill: true });

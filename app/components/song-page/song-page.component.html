@@ -43,20 +43,20 @@
         <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen && isBrowser">
             <div class="button-item">
                 <a class="btn btn-info" (click)="openEditor()" title="{{i18n.editSongButtonTitle}}">
-                    <span class="desktop-only">{{i18n.editSongButtonDesktop}}</span>
-                    <span class="mobile-only">{{i18n.editSongButtonMobile}}</span>
+                    <span class="desktop-only-inline">{{i18n.editSongButtonDesktop}}</span>
+                    <span class="mobile-only-inline">{{i18n.editSongButtonMobile}}</span>
                 </a>
             </div>
             <div class="button-item" *ngIf="hasValidForumTopic(song)">
                 <a class="btn" href="{{getSongForumTopicLink(song)}}" title="{{i18n.discussSongButtonTitle}}">
-                    <span class="desktop-only">{{i18n.discussSongButtonDesktop}}</span>
-                    <span class="mobile-only">{{i18n.discussSongButtonMobile}}</span>
+                    <span class="desktop-only-inline">{{i18n.discussSongButtonDesktop}}</span>
+                    <span class="mobile-only-inline">{{i18n.discussSongButtonMobile}}</span>
                 </a>
             </div>
             <div class="button-item">
                 <a class="btn" (click)="gotoRandomSongInCatalog($event)" title="{{i18n.gotoRandomSongInCatalogButtonTitle}}">
-                    <span class="desktop-only">{{i18n.gotoRandomSongInCatalogButtonDesktop}}</span>
-                    <span class="mobile-only">{{i18n.gotoRandomSongInCatalogButtonMobile}}</span>
+                    <span class="desktop-only-inline">{{i18n.gotoRandomSongInCatalogButtonDesktop}}</span>
+                    <span class="mobile-only-inline">{{i18n.gotoRandomSongInCatalogButtonMobile}}</span>
                 </a>
             </div>
         </div>

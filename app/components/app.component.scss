@@ -29,11 +29,13 @@
 }
 
 main {
+  display: block;
   padding: 20px 20px $footer-height;
   margin-bottom: 40px;
 }
 
 header {
+  display: block;
   position: fixed;
   top: 0;
   width: 100%;
@@ -41,10 +43,10 @@ header {
 }
 
 footer {
+  display: block;
   position: absolute;
   bottom: 0;
   width: 100%;
   height: $footer-height;
   background-color: $color-dark-bg;
 }
-

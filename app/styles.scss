@@ -117,21 +117,22 @@ input[type=text] {
   padding-right: 5px;
 }
 
-.mobile-only {
-  display: initial;
+// Using 'inline' instead of 'initial' because IE does not support 'initial'
+.mobile-only-inline {
+  display: inline;
 }
 
-.desktop-only {
+.desktop-only-inline {
   display: none;
 }
 
 @media only screen and (min-width: $min-desktop-width) {
-  .mobile-only {
+  .mobile-only-inline {
     display: none;
   }
 
-  .desktop-only {
-    display: initial;
+  .desktop-only-inline {
+    display: inline;
   }
 
 }
