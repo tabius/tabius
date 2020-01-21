@@ -19,7 +19,8 @@ a {
 }
 
 .logo {
-  color: #49011a;
+  color: #7b7b7b; /* used only on non-webkit (IE11) browsers */
+  -webkit-text-fill-color: #49011a;
   font-weight: 700;
 }
 
