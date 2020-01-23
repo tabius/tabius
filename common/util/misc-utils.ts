@@ -205,13 +205,13 @@ export function trackById(idx: number, entity: { id: number|string }): number|st
 
 /** Returns true if the element is input element: <textarea> or <input>. */
 export function isInputEvent(event: KeyboardEvent): boolean {
-  return isInputElement(event.target as HTMLElement);
+  return isElementToIgnoreKeyEvent(event.target as HTMLElement);
 }
 
 /** Returns true if the element is input element: <textarea> or <input>. */
-export function isInputElement(element: HTMLElement|undefined): boolean {
+export function isElementToIgnoreKeyEvent(element: HTMLElement|undefined): boolean {
   const tagName = element ? element.tagName.toLowerCase() : '';
-  return tagName === 'textarea' || tagName === 'input';
+  return tagName === 'textarea' || (tagName === 'input' && element!.getAttribute('type') !== 'checkbox');
 }
 
 const ALPHA_EN = /^[A-Z]+$/i;

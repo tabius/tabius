@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Ho
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
-import {combineLatest0, defined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isInputElement, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {combineLatest0, defined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isElementToIgnoreKeyEvent, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
@@ -134,7 +134,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.shiftKey && !isInputElement(event.target as HTMLElement)) {
+    if (event.shiftKey && !isElementToIgnoreKeyEvent(event.target as HTMLElement)) {
       if (event.code === 'ArrowLeft') {
         this.navigate(this.prevLink);
       } else if (event.code === 'ArrowRight') {
