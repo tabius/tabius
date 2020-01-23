@@ -44,12 +44,6 @@ export class SongDbi {
         .then(([rows]: [SongRow[]]) => rows.map(row2SongDetails));
   }
 
-  private getSongsByCollectionId(collectionId: number): Promise<Song[]> {
-    return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL} WHERE s.collection_id = ? ORDER BY s.id`, [collectionId])
-        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
-  }
-
   private getSongsBySecondaryCollectionId(collectionId: number): Promise<Song[]> {
     return this.db.pool.promise()
         .query(`${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?) ORDER BY s.id`, [collectionId])
@@ -68,11 +62,11 @@ export class SongDbi {
 
   /** Returns all songs in the collection. */
   async getPrimaryAndSecondarySongsByCollectionId(collectionId: number): Promise<Song[]> {
-    const [primarySongs, secondarySongs] = await Promise.all([
-      this.getSongsByCollectionId(collectionId),
-      this.getSongsBySecondaryCollectionId(collectionId),
-    ]);
-    return [...primarySongs, ...secondarySongs];
+    return this.db.pool.promise()
+        .query(`${SELECT_SONG_SQL} WHERE s.collection_id = ? UNION ` +
+            `${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?)` +
+            ' ORDER BY id', [collectionId, collectionId])
+        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
   }
 
 
@@ -159,9 +153,11 @@ export class SongDbi {
   }
 
   async getRandomSongFromCollection(collectionId: number): Promise<number|undefined> {
-    const sql = `SELECT s.id FROM song s WHERE s.collection_id = ? ORDER BY RAND() LIMIT 1`;
+    const sql = 'SELECT id FROM song WHERE collection_id = ? ' +
+        'UNION SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ? ' +
+        'ORDER BY RAND() LIMIT 1';
     return await this.db.pool.promise()
-        .query(sql, [collectionId])
+        .query(sql, [collectionId, collectionId])
         .then(([rows]: [SongRow[]]) => rows.length > 0 && rows[0].id);
   }
 }
