@@ -7,6 +7,7 @@ import {CatalogService} from '@app/services/catalog.service';
 import {UserService} from '@app/services/user.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, getCollectionPageLink} from '@common/util/misc-utils';
+import {I18N} from '@app/app-i18n';
 
 
 interface CollectionInfo {
@@ -23,6 +24,8 @@ interface CollectionInfo {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserCollectionsListComponent implements OnChanges, OnDestroy {
+
+  readonly i18n = I18N.userCollectionsListComponent;
 
   private readonly destroyed$ = new Subject();
 
@@ -64,7 +67,7 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
               linkText: collection.name + (songCount > 0 ? ` [${songCount}]` : ''),
               link: getCollectionPageLink(collection),
               songCount,
-              titleText: `Коллекция «${collection.name}»${songCount == 0 ? ', нет песен' : ', песен: ' + songCount}`
+              titleText: this.i18n.titleText(collection.name, songCount),
             });
           }
           this.cd.detectChanges();
@@ -82,5 +85,4 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
     this.cds.createUserCollection(this.userId, request)
         .catch(err => this.toastService.warning(err, MSG_UNEXPECTED_ERROR));
   }
-
 }

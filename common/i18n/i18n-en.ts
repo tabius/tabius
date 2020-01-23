@@ -315,4 +315,10 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     failedToRemoveCollection: 'Error while removing collection!',
     removeButton: 'Delete'
   },
+  userCollectionsListComponent: {
+    createCollectionButton: 'Create',
+    createCollectionButtonTitle: 'Create new collection',
+    newCollectionInputPlaceholder: 'New collection name',
+    titleText: (collectionName: string, songCount: number) => `Collection «${collectionName}», ${songCount == 0 ? 'empty' : `songs: ${songCount}`}`,
+  },
 };

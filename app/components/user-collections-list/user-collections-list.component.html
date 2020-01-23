@@ -8,13 +8,13 @@
     <input type="text" [(ngModel)]="newCollectionName"
            name="name" required
            class="new-collection-name-input"
-           placeholder="Имя новой коллекции"
+           placeholder="{{i18n.newCollectionInputPlaceholder}}"
     />
     <button type="submit"
             class="btn create-button"
-            title="Создать новую коллекцию"
+            title="{{i18n.createCollectionButtonTitle}}"
             [disabled]="!createCollectionForm.form.valid">
-        Создать
+        {{i18n.createCollectionButton}}
     </button>
 
 </form>

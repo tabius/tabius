@@ -301,4 +301,10 @@ export interface I18n {
     failedToRemoveCollection: string;
     removeButton: string;
   };
+  userCollectionsListComponent: {
+    titleText: (collectionName: string, songCount: number) => string;
+    newCollectionInputPlaceholder: string;
+    createCollectionButton: string;
+    createCollectionButtonTitle: string;
+  };
 }
