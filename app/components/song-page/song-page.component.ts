@@ -264,8 +264,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   gotoRandomSongInCollection(): void {
-    if (this.primaryCollection) {
-      this.ss.gotoRandomSong(this.primaryCollection.id);
+    if (this.activeCollection) {
+      this.ss.gotoRandomSong(this.activeCollection.id);
     }
   }
 }
