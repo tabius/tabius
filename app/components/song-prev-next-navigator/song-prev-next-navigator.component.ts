@@ -176,8 +176,15 @@ export function getAllSongsInCollectionsSorted(collection$: Observable<Collectio
   );
 }
 
-export function findPrevAndNextSongs(songId: number|undefined, allSongs: Song[]): { prevSong?: Song, nextSong?: Song } {
-  const songIdx = songId === undefined ? -1 : allSongs.findIndex(song => song.id === songId);
+export function findPrevAndNextSongs(songId: number|undefined, allSongs: Song[], title?: string): { prevSong?: Song, nextSong?: Song } {
+  let songIdx = songId === undefined ? -1 : allSongs.findIndex(song => song.id === songId);
+  if (songIdx === -1 && !!title) {
+    for (songIdx = 0; songIdx < allSongs.length - 1; songIdx++) {
+      if (allSongs[songIdx + 1].title.localeCompare(title) >= 0) {
+        break;
+      }
+    }
+  }
   const prevSongIdx = songIdx === -1 ? allSongs.length - 1 : songIdx - 1;
   const prevSong = prevSongIdx === -1 ? undefined : allSongs[prevSongIdx];
   const nextSongIdx = songIdx === -1 ? 0 : songIdx + 1;

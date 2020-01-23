@@ -154,7 +154,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
             takeUntil(this.destroyed$)
         ).subscribe(songs => {
       const {collectionMount, song, primaryCollection} = this;
-      const {prevSong, nextSong} = findPrevAndNextSongs(song && song.id, songs);
+      const {prevSong, nextSong} = findPrevAndNextSongs(song && song.id, songs, song && song.title);
       const targetSong = nextSong || prevSong;
       if (targetSong && collectionMount && primaryCollection) {
         const link = getSongPageLink(collectionMount, targetSong.mount, primaryCollection.mount);
