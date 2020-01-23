@@ -321,4 +321,11 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     newCollectionInputPlaceholder: 'New collection name',
     titleText: (collectionName: string, songCount: number) => `Collection «${collectionName}», ${songCount == 0 ? 'empty' : `songs: ${songCount}`}`,
   },
+  userRegistrationPromptComponent: {
+    close: 'close',
+    register: 'Register',
+    or: 'or',
+    signIn: 'sign in',
+    toAddSongs: 'to add songs.',
+  },
 };

@@ -2,6 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmit
 import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
 import {scrollToView} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-user-registration-prompt',
@@ -10,6 +11,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserRegistrationPromptComponent implements AfterViewInit {
+  readonly i18n = I18N.userRegistrationPromptComponent
   readonly loginLink = NODE_BB_LOGIN_URL;
   readonly registrationLink = NODE_BB_REGISTRATION_URL;
 

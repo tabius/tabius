@@ -307,4 +307,11 @@ export interface I18n {
     createCollectionButton: string;
     createCollectionButtonTitle: string;
   };
+  userRegistrationPromptComponent: {
+    close: string;
+    register: string;
+    or: string;
+    signIn: string;
+    toAddSongs: string;
+  };
 }
