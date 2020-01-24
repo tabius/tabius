@@ -78,7 +78,6 @@ export function getToneByToneNumber(toneNumber: number, flat?: boolean): ChordTo
 }
 
 export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, minResultStringLength = 0): string {
-  console.log('Min', minResultStringLength);
   let tone = chord.tone;
   if (options.transpose) {
     const oldToneNumber = getToneNumberByTone(tone);
