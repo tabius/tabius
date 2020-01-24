@@ -82,6 +82,11 @@ describe('Chords renderer ', () => {
     expect(renderChord(c('B', 'maj'))).toEqual('B');
   });
 
+  it('should use minResultStringLength', () => {
+    expect(renderChord(c('A', 'maj'), {}, 3)).toEqual('A  ');
+    expect(renderChord(c('A', 'min'), {}, 1)).toEqual('Am');
+  });
+
   it('should respect flat|sharp flags in getToneByToneNumber', () => {
     expect(getToneByToneNumber(1, false)).toEqual('C#');
     expect(getToneByToneNumber(1, true)).toEqual('Db');

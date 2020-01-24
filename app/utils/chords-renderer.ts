@@ -77,7 +77,8 @@ export function getToneByToneNumber(toneNumber: number, flat?: boolean): ChordTo
   throw new Error(`Illegal tone number: ${toneNumber}`);
 }
 
-export function renderChord(chord: Chord, options: ChordRenderingOptions = {}): string {
+export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, minResultStringLength = 0): string {
+  console.log('Min', minResultStringLength);
   let tone = chord.tone;
   if (options.transpose) {
     const oldToneNumber = getToneNumberByTone(tone);
@@ -93,8 +94,10 @@ export function renderChord(chord: Chord, options: ChordRenderingOptions = {}): 
 
   const visualType = chord.type ? VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type) || '' : '';
   const chordString = `${toneString + visualType}`;
+  const trailingSpaceCount = minResultStringLength - chordString.length;
+  const trailingSpaces = trailingSpaceCount > 0 ? ' '.repeat(trailingSpaceCount) : '';
   const {tag} = options;
-  return tag ? `<${tag}>${chordString}</${tag}>` : chordString;
+  return (tag ? `<${tag}>${chordString}</${tag}>` : chordString) + trailingSpaces;
 }
 
 export function renderChords(text: string, options: ChordRenderingOptions = {}): string {
@@ -120,7 +123,7 @@ export function renderChords(text: string, options: ChordRenderingOptions = {}):
       prevChordEndIdx = skipSpaces(text, chordLocation.endIdx);
       linesWithStrippedChords.add(currentLineNum);
     } else {
-      result += renderChord(chordLocation.chord, options);
+      result += renderChord(chordLocation.chord, options, chordLocation.endIdx - chordLocation.startIdx);
       prevChordEndIdx = chordLocation.endIdx;
     }
   }
