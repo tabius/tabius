@@ -6,8 +6,8 @@ import {User} from '@common/user-model';
 import {combineLatest, Observable, of} from 'rxjs';
 import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
-import {Song} from '@common/catalog-model';
-import {sortSongsAndMounts} from '@app/components/collection-page/collection-page.component';
+import {Collection, Song} from '@common/catalog-model';
+import {sortSongsAndRelatedItems} from '@app/components/collection-page/collection-page.component';
 import {combineLatest0, defined, getSongPageLink} from '@common/util/misc-utils';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {Router} from '@angular/router';
@@ -27,7 +27,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
 
   /** Personal pick-ups. */
   songs: Song[] = [];
-  primarySongCollectionMounts: (string|undefined)[] = [];
+  primarySongCollections: (Collection|undefined)[] = [];
 
   editorIsOpen = false;
 
@@ -69,30 +69,29 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
             map(([collectionIds, songs]) => songs.filter(s => collectionIds.includes(s.collectionId)))
         );
 
-    const primarySongCollectionMounts$: Observable<(string|undefined)[]> = songsPickedByUser$.pipe(
+    const primarySongCollections$: Observable<(Collection|undefined)[]> = songsPickedByUser$.pipe(
         flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
-        map(collections => collections.map(collection => !!collection ? collection.mount : undefined))
     );
 
     const primaryUserCollection$ = user$.pipe(
         flatMap(user => user ? this.cds.getCollectionById(user.collectionId) : of(undefined))
     );
 
-    combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollectionMounts$])
+    combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollections$])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),
         )
-        .subscribe(([user, primaryUserCollection, songs, primarySongCollectionMounts]) => {
+        .subscribe(([user, primaryUserCollection, songs, primarySongCollections]) => {
           this.loaded = true;
-          if (!user || !primaryUserCollection || !songs || !primarySongCollectionMounts) {
+          if (!user || !primaryUserCollection || !songs || !primarySongCollections) {
             //TODO: switchToNotFoundMode(this);
             this.cd.detectChanges();
             return;
           }
           this.user = user;
           this.primaryUserCollectionMount = primaryUserCollection.mount;
-          [this.songs, this.primarySongCollectionMounts] = sortSongsAndMounts(songs, primarySongCollectionMounts);
+          [this.songs, this.primarySongCollections] = sortSongsAndRelatedItems(songs, primarySongCollections);
           this.cd.detectChanges();
         });
     this.updateMeta();

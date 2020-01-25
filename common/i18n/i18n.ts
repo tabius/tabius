@@ -230,7 +230,8 @@ export interface I18n {
   };
   songListComponent: {
     listIsEmpty: string;
-    titleSuffix: string;
+    songLinkTitleSuffix: string;
+    songPrimaryCollectionLinkTitle: string;
   };
   songPage: {
     titleSuffix: (titlePrefix: string) => string;

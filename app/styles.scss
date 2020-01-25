@@ -58,6 +58,14 @@ h1, h2, h3, h4, h5, h6 {
 a {
   color: $color-default-link;
   text-decoration: none;
+
+  &.dark-pill {
+    font-size: 14px;
+    color: #5A5A5A;
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: solid 1px #ababab;
+  }
 }
 
 a:hover {
@@ -134,5 +142,4 @@ input[type=text] {
   .desktop-only-inline {
     display: inline;
   }
-
 }

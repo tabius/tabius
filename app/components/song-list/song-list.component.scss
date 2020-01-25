@@ -9,6 +9,10 @@
   color: #999999;
 }
 
+.primary-collection-link {
+  margin-left: 5px;
+}
+
 @media only screen and (min-width: $min-desktop-width) {
   .songs-list {
     line-height: $desktop-lists-line-height;

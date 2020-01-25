@@ -235,7 +235,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   },
   songListComponent: {
     listIsEmpty: 'No songs found',
-    titleSuffix: ' — song text and chords',
+    songLinkTitleSuffix: ' — song text and chords',
+    songPrimaryCollectionLinkTitle: 'Primary song collection',
   },
   songPage: {
     titleSuffix: (titlePrefix: string) => titlePrefix.length > 50 ? 'chords' : titlePrefix.length > 35 ? 'text and chords' : 'song text and chords',

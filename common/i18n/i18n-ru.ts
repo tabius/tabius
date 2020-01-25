@@ -233,7 +233,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   songListComponent: {
     listIsEmpty: 'Нет песен',
-    titleSuffix: ' — текст песни и аккорды',
+    songLinkTitleSuffix: ' — текст песни и аккорды',
+    songPrimaryCollectionLinkTitle: 'Исполнитель',
   },
   songPage: {
     titleSuffix: (titlePrefix: string) => titlePrefix.length > 50 ? 'аккорды' : titlePrefix.length > 35 ? 'текст и аккорды' : 'текст песни и аккорды',

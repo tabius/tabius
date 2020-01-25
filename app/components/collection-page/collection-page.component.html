@@ -42,7 +42,8 @@
 
                 <gt-song-list [collectionMount]="collectionViewModel.collection.mount"
                               [songs]="collectionViewModel.songs"
-                              [primarySongCollectionMounts]="collectionViewModel.primarySongCollectionMounts"
+                              [primarySongCollections]="collectionViewModel.primarySongCollections"
+                              [showPrimaryCollectionLinks]="!collectionViewModel.listed"
                 ></gt-song-list>
             </div>
         </div>

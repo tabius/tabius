@@ -23,16 +23,16 @@ export class CollectionViewModel {
   readonly displayName: string;
   readonly imgSrc: string|undefined;
   readonly songs: Song[];
-  readonly primarySongCollectionMounts: (string|undefined)[];
+  readonly primarySongCollections: (Collection|undefined)[];
 
   constructor(readonly collection: Collection,
               readonly bands: Collection[],
               songs: Song[],
-              primarySongCollectionMounts: (string|undefined)[],
+              primarySongCollections: (Collection|undefined)[],
               readonly listed: boolean) {
     this.displayName = getNameFirstFormArtistName(collection);
     this.imgSrc = listed ? getCollectionImageUrl(collection.mount) : undefined;
-    [this.songs, this.primarySongCollectionMounts] = sortSongsAndMounts(songs, primarySongCollectionMounts);
+    [this.songs, this.primarySongCollections] = sortSongsAndRelatedItems(songs, primarySongCollections);
   }
 }
 
@@ -90,17 +90,16 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
         flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
         map(songs => songs.filter(defined))
     );
-    const primarySongCollectionMounts$: Observable<(string|undefined)[]> = songs$.pipe(
+    const primarySongCollections$: Observable<(Collection|undefined)[]> = songs$.pipe(
         flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
-        map(collections => collections.map(collection => !!collection ? collection.mount : undefined))
     );
 
-    combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollectionMounts$, this.uds.getUser()])
+    combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollections$, this.uds.getUser()])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),
         )
-        .subscribe(([collection, collectionDetails, bands, songs, primarySongCollectionMounts, user]) => {
+        .subscribe(([collection, collectionDetails, bands, songs, primarySongCollections, user]) => {
           this.loaded = true;
           if (!collection || !collectionDetails || !bands || !songs) {
             if (this.collectionViewModel) {
@@ -110,7 +109,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
             }
             return;
           }
-          this.collectionViewModel = new CollectionViewModel(collection, bands, songs, primarySongCollectionMounts, collectionDetails.listed);
+          this.collectionViewModel = new CollectionViewModel(collection, bands, songs, primarySongCollections, collectionDetails.listed);
           this.user = user;
           this.canAddSongs = canManageCollectionContent(this.user, collection);
           this.canEditCollection = canRemoveCollection(this.user, collection);
@@ -196,13 +195,13 @@ function getFirstSongsNames(songs: Song[]): string {
   return res.trim();
 }
 
-export function sortSongsAndMounts(songs: Song[], primarySongCollectionMounts: (string|undefined)[]): ([Song[], (string|undefined)[]]) {
-  const primaryCollectionMountBySong = new Map<number, string|undefined>();
+export function sortSongsAndRelatedItems<T>(songs: Song[], items: T[]): ([Song[], T[]]) {
+  const itemBySong = new Map<number, T>();
   for (let index = 0; index < songs.length; index++) {
-    primaryCollectionMountBySong.set(songs[index].id, primarySongCollectionMounts[index]);
+    itemBySong.set(songs[index].id, items[index]);
   }
   const sortedSongs = sortSongsAlphabetically(songs);
-  const sortedPrimarySongCollectionMounts = songs.map(s => primaryCollectionMountBySong.get(s.id));
-  return [sortedSongs, sortedPrimarySongCollectionMounts];
+  const sortedItems = songs.map(s => itemBySong.get(s.id)!);
+  return [sortedSongs, sortedItems];
 }
 
