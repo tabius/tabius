@@ -243,9 +243,8 @@ export interface I18n {
     discussSongButtonTitle: string;
     discussSongButtonDesktop: string
     discussSongButtonMobile: string
-    gotoRandomSongInCatalogButtonTitle: string;
-    gotoRandomSongInCatalogButtonDesktop: string
-    gotoRandomSongInCatalogButtonMobile: string
+    catalog: string;
+    collection: string;
   };
   songPrevNextNavigator: {
     nextSong: string;

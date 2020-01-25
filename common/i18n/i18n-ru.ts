@@ -255,9 +255,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     discussSongButtonTitle: 'Обсудить подбор песни на форуме',
     discussSongButtonDesktop: 'Обсудить на форуме',
     discussSongButtonMobile: 'Обсудить',
-    gotoRandomSongInCatalogButtonTitle: 'Перейти к случайной песне в каталоге (левый SHIFT 2 раза)',
-    gotoRandomSongInCatalogButtonDesktop: 'Случайная песня',
-    gotoRandomSongInCatalogButtonMobile: 'Случайная',
+    collection: 'Коллекция',
+    catalog: 'Каталог'
   },
   songPrevNextNavigator: {
     nextSong: 'След. песня »',

@@ -255,18 +255,14 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   gotoRandomSongInCatalog(event?: MouseEvent): void {
     this.ss.gotoRandomSong();
-    if (event) {
-      // On Android the button text is selected and 'Search' footer appears.
-      // Preventing default to prevent this unwanted behavior.
-      event.stopPropagation();
-      event.preventDefault();
-    }
+    stopAndPreventDefaultOnRandomSongButtonClick(event);
   }
 
-  gotoRandomSongInCollection(): void {
+  gotoRandomSongInCollection(event?: MouseEvent): void {
     if (this.activeCollection) {
       this.ss.gotoRandomSong(this.activeCollection.id);
     }
+    stopAndPreventDefaultOnRandomSongButtonClick(event);
   }
 }
 
@@ -305,3 +301,13 @@ export function getSongTextWithNoChords(text: string, linesCount: number, mergeL
   }
   return result;
 }
+
+// On Android the button text is selected and 'Search' footer appears.
+// Preventing default to prevent this unwanted behavior.
+function stopAndPreventDefaultOnRandomSongButtonClick(event: MouseEvent|undefined): void {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+}
+

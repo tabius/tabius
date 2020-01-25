@@ -53,14 +53,22 @@
                     <span class="mobile-only-inline">{{i18n.discussSongButtonMobile}}</span>
                 </a>
             </div>
-            <div class="button-item">
-                <a class="btn" (click)="gotoRandomSongInCatalog($event)" title="{{i18n.gotoRandomSongInCatalogButtonTitle}}">
-                    <span class="desktop-only-inline">{{i18n.gotoRandomSongInCatalogButtonDesktop}}</span>
-                    <span class="mobile-only-inline">{{i18n.gotoRandomSongInCatalogButtonMobile}}</span>
+        </div>
+
+        <div class="bottom-action-buttons-block random-song-buttons-block" *ngIf="!editorIsOpen && isBrowser">
+            <div>
+                <a class="btn" (click)="gotoRandomSongInCatalog($event)">
+                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
+                    {{i18n.catalog}}
+                </a>
+            </div>
+            <div>
+                <a class="btn" (click)="gotoRandomSongInCollection($event)">
+                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
+                    {{i18n.collection}}
                 </a>
             </div>
         </div>
-
         <gt-song-prev-next-navigator *ngIf="isBrowser" [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song-prev-next-navigator>
 
     </div>
