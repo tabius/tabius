@@ -195,10 +195,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       scrollToView(this.getSongTextElement());
       return;
     }
-    if (this.ss.isDoubleShiftRightPressEvent) {
-      this.gotoRandomSongInCollection();
-      return;
-    }
 
     if (!this.editorIsOpen && event.shiftKey && event.code === 'KeyE') {
       this.openEditor();
@@ -252,18 +248,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   onMountChangeBeforeUpdate(mountBeforeUpdate: string): void {
     this.songMountBeforeUpdate = mountBeforeUpdate;
   }
-
-  gotoRandomSongInCatalog(event?: MouseEvent): void {
-    this.ss.gotoRandomSong();
-    stopAndPreventDefaultOnRandomSongButtonClick(event);
-  }
-
-  gotoRandomSongInCollection(event?: MouseEvent): void {
-    if (this.activeCollection) {
-      this.ss.gotoRandomSong(this.activeCollection.id);
-    }
-    stopAndPreventDefaultOnRandomSongButtonClick(event);
-  }
 }
 
 function isServiceLineChar(c: string): boolean {
@@ -301,13 +285,3 @@ export function getSongTextWithNoChords(text: string, linesCount: number, mergeL
   }
   return result;
 }
-
-// On Android the button text is selected and 'Search' footer appears.
-// Preventing default to prevent this unwanted behavior.
-function stopAndPreventDefaultOnRandomSongButtonClick(event: MouseEvent|undefined): void {
-  if (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-}
-

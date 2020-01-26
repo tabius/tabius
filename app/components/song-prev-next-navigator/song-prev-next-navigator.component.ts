@@ -134,6 +134,11 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
+    if (this.ss.isDoubleShiftRightPressEvent) {
+      this.gotoRandomSongInCollection();
+      return;
+    }
+
     if (event.shiftKey && !isElementToIgnoreKeyEvent(event.target as HTMLElement)) {
       if (event.code === 'ArrowLeft') {
         this.navigate(this.prevLink);
@@ -158,12 +163,16 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     this.navigate(link);
   }
 
-  gotoRandomSongInCatalog(): void {
+  gotoRandomSongInCatalog(event?: MouseEvent): void {
     this.ss.gotoRandomSong();
+    stopAndPreventDefaultOnRandomSongButtonClick(event);
   }
 
-  gotoRandomSongInCollection(): void {
-    this.ss.gotoRandomSong(this.activeCollectionId);
+  gotoRandomSongInCollection(event?: MouseEvent): void {
+    if (!!this.activeCollectionId) {
+      this.ss.gotoRandomSong(this.activeCollectionId);
+    }
+    stopAndPreventDefaultOnRandomSongButtonClick(event);
   }
 }
 
@@ -190,5 +199,15 @@ export function findPrevAndNextSongs(songId: number|undefined, allSongs: Song[],
   const nextSongIdx = songIdx === -1 ? 0 : songIdx + 1;
   const nextSong = nextSongIdx >= allSongs.length ? undefined : allSongs[nextSongIdx];
   return {prevSong, nextSong};
+}
+
+
+// On Android the button text is selected and 'Search' footer appears.
+// Preventing default to prevent this unwanted behavior.
+function stopAndPreventDefaultOnRandomSongButtonClick(event: MouseEvent|undefined): void {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
 }
 

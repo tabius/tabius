@@ -1,8 +1,25 @@
 <div *ngIf="prevLink && nextLink && !isInitializing">
 
-    <div class="prev-next-links-block" *ngIf="!isWideScreenMode">
-        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong}}</a>
-        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong}}</a>
+    <div *ngIf="!isWideScreenMode">
+        <div class="mobile-buttons-row">
+            <div>
+                <a class="btn" (click)="gotoRandomSongInCatalog($event)">
+                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
+                    {{i18n.gotoRandomSongInCatalogButton}}
+                </a>
+            </div>
+            <div>
+                <a class="btn" (click)="gotoRandomSongInCollection($event)">
+                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
+                    {{i18n.gotoRandomSongInCollectionButton}}
+                </a>
+            </div>
+        </div>
+
+        <div class="mobile-buttons-row">
+            <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong}}</a>
+            <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong}}</a>
+        </div>
     </div>
 
     <div *ngIf="isWideScreenMode" class="sticky-sidebar">

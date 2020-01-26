@@ -1,17 +1,24 @@
 @import "app/styles/colors";
 @import "app/styles/dimensions";
 
-.prev-next-links-block {
-  margin-top: 30px;
+
+.mobile-buttons-row {
+  min-width: 300px;
   display: flex;
+  margin-top: 30px;
+
   justify-content: space-between;
 
   .btn {
+    min-width: 115px;
     font-size: 16px;
   }
 
-  .prev-link {
-    margin-right: 20px;
+  .random-song-icon {
+    width: 20px;
+    height: 20px;
+    margin-top: -1px;
+    margin-bottom: -4px;
   }
 }
 

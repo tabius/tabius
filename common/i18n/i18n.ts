@@ -244,8 +244,6 @@ export interface I18n {
     discussSongButtonTitle: string;
     discussSongButtonDesktop: string
     discussSongButtonMobile: string
-    catalog: string;
-    collection: string;
   };
   songPrevNextNavigator: {
     nextSong: string;
@@ -257,6 +255,8 @@ export interface I18n {
     toCollectionTitle: string;
     gotoRandomSongInCollectionTitle: string;
     gotoRandomSongInCatalogTitle: string;
+    gotoRandomSongInCatalogButton: string;
+    gotoRandomSongInCollectionButton: string;
   };
   studioPage: {
     addSong: string;

@@ -258,8 +258,6 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     discussSongButtonTitle: 'Discuss song chords on forum',
     discussSongButtonDesktop: 'Discuss on forum',
     discussSongButtonMobile: 'Discuss',
-    collection: 'Collection',
-    catalog: 'Catalog'
   },
   songPrevNextNavigator: {
     nextSong: 'Next. song »',
@@ -271,6 +269,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     toCollectionTitle: 'To collection',
     gotoRandomSongInCollectionTitle: 'Open random song from the same collection (right SHIFT twice)',
     gotoRandomSongInCatalogTitle: 'Open random song from the whole catalog (left SHIFT twice)',
+    gotoRandomSongInCollectionButton: 'Collection',
+    gotoRandomSongInCatalogButton: 'Catalog'
   },
   studioPage: {
     addSong: 'Add song',

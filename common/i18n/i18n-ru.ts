@@ -256,8 +256,6 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     discussSongButtonTitle: 'Обсудить подбор песни на форуме',
     discussSongButtonDesktop: 'Обсудить на форуме',
     discussSongButtonMobile: 'Обсудить',
-    collection: 'Коллекция',
-    catalog: 'Каталог'
   },
   songPrevNextNavigator: {
     nextSong: 'След. песня »',
@@ -269,6 +267,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     toCollectionTitle: 'В коллекцию',
     gotoRandomSongInCollectionTitle: 'Перейти к случайной песне из текущей коллекции (правый SHIFT 2 раза)',
     gotoRandomSongInCatalogTitle: 'Перейти к случайной песне из всего каталога (левый SHIFT 2 раза)',
+    gotoRandomSongInCollectionButton: 'Коллекция',
+    gotoRandomSongInCatalogButton: 'Каталог'
   },
   studioPage: {
     addSong: 'Добавить',

@@ -55,21 +55,10 @@
             </div>
         </div>
 
-        <div class="bottom-action-buttons-block random-song-buttons-block" *ngIf="!editorIsOpen && isBrowser">
-            <div>
-                <a class="btn" (click)="gotoRandomSongInCatalog($event)">
-                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
-                    {{i18n.catalog}}
-                </a>
-            </div>
-            <div>
-                <a class="btn" (click)="gotoRandomSongInCollection($event)">
-                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
-                    {{i18n.collection}}
-                </a>
-            </div>
-        </div>
-        <gt-song-prev-next-navigator *ngIf="isBrowser" [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song-prev-next-navigator>
+        <gt-song-prev-next-navigator *ngIf="isBrowser && !editorIsOpen"
+                                     [songId]="song.id"
+                                     [activeCollectionId]="activeCollection.id"
+        ></gt-song-prev-next-navigator>
 
     </div>
 

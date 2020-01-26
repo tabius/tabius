@@ -37,24 +37,11 @@
         display: inline-block;
 
         .btn {
-          min-width: 100px;
+          min-width: 115px;
         }
 
         &:not(:last-of-type) {
           margin-right: 15px;
-        }
-      }
-
-      &.random-song-buttons-block {
-        .btn {
-          min-width: 100px;
-        }
-
-        .random-song-icon {
-          width: 20px;
-          height: 20px;
-          margin-top: -1px;
-          margin-bottom: -4px;
         }
       }
     }
@@ -74,9 +61,6 @@
       .bottom-action-buttons-block {
         justify-content: start;
         .button-item {
-        }
-        &.random-song-buttons-block {
-          display: none;
         }
       }
     }
