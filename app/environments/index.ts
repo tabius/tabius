@@ -22,7 +22,7 @@ export interface TabiusEnv {
   nodeBbUrl: string,
 
   /** Topic id where chord fingering is discussed. */
-  nodeBbChordsDiscussionTopicId?: number,
+  nodeBbChordsDiscussionTopicId: number,
 
   buildInfo: { buildDate: number; },
 }
