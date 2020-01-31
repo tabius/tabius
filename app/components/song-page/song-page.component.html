@@ -59,7 +59,11 @@
                                      [songId]="song.id"
                                      [activeCollectionId]="activeCollection.id"
         ></gt-song-prev-next-navigator>
-
     </div>
 
+</div>
+
+<div *ngIf="!editorIsOpen && songSettingsPopoverIsOpen" class="song-setting-popover">
+    <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
+    <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
 </div>

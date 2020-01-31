@@ -14,13 +14,15 @@ import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.s
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
 import {TONES_COUNT} from '@app/utils/chords-renderer';
-import {User, UserSongSettings} from '@common/user-model';
+import {User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
 import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
 import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
+import {ContextMenuActionService} from '@app/services/context-menu-action.service';
+import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
 
 @Component({
   selector: 'gt-song-page',
@@ -39,9 +41,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   songSettings?: UserSongSettings;
   canonicalPageUrl?: string;
   user?: User;
+  deviceSettings?: UserDeviceSettings;
 
   hasEditRight = false;
   editorIsOpen = false;
+  songSettingsPopoverIsOpen = false;
   private isUserCollection = false;
 
   readonly hasValidForumTopic = hasValidForumTopic;
@@ -62,6 +66,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
               private readonly helpService: HelpService,
               private readonly ss: ShortcutsService,
               private readonly elementRef: ElementRef,
+              private readonly contextMenuActionService: ContextMenuActionService,
               injector: Injector,
   ) {
     super(injector);
@@ -83,6 +88,13 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       switchToNotFoundMode(this); // TODO: use permanent redirect to the primary song page?
       return;
     }
+
+    this.contextMenuActionService.activeAction$.next({
+      icon: 'song-settings',
+      activate: () => {
+        this.songSettingsPopoverIsOpen = !this.songSettingsPopoverIsOpen;
+      }
+    });
 
     if (primaryCollectionMount === undefined) {
       primaryCollectionMount = this.collectionMount;
@@ -133,6 +145,12 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     ).subscribe(songSettings => {
       this.songSettings = songSettings;
     });
+
+    this.uds.getUserDeviceSettings()
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(deviceSettings => {
+          this.deviceSettings = deviceSettings;
+        });
   }
 
   private handleMountUpdate(): void {
@@ -169,6 +187,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   ngOnDestroy(): void {
     this.destroyed$.next();
+    this.contextMenuActionService.activeAction$.next();
   }
 
   updateMeta() {
@@ -225,6 +244,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
   }
 
+  @HostListener('window:mousedown', ['$event'])
+  mouseEvent(): void {
+    // this.songSettingsPopoverIsOpen = false;
+  }
+
   private getSongTextElement(): HTMLElement|undefined {
     return (this.elementRef.nativeElement as HTMLElement).querySelector(SONG_TEXT_COMPONENT_NAME) as HTMLElement|undefined;
   }
@@ -242,6 +266,25 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     if (this.songSettings) {
       const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
       this.uds.setUserSongSettings({...this.songSettings!, transpose});
+    }
+  }
+
+  incFontSize(): void {
+    console.error('INC');
+    if (this.deviceSettings) {
+      this.updateSongFontSize(Math.min(this.deviceSettings.songFontSize + 1, MAX_SONG_FONT_SIZE));
+    }
+  }
+
+  decFontSize(): void {
+    if (this.deviceSettings) {
+      this.updateSongFontSize(Math.max(this.deviceSettings.songFontSize - 1, MIN_SONG_FONT_SIZE));
+    }
+  }
+
+  private updateSongFontSize(songFontSize: number) {
+    if (this.deviceSettings) {
+      this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize});
     }
   }
 

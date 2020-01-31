@@ -12,6 +12,7 @@ import {LocationStrategy} from '@angular/common';
 import {NODE_BB_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
 import {USER_COLLECTION_MOUNT_SEPARATOR} from '@common/common-constants';
+import {ContextMenuAction, ContextMenuActionService} from '@app/services/context-menu-action.service';
 
 enum NavSection {
   Home = 1,
@@ -45,13 +46,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly noSleepMode$: Observable<boolean>;
   readonly i18n = I18N.navbar;
 
+  /** Extra action used in mobile mode only. */
+  contextMenuAction?: ContextMenuAction;
+
   constructor(private readonly uds: UserService,
               private readonly router: Router,
               private readonly bss: BrowserStateService,
               private readonly toast: ToastService,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly cd: ChangeDetectorRef,
-              private location: LocationStrategy,
+              private readonly location: LocationStrategy,
+              contextMenuActionService: ContextMenuActionService,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
     this.location.onPopState(() => {
@@ -60,6 +65,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.close();
         window.history.go(1);
       }
+    });
+    contextMenuActionService.activeAction$.pipe(takeUntil(this.destroyed$)).subscribe(action => {
+      this.contextMenuAction = action;
     });
   }
 

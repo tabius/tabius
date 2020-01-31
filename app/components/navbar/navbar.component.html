@@ -71,6 +71,10 @@
             <div class="user-icon-mobile">{{getUserIconText()}}</div>
         </div>
 
+        <div *ngIf="!opened && contextMenuAction" (click)="contextMenuAction.activate()" class="item">
+            <gt-svg-icon [icon]="contextMenuAction.icon"></gt-svg-icon>
+        </div>
+
         <div *ngIf="!opened" (click)="open()" class="item">
             <gt-svg-icon icon="menu"></gt-svg-icon>
         </div>
@@ -112,7 +116,6 @@
                 <div class="title">{{i18n.settings}}</div>
             </a>
         </div>
-
         <div class="item no-sleep" title="{{i18n.noSleepTitle}}">
             <a (click)="toggleNoSleep(); close()">
                 <gt-svg-icon icon="no-sleep"></gt-svg-icon>
