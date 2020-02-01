@@ -89,7 +89,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       return;
     }
 
-    this.contextMenuActionService.activeAction$.next({
+    this.contextMenuActionService.navbarAction.next({
       icon: 'song-settings',
       activate: () => {
         this.songSettingsPopoverIsOpen = !this.songSettingsPopoverIsOpen;
@@ -187,7 +187,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   ngOnDestroy(): void {
     this.destroyed$.next();
-    this.contextMenuActionService.activeAction$.next();
+    this.contextMenuActionService.navbarAction.next();
   }
 
   updateMeta() {
@@ -246,7 +246,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   @HostListener('window:mousedown', ['$event'])
   mouseEvent(): void {
-    // this.songSettingsPopoverIsOpen = false;
+    this.songSettingsPopoverIsOpen = false;
   }
 
   private getSongTextElement(): HTMLElement|undefined {
@@ -290,6 +290,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   onMountChangeBeforeUpdate(mountBeforeUpdate: string): void {
     this.songMountBeforeUpdate = mountBeforeUpdate;
+  }
+
+  onMouseDownOnPopover(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
   }
 }
 

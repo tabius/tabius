@@ -244,6 +244,7 @@ export interface I18n {
     discussSongButtonTitle: string;
     discussSongButtonDesktop: string
     discussSongButtonMobile: string
+    fontSize: string;
   };
   songPrevNextNavigator: {
     nextSong: string;

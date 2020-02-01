@@ -63,7 +63,10 @@
 
 </div>
 
-<div *ngIf="!editorIsOpen && songSettingsPopoverIsOpen" class="song-setting-popover">
-    <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
-    <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
+<div *ngIf="!editorIsOpen && songSettingsPopoverIsOpen" class="song-setting-popover" (mousedown)="onMouseDownOnPopover($event)">
+    <div style="display: flex; justify-content: space-evenly; line-height: 30px;">
+        <div>{{i18n.fontSize}}</div>
+        <button (click)="decFontSize()" class="btn mono f16px">-</button>
+        <button (click)="incFontSize()" class="btn mono f16px">+</button>
+    </div>
 </div>

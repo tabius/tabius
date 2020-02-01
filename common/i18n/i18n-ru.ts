@@ -256,6 +256,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     discussSongButtonTitle: 'Обсудить подбор песни на форуме',
     discussSongButtonDesktop: 'Обсудить на форуме',
     discussSongButtonMobile: 'Обсудить',
+    fontSize: 'Размер шрифта',
   },
   songPrevNextNavigator: {
     nextSong: 'След. песня »',

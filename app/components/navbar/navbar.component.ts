@@ -66,7 +66,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         window.history.go(1);
       }
     });
-    contextMenuActionService.activeAction$.pipe(takeUntil(this.destroyed$)).subscribe(action => {
+    contextMenuActionService.navbarAction.pipe(takeUntil(this.destroyed$)).subscribe(action => {
       this.contextMenuAction = action;
     });
   }

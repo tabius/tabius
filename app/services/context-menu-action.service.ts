@@ -10,5 +10,6 @@ export interface ContextMenuAction {
   providedIn: 'root'
 })
 export class ContextMenuActionService {
-  activeAction$ = new ReplaySubject<ContextMenuAction|undefined>(1);
+  navbarAction = new ReplaySubject<ContextMenuAction|undefined>(1);
+  footerAction = new ReplaySubject<ContextMenuAction|undefined>(1);
 }
