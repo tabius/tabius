@@ -94,6 +94,10 @@
     a {
       width: 100%;
 
+      &.btn-flat-white:focus, &.btn-flat-white:hover {
+        background-color: white;
+      }
+
       gt-svg-icon {
         fill: #333;
         margin-top: 1px;
