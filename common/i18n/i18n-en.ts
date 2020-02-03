@@ -64,6 +64,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     twitterLinkTitle: 'Read the latest site news in Twitter.',
     githubLinkTitle: 'Current version.\nClick to see the latest changes.',
     homePageLinkTitle: 'Home',
+    closeMenu: 'CLOSE'
   },
   collectionEditor: {
     header: 'Add collection',

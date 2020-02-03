@@ -4,15 +4,14 @@ import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
 import {LINK_CATALOG, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {BrowserStateService} from '@app/services/browser-state.service';
 import {UserService} from '@app/services/user.service';
 import {ToastService} from '@app/toast/toast.service';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {LocationStrategy} from '@angular/common';
 import {NODE_BB_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
 import {USER_COLLECTION_MOUNT_SEPARATOR} from '@common/common-constants';
 import {ContextMenuAction, ContextMenuActionService} from '@app/services/context-menu-action.service';
+import {BrowserStateService} from '@app/services/browser-state.service';
 
 enum NavSection {
   Home = 1,
@@ -34,7 +33,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private readonly destroyed$ = new Subject();
 
   user?: User;
-  opened = false;
 
   readonly forumLink = NODE_BB_URL;
   readonly catalogLink = LINK_CATALOG;
@@ -43,30 +41,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
   readonly settingsLink = LINK_SETTINGS;
 
   readonly NavSection = NavSection;
-  readonly noSleepMode$: Observable<boolean>;
   readonly i18n = I18N.navbar;
 
   /** Extra action used in mobile mode only. */
   contextMenuAction?: ContextMenuAction;
 
+  readonly noSleepMode$: Observable<boolean>;
+
   constructor(private readonly uds: UserService,
               private readonly router: Router,
-              private readonly bss: BrowserStateService,
               private readonly toast: ToastService,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly cd: ChangeDetectorRef,
-              private readonly location: LocationStrategy,
+              private readonly bss: BrowserStateService,
               contextMenuActionService: ContextMenuActionService,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
-    this.location.onPopState(() => {
-      // Closes opened navbar on back button on mobile device.
-      if (this.opened) {
-        this.close();
-        window.history.go(1);
-      }
-    });
-    contextMenuActionService.navbarAction.pipe(takeUntil(this.destroyed$)).subscribe(action => {
+    contextMenuActionService.navbarAction$.pipe(takeUntil(this.destroyed$)).subscribe(action => {
       this.contextMenuAction = action;
     });
   }
@@ -109,18 +100,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     return NavSection.Home;
   }
 
-  open() {
-    this.opened = true;
-  }
-
-  close() {
-    this.opened = false;
-  }
-
-  toggleNoSleep(): void {
-    this.bss.toggleNoSleepMode();
-  }
-
   getUserIconText(): string {
     const {user} = this;
     if (!user) {
@@ -142,5 +121,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.router.url === this.catalogLink) {
       window.scroll({top: 0, left: 0, behavior: 'smooth'});
     }
+  }
+
+  toggleNoSleep(): void {
+    this.bss.toggleNoSleepMode();
   }
 }

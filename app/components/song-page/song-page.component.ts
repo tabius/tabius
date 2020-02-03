@@ -45,7 +45,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   hasEditRight = false;
   editorIsOpen = false;
-  songSettingsPopoverIsOpen = false;
   private isUserCollection = false;
 
   readonly hasValidForumTopic = hasValidForumTopic;
@@ -89,12 +88,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       return;
     }
 
-    this.contextMenuActionService.navbarAction.next({
-      icon: 'song-settings',
-      activate: () => {
-        this.songSettingsPopoverIsOpen = !this.songSettingsPopoverIsOpen;
-      }
-    });
+    this.setupContextMenuActions();
 
     if (primaryCollectionMount === undefined) {
       primaryCollectionMount = this.collectionMount;
@@ -153,6 +147,16 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         });
   }
 
+  private setupContextMenuActions() {
+    this.contextMenuActionService.footerActions$.next([
+      {icon: 'arrow-down', activate: () => this.transpose(-1), style: {'width.px': 18}},
+      {icon: 'arrow-up', activate: () => this.transpose(+1), style: {'width.px': 18}},
+      {icon: 'minus', activate: () => this.decFontSize(), style: {'width.px': 18}},
+      {icon: 'plus', activate: () => this.incFontSize(), style: {'width.px': 18}},
+      {icon: 'dice4', activate: () => this.activeCollection && this.ss.gotoRandomSong(this.activeCollection.id), style: {'width.px': 22}},
+    ]);
+  }
+
   private handleMountUpdate(): void {
     if (!this.collectionMount || !this.songMountBeforeUpdate) {
       return;
@@ -187,7 +191,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   ngOnDestroy(): void {
     this.destroyed$.next();
-    this.contextMenuActionService.navbarAction.next();
+    this.contextMenuActionService.footerActions$.next([]);
   }
 
   updateMeta() {
@@ -244,11 +248,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
   }
 
-  @HostListener('window:mousedown', ['$event'])
-  mouseEvent(): void {
-    this.songSettingsPopoverIsOpen = false;
-  }
-
   private getSongTextElement(): HTMLElement|undefined {
     return (this.elementRef.nativeElement as HTMLElement).querySelector(SONG_TEXT_COMPONENT_NAME) as HTMLElement|undefined;
   }
@@ -270,7 +269,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   incFontSize(): void {
-    console.error('INC');
     if (this.deviceSettings) {
       this.updateSongFontSize(Math.min(this.deviceSettings.songFontSize + 1, MAX_SONG_FONT_SIZE));
     }

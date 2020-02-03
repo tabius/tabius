@@ -50,15 +50,6 @@
       margin-top: 20px;
     }
   }
-
-  .song-setting-popover {
-    position: fixed;
-    top: $mobile-nav-height + 10px;
-    background-color: white;
-    min-width: 320px;
-    padding: 20px;
-    border: 1px solid #ccc;
-  }
 }
 
 @media only screen and (min-width: $min-desktop-width) {

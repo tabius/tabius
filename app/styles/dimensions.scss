@@ -3,7 +3,10 @@ $min-desktop-width: 900px;
 $hires-desktop-width: 1921px;
 $hires-desktop-height: 800px;
 
-$footer-height: 42px;
+$footer-info-line-height: 42px;
+$footer-menu-height: 35px; // Shown in mobile mode only.
+$desktop-footer-height: $footer-info-line-height;
+$mobile-footer-height: $footer-info-line-height + $footer-menu-height;
 
 $mobile-nav-height: 60px;
 $mobile-nav-item-padding: 12px;

@@ -69,6 +69,7 @@ export interface I18n {
     twitterLinkTitle: string;
     githubLinkTitle: string;
     homePageLinkTitle: string;
+    closeMenu: string;
   };
   collectionEditor: {
     header: string;

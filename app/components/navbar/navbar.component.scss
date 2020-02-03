@@ -1,8 +1,6 @@
 @import "app/styles/colors";
 @import "app/styles/dimensions";
 
-$color-no-sleep: #d4c3a5;
-
 :host {
   color: #cecece;
 }
@@ -224,21 +222,6 @@ a {
         justify-content: center;
       }
 
-      &.close {
-        padding: 0;
-        height: $mobile-nav-height;
-
-        .close-content {
-          height: $mobile-nav-height;
-          width: $mobile-nav-height;
-          //todo:
-          background: linear-gradient(to right, #25b4cc, #40c5a3);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-      }
-
       .logo {
         font-size: 36px;
         -webkit-text-stroke: 1.4px #b0b0b0;
@@ -255,11 +238,6 @@ a {
         line-height: 30px;
       }
 
-      .no-sleep-icon {
-        fill: #ddd;
-        padding-top: 1px;
-      }
-
       gt-svg-icon {
         margin: 0 auto;
         fill: #ccc;
@@ -269,75 +247,6 @@ a {
     }
   }
 
-  //todo: add separator line from nav to the top
-  .drawer {
-    position: fixed;
-    top: $mobile-nav-height;
-    left: 0;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: $color-dark-bg;
-    height: calc(100% - 52px);
-    z-index: 2;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 30px 10px;
-    overflow: scroll;
-
-    .item {
-      width: 140px;
-      height: 100%;
-      max-height: 120px;
-      margin-bottom: 20px;
-
-      a {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        text-align: center;
-        padding: 10px;
-        outline: none;
-
-        gt-svg-icon {
-          margin: 0 auto;
-          height: 80px;
-          width: 100%;
-        }
-      }
-
-      .title {
-        margin-top: 15px;
-        font-weight: 400;
-        font-size: 18px;
-      }
-
-      &.forum gt-svg-icon {
-        fill: $color-nav-forum;
-      }
-
-      &.catalog gt-svg-icon {
-        fill: $color-nav-catalog;
-      }
-
-      &.studio gt-svg-icon {
-        fill: $color-nav-studio;
-      }
-
-      &.tuner gt-svg-icon {
-        fill: $color-nav-tuner;
-      }
-
-      &.settings gt-svg-icon {
-        fill: $color-nav-settings;
-      }
-
-      &.no-sleep gt-svg-icon {
-        fill: $color-no-sleep;
-      }
-
-    }
-  }
 }
 
 

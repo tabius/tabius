@@ -2,7 +2,7 @@
 @import "app/styles/dimensions";
 
 :host {
-  line-height: $footer-height; /* Vertically center the text there */
+  line-height: $footer-info-line-height; /* Vertically center the text there */
   text-align: center;
 }
 
@@ -33,7 +33,7 @@
 
   a {
     display: block;
-    height: $footer-height;
+    height: $footer-info-line-height;
     padding-top: 6px;
     padding-left: 10px;
     padding-right: 5px;
@@ -57,7 +57,7 @@
 
   a {
     display: block;
-    height: $footer-height;
+    height: $footer-info-line-height;
     padding-top: 6px;
     padding-right: 8px;
     text-decoration: none;
@@ -74,6 +74,128 @@
       width: 22px;
       height: 22px;
       fill: #BBB;
+    }
+  }
+}
+
+.footer-menu {
+  position: fixed;
+  bottom: 0;
+  height: $footer-menu-height;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 -2px 6px -6px black;
+
+  .footer-menu-line {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+
+    a {
+      width: 100%;
+
+      gt-svg-icon {
+        fill: #333;
+        margin-top: 1px;
+        height: 24px;
+        width: 24px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  .footer-menu {
+    display: none;
+  }
+}
+
+$close-button-line-height: 60px;
+.drawer {
+  height: calc(100% - 60px); // -$close-button-line-height
+  background-color: $color-dark-bg;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  box-sizing: border-box;
+  overflow: scroll;
+
+  .drawer-items {
+    height: calc(100% - 60px); // -$close-button-line-height
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 30px 10px;
+
+    .item {
+      width: 140px;
+      height: 100%;
+      max-height: 120px;
+      margin-bottom: 20px;
+
+      a {
+        color: #cecece;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+        outline: none;
+
+        gt-svg-icon {
+          margin: 0 auto;
+          height: 80px;
+          width: 100%;
+        }
+      }
+
+      .title {
+        margin-top: 15px;
+        font-weight: 400;
+        font-size: 18px;
+      }
+
+      &.forum gt-svg-icon {
+        fill: $color-nav-forum;
+      }
+
+      &.catalog gt-svg-icon {
+        fill: $color-nav-catalog;
+      }
+
+      &.studio gt-svg-icon {
+        fill: $color-nav-studio;
+      }
+
+      &.tuner gt-svg-icon {
+        fill: $color-nav-tuner;
+      }
+
+      &.settings gt-svg-icon {
+        fill: $color-nav-settings;
+      }
+
+      &.no-sleep gt-svg-icon {
+        fill: $color-no-sleep;
+      }
+    }
+  }
+
+  .close-button-line {
+    height: $close-button-line-height;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: $color-dark-bg;
+
+    .close-button {
+      border-radius: 4px;
+      border: 1px #333 solid;
+      color: #999;
+      padding: 5px 10px;
     }
   }
 }
