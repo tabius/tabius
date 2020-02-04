@@ -20,6 +20,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   private destroyed = false;
 
   readonly i18n = I18N.tunerPage;
+  readonly i18nCommon = I18N.common;
 
   @ViewChild('s1', {static: true}) private s1!: ElementRef;
   @ViewChild('s2', {static: true}) private s2!: ElementRef;

@@ -110,9 +110,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   showUserInfo(): void {
     if (this.user) {
-      this.toast.info(`Аккаунт: ${this.user.username}, ${this.user.email}`);
+      this.toast.info(this.i18n.accountInfoToast(this.user));
     } else {
-      this.toast.info('Вы не вошли в систему');
+      this.toast.info(this.i18n.accountInfoNotLoggedInToast);
     }
   }
 

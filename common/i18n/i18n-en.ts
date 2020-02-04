@@ -1,11 +1,13 @@
 import {I18n} from '@common/i18n/i18n';
 import {CollectionType, isBand, isCompilation} from '@common/catalog-model';
+import {User} from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Favorites';
 
 export const TRANSLATIONS_MAP_EN: I18n = {
   common: {
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
+    and: 'and',
     error: (message: string) => `Error: ${message}`,
   },
   navbar: {
@@ -18,6 +20,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     studio: 'STUDIO',
     tuner: 'TUNER',
     userIconTitle: (username: string) => `Account: ${username}`,
+    accountInfoToast: (user: User) => `Account: ${user.username}, ${user.email}`,
+    accountInfoNotLoggedInToast: 'You are not logged in',
   },
   page404: {
     message: 'Page not found!',

@@ -1,11 +1,13 @@
 import {I18n} from '@common/i18n/i18n';
 import {CollectionType, isBand, isCompilation} from '@common/catalog-model';
+import {User} from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Избранное';
 
 export const TRANSLATIONS_MAP_RU: I18n = {
   common: {
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
+    and: 'и',
     error: (message: string) => `Ошибка: ${message}`,
   },
   navbar: {
@@ -17,7 +19,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     settings: 'НАСТРОЙКИ',
     studio: 'СТУДИЯ',
     tuner: 'ТЮНЕР',
-    userIconTitle: (username: string) => `Аккаунт: ${username}`
+    userIconTitle: (username: string) => `Аккаунт: ${username}`,
+    accountInfoToast: (user: User) => `Аккаунт: ${user.username}, ${user.email}`,
+    accountInfoNotLoggedInToast: 'Вы не вошли в систему',
   },
   page404: {
     message: 'Страница не найдена!',

@@ -23,7 +23,7 @@ export const SONG_PRINT_FONT_SIZE = 14;
 
 export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
 
-/** Отображает содежимое мести (текст) без заголовка и прочей мета-информации. */
+/** Shows song content (text with chords) with no title and any other meta-info. */
 @Component({
   selector: SONG_TEXT_COMPONENT_NAME,
   templateUrl: './song-text.component.html',
