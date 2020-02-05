@@ -334,4 +334,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     signIn: 'sign in',
     toAddSongs: 'to add songs.',
   },
+  browserStateService: {
+    noSleepModeIsOff: 'NoSleep mode is OFF.',
+    noSleepModeIsOn: 'NoSleep mode is ON.',
+  },
 };

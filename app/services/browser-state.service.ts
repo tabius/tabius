@@ -6,6 +6,7 @@ import {skip} from 'rxjs/operators';
 import * as NoSleep from 'nosleep.js/dist/NoSleep';
 import {Router} from '@angular/router';
 import {MOUNT_PRINT_SUFFIX} from '@common/mounts';
+import {I18N} from '@app/app-i18n';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class BrowserStateService {
   readonly isServer;
 
   private readonly noSleep = new NoSleep();
+  private readonly i18n = I18N.browserStateService;
 
   private readonly noSleepMode$ = new BehaviorSubject<boolean>(false);
 
@@ -29,9 +31,7 @@ export class BrowserStateService {
     this.isBrowser = isPlatformBrowser(platformId);
     this.isServer = !this.isBrowser;
     this.noSleepMode$.pipe(skip(1)).subscribe(mode => {
-      const msg = mode
-          ? 'Включена блокировка сна.\nТеперь экран будет всегда включён.'
-          : 'Блокировка сна отключена.\nИспользуется режим по умолчанию.';
+      const msg = mode ? this.i18n.noSleepModeIsOn : this.i18n.noSleepModeIsOff;
       toaster.show(msg, 'info');
     });
 

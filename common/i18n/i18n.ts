@@ -320,4 +320,8 @@ export interface I18n {
     signIn: string;
     toAddSongs: string;
   };
+  browserStateService: {
+    noSleepModeIsOn: string;
+    noSleepModeIsOff: string;
+  };
 }

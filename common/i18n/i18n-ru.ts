@@ -332,4 +332,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     signIn: 'войдите',
     toAddSongs: ', чтобы добавлять свои песни.',
   },
+  browserStateService: {
+    noSleepModeIsOff: 'Блокировка сна отключена.\nИспользуется режим по умолчанию.',
+    noSleepModeIsOn: 'Включена блокировка сна.\nТеперь экран будет всегда включён.',
+  },
 };
