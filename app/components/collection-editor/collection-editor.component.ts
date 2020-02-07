@@ -22,14 +22,8 @@ export class CollectionEditorComponent implements OnInit {
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
-  @ViewChild('editorBlock', {
-    static: false,
-    read: ElementRef
-  }) private editorBlockRef!: ElementRef;
-  @ViewChild('collectionNameInput', {
-    static: false,
-    read: ElementRef
-  }) private collectionNameInputRef!: ElementRef;
+  @ViewChild('editorBlock', {static: false, read: ElementRef}) private editorBlockRef!: ElementRef;
+  @ViewChild('collectionNameInput', {static: false, read: ElementRef}) private collectionNameInputRef!: ElementRef;
 
   readonly i18n = I18N.collectionEditor;
 

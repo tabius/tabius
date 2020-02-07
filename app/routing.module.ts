@@ -46,6 +46,7 @@ const routerOptions: ExtraOptions = {
 };
 
 //TODO: Re-check this solution or fix CollectionPageComponent to handle route update from itself.
+@Injectable()
 export class TabiusRouteReuseStrategy extends RouteReuseStrategy {
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
     return future.routeConfig === curr.routeConfig && JSON.stringify(future.params) === JSON.stringify(curr.params);
