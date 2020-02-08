@@ -1,4 +1,3 @@
-import {enableProdMode} from '@angular/core';
 import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
@@ -6,8 +5,6 @@ import * as session from 'express-session';
 import {SERVER_CONFIG} from '@server/server-config';
 
 const cookieParser = require('cookie-parser');
-
-enableProdMode();
 
 // @ts-ignore
 global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
