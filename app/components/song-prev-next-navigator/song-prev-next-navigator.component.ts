@@ -10,7 +10,7 @@ import {Collection, Song} from '@common/catalog-model';
 import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
 
-const Hammer: HammerStatic = require('hammerjs');
+import * as Hammer from 'hammerjs';
 
 @Component({
   selector: 'gt-song-prev-next-navigator',
