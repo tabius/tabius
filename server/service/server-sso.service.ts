@@ -2,14 +2,13 @@ import {CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, Lo
 import {Observable} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import {Response} from 'express';
-
 import {Db, MongoClient, MongoClientOptions} from 'mongodb';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
 import {isValidId} from '@common/util/misc-utils';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {map} from 'rxjs/operators';
+import * as cookieParser from 'cookie-parser';
 import {SERVER_CONFIG} from '@server/server-config';
-import cookieParser = require('cookie-parser');
 
 const USER_SESSION_KEY = 'user';
 
