@@ -29,7 +29,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   chordLayouts: ChordLayout[] = [];
 
   private songSettings = newDefaultUserSongSettings(0);
-  private h4Si = false;
+  h4Si = false;
   private content = '';
 
   private readonly songId$ = new ReplaySubject<number>(1);

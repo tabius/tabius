@@ -3,7 +3,7 @@
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
-<div *ngIf="loaded" itemscope itemtype="https://schema.org/MusicRecording">
+<div *ngIf="loaded && song && songDetails" itemscope itemtype="https://schema.org/MusicRecording">
     <meta itemprop="name" [content]="song.title"/>
     <div itemprop="byArtist" itemscope [attr.itemtype]="schemaItemArtistType" *ngIf="!!schemaItemArtistType">
         <meta itemprop="name" [content]="schemaItemArtistName"/>

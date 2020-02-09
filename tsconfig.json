@@ -18,6 +18,10 @@
       "@common/*": ["./common/*"],
       "@server/*": ["./server/*"]
     },
-    "lib": ["es2017", "dom", "es2018.promise"]
+    "lib": ["es2018", "dom"]
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
   }
 }

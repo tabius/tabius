@@ -55,7 +55,7 @@ export class ShowChordPopoverOnClickDirective implements OnDestroy {
     }
   }
 
-  @HostListener('document:keydown', ['$event'])
+  @HostListener('document:keydown')
   onKeydown(): void {
     this.closeChordPopover();
   }

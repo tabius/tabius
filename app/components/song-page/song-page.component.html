@@ -18,7 +18,7 @@
             <gt-collection-breadcrumb [collection]="activeCollection"></gt-collection-breadcrumb>
         </div>
 
-        <gt-song [songId]="song.id" [activeCollectionId]="activeCollection.id"></gt-song>
+        <gt-song [songId]="song.id" [activeCollectionId]="activeCollection?.id"></gt-song>
 
         <div class="user-controls">
             <gt-add-song-to-collection *ngIf="isBrowser" [song]="song"></gt-add-song-to-collection>
@@ -57,7 +57,7 @@
 
         <gt-song-prev-next-navigator *ngIf="isBrowser && !editorIsOpen"
                                      [songId]="song.id"
-                                     [activeCollectionId]="activeCollection.id"
+                                     [activeCollectionId]="activeCollection?.id"
         ></gt-song-prev-next-navigator>
     </div>
 </div>

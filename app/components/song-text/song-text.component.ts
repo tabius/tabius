@@ -46,7 +46,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   private deviceSettings: UserDeviceSettings = newDefaultUserDeviceSettings();
   private songSettings = newDefaultUserSongSettings(0);
-  private h4Si?: boolean;
+  h4Si?: boolean;
   private songFontSize?: number;
   private availableWidth = 0;
 
@@ -81,6 +81,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
               this.updateSongStyle();
             }));
 
+    //TODO: replace taps with subscriptions!
     //todo: handle song text update too
     const settings$ = this.uds.getUserSongSettings(this.song.id)
         .pipe(
