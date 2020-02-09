@@ -1,3 +1,5 @@
+import {readFileSync} from 'fs';
+
 export interface TabiusServerConfig {
   /**  e.g. 'tabius.ru' . */
   serverHost: string;
@@ -16,7 +18,8 @@ export interface TabiusServerConfig {
   lang: string;
 }
 
-const CONFIG_FROM_FILE = require(getConfigFilePath('server-config.json'));
+const serverConfigAsString = readFileSync(getConfigFilePath('server-config.json')).toString();
+const CONFIG_FROM_FILE: TabiusServerConfig = JSON.parse(serverConfigAsString) as TabiusServerConfig;
 
 export const SERVER_CONFIG: Readonly<TabiusServerConfig> = {
   serverPort: 4001,

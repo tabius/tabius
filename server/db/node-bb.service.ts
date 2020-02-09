@@ -4,10 +4,12 @@ import {promisify} from 'util';
 
 import {del} from 'request';
 import {getConfigFilePath} from '@server/server-config';
+import {readFileSync} from 'fs';
 
 const [delAsync] = [del].map(promisify);
 
-const nodeBBConfig: NodeBBConfig = require(getConfigFilePath('nodebb-config.json'));
+const nodeBBConfigAsString = readFileSync(getConfigFilePath('nodebb-config.json')).toString();
+const nodeBBConfig: NodeBBConfig = JSON.parse(nodeBBConfigAsString) as NodeBBConfig;
 
 interface NodeBBConfig {
   writeApi: {
