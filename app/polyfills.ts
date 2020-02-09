@@ -21,22 +21,22 @@
 /** IE9, IE10, IE11, and Chrome <55 requires all of the following polyfills.
  *  This also includes Android Emulators with older versions of Chrome and Google Search/Googlebot
  */
-// import 'core-js/es/symbol';
-// import 'core-js/es/object';
-// import 'core-js/es/function';
-// import 'core-js/es/parse-int';
-// import 'core-js/es/parse-float';
-// import 'core-js/es/number';
-// import 'core-js/es/math';
-// import 'core-js/es/string';
-// import 'core-js/es/date';
-// import 'core-js/es/array';
-// import 'core-js/es/regexp';
-// import 'core-js/es/map';
-// import 'core-js/es/weak-map';
-// import 'core-js/es/set';
+import 'core-js/es/symbol';
+import 'core-js/es/object';
+import 'core-js/es/function';
+import 'core-js/es/parse-int';
+import 'core-js/es/parse-float';
+import 'core-js/es/number';
+import 'core-js/es/math';
+import 'core-js/es/string';
+import 'core-js/es/date';
+import 'core-js/es/array';
+import 'core-js/es/regexp';
+import 'core-js/es/map';
+import 'core-js/es/weak-map';
+import 'core-js/es/set';
 /** IE10 and IE11 requires the following for NgClass support on SVG elements */
-// import 'classlist.js'; // Run `npm install --save classlist.js`.
+import 'classlist.js'; // Run `npm install --save classlist.js`.
 /***************************************************************************************************
  * Zone JS is required by default for Angular itself.
  */
@@ -45,7 +45,7 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 /** IE10 and IE11 requires the following for external source of SVG when using <use> tag */
-// import * as svg4everybody from 'svg4everybody';
+import * as svg4everybody from 'svg4everybody';
 
 /** IE10 and IE11 requires the following for the Reflect API. */
 // import 'core-js/proposals/reflect-metadata'
@@ -80,4 +80,4 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
  *  (window as any).__Zone_enable_cross_context_check = true;
  *
  */
-// svg4everybody({ polyfill: true });
+svg4everybody({ polyfill: true });

@@ -15,10 +15,8 @@ export class SongVideoComponent implements OnChanges {
 
   onLine = true;
   youtubeId?: string;
-  isBrowser = true;
 
   constructor(private readonly bss: BrowserStateService) {
-    this.isBrowser = bss.isBrowser
   }
 
   ngOnChanges(): void {

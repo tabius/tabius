@@ -1,6 +1,5 @@
 <div *ngIf="youtubeId && onLine" class="youtube-video">
-    <iframe *ngIf="isBrowser"
-            [src]="'https://www.youtube.com/embed/'+youtubeId | safeResourceUrl"
+    <iframe [src]="'https://www.youtube.com/embed/'+youtubeId | safeResourceUrl"
             [title]="title"
             allowfullscreen="allowfullscreen"
     ></iframe>
