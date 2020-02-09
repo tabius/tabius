@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "es2015"
+  },
+  "exclude": [
+    "./server/*",
+    "./**/*.d.ts",
+    "./**/*.spec.ts",
+    "./app/environments/environment.prod-org.ts",
+    "./app/environments/environment.prod-ru.ts",
+    "./app/app.ssr.module.ts",
+    "./app/main.ssr.ts",
+    "./app/test.ts"
+  ]
+}

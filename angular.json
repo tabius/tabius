@@ -21,7 +21,7 @@
             "index": "app/index.html",
             "main": "app/main.ts",
             "polyfills": "app/polyfills.ts",
-            "tsConfig": "app/tsconfig.json",
+            "tsConfig": "tsconfig.app.json",
             "extractCss": true,
             "assets": [
               {
@@ -95,7 +95,7 @@
           "options": {
             "outputPath": "dist/server",
             "main": "app/main.ssr.ts",
-            "tsConfig": "app/tsconfig.ssr.json"
+            "tsConfig": "tsconfig.ssr.json"
           },
           "configurations": {
             "tabius-ru": {
@@ -121,7 +121,7 @@
           "options": {
             "main": "app/test.ts",
             "polyfills": "app/polyfills.ts",
-            "tsConfig": "app/tsconfig.spec.json",
+            "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "app/karma.conf.js",
             "scripts": []
           }

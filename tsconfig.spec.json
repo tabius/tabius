@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "jasmine",
+      "node"
+    ]
+  },
+  "files": [
+    "./app/test.ts",
+    "./app/polyfills.ts"
+  ],
+  "include": [
+    "./app/**/*.spec.ts",
+    "./common/**/*.spec.ts",
+    "./app/**/*.d.ts"
+  ],
+  "exclude": [
+    "./server/*"
+  ]
+}
