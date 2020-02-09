@@ -254,3 +254,14 @@ export function findParentOrSelfWithClass(el: Element|undefined|null, className:
   }
   return findParentOrSelfWithClass(el.parentElement, className);
 }
+
+/** Returns true if userAgent string is bot. */
+export function isBotUserAgent(userAgent: string|undefined): boolean {
+  return !!userAgent && /bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(userAgent);
+}
+
+export function getUserAgentFromRequest(request: any): string|undefined {
+  return request && request.headers ? request.headers ['user-agent'] : undefined;
+}
+
+

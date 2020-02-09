@@ -1,4 +1,4 @@
-ncu <!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
@@ -18,17 +18,24 @@ ncu <!doctype html>
 <gt-app></gt-app>
 <noscript>You need to enable JavaScript to run this app.</noscript>
 
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40064729-27"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
+  var forceEnableGa = window && window.location && window.location.href.includes('gaScript=on') || false;
+  var enabled = forceEnableGa || !/bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(navigator.userAgent);
+  if (enabled) {
+    var gaScript = document.createElement('script');
+    gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=UA-40064729-27';
+    gaScript.async = true;
+    document.body.appendChild(gaScript);
 
-  function gtag() {
-    dataLayer.push(arguments);
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-40064729-27');
   }
-
-  gtag('js', new Date());
-  gtag('config', 'UA-40064729-27');
 </script>
 
 <!-- IE11 'preload' polyfill -->

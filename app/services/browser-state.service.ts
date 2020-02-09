@@ -7,6 +7,7 @@ import * as NoSleep from 'nosleep.js/dist/NoSleep';
 import {Router} from '@angular/router';
 import {MOUNT_PRINT_SUFFIX} from '@common/mounts';
 import {I18N} from '@app/app-i18n';
+import {getUserAgentFromRequest} from '@common/util/misc-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -74,5 +75,9 @@ export class BrowserStateService {
 
   getPrintMode(): Observable<boolean> {
     return this.printMode$;
+  }
+
+  getUserAgentString(request: any): string|undefined {
+    return this.isBrowser ? navigator && navigator.userAgent : getUserAgentFromRequest(request);
   }
 }
