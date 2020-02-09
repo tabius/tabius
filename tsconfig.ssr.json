@@ -2,10 +2,16 @@
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "module": "commonjs",
-    "types": ["node"]
+    "types": [
+      "node",
+      "hammerjs"
+    ]
   },
   "angularCompilerOptions": {
     "entryModule": "app/app.ssr.module#AppServerModule"
   },
-  "files": ["app/main.ssr.ts", "app/polyfills.ts"]
+  "files": [
+    "app/main.ssr.ts",
+    "app/polyfills.ts"
+  ]
 }

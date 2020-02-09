@@ -1,7 +1,13 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext"
+    "module": "ESNext",
+    "types": [
+      "hammerjs"
+    ]
   },
-  "files": ["app/main.ts", "app/polyfills.ts"]
+  "files": [
+    "app/main.ts",
+    "app/polyfills.ts"
+  ]
 }
