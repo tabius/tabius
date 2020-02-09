@@ -12,7 +12,7 @@ server {
         proxy_hide_header X-Powered-By;
 
         if ($request_uri ~* \.(css|js|jpg|jpeg|png|gif|svg)$) {
-            expires 28d;
+            expires max;
         }
     }
 
@@ -39,7 +39,7 @@ server {
     # Build artifacts in root folder
     location ~* .(png|ico|gif|jpg|jpeg|css|js|map)$ {
         root /opt/tabius-org/browser;
-        expires 28d;
+        expires max;
     }
 
     #    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
