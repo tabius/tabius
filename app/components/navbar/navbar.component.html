@@ -67,7 +67,7 @@
             </a>
         </div>
 
-        <div *ngIf="contextMenuAction" (click)="contextMenuAction.activate()" class="item">
+        <div *ngIf="contextMenuAction" (click)="activateContextMenuAction()" class="item">
             <gt-svg-icon [icon]="contextMenuAction.icon"></gt-svg-icon>
         </div>
 

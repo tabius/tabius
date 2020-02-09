@@ -126,4 +126,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   toggleNoSleep(): void {
     this.bss.toggleNoSleepMode();
   }
+
+  activateContextMenuAction(): void {
+    if (this.contextMenuAction) {
+      this.contextMenuAction.activate();
+    }
+  }
 }

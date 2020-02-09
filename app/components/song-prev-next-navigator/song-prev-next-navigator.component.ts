@@ -28,9 +28,9 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   @Input() songId?: number;
   @Input() activeCollectionId!: number;
 
-  prevLink?: string;
+  prevLink = '';
   prevLinkIsCollection = false;
-  nextLink?: string;
+  nextLink = '';
   nextLinkIsCollection = false;
 
   isInitializing = true;
