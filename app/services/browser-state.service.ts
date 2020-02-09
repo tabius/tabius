@@ -16,12 +16,13 @@ export class BrowserStateService {
   readonly isBrowser;
   readonly isServer;
 
-  private readonly noSleep = new NoSleep();
   private readonly i18n = I18N.browserStateService;
 
   private readonly noSleepMode$ = new BehaviorSubject<boolean>(false);
 
   private readonly printMode$ = new BehaviorSubject<boolean>(false);
+
+  private noSleep?: NoSleep;
 
   constructor(
       @Inject(PLATFORM_ID) readonly platformId: Object,
@@ -58,6 +59,9 @@ export class BrowserStateService {
   toggleNoSleepMode(): void {
     if (!this.isBrowser) {
       return;
+    }
+    if (!this.noSleep) {
+      this.noSleep = new NoSleep();
     }
     const nextState = !this.noSleepMode$.getValue();
     if (nextState) {
