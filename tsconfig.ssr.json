@@ -4,15 +4,7 @@
     "module": "commonjs"
   },
   "angularCompilerOptions": {
-    "entryModule": "./app/app.ssr.module#AppServerModule"
+    "entryModule": "app/app.ssr.module#AppServerModule"
   },
-  "exclude": [
-    "./server/*",
-    "./**/*.d.ts",
-    "./**/*.spec.ts",
-    "./app/environments/environment.prod-org.ts",
-    "./app/environments/environment.prod-ru.ts",
-    "./app/main.ts",
-    "./app/test.ts"
-  ]
+  "files": ["app/main.ssr.ts", "app/polyfills.ts"]
 }

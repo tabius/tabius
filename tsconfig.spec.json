@@ -15,8 +15,5 @@
     "./app/**/*.spec.ts",
     "./common/**/*.spec.ts",
     "./app/**/*.d.ts"
-  ],
-  "exclude": [
-    "./server/*"
   ]
 }
