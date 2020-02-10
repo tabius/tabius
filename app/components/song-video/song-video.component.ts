@@ -15,22 +15,31 @@ export class SongVideoComponent implements OnChanges {
   @Input() title: string|null = null;
   @Input() mediaLinks?: string[];
 
-  onLine = true;
   youtubeId?: string;
-  isBot = false;
+
+  /** Frame is always shown when we have a valid video. This helps to reduce flickering from the re-layout. */
+  isFrameVisible = true;
+
+  /** Video load is not allowed in SSR response. Reason: it will be re-drawn by the client version. */
+  isVideoLoadAllowed = true;
+
+  private readonly isBot: boolean;
 
   constructor(
       private readonly bss: BrowserStateService,
       @Optional() @Inject(REQUEST) private request: any,
   ) {
     this.isBot = isBotUserAgent(this.bss.getUserAgentString(request));
+    this.updateVisibleFlag();
   }
 
   ngOnChanges(): void {
-    this.onLine = this.bss.isOnline();
-    if (this.mediaLinks) {
-      this.youtubeId = getFirstYoutubeVideoIdFromLinks(this.mediaLinks);
-    }
+    this.youtubeId = getFirstYoutubeVideoIdFromLinks(this.mediaLinks);
+    this.updateVisibleFlag();
   }
 
+  private updateVisibleFlag(): void {
+    this.isFrameVisible = !!this.youtubeId && !this.isBot && this.bss.isOnline();
+    this.isVideoLoadAllowed = this.isFrameVisible && this.bss.isBrowser;
+  }
 }
