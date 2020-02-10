@@ -1,6 +1,8 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, Input, OnChanges, Optional} from '@angular/core';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
+import {isBotUserAgent} from '@common/util/misc-utils';
+import {REQUEST} from '@nguniversal/express-engine/tokens';
 
 @Component({
   selector: 'gt-song-video',
@@ -15,8 +17,13 @@ export class SongVideoComponent implements OnChanges {
 
   onLine = true;
   youtubeId?: string;
+  isBot = false;
 
-  constructor(private readonly bss: BrowserStateService) {
+  constructor(
+      private readonly bss: BrowserStateService,
+      @Optional() @Inject(REQUEST) private request: any,
+  ) {
+    this.isBot = isBotUserAgent(this.bss.getUserAgentString(request));
   }
 
   ngOnChanges(): void {

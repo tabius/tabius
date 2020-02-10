@@ -1,4 +1,4 @@
-<div *ngIf="youtubeId && onLine" class="youtube-video">
+<div *ngIf="youtubeId && onLine && !isBot" class="youtube-video">
     <iframe [src]="'https://www.youtube.com/embed/'+youtubeId | safeResourceUrl"
             [title]="title"
             allowfullscreen="allowfullscreen"
