@@ -3,8 +3,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "types": [
-      "node",
-      "hammerjs"
+      "node"
     ]
   },
   "angularCompilerOptions": {
@@ -12,6 +11,6 @@
   },
   "files": [
     "app/main.ssr.ts",
-    "app/polyfills.ts"
+    "server.ts"
   ]
 }

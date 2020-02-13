@@ -42,7 +42,7 @@
             "scripts": []
           },
           "configurations": {
-            "tabius-ru": {
+            "ru": {
               "fileReplacements": [
                 {
                   "replace": "app/environments/environment.ts",
@@ -57,7 +57,7 @@
               "serviceWorker": true,
               "sourceMap": true
             },
-            "tabius-org": {
+            "org": {
               "index": "app/index-org.html",
               "fileReplacements": [
                 {
@@ -82,23 +82,23 @@
             "port": 4201
           },
           "configurations": {
-            "tabius-ru": {
-              "browserTarget": "tabius:build:tabius-ru"
+            "ru": {
+              "browserTarget": "tabius:build:ru"
             },
-            "tabius-org": {
-              "browserTarget": "tabius:build:tabius-org"
+            "org": {
+              "browserTarget": "tabius:build:org"
             }
           }
         },
-        "ssr": {
+        "server": {
           "builder": "@angular-devkit/build-angular:server",
           "options": {
             "outputPath": "dist/server",
-            "main": "app/main.ssr.ts",
+            "main": "server.ts",
             "tsConfig": "tsconfig.ssr.json"
           },
           "configurations": {
-            "tabius-ru": {
+            "ru": {
               "fileReplacements": [
                 {
                   "replace": "app/environments/environment.ts",
@@ -106,7 +106,7 @@
                 }
               ]
             },
-            "tabius-org": {
+            "org": {
               "fileReplacements": [
                 {
                   "replace": "app/environments/environment.ts",
@@ -116,43 +116,11 @@
             }
           }
         },
-        "server9": {
-          "builder": "@angular-devkit/build-angular:server",
-          "options": {
-            "outputPath": "dist/server",
-            "main": "server.ts",
-            "tsConfig": "tsconfig.ssr.json",
-            "externalDependencies": [
-              "@nestjs/microservices",
-              "@nestjs/microservices/microservices-module",
-              "@nestjs/websockets",
-              "@nestjs/websockets/socket-module",
-              "cache-manager"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "outputHashing": "media",
-              "fileReplacements": [
-                {
-                  "replace": "app/environments/environment.ts",
-                  "with": "app/environments/environment.prod-ru.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve-ssr9": {
+        "serve-ssr": {
           "builder": "@nguniversal/builders:ssr-dev-server",
           "options": {
             "browserTarget": "tabius:build",
-            "serverTarget": "tabius:server9"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "tabius:build:production",
-              "serverTarget": "tabius:server9:production"
-            }
+            "serverTarget": "tabius:server"
           }
         },
         "test": {

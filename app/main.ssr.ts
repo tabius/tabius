@@ -1,10 +1,33 @@
+import * as domino from 'domino';
 import {enableProdMode} from '@angular/core';
-// import {environment} from '@app/environments/environment';
+import {environment} from '@app/environments/environment';
 
-// if (environment.production) {
-enableProdMode();
-// }
+applyDomino();
 
-export {ngExpressEngine} from '@nguniversal/express-engine';
-export {provideModuleMap} from '@nguniversal/module-map-ngfactory-loader';
+if (environment.production) {
+  enableProdMode();
+}
+
 export {AppServerModule} from './app.ssr.module';
+export {renderModule, renderModuleFactory} from '@angular/platform-server';
+
+function applyDomino(): void {
+  const win = domino.createWindow('<body></body>');
+
+  global['window'] = win;
+  Object.defineProperty(
+      win.document.body.style,
+      'transform',
+      {
+        value: () => ({
+          enumerable: true,
+          configurable: true,
+        })
+      },
+  );
+  global['document'] = win.document;
+  global['navigator'] = win.navigator;
+  global['CSS'] = null;
+  global['Prism'] = null;
+}
+
