@@ -6,6 +6,7 @@ server {
         return 301 $uri;
     }
 
+    # Angular Universal
     location / {
         proxy_pass http://127.0.0.1:4001;
         proxy_set_header Upgrade $http_upgrade;
@@ -19,6 +20,18 @@ server {
         if ($request_uri ~* \.(css|js|jpg|jpeg|png|gif|svg)$) {
             expires max;
         }
+    }
+
+    # NestJS
+    location /api {
+        proxy_pass http://127.0.0.1:4001/api;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # remove headers we do not want to expose
+        proxy_hide_header X-Powered-By;
     }
 
     location ^~ /images {
