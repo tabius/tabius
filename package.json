@@ -15,8 +15,8 @@
     "dev:ssr": "ng run tabius:serve-ssr",
     "serve:ssr": "node dist/server/main.js",
     "build:ssr": "npm run update-version && ng build && ng run tabius:server",
-    "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-org-index",
-    "build:ssr-ru": "npm run update-version && ng build -c ru && ng run tabius:server:ru"
+    "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-org-index  && ts-node scripts/inline-css.ts",
+    "build:ssr-ru": "npm run update-version && ng build -c ru && ng run tabius:server:ru && ts-node scripts/inline-css.ts"
   },
   "private": true,
   "dependencies": {
