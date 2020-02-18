@@ -3,11 +3,7 @@ import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
 import * as cookieParser from 'cookie-parser';
-import * as xmlhttprequest from 'xmlhttprequest';
 import {SERVER_CONFIG} from '@server/server-config';
-
-// @ts-ignore
-global.XMLHttpRequest = xmlhttprequest.XMLHttpRequest;
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerMainModule);
