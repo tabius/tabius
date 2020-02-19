@@ -34,9 +34,9 @@ export class CollectionDbi {
   constructor(private readonly db: DbService) {
   }
 
-  getAllCollections(listedOnly: boolean): Promise<Collection[]> {
+  getAllCollections(kind: 'listed-only'|'all'): Promise<Collection[]> {
     return this.db.pool.promise()
-        .query(SELECT_COLLECTION_SQL + (listedOnly ? ' WHERE listed = 1' : ''))
+        .query(SELECT_COLLECTION_SQL + (kind === 'listed-only' ? ' WHERE listed = 1' : ''))
         .then(([rows]: [CollectionRow[]]) => rows.map(row => rowToCollection(row)));
   }
 

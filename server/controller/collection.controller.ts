@@ -21,7 +21,7 @@ export class CollectionController {
   @Get('/all-listed')
   getAllListedCollections(): Promise<Collection[]> {
     this.logger.log('all-listed');
-    return this.collectionDbi.getAllCollections(true);
+    return this.collectionDbi.getAllCollections('listed-only');
   }
 
   /** Returns list of all user collections. */
