@@ -1,5 +1,5 @@
 import {I18n} from '@common/i18n/i18n';
-import {CollectionType, isBand, isCompilation} from '@common/catalog-model';
+import {CollectionType, isBand, isCompilation, isPerson} from '@common/catalog-model';
 import {User} from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Favorites';
@@ -9,6 +9,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
     and: 'and',
     error: (message: string) => `Error: ${message}`,
+    unexpectedError: 'Unexpected internal error!',
+    serverRequestError: 'Error connecting to server!',
+    failedToCreateCollection: 'Failed to create new collection!',
   },
   navbar: {
     catalog: 'CATALOG',
@@ -49,6 +52,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     addNewArtist: 'Add',
     addNewArtistTitle: 'Add new artist or collection to the catalog',
     searchResultsPrefix: 'Search results for',
+    listItemTitleSuffix: function (type: CollectionType): string {
+      return `go to the list of songs ${(isPerson(type) ? 'for the artist' : isBand(type) ? 'for the band' : 'in the collection')}`;
+    },
     meta: {
       title: 'Catalog: all artists and collections',
       description: 'Full list of all artists and collections on Tabius. Search songs by artist name, title and song.',
@@ -169,15 +175,15 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     newsLink: 'NEWS',
     catalogLink: 'CATALOG',
     studioLink: 'STUDIO',
-    interestingFacts: 'Facts about Tabius',
-    worksWithNoInternetFact: 'You don\'t need to be online to use Tabius! All songs opened when online are available offline.',
-    noAdsFact: 'We have no ads. Only links to the official media. This is our gratitude for authors.',
+    interestingFacts: 'About Tabius',
+    worksWithNoInternetFact: 'You do not need to be online to use Tabius! All songs opened when online are available offline.',
+    noAdsFact: 'We have no ads. Links to the official media and merch only. This is our gratitude for artists.',
     openSourceFact: {
       tabiusSourceCode: 'Tabius source code',
       isOpenOnGithub: 'is open on Github',
       useAndImprove: 'Help us to improve Tabius or use it for your own needs',
     },
-    forMusicLoversFact: 'This site is is free and open for everyone who loves music. It won\'t change',
+    forMusicLoversFact: 'This site is free and open for everyone who loves music. It won\'t change',
   },
   chordPopover: {
     discussionLink: 'improve »',

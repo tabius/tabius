@@ -1,5 +1,5 @@
 import {I18n} from '@common/i18n/i18n';
-import {CollectionType, isBand, isCompilation} from '@common/catalog-model';
+import {CollectionType, isBand, isCompilation, isPerson} from '@common/catalog-model';
 import {User} from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Избранное';
@@ -9,6 +9,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
     and: 'и',
     error: (message: string) => `Ошибка: ${message}`,
+    unexpectedError: 'Ошибка в работе приложения!',
+    serverRequestError: 'Ошибка при обращении к серверу!',
+    failedToCreateCollection: 'Не удалось создать коллекцию!',
   },
   navbar: {
     catalog: 'КАТАЛОГ',
@@ -49,11 +52,15 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     addNewArtist: 'Добавить',
     addNewArtistTitle: 'Добавить исполнителя или коллекцию в каталог',
     searchResultsPrefix: 'Результаты поиска для',
+    listItemTitleSuffix: function (type: CollectionType): string {
+      const typeName = isPerson(type) ? 'артиста' : isBand(type) ? 'группы' : ' коллекции';
+      return `перейти к списку песен ${typeName}`;
+    },
     meta: {
       title: 'Каталог: все исполнители и коллекции песен',
       description: 'Полный список всех исполнителей и коллекций на Tabius. Поиск песен и аккордов по тексту и исполнителю.',
       keywords: ['табы', 'аккорды', 'гитара', 'список артистов', 'поиск песни по тексту'],
-    },
+    }
   },
   chordImage: {
     chordsLayoutTitleSuffix: ', аппликатура аккорда',

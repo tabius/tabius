@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Collection, isBand, isPerson} from '@common/catalog-model';
+import {Collection} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {FormControl} from '@angular/forms';
 import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
@@ -194,12 +194,11 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
 }
 
 function createListItemFromCollection(collection: Collection): CollectionListItem {
-  const type = isPerson(collection.type) ? 'артиста' : isBand(collection.type) ? 'группы' : ' коллекции';
   return {
     ...collection,
     lcName: collection.name.toLocaleLowerCase(),
     link: getCollectionPageLink(collection),
-    titleAttribute: `${collection.name} — перейти к списку песен ${type}`,
+    titleAttribute: `${collection.name} — ${this.i18n.listItemTitleSuffix(collection.type)}`,
   };
 }
 

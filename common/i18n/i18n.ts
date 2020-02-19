@@ -14,6 +14,9 @@ export interface I18n {
     favoritesCollectionName: string;
     and: string;
     error: (message: string) => string;
+    unexpectedError: string;
+    serverRequestError: string;
+    failedToCreateCollection: string;
   };
   navbar: {
     catalog: string;
@@ -54,6 +57,7 @@ export interface I18n {
     addNewArtist: string;
     addNewArtistTitle: string;
     searchResultsPrefix: string;
+    listItemTitleSuffix: (type: CollectionType) => string;
     meta: {
       title: string;
       description: string;

@@ -10,6 +10,7 @@ import {combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, wa
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion} from '@app/store/check-update-functions';
+import {I18N} from '@app/app-i18n';
 
 const COLLECTION_LIST_KEY = 'catalog';
 const COLLECTION_KEY_PREFIX = 'c-';
@@ -167,7 +168,7 @@ export class CatalogService {
       return response.song;
     } catch (httpError) {
       console.error(httpError);
-      throw new Error('Ошибка при обращении к серверу.');
+      throw new Error(I18N.common.serverRequestError);
     }
   }
 
@@ -178,7 +179,7 @@ export class CatalogService {
       await this.processSongUpdateResponse(response);
     } catch (httpError) {
       console.error(httpError);
-      throw new Error('Ошибка при обращении к серверу.');
+      throw new Error(I18N.common.serverRequestError);
     }
   }
 
@@ -216,7 +217,7 @@ export class CatalogService {
     ]);
     const collection = response.collections.find(collection => collection.id === response.collectionId);
     if (!collection) {
-      throw new Error('Не удалось создать коллекцию!');
+      throw new Error(I18N.common.failedToCreateCollection);
     }
     return collection;
   }
@@ -226,7 +227,7 @@ export class CatalogService {
     await this.updateUserCollections(userId, response.collections);
     const collection = response.collections.find(collection => collection.id === response.collectionId);
     if (!collection) {
-      throw new Error('Не удалось создать коллекцию!');
+      throw new Error(I18N.common.failedToCreateCollection);
     }
     return collection;
   }
@@ -298,7 +299,7 @@ export class CatalogService {
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
-      throw new Error('Ошибка при обращении к серверу.');
+      throw new Error(I18N.common.serverRequestError);
     }
   }
 
@@ -310,7 +311,7 @@ export class CatalogService {
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
-      throw new Error('Ошибка при обращении к серверу.');
+      throw new Error(I18N.common.serverRequestError);
     }
   }
 

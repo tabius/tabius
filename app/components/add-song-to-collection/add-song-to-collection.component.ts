@@ -8,7 +8,6 @@ import {combineLatest0, getCollectionPageLink, trackById} from '@common/util/mis
 import {User} from '@common/user-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, Song} from '@common/catalog-model';
-import {MSG_UNEXPECTED_ERROR} from '@common/messages';
 import {I18N} from '@app/app-i18n';
 
 interface ComponentCollectionData extends Collection {
@@ -96,7 +95,7 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
       }
     } catch (err) {
       console.error(err);
-      this.toastService.warning(err, MSG_UNEXPECTED_ERROR);
+      this.toastService.warning(err, I18N.common.unexpectedError);
       //todo: this code unsafe, checkbox may not exist!
       const updatedCollection = this.collections.find(c => c.id == collection.id);
       checkboxElement.checked = updatedCollection && updatedCollection.isSongInCollection;

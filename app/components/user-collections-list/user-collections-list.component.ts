@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
 import {CreateUserCollectionRequest} from '@common/ajax-model';
-import {MSG_UNEXPECTED_ERROR} from '@common/messages';
 import {CatalogService} from '@app/services/catalog.service';
 import {UserService} from '@app/services/user.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
@@ -83,6 +82,6 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
       name: this.newCollectionName,
     };
     this.cds.createUserCollection(this.userId, request)
-        .catch(err => this.toastService.warning(err, MSG_UNEXPECTED_ERROR));
+        .catch(err => this.toastService.warning(err, I18N.common.unexpectedError));
   }
 }
