@@ -198,7 +198,7 @@ function createListItemFromCollection(collection: Collection): CollectionListIte
     ...collection,
     lcName: collection.name.toLocaleLowerCase(),
     link: getCollectionPageLink(collection),
-    titleAttribute: `${collection.name} — ${this.i18n.listItemTitleSuffix(collection.type)}`,
+    titleAttribute: `${collection.name} — ${I18N.catalogPage.listItemTitleSuffix(collection.type)}`,
   };
 }
 
