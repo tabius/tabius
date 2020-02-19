@@ -114,6 +114,7 @@ export class ServerSsoService implements NestInterceptor {
           this.logger.warn(`User primary collection is missed! Re-creating: ${user.email}`);
           const collectionId = await this.collectionDbi.createPrimaryUserCollection({...user, collectionId: INVALID_ID});
           user = {...user, collectionId};
+          await this.userDbi.updateUserCollection(user);
         }
       }
       (req.session)[USER_SESSION_KEY] = user;

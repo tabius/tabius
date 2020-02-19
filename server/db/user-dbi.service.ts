@@ -46,8 +46,8 @@ export class UserDbi {
         .query('SELECT settings FROM user WHERE id = ?', [userId])
         .then(([rows]: [{ settings: string }[]]) =>
             rows.length === 0 || rows[0].settings.length === 0
-                ? undefined
-                : {...newDefaultUserSettings(), ...JSON.parse(rows[0].settings)}
+            ? undefined
+            : {...newDefaultUserSettings(), ...JSON.parse(rows[0].settings)}
         );
   }
 
@@ -55,5 +55,11 @@ export class UserDbi {
     return this.db.pool.promise()
         .query('SELECT collection_id FROM user WHERE id = ?', [userId])
         .then(([rows]) => rows.length === 0 ? undefined : rows[0]['collection_id']);
+  }
+
+  updateUserCollection(user: User): Promise<void> {
+    return this.db.pool.promise()
+        .query('UPDATE user SET collection_id = ? WHERE id = ?',
+            [user.collectionId, user.id]);
   }
 }
