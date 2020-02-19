@@ -9,6 +9,7 @@ import {UserDbi} from '@server/db/user-dbi.service';
 import {map} from 'rxjs/operators';
 import * as cookieParser from 'cookie-parser';
 import {SERVER_CONFIG} from '@server/server-config';
+import {INVALID_ID} from '@common/common-constants';
 
 const USER_SESSION_KEY = 'user';
 
@@ -96,6 +97,7 @@ export class ServerSsoService implements NestInterceptor {
     }
     if (user) {
       const userInSession = (req.session)[USER_SESSION_KEY];
+      const isUserSessionInit = !userInSession;
       if (userInSession && userInSession.id === user.id) {
         user = {...user, collectionId: userInSession.collectionId};
       } else {
@@ -105,6 +107,14 @@ export class ServerSsoService implements NestInterceptor {
         const collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
         user = {...user, collectionId};
         await this.userDbi.createUser(user);
+      } else if (isUserSessionInit) {
+        // Ensure primary user collection exists. This is old regression. Do it only during session init.
+        const collection = await this.collectionDbi.getCollectionById(user.collectionId);
+        if (!collection) {
+          this.logger.warn(`User primary collection is missed! Re-creating: ${user.email}`);
+          const collectionId = await this.collectionDbi.createPrimaryUserCollection({...user, collectionId: INVALID_ID});
+          user = {...user, collectionId};
+        }
       }
       (req.session)[USER_SESSION_KEY] = user;
     } else {
