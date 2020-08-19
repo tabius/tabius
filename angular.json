@@ -23,6 +23,7 @@
             "polyfills": "app/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "extractCss": true,
+            "allowedCommonJsDependencies": ["hammerjs"],
             "assets": [
               {
                 "glob": "**/*",
