@@ -12,11 +12,11 @@ export {AppServerModule} from './app.ssr.module';
 export {renderModule, renderModuleFactory} from '@angular/platform-server';
 
 function applyDomino(): void {
-  const win = domino.createWindow('<body></body>');
+  const dominoWindow = domino.createWindow('<body></body>');
 
-  global['window'] = win;
+  global['window'] = dominoWindow as Window&typeof globalThis;
   Object.defineProperty(
-      win.document.body.style,
+      dominoWindow.document.body.style,
       'transform',
       {
         value: () => ({
@@ -25,9 +25,9 @@ function applyDomino(): void {
         })
       },
   );
-  global['document'] = win.document;
-  global['navigator'] = win.navigator;
-  global['CSS'] = null;
+  global['document'] = dominoWindow.document;
+  global['navigator'] = dominoWindow.navigator;
+  global['CSS'] = {escape: (value) => value, supports: () => false};
   global['Prism'] = null;
 }
 
