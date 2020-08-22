@@ -152,10 +152,6 @@ function addToRawTypesByFirstChar(rawType): void {
 function getRawTypeVariations(originalVariant: string): string[] {
   const derivedVariants: string[] = [];
 
-  if (originalVariant.includes('+')) {
-    derivedVariants.push(originalVariant.replace('+', '♯'));
-  }
-
   if (originalVariant.includes('dim')) {
     derivedVariants.push(originalVariant.replace('dim', '°'));
   }

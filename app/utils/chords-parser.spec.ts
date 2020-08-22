@@ -45,7 +45,8 @@ describe('Chords parser, parseChord', () => {
   });
 
   it('should recognize chords with raw type variation chars', () => {
-    expect(parseChord('A♯')).toEqual({chord: c('A', 'aug'), startIdx: 0, endIdx: 2});
+    expect(parseChord('A♯')).toEqual({chord: c('A#', 'maj'), startIdx: 0, endIdx: 2});
+    expect(parseChord('A♭m')).toEqual({chord: c('Ab', 'min'), startIdx: 0, endIdx: 3});
     expect(parseChord('AΔ')).toEqual({chord: c('A', 'maj'), startIdx: 0, endIdx: 2});
     expect(parseChord('A°')).toEqual({chord: c('A', 'dim'), startIdx: 0, endIdx: 2});
   });

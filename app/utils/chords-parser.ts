@@ -142,8 +142,8 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
   // loop until inside a chord.
   while (idx < maxIdx) {
     const c = text.charAt(idx);
-    if (chord.tone.length === 1 && c === '#' || c === 'b') {
-      chord.tone += c;
+    if (chord.tone.length === 1 && c === '#' || c == '♯' || c === 'b' || c === '♭') {
+      chord.tone += c === 'b' || c === '♭' ? 'b' : '#';
       idx++;
       continue;
     }
