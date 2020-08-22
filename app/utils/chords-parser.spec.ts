@@ -97,9 +97,18 @@ describe('Chords parser, parseChordsLine', () => {
   });
 
   it('should correctly filter string tabs', () => {
+    // Note: only first line must be parsed.
     expect(parseChordsLine('E--2-3--4-4\nC--3-3-2')).toEqual([]);
     expect(parseChordsLine('A|--2-3--4-4\nC|--3-3-2')).toEqual([]);
     expect(parseChordsLine('H  ||--------1----------1h3p-0--|-----1-------------------||')).toEqual([]);
+  });
+
+  it('should detect chords in string tabs when no string is provided', () => {
+    // Note: only first line must be parsed.
+    expect(parseChordsLine('--Am--Dm---\nC---G---')).toEqual([
+      {chord: c('A', 'min'), startIdx: 2, endIdx: 4},
+      {chord: c('D', 'min'), startIdx: 6, endIdx: 8},
+    ]);
   });
 
   it('should correctly detect tabs-like lines', () => {

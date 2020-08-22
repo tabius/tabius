@@ -33,8 +33,12 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     maxIdx = Math.min(maxIdx, text.length);
   }
 
+  let lineText = text;
   if (isTabsLine(text, minIdx, maxIdx)) {
-    return [];
+    if (!text.startsWith('-')) {
+      return [];
+    }
+    lineText = text.replace(/-/g, ' ');
   }
 
   let prevIsChordSep = true;
@@ -48,7 +52,7 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
       continue;
     }
     prevIsChordSep = isChordSep;
-    const chordLocation = parseChord(text, idx, maxIdx);
+    const chordLocation = parseChord(lineText, idx, maxIdx);
     if (chordLocation === undefined) {
       idx++;
       continue;
@@ -56,7 +60,7 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     chordLocations.push(chordLocation);
     idx += chordLocation.endIdx - chordLocation.startIdx;
   }
-  if (isMostlyNonChordsTextLine(chordLocations, text, minIdx, maxIdx)) {
+  if (isMostlyNonChordsTextLine(chordLocations, lineText, minIdx, maxIdx)) {
     return [];
   }
   return chordLocations;
