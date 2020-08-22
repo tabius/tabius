@@ -21,10 +21,14 @@ export interface TabiusServerConfig {
 const serverConfigAsString = readFileSync(getConfigFilePath('server-config.json')).toString();
 const CONFIG_FROM_FILE: TabiusServerConfig = JSON.parse(serverConfigAsString) as TabiusServerConfig;
 
-export const SERVER_CONFIG: Readonly<TabiusServerConfig> = {
+const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
   serverPort: 4001,
   corsOriginWhitelist: ['http://localhost:4001', 'http://localhost:4201'],
   sessionCookieName: 'tabius.sid',
+};
+
+export const SERVER_CONFIG: Readonly<TabiusServerConfig> = {
+  ...DEFAULT_CONFIG,
   ...CONFIG_FROM_FILE
 };
 
