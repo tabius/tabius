@@ -1,0 +1,26 @@
+{
+  "serverHost": "localhost",
+  "serverPort": 4001,
+  "resourcesDir": "/opt/tabius",
+  "corsOriginWhitelist": ["http://localhost:4002", "http://localhost:4201"],
+  "ssoConfig": {
+    "mode": "mock-user",
+    "id": "1",
+    "username": "test-user",
+    "email": "test-user@test-email.com",
+    "picture": "",
+    "groups": ["moderator"],
+    "collectionId": 1871
+  },
+  "dbConfig": {
+    "host": "localhost",
+    "user": "tabius",
+    "password": "secure-password",
+    "database": "tabius",
+    "waitForConnections": true,
+    "connectionLimit": 10,
+    "queueLimit": 0
+  },
+  "sphinxSongIndex": "tabius_ru_song_index",
+  "lang": "ru"
+}
