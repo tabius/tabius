@@ -50,7 +50,7 @@ server {
     }
 
     # Build artifacts in root folder
-    location ~* .(png|ico|gif|jpg|jpeg|css|js|map)$ {
+    location ~* \.(png|ico|gif|jpg|jpeg|css|js|map)$ {
         root /opt/tabius-org/browser;
         expires max;
     }
