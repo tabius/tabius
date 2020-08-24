@@ -26,7 +26,7 @@ export class ShowChordPopoverOnClickDirective implements OnDestroy {
   private popoverChordLayout?: ChordLayout;
 
   constructor(private readonly el: ElementRef,
-              private readonly popover: PopoverService,
+              private readonly popoverService: PopoverService,
   ) {
   }
 
@@ -44,7 +44,7 @@ export class ShowChordPopoverOnClickDirective implements OnDestroy {
       this.lastClickedChordElement = element;
       this.popoverChordLayout = getChordLayout(chord);
       this.gtChordPopoverOnClick_onChordLayoutChanged.emit(this.popoverChordLayout);
-      this.chordPopoverRef = this.popover.open(this.gtChordPopoverOnClick_popoverTemplate, element, {
+      this.chordPopoverRef = this.popoverService.open(this.gtChordPopoverOnClick_popoverTemplate, element, {
         data: element.innerText,
         backdropClass: 'c-popover-backdrop',
         panelClass: 'c-popover-panel',

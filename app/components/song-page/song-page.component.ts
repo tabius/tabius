@@ -1,9 +1,9 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {combineLatest, of} from 'rxjs';
-import {flatMap, take, takeUntil, throttleTime} from 'rxjs/operators';
+import {mergeMap, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
@@ -55,6 +55,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   songMountBeforeUpdate?: string;
   collectionMount?: string;
 
+  @ViewChild('gotoRandomSongPopoverTemplate', {static: true}) gotoRandomSongPopoverTemplate!: TemplateRef<{}>;
+
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               private readonly router: Router,
@@ -63,7 +65,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
               readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
-              private readonly ss: ShortcutsService,
+              private readonly shortcutsService: ShortcutsService,
               private readonly elementRef: ElementRef,
               private readonly contextMenuActionService: ContextMenuActionService,
               injector: Injector,
@@ -95,10 +97,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
     const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
     const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
-    const collection$ = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
-    const primaryCollection$ = primaryCollectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
-    const song$ = collectionId$.pipe(flatMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
-    const songDetails$ = song$.pipe(flatMap(song => this.cds.getSongDetailsById(song && song.id)));
+    const collection$ = collectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
+    const primaryCollection$ = primaryCollectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
+    const song$ = collectionId$.pipe(mergeMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
+    const songDetails$ = song$.pipe(mergeMap(song => this.cds.getSongDetailsById(song && song.id)));
 
     combineLatest([collection$, primaryCollection$, song$, songDetails$, this.uds.getUser()])
         .pipe(
@@ -134,7 +136,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.navHelper.restoreScrollPosition();
         });
 
-    song$.pipe(flatMap(song => song ? this.uds.getUserSongSettings(song.id) : of(undefined)),
+    song$.pipe(mergeMap(song => song ? this.uds.getUserSongSettings(song.id) : of(undefined)),
         takeUntil(this.destroyed$)
     ).subscribe(songSettings => {
       this.songSettings = songSettings;
@@ -153,9 +155,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       {icon: 'arrow-up', activate: () => this.transpose(+1), style: {'width.px': 18}},
       {icon: 'minus', activate: () => this.decFontSize(), style: {'width.px': 18}},
       {icon: 'plus', activate: () => this.incFontSize(), style: {'width.px': 18}},
-      {icon: 'dice4', activate: () => this.activeCollection && this.ss.gotoRandomSong(this.activeCollection.id), style: {'width.px': 22}},
+      {icon: 'dice4', activate: this.gotoRandomSongPopoverTemplate, style: {'width.px': 22}},
     ]);
   }
+
 
   private handleMountUpdate(): void {
     if (!this.collectionMount || !this.songMountBeforeUpdate) {
@@ -169,7 +172,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   private handleSongRemoval(): void {
     // Try to go to the next or prev song in the current collection. Fall-back to collection/studio page.
     const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
-    const collection$ = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
+    const collection$ = collectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
     getAllSongsInCollectionsSorted(collection$, this.cds)
         .pipe(
             take(1),
@@ -214,7 +217,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     if (isInputEvent(event)) {
       return;
     }
-    if (this.ss.isDoubleControlRightPressEvent) {
+    if (this.shortcutsService.isDoubleControlRightPressEvent) {
       scrollToView(this.getSongTextElement());
       return;
     }
@@ -289,15 +292,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   onMountChangeBeforeUpdate(mountBeforeUpdate: string): void {
     this.songMountBeforeUpdate = mountBeforeUpdate;
   }
-
-  onMouseDownOnPopover(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-}
-
-function isServiceLineChar(c: string): boolean {
-  return c === '{' || c === '}' || c === '(' || c === ')' || c === '[' || c === ']';
 }
 
 //TODO: move to utils
@@ -306,6 +300,8 @@ export function getSongTextWithNoChords(text: string, linesCount: number, mergeL
   let result = '';
   let linesFound = 0;
   let position = 0;
+  const isServiceLineChar = (c: string): boolean => c === '{' || c === '}' || c === '(' || c === ')' || c === '[' || c === ']';
+
   while (linesFound < linesCount) {
     const newPosition = text.indexOf('\n', position + 1);
     if (newPosition === -1) {

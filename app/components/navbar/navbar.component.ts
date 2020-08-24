@@ -128,7 +128,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   activateContextMenuAction(): void {
-    if (this.contextMenuAction) {
+    if (this.contextMenuAction && typeof this.contextMenuAction.activate === 'function') {
       this.contextMenuAction.activate();
     }
   }

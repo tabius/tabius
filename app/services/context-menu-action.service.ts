@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
+import {Injectable, TemplateRef} from '@angular/core';
 import {ReplaySubject} from 'rxjs';
 
 export interface ContextMenuAction {
   icon: string;
-  activate: () => void;
+  activate: (() => void)|TemplateRef<unknown>;
   style?: any;
 }
 

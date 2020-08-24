@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
 import {environment} from '@app/environments/environment';
 import {Router} from '@angular/router';
 import {I18N} from '@app/app-i18n';
@@ -8,6 +8,8 @@ import {LocationStrategy} from '@angular/common';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {ContextMenuAction, ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {Observable} from 'rxjs';
+import {PopoverService} from '@app/popover/popover.service';
+import {PopoverRef} from '@app/popover/popover-ref';
 
 @Component({
   selector: 'gt-footer',
@@ -15,7 +17,7 @@ import {Observable} from 'rxjs';
   styleUrls: ['./footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FooterComponent {
+export class FooterComponent implements OnDestroy {
 
   readonly month = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(4, 6);
   readonly day = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(6, 8);
@@ -39,39 +41,65 @@ export class FooterComponent {
   readonly i18n = I18N.footer;
   readonly i18nNav = I18N.navbar;//TODO:
 
-  opened = false;
+  isMainMenuDrawerOpen = false;
+
   actions$: Observable<ContextMenuAction[]>;
+
+  private actionMenuPopoverRef?: PopoverRef;
+
   readonly defaultMenuIconSize = 24;
 
   constructor(readonly router: Router,
               private readonly location: LocationStrategy,
               private readonly bss: BrowserStateService,
               contextMenuActionService: ContextMenuActionService,
+              private readonly popoverService: PopoverService,
   ) {
     this.actions$ = contextMenuActionService.footerActions$;
     this.location.onPopState(() => {
       // Closes opened navbar on back button on mobile device.
-      if (this.opened) {
+      if (this.isMainMenuDrawerOpen) {
         this.close();
         window.history.go(1);
       }
     });
-
   }
 
-  open() {
-    this.opened = true;
+  ngOnDestroy(): void {
+    this.closeMenuPopover();
   }
 
-  close() {
-    this.opened = false;
+  open(): void {
+    this.isMainMenuDrawerOpen = true;
+  }
+
+  close(): void {
+    this.isMainMenuDrawerOpen = false;
   }
 
   toggleNoSleep(): void {
     this.bss.toggleNoSleepMode();
   }
 
+  private closeMenuPopover(): void {
+    if (this.actionMenuPopoverRef) {
+      this.actionMenuPopoverRef.close();
+      this.actionMenuPopoverRef = undefined;
+    }
+  }
+
   activateAction(action: ContextMenuAction): void {
-    action.activate();
+    if (typeof action.activate === 'function') {
+      action.activate();
+    } else {
+      this.closeMenuPopover();
+      this.actionMenuPopoverRef = this.popoverService.open(action.activate, null, {
+        backdropClass: 'c-popover-backdrop-modal',
+        panelClass: 'c-popover-panel',
+      });
+      this.actionMenuPopoverRef.afterClosed().subscribe(() => {
+        this.actionMenuPopoverRef = undefined;
+      });
+    }
   }
 }

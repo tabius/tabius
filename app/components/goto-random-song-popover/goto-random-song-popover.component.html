@@ -1,0 +1,18 @@
+<div class="content">
+
+    <h3>{{i18n.gotoRandomSongTitle}}</h3>
+
+    <div class="buttons-block">
+        <div class="single-buttons-block" *ngIf="!!collectionId">
+            <a class="btn btn-info" (click)="gotoRandomSongInCurrentCollection()">{{i18n.currentCollection}}</a>
+        </div>
+
+        <div class="single-buttons-block">
+            <a class="btn btn-info" (click)="gotoRandomSongInService()">{{i18n.wholeService}}</a>
+        </div>
+
+        <div class="single-buttons-block close-button-block">
+            <a class="btn close-button" (click)="close()">{{i18n.close}}</a>
+        </div>
+    </div>
+</div>

@@ -28,7 +28,7 @@
 </div>
 
 <div class="footer-menu">
-    <div class="footer-menu-line" *ngIf="!opened">
+    <div class="footer-menu-line" *ngIf="!isMainMenuDrawerOpen">
         <a (click)="open()" class="btn btn-flat-white">
             <gt-svg-icon icon="menu"></gt-svg-icon>
         </a>
@@ -39,7 +39,7 @@
 
     </div>
 
-    <div *ngIf="opened" class="drawer">
+    <div *ngIf="isMainMenuDrawerOpen" class="drawer">
         <div class="drawer-items">
             <div class="item forum">
                 <a href="{{forumLink}}" (click)="close()">

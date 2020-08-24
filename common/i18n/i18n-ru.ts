@@ -77,6 +77,12 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     homePageLinkTitle: 'Перейти на главную страницу сайта.',
     closeMenu: 'ЗАКРЫТЬ МЕНЮ',
   },
+  gotoRandomSongMenu: {
+    gotoRandomSongTitle: 'Перейти к случайной песне',
+    currentCollection: 'В текущей коллекции',
+    wholeService: 'На всём сервисе',
+    close: 'Закрыть',
+  },
   collectionEditor: {
     header: 'Добавление коллекции',
     collectionName: 'Имя коллекции',
