@@ -1,4 +1,5 @@
 import {Chord, ChordTone} from '@app/utils/chords-parser-lib';
+import {isDigit} from '@common/util/misc-utils';
 
 export interface ChordLayout {
   chord: Chord,
@@ -456,44 +457,42 @@ function initBassTones() {
   return map;
 }
 
-export function applyBassTone(layout: string, bassTone: string|undefined): string {
+/** Applies bass tone to the layout and returns new layout with the bass-tone. */
+export function applyBassTone(chordLayout: string, bassTone: string|undefined): string {
   if (!bassTone) {
-    return layout;
+    return chordLayout;
   }
   const bassPositions = BASS_TONE_POSITIONS.get(bassTone);
   if (!bassPositions || bassPositions.length === 0) {
-    return layout;
+    return chordLayout;
   }
-  let averageChordPosition = 0;
+  let averageChordFret = 0;
   let stringsCount = 0;
-  for (let i = 2; i < layout.length; i++) {
-    const c = layout.charAt(i);
-    if (c != 'x') {
+  for (let i = 2; i < chordLayout.length; i++) {
+    const stringIndexChar = chordLayout.charAt(i);
+    if (isDigit(stringIndexChar)) {
       stringsCount++;
-      averageChordPosition += (+c);
+      averageChordFret += Number(stringIndexChar);
     }
   }
   if (stringsCount === 0) {
-    return layout;
+    return chordLayout;
   }
-  averageChordPosition = averageChordPosition / stringsCount;
+  averageChordFret = averageChordFret / stringsCount;
 
-  let bestPos = bassPositions[0];
-
-  const d = (p: BassTonePosition) => Math.abs(p.fret - averageChordPosition);
-  const isFirstPosBetter = (p1: BassTonePosition, p2: BassTonePosition) => {
-    const d1 = d(p1);
-    const d2 = d(p2);
-    return d1 < d2 || d1 === d2 && p1.stringIndex === 6;
+  const fretDistance = (p: BassTonePosition) => Math.abs(p.fret - averageChordFret);
+  const isFirstBassPositionBetter = (position1: BassTonePosition, position2: BassTonePosition) => {
+    const distance1 = fretDistance(position1);
+    const distance2 = fretDistance(position2);
+    return distance1 < distance2 || (distance1 === distance2 && position1.stringIndex === 6);
   };
 
+  let bestPos = bassPositions[0];
   for (let i = 1; i < bassPositions.length; i++) {
     const pos = bassPositions[i];
-    if (isFirstPosBetter(pos, bestPos)) {
-      bestPos = pos;
-    }
+    bestPos = isFirstBassPositionBetter(pos, bestPos) ? pos : bestPos;
   }
-  return bestPos.stringIndex === 5 ? 'x' + bestPos.fret + layout.substring(2) : bestPos.fret + layout.substring(1);
+  return bestPos.stringIndex === 5 ? 'x' + bestPos.fret + chordLayout.substring(2) : bestPos.fret + chordLayout.substring(1);
 }
 
 /** Returns chord layout for the given chord. */
