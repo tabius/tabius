@@ -349,4 +349,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     noSleepModeIsOff: 'Блокировка сна отключена.\nИспользуется режим по умолчанию.',
     noSleepModeIsOn: 'Включена блокировка сна.\nТеперь экран будет всегда включён.',
   },
+  loadingIndicatorWarning: {
+    reloadLink: 'Перегрузить',
+    reloadNotice: 'При зависшей загрузке попробуйте перезагрузить страницу.',
+  }
+
 };

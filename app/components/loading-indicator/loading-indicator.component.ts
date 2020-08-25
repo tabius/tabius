@@ -1,4 +1,7 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {I18N} from '@app/app-i18n';
+import {takeUntil} from 'rxjs/operators';
+import {Subject, timer} from 'rxjs';
 
 @Component({
   selector: 'gt-loading-indicator',
@@ -6,5 +9,27 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
   styleUrls: ['./loading-indicator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoadingIndicatorComponent {
+export class LoadingIndicatorComponent implements OnInit, OnDestroy {
+  readonly i18n = I18N.loadingIndicatorWarning;
+  readonly destroyed$ = new Subject<void>();
+  isReloadWarningVisible = false;
+
+  constructor(private readonly cdr: ChangeDetectorRef) {
+  }
+
+  ngOnInit(): void {
+    timer(15_000).pipe(takeUntil(this.destroyed$)).subscribe(() => {
+      this.isReloadWarningVisible = true;
+      this.cdr.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+  }
+
+  onReloadButtonClicked(): void {
+    location.reload();
+  }
+
 }

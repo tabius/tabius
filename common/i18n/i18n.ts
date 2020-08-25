@@ -334,4 +334,8 @@ export interface I18n {
     noSleepModeIsOn: string;
     noSleepModeIsOff: string;
   };
+  loadingIndicatorWarning: {
+    reloadNotice: string;
+    reloadLink: string;
+  };
 }

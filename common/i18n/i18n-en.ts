@@ -80,7 +80,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     gotoRandomSongTitle: 'Go to random song in',
     currentCollection: 'Current collection',
     wholeService: 'Whole service',
-    close: "Close",
+    close: 'Close',
   },
   collectionEditor: {
     header: 'Add collection',
@@ -350,4 +350,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     noSleepModeIsOff: 'NoSleep mode is OFF.',
     noSleepModeIsOn: 'NoSleep mode is ON.',
   },
+  loadingIndicatorWarning: {
+    reloadLink: 'Reload',
+    reloadNotice: 'If loading takes too long try to reload whole page.',
+  }
 };

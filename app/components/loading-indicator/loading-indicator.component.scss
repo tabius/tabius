@@ -6,13 +6,16 @@ $circle_3_pos: 80px;
 $distance_between_circles: 40px;
 $step_timing: 0.6s;
 
+$warning-block-width: 250px;
+$warning-block-margin-left: ($size - $warning-block-width)/2;
+
 :host {
   display: inline-block;
   position: relative;
   width: $size;
   height: $circle_size;
 
-  div {
+  .dot {
     position: absolute;
     top: 0;
     width: $circle_size;
@@ -22,24 +25,38 @@ $step_timing: 0.6s;
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
   }
 
-  div:nth-child(1) {
+  .dot:nth-child(1) {
     left: $circle_1_pos;
     animation: step1 $step_timing infinite;
   }
 
-  div:nth-child(2) {
+  .dot:nth-child(2) {
     left: $circle_1_pos;
     animation: step3 $step_timing infinite;
   }
 
-  div:nth-child(3) {
+  .dot:nth-child(3) {
     left: $circle_2_pos;
     animation: step3 $step_timing infinite;
   }
 
-  div:nth-child(4) {
+  .dot:nth-child(4) {
     left: $circle_3_pos;
     animation: step2 $step_timing infinite;
+  }
+
+  .long-wait-warning-block {
+    margin-top: 60px;
+    width: $warning-block-width;
+    margin-left: $warning-block-margin-left;
+    text-align: center;
+    display: block;
+    color: #999;
+
+    .reload-link-block {
+      margin-top: 15px;
+      cursor: pointer;
+    }
   }
 }
 
