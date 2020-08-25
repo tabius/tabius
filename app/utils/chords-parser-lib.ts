@@ -1,6 +1,7 @@
 export interface Chord {
   tone: ChordTone;
   type: ChordType;
+  bassTone?: ChordTone;
 }
 
 export interface ChordLocation {

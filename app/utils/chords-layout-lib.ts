@@ -427,6 +427,75 @@ function withFlatsFromSharps(chordsMap: StringMap): StringMap {
   return res;
 }
 
+interface BassTonePosition {
+  /** String number. */
+  stringIndex: number;
+  /** Fret. */
+  fret: number;
+}
+
+const BASS_TONE_POSITIONS = initBassTones();
+
+function initBassTones() {
+  const map = new Map<string, BassTonePosition[]>();
+  map.set('E', [{stringIndex: 6, fret: 0}]);
+  map.set('F', [{stringIndex: 6, fret: 1}, {stringIndex: 5, fret: 8}]);
+  map.set('F#', [{stringIndex: 6, fret: 2}, {stringIndex: 5, fret: 9}]);
+  map.set('Gb', [{stringIndex: 6, fret: 2}, {stringIndex: 5, fret: 9}]);
+  map.set('G', [{stringIndex: 6, fret: 3}, {stringIndex: 5, fret: 10}]);
+  map.set('G#', [{stringIndex: 6, fret: 4}, {stringIndex: 5, fret: 11}]);
+  map.set('Ab', [{stringIndex: 6, fret: 4}, {stringIndex: 5, fret: 11}]);
+  map.set('A', [{stringIndex: 6, fret: 5}, {stringIndex: 5, fret: 0}]);
+  map.set('A#', [{stringIndex: 6, fret: 6}, {stringIndex: 5, fret: 1}]);
+  map.set('Bb', [{stringIndex: 6, fret: 6}, {stringIndex: 5, fret: 1}]);
+  map.set('B', [{stringIndex: 6, fret: 7}, {stringIndex: 5, fret: 2}]);
+  map.set('C', [{stringIndex: 6, fret: 8}, {stringIndex: 5, fret: 3}]);
+  map.set('C#', [{stringIndex: 6, fret: 9}, {stringIndex: 5, fret: 4}]);
+  map.set('Db', [{stringIndex: 6, fret: 9}, {stringIndex: 5, fret: 4}]);
+  map.set('D', [{stringIndex: 6, fret: 10}, {stringIndex: 5, fret: 5}]);
+  return map;
+}
+
+export function applyBassTone(layout: string, bassTone: string|undefined): string {
+  if (!bassTone) {
+    return layout;
+  }
+  const bassPositions = BASS_TONE_POSITIONS.get(bassTone);
+  if (!bassPositions || bassPositions.length === 0) {
+    return layout;
+  }
+  let averageChordPosition = 0;
+  let stringsCount = 0;
+  for (let i = 2; i < layout.length; i++) {
+    const c = layout.charAt(i);
+    if (c != 'x') {
+      stringsCount++;
+      averageChordPosition += (+c);
+    }
+  }
+  if (stringsCount === 0) {
+    return layout;
+  }
+  averageChordPosition = averageChordPosition / stringsCount;
+
+  let bestPos = bassPositions[0];
+
+  const d = (p: BassTonePosition) => Math.abs(p.fret - averageChordPosition);
+  const isFirstPosBetter = (p1: BassTonePosition, p2: BassTonePosition) => {
+    const d1 = d(p1);
+    const d2 = d(p2);
+    return d1 < d2 || d1 === d2 && p1.stringIndex === 6;
+  };
+
+  for (let i = 1; i < bassPositions.length; i++) {
+    const pos = bassPositions[i];
+    if (isFirstPosBetter(pos, bestPos)) {
+      bestPos = pos;
+    }
+  }
+  return bestPos.stringIndex === 5 ? 'x' + bestPos.fret + layout.substring(2) : bestPos.fret + layout.substring(1);
+}
+
 /** Returns chord layout for the given chord. */
 export function getChordLayout(chord: Chord): ChordLayout|undefined {
   const key = chord.tone + chord.type;
@@ -437,7 +506,7 @@ export function getChordLayout(chord: Chord): ChordLayout|undefined {
   const tokens = layout.split('&');
   return {
     chord: chord,
-    positions: tokens[0],
+    positions: applyBassTone(tokens[0], chord.bassTone),
     fingers: tokens.length > 1 && tokens[1] ? tokens[1] : ''
   };
 }

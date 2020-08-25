@@ -1,4 +1,4 @@
-import {CHORDS_LAYOUTS, NEXT_TONE_LETTER_MAP} from '@app/utils/chords-layout-lib';
+import {applyBassTone, CHORDS_LAYOUTS, NEXT_TONE_LETTER_MAP} from '@app/utils/chords-layout-lib';
 import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 
 
@@ -33,10 +33,7 @@ describe('Chords layout lib', () => {
   });
 
   it('should not have duplicate layouts', () => {
-    function removeFlats(v: string): boolean {
-      return v.length < 2 || v.charAt(1) != 'b';
-    }
-
+    const removeFlats = (v: string): boolean => v.length < 2 || v.charAt(1) != 'b';
     const allLayouts = Object.keys(CHORDS_LAYOUTS).filter(removeFlats).map(key => CHORDS_LAYOUTS[key]).map(removeFingers);
     const allLayoutsString = allLayouts.join('\n');
     for (const layout of allLayouts) {
@@ -53,6 +50,13 @@ describe('Chords layout lib', () => {
         expect(flatLayout).toBe(sharpLayout, `Layout for ${name} is not the same as for ${flatName}`);
       }
     }
+  });
+
+  it('should assign bass strings correctly', () => {
+    expect(applyBassTone('000000', 'G')).toBe('300000');
+    expect(applyBassTone('555555', 'E')).toBe('055555');
+    expect(applyBassTone('555555', 'F')).toBe('x85555');
+    expect(applyBassTone('222222', 'F')).toBe('122222');
   });
 
 });
