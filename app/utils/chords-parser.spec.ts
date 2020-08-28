@@ -169,4 +169,13 @@ describe('Chords parser, parseChords', () => {
     ]);
   });
 
+  it('should recognize special whitespace chars', () => {
+    expect(parseChords('Am/C')).toEqual([
+      {chord: c('A', 'min', 'C'), startIdx: 0, endIdx: 4}
+    ]);
+    expect(parseChords('Am/CC')).toEqual([
+      {chord: c('A', 'min'), startIdx: 0, endIdx: 2}
+    ]);
+  });
+
 });

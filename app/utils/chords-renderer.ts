@@ -77,12 +77,17 @@ export function getToneByToneNumber(toneNumber: number, flat?: boolean): ChordTo
   throw new Error(`Illegal tone number: ${toneNumber}`);
 }
 
+function transpose(tone: ChordTone, transpose: number): ChordTone {
+  const oldToneNumber = getToneNumberByTone(tone);
+  const newToneNumber = (oldToneNumber + (transpose % TONES_COUNT) + TONES_COUNT) % TONES_COUNT;
+  return getToneByToneNumber(newToneNumber);
+}
+
 export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, minResultStringLength = 0): string {
-  let tone = chord.tone;
+  let {tone, bassTone} = chord;
   if (options.transpose) {
-    const oldToneNumber = getToneNumberByTone(tone);
-    const newToneNumber = (oldToneNumber + (options.transpose % TONES_COUNT) + TONES_COUNT) % TONES_COUNT;
-    tone = getToneByToneNumber(newToneNumber);
+    tone = transpose(tone, options.transpose);
+    bassTone = bassTone ? transpose(bassTone, options.transpose) : undefined;
   }
 
   // Handle 'B' & 'H'
@@ -92,7 +97,8 @@ export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, m
   }
 
   const visualType = chord.type ? VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type) || '' : '';
-  const chordString = `${toneString + visualType}`;
+  const bassSuffix = bassTone ? `/${bassTone}` : '';
+  const chordString = `${toneString + visualType + bassSuffix}`;
   const trailingSpaceCount = minResultStringLength - chordString.length;
   const trailingSpaces = trailingSpaceCount > 0 ? ' '.repeat(trailingSpaceCount) : '';
   const {tag} = options;

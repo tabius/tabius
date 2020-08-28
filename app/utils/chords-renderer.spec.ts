@@ -116,4 +116,11 @@ describe('Chords renderer', () => {
     expect(renderChords('line 1 \n Am Em \n \nline 2', {hideChords: true})).toEqual('line 1 \n \nline 2');
   });
 
+  it('should render bass suffixes', () => {
+    expect(renderChords('Am/C', {tag: 'i'})).toEqual('<i>Am/C</i>');
+    expect(renderChords('Aminor/C', {tag: 'd'})).toEqual('<d>Am/C</d>    ');
+    expect(renderChords('D#/G#', {tag: 'j', transpose: -1})).toEqual('<j>D/G</j>  ');
+    expect(renderChords('D#/G#', {tag: 'x', transpose: 1})).toEqual('<x>E/A</x>  ');
+  });
+
 });

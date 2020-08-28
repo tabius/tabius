@@ -5,6 +5,8 @@ function isWordChar(char: string): boolean {
   return isAlpha(char) || char === '’';
 }
 
+const CHORD_BASS_SEPARATOR = '/';
+
 export function parseChords(text: string): ChordLocation[] {
   const allChords: ChordLocation[] = [];
   for (let idx = 0; idx < text.length;) {
@@ -125,7 +127,7 @@ export function isTabsLine(text: string, startIdx: number, endIdx: number): 'yes
 const EXTENDED_CHORD_LETTERS: string[] = CHORD_TONES.map(t => t.length === 1 ? t : undefined).filter(defined);
 EXTENDED_CHORD_LETTERS.push('H');
 
-/** Parses 1 chord starting from the startIdx. */
+/** Parses 1 chord starting from startIdx (inclusive) and ending before endIdx (exclusive). */
 export function parseChord(text?: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
   if (!text) {
     return undefined;
@@ -160,7 +162,7 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
     }
 
     // Parse bass suffix string if any.
-    if (idx < maxIdx - 1 && c === '/') {
+    if (idx + 1 < maxIdx && c === CHORD_BASS_SEPARATOR) {
       const bassTone = readNextCharAsTone(text, idx + 1);
       if (bassTone !== undefined) {
         // Check if the next char is a terminator (end of text or whitespace).
@@ -182,7 +184,9 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
 }
 
 function readNextCharAsTone(text: string, idx: number): ChordTone|undefined {
-  let tone = findPrefixToken(text, idx, EXTENDED_CHORD_LETTERS);
+  const c0 = text.charAt(idx);
+  let tone = EXTENDED_CHORD_LETTERS.find(c => c === c0);
+
   if (tone === undefined) {
     return undefined;
   }
@@ -216,7 +220,7 @@ function isKnownChordTypeAndTextConflict(c: string, text: string, idx: number): 
 
 /** Return true if a chord in any form can have this character as the last. */
 function isWhitespaceOrChordExtender(c: string): boolean {
-  return c === ' ' || c === '\n' || c === '/' || c === '(';
+  return c === ' ' || c === '\n' || c === CHORD_BASS_SEPARATOR || c === '(';
 }
 
 /**
