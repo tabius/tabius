@@ -131,24 +131,20 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
     return undefined;
   }
   let idx = startIdx === undefined ? 0 : startIdx;
-  const tone = findPrefixToken(text, idx, EXTENDED_CHORD_LETTERS);
+  const tone = readNextCharAsTone(text, idx);
   if (tone === undefined) {
     return undefined;
   }
-  const chord: Chord = {tone: tone === 'H' ? 'B' : tone as ChordTone, type: 'maj'};
+  const chord: Chord = {tone, type: 'maj', bassTone: undefined};
   let parsedType: ChordType|undefined = undefined;
   idx += tone.length;
   let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
-  // loop until inside a chord.
+
+  // Loop until inside of the chord. Skip parts in brackets.
   while (idx < maxIdx) {
     const c = text.charAt(idx);
-    if (chord.tone.length === 1 && c === '#' || c == '♯' || c === 'b' || c === '♭') {
-      chord.tone += c === 'b' || c === '♭' ? 'b' : '#';
-      idx++;
-      continue;
-    }
     if (parsedType === undefined) {
-      if (isKnownTypeAndTextConflict(c, text, idx)) {
+      if (isKnownChordTypeAndTextConflict(c, text, idx)) {
         return undefined;
       }
       const typesByFirstChar = RAW_CHORD_TYPES_BY_FIRST_CHAR.get(c);
@@ -162,6 +158,20 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
         }
       }
     }
+
+    // Parse bass suffix string if any.
+    if (idx < maxIdx - 1 && c === '/') {
+      const bassTone = readNextCharAsTone(text, idx + 1);
+      if (bassTone !== undefined) {
+        // Check if the next char is a terminator (end of text or whitespace).
+        if (idx + bassTone.length + 1 == maxIdx || isWhitespaceOrChordExtender(text.charAt(idx + bassTone.length + 1))) {
+          chord.bassTone = bassTone as ChordTone;
+          idx += bassTone.length + 1;
+          break;
+        }
+      }
+    }
+
     if (isWordChar(c)) { // the word continues with some letters -> most probably this is not a chord but an ordinary word.
       return undefined;
     }
@@ -169,6 +179,25 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
   }
   const suffixLenInBracesAfterChord = skipTextInBracesAfterChord(text, idx, 4);
   return {chord, startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx + suffixLenInBracesAfterChord};
+}
+
+function readNextCharAsTone(text: string, idx: number): ChordTone|undefined {
+  let tone = findPrefixToken(text, idx, EXTENDED_CHORD_LETTERS);
+  if (tone === undefined) {
+    return undefined;
+  }
+  if (tone === 'H') {
+    tone = 'B';
+  }
+  if (idx + 1 === text.length) {
+    return tone as ChordTone;
+  }
+  const toneSuffix = text.charAt(idx + 1);
+  if (toneSuffix === '#' || toneSuffix == '♯' || toneSuffix === 'b' || toneSuffix === '♭') {
+    tone += toneSuffix === 'b' || toneSuffix === '♭' ? 'b' : '#';
+  }
+  return tone as ChordTone;
+
 }
 
 function findPrefixToken(text: string, idx: number, tokens: readonly string[]): string|undefined {
@@ -181,7 +210,7 @@ function findPrefixToken(text: string, idx: number, tokens: readonly string[]): 
 }
 
 /** Returns true if the char at the given position is a text start. Chord parsing must start in this case. */
-function isKnownTypeAndTextConflict(c: string, text: string, idx: number): boolean {
+function isKnownChordTypeAndTextConflict(c: string, text: string, idx: number): boolean {
   return (c === '-' || c === '−') && (idx < text.length - 1 && !isWhitespaceOrChordExtender(text.charAt(idx + 1)));
 }
 

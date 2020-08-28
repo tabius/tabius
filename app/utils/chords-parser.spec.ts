@@ -1,7 +1,7 @@
 import {isTabsLine, parseChord, parseChords, parseChordsLine} from '@app/utils/chords-parser';
 import {Chord, ChordTone, ChordType} from '@app/utils/chords-parser-lib';
 
-const c = (tone: ChordTone, type: ChordType): Chord => ({tone, type});
+const c = (tone: ChordTone, type: ChordType, bassTone?: ChordTone): Chord => ({tone, type, bassTone});
 
 describe('Chords parser, parseChord', () => {
 
@@ -56,6 +56,11 @@ describe('Chords parser, parseChord', () => {
     expect(parseChord('A--')).toBeUndefined();
   });
 
+  it('should recognize bass tones', () => {
+    expect(parseChord('A/C')).toEqual({chord: c('A', 'maj', 'C'), startIdx: 0, endIdx: 3});
+    expect(parseChord('Am/D#')).toEqual({chord: c('A', 'min', 'D#'), startIdx: 0, endIdx: 5});
+    expect(parseChord('Am/G(III)')).toEqual({chord: c('A', 'min', 'G'), startIdx: 0, endIdx: 9});
+  });
 });
 
 
@@ -80,15 +85,14 @@ describe('Chords parser, parseChordsLine', () => {
     expect(parseChordsLine('Go Go Go')).toEqual([]);
     expect(parseChordsLine('Gо Gо, Jонnnу B. Gооdе')).toEqual([]);
     expect(parseChordsLine('G, Am } 3 times')).toEqual([
-      {chord: {tone: 'G', type: 'maj'}, startIdx: 0, endIdx: 1},
-      {chord: {tone: 'A', type: 'min'}, startIdx: 3, endIdx: 5},
+      {chord: c('G', 'maj'), startIdx: 0, endIdx: 1},
+      {chord: c('A', 'min'), startIdx: 3, endIdx: 5},
     ]);
     expect(parseChordsLine('G° Am')).toEqual([
-      {chord: {tone: 'G', type: 'dim'}, startIdx: 0, endIdx: 2},
-      {chord: {tone: 'A', type: 'min'}, startIdx: 3, endIdx: 5},
+      {chord: c('G', 'dim'), startIdx: 0, endIdx: 2},
+      {chord: c('A', 'min'), startIdx: 3, endIdx: 5},
     ]);
   });
-
 
   it('should correctly parse chords with non-chords text in the line', () => {
     expect(parseChordsLine(' A E - 2x')).toEqual([
