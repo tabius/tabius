@@ -35,7 +35,9 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
       return;
     }
     const {chord} = this.layout;
-    const visualChordName = this.getToneWithH4SiFix(chord.tone) + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type);
+    const visualTone = this.getToneWithH4SiFix(chord.tone);
+    const visualBassToneSuffix = chord.bassTone ? '/' + this.getToneWithH4SiFix(chord.bassTone) : '';
+    const visualChordName = visualTone + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type) + visualBassToneSuffix;
     this.painter = new ChordImagePainter(visualChordName, this.layout.positions, this.layout.fingers, this.size);
     this.width = this.painter.imageWidth;
     this.height = this.painter.imageHeight;

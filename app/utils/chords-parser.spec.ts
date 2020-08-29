@@ -126,6 +126,14 @@ describe('Chords parser, parseChordsLine', () => {
     expect(parseChordsLine('THE DOG')).toEqual([]); // do not mark E and G as chords
   });
 
+  it('should parse lines with complex chords', () => {
+    expect(parseChordsLine('AM7sus24       F#7sus4       Gm11').map(l => l.chord)).toEqual([
+      c('A', 'maj7sus24'),
+      c('F#', '7sus4'),
+      c('G', 'min11')
+    ]);
+  });
+
 });
 
 
