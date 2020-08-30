@@ -35,7 +35,7 @@
                     </div>
                     <div *ngIf="collectionViewModel.bands.length > 1">
                         Группы <span *ngFor="let band of collectionViewModel.bands; let last = last">
-                            <a routerLink="{{getCollectionPageLink(band)}}">{{band.name}}</a><span *ngIf="!last">,</span>
+                            <a routerLink="{{getCollectionPageLink(band)}}">{{band.name}}</a><span *ngIf="!last">, </span>
                         </span>
                     </div>
                 </div>
