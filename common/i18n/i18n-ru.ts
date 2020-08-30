@@ -206,9 +206,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   songChordsComponent: {
     chordsTitle: 'Аккорды:',
-    transposeUp: 'Транспонировать на половину тона выше',
-    transposeDown: 'Транспонировать на половину тона ниже',
-    originalKey: 'Оригинальная тональность',
+    transposeUp: 'Транспонировать на полутон выше (SHIFT + ⇧)',
+    transposeDown: 'Транспонировать на полутон ниже (SHIFT + ⇩)',
+    originalKey: 'Оригинальная тональность (SHIFT + 0)',
   },
   songEditorComponent: {
     loadingMessage: 'Загружаем детали песни…',
