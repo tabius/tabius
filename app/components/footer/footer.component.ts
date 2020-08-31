@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {environment} from '@app/environments/environment';
 import {Router} from '@angular/router';
 import {I18N} from '@app/app-i18n';
@@ -52,15 +52,17 @@ export class FooterComponent implements OnDestroy {
   constructor(readonly router: Router,
               private readonly location: LocationStrategy,
               private readonly bss: BrowserStateService,
+              private readonly cdr: ChangeDetectorRef,
               contextMenuActionService: ContextMenuActionService,
               private readonly popoverService: PopoverService,
   ) {
     this.actions$ = contextMenuActionService.footerActions$;
     this.location.onPopState(() => {
-      // Closes opened navbar on back button on mobile device.
+      // Closes opened navbar on back button click on mobile device.
+      // Warning: this solution does not work for the first page in PWA!
       if (this.isMainMenuDrawerOpen) {
-        this.close();
-        window.history.go(1);
+        this.closeMainMenuDrawer();
+        window.history.forward(); // Restore the current page.
       }
     });
   }
@@ -69,12 +71,18 @@ export class FooterComponent implements OnDestroy {
     this.closeMenuPopover();
   }
 
-  open(): void {
-    this.isMainMenuDrawerOpen = true;
+  openMainMenuDrawer(): void {
+    if (!this.isMainMenuDrawerOpen) {
+      this.isMainMenuDrawerOpen = true;
+      this.cdr.markForCheck();
+    }
   }
 
-  close(): void {
-    this.isMainMenuDrawerOpen = false;
+  closeMainMenuDrawer(): void {
+    if (this.isMainMenuDrawerOpen) {
+      this.isMainMenuDrawerOpen = false;
+      this.cdr.markForCheck();
+    }
   }
 
   toggleNoSleep(): void {

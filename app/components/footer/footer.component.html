@@ -29,7 +29,7 @@
 
 <div class="footer-menu">
     <div class="footer-menu-line" *ngIf="!isMainMenuDrawerOpen">
-        <a (click)="open()" class="btn btn-flat-white">
+        <a (click)="openMainMenuDrawer()" class="btn btn-flat-white">
             <gt-svg-icon icon="menu"></gt-svg-icon>
         </a>
 
@@ -42,44 +42,44 @@
     <div *ngIf="isMainMenuDrawerOpen" class="drawer">
         <div class="drawer-items">
             <div class="item forum">
-                <a href="{{forumLink}}" (click)="close()">
+                <a href="{{forumLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="forum"></gt-svg-icon>
                     <div class="title">{{i18nNav.forum}}</div>
                 </a>
             </div>
             <div class="item catalog">
-                <a routerLink="{{catalogLink}}" (click)="close()">
+                <a routerLink="{{catalogLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="artist"></gt-svg-icon>
                     <div class="title">{{i18nNav.catalog}}</div>
                 </a>
             </div>
             <div class="item studio">
-                <a routerLink="{{studioLink}}" (click)="close()">
+                <a routerLink="{{studioLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="studio"></gt-svg-icon>
                     <div class="title">{{i18nNav.studio}}</div>
                 </a>
             </div>
             <div class="item tuner">
-                <a routerLink="{{tunerLink}}" (click)="close()">
+                <a routerLink="{{tunerLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="tuner"></gt-svg-icon>
                     <div class="title">{{i18nNav.tuner}}</div>
                 </a>
             </div>
             <div class="item settings">
-                <a routerLink="{{settingsLink}}" (click)="close()">
+                <a routerLink="{{settingsLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="settings"></gt-svg-icon>
                     <div class="title">{{i18nNav.settings}}</div>
                 </a>
             </div>
             <div class="item no-sleep" title="{{i18nNav.noSleepTitle}}">
-                <a (click)="toggleNoSleep(); close()">
+                <a (click)="toggleNoSleep(); closeMainMenuDrawer()">
                     <gt-svg-icon icon="no-sleep"></gt-svg-icon>
                     <div class="title">{{i18nNav.noSleep}}</div>
                 </a>
             </div>
         </div>
         <div class="close-button-line">
-            <a (click)="close()" class="close-button">{{i18n.closeMenu}}</a>
+            <a (click)="closeMainMenuDrawer()" class="close-button">{{i18n.closeMenu}}</a>
         </div>
     </div>
 </div>
