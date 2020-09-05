@@ -15,8 +15,10 @@
     "dev:ssr": "ng run tabius:serve-ssr",
     "serve:ssr": "node dist/server/main.js",
     "build:ssr": "npm run update-version && ng build && ng run tabius:server",
-    "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-org-index  && ts-node scripts/inline-css.ts",
-    "build:ssr-ru": "npm run update-version && ng build -c ru && ng run tabius:server:ru && ts-node scripts/inline-css.ts"
+    "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-org-index  && npm run inline-css",
+    "build:ssr-ru": "npm run update-version && ng build -c ru && ng run tabius:server:ru && npm run inline-css",
+    "inline-css": "ts-node scripts/inline-css.ts && npm run ngsw-json",
+    "ngsw-json": "node_modules/.bin/ngsw-config dist/browser ngsw-config.json"
   },
   "private": true,
   "dependencies": {
