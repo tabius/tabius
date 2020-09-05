@@ -109,7 +109,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   private installHammer(): void {
     this.uninstallHammer();
     if (this.bss.isBrowser && isTouchEventsSupportAvailable()) {
-      delete Hammer.defaults.cssProps.userSelect; // to allow selection
+      Hammer.defaults.cssProps.userSelect = 'auto';
       this.hammer = new Hammer(window.document.body, {
         // touchAction: 'auto',
         // inputClass: Hammer['SUPPORT_POINTER_EVENTS'] ? Hammer.PointerEventInput : Hammer.TouchMouseInput,
