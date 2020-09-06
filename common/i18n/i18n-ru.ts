@@ -77,12 +77,6 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     homePageLinkTitle: 'Перейти на главную страницу сайта.',
     closeMenu: 'ЗАКРЫТЬ МЕНЮ',
   },
-  gotoRandomSongMenu: {
-    gotoRandomSongTitle: 'Перейти к случайной песне',
-    currentCollection: 'В текущей коллекции',
-    wholeService: 'На всём сервисе',
-    close: 'Закрыть',
-  },
   collectionEditor: {
     header: 'Добавление коллекции',
     collectionName: 'Имя коллекции',
@@ -275,6 +269,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     discussSongButtonDesktop: 'Обсудить на форуме',
     discussSongButtonMobile: 'Обсудить',
     fontSize: 'Размер шрифта',
+    gotoRandomSongInCollectionMenu: 'Коллекция',
+    gotoRandomSongInCatalogMenu: 'Каталог',
+
   },
   songPrevNextNavigator: {
     nextSong: 'След. песня »',

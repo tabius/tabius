@@ -79,12 +79,6 @@ export interface I18n {
     homePageLinkTitle: string;
     closeMenu: string;
   };
-  gotoRandomSongMenu: {
-    gotoRandomSongTitle: string;
-    currentCollection: string;
-    wholeService: string;
-    close: string;
-  };
   collectionEditor: {
     header: string;
     collectionName: string;
@@ -260,6 +254,8 @@ export interface I18n {
     discussSongButtonDesktop: string
     discussSongButtonMobile: string
     fontSize: string;
+    gotoRandomSongInCollectionMenu: string;
+    gotoRandomSongInCatalogMenu: string;
   };
   songPrevNextNavigator: {
     nextSong: string;

@@ -1,9 +1,12 @@
 import {Injectable, TemplateRef} from '@angular/core';
 import {ReplaySubject} from 'rxjs';
 
+export type ContextMenuTarget = (() => void)|TemplateRef<unknown>|ContextMenuAction[];
+
 export interface ContextMenuAction {
   icon: string;
-  activate: (() => void)|TemplateRef<unknown>;
+  title?: string;
+  target: ContextMenuTarget;
   style?: any;
 }
 
@@ -13,4 +16,12 @@ export interface ContextMenuAction {
 export class ContextMenuActionService {
   navbarAction$ = new ReplaySubject<ContextMenuAction|undefined>(1);
   footerActions$ = new ReplaySubject<ContextMenuAction[]>(1);
+}
+
+export function isSubmenuTarget(target: ContextMenuTarget): target is ContextMenuAction[] {
+  return Array.isArray(target);
+}
+
+export function isFunctionalTarget(target: ContextMenuTarget): target is () => void {
+  return typeof target === 'function';
 }

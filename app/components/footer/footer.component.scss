@@ -90,6 +90,7 @@
     display: flex;
     justify-content: space-between;
     background-color: white;
+    padding-top: 1px;
 
     a {
       width: 100%;
@@ -98,11 +99,25 @@
         background-color: white;
       }
 
+      &.btn-level-up {
+        width: 24px;
+      }
+
       gt-svg-icon {
         fill: #333;
-        margin-top: 1px;
         height: 24px;
         width: 24px;
+      }
+
+      .menu-item-content {
+        display: flex;
+        white-space: nowrap;
+        justify-content: center;
+        align-items: center;
+
+        .menu-item-title {
+          padding-left: 7px;
+        }
       }
     }
   }

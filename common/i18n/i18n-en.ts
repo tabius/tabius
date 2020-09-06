@@ -76,12 +76,6 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     homePageLinkTitle: 'Home',
     closeMenu: 'CLOSE'
   },
-  gotoRandomSongMenu: {
-    gotoRandomSongTitle: 'Go to random song in',
-    currentCollection: 'Current collection',
-    wholeService: 'Whole service',
-    close: 'Close',
-  },
   collectionEditor: {
     header: 'Add collection',
     collectionName: 'Name',
@@ -276,6 +270,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     discussSongButtonDesktop: 'Discuss on forum',
     discussSongButtonMobile: 'Discuss',
     fontSize: 'Font size',
+    gotoRandomSongInCollectionMenu: 'Collection',
+    gotoRandomSongInCatalogMenu: 'Catalog',
   },
   songPrevNextNavigator: {
     nextSong: 'Next. song »',

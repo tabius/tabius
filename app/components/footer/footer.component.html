@@ -29,14 +29,18 @@
 
 <div class="footer-menu">
     <div class="footer-menu-line" *ngIf="!isMainMenuDrawerOpen">
-        <a (click)="openMainMenuDrawer()" class="btn btn-flat-white">
+        <a *ngIf="menuStack.length === 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white">
             <gt-svg-icon icon="menu"></gt-svg-icon>
         </a>
-
-        <a *ngFor="let action of actions$|async" (click)="activateAction(action)" class="btn btn-flat-white">
-            <gt-svg-icon [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
+        <a *ngFor="let action of actions" (click)="activateAction(action)" class="btn btn-flat-white">
+            <div class="menu-item-content">
+                <gt-svg-icon [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
+                <div *ngIf="action.title" class="menu-item-title">{{action.title}}</div>
+            </div>
         </a>
-
+        <a *ngIf="menuStack.length > 0" (click)="popMenuState()" class="btn btn-flat-white btn-level-up">
+            <gt-svg-icon icon="level-up"></gt-svg-icon>
+        </a>
     </div>
 
     <div *ngIf="isMainMenuDrawerOpen" class="drawer">

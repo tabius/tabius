@@ -55,8 +55,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   songMountBeforeUpdate?: string;
   collectionMount?: string;
 
-  @ViewChild('gotoRandomSongPopoverTemplate', {static: true}) gotoRandomSongPopoverTemplate!: TemplateRef<{}>;
-
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               private readonly router: Router,
@@ -151,11 +149,27 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   private setupContextMenuActions() {
     this.contextMenuActionService.footerActions$.next([
-      {icon: 'arrow-down', activate: () => this.transpose(-1), style: {'width.px': 18}},
-      {icon: 'arrow-up', activate: () => this.transpose(+1), style: {'width.px': 18}},
-      {icon: 'minus', activate: () => this.decFontSize(), style: {'width.px': 18}},
-      {icon: 'plus', activate: () => this.incFontSize(), style: {'width.px': 18}},
-      {icon: 'dice4', activate: this.gotoRandomSongPopoverTemplate, style: {'width.px': 22}},
+      {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
+      {icon: 'arrow-up', target: () => this.transpose(+1), style: {'width.px': 18}},
+      {icon: 'minus', target: () => this.decFontSize(), style: {'width.px': 18}},
+      {icon: 'plus', target: () => this.incFontSize(), style: {'width.px': 18}},
+      {
+        icon: 'dice4',
+        target: [{
+          icon: 'dice4',
+          title: this.i18n.gotoRandomSongInCollectionMenu,
+          target: () => {
+            if (this.activeCollection && this.activeCollection.id) {
+              this.shortcutsService.gotoRandomSong(this.activeCollection.id);
+            }
+          }
+        }, {
+          icon: 'dice4',
+          title: this.i18n.gotoRandomSongInCatalogMenu,
+          target: () => this.shortcutsService.gotoRandomSong()
+        },],
+        style: {'width.px': 22}
+      },
     ]);
   }
 
