@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
@@ -155,19 +155,21 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       {icon: 'plus', target: () => this.incFontSize(), style: {'width.px': 18}},
       {
         icon: 'dice4',
-        target: [{
-          icon: 'dice4',
-          title: this.i18n.gotoRandomSongInCollectionMenu,
-          target: () => {
-            if (this.activeCollection && this.activeCollection.id) {
-              this.shortcutsService.gotoRandomSong(this.activeCollection.id);
+        target: [
+          {
+            icon: 'dice4',
+            title: this.i18n.gotoRandomSongInCatalogMenu,
+            target: () => this.shortcutsService.gotoRandomSong()
+          }, {
+            icon: 'dice4',
+            title: this.i18n.gotoRandomSongInCollectionMenu,
+            target: () => {
+              if (this.activeCollection && this.activeCollection.id) {
+                this.shortcutsService.gotoRandomSong(this.activeCollection.id);
+              }
             }
-          }
-        }, {
-          icon: 'dice4',
-          title: this.i18n.gotoRandomSongInCatalogMenu,
-          target: () => this.shortcutsService.gotoRandomSong()
-        },],
+          },
+        ],
         style: {'width.px': 22}
       },
     ]);

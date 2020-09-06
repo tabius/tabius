@@ -116,7 +116,8 @@
         align-items: center;
 
         .menu-item-title {
-          padding-left: 7px;
+          user-select: none;
+          padding-left: 8px;
         }
       }
     }
