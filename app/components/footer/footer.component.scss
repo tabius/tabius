@@ -94,6 +94,11 @@
 
     a {
       width: 100%;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      speak: none;
 
       &.btn-flat-white:focus, &.btn-flat-white:hover {
         background-color: white;
@@ -117,11 +122,6 @@
 
         .menu-item-title {
           padding-left: 8px;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-          speak: none;
         }
       }
     }
