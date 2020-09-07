@@ -52,7 +52,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   canCreateNewPublicCollection = false;
   user?: User;
 
-  readonly isVirtualKeyboardShownOnInput = isSmallScreenDevice() || true;
+  readonly isVirtualKeyboardShownOnInput = isSmallScreenDevice();
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
