@@ -6,7 +6,7 @@ import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
 import {timer} from 'rxjs';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent, isSmallScreenDevice, scrollToView} from '@common/util/misc-utils';
+import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent, isTouchEventsSupportAvailable, scrollToView} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {UserService} from '@app/services/user.service';
 import {MIN_DESKTOP_WIDTH, MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
@@ -52,7 +52,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   canCreateNewPublicCollection = false;
   user?: User;
 
-  readonly isVirtualKeyboardShownOnInput = isSmallScreenDevice();
+  readonly isVirtualKeyboardShownOnInput = isTouchEventsSupportAvailable();
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
