@@ -16,7 +16,17 @@
                        placeholder="{{i18n.searchInputPlaceholder}}"
                        title="{{i18n.searchInputTitle}}"
                 >
-                <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">{{i18n.clear}}</button>
+                <div *ngIf="isVirtualKeyboardShownOnInput" class="search-buttons-block">
+                    <button (click)="gotoResults()" class="btn btn-hide-keyboard" title="{{i18n.gotoResultsTitle}}">
+                        <gt-svg-icon icon="search"></gt-svg-icon>
+                    </button>
+                    <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">
+                        <gt-svg-icon icon="undo"></gt-svg-icon>
+                    </button>
+                </div>
+                <div *ngIf="!isVirtualKeyboardShownOnInput">
+                    <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">{{i18n.clear}}</button>
+                </div>
             </div>
 
             <div class="letters-navigator-root">
@@ -47,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="searchValue.length > 0" class="filtered-collections-block">
+        <div *ngIf="searchValue.length > 0" class="filtered-collections-block" #searchResultsBlock>
 
             <div class="search-results-message">
                 {{i18n.searchResultsPrefix}} «<span class="search-text">{{searchValue}}</span>»:

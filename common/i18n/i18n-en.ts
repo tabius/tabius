@@ -46,6 +46,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     clear: 'Reset',
     showAllCollections: 'ALL',
     showAllCollectionsTitle: 'Show all collections',
+    gotoResultsTitle: "Go to results",
     artistsHeader: 'Artists',
     noArtistsFound: 'No artists found',
     songsHeader: 'Songs',

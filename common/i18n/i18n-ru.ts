@@ -46,6 +46,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     clear: 'Очистить',
     showAllCollections: 'ВСЕ',
     showAllCollectionsTitle: 'Показать все коллекции',
+    gotoResultsTitle: 'Перейти к результатам',
     artistsHeader: 'Артисты',
     noArtistsFound: 'Артисты не найдены',
     songsHeader: 'Песни',

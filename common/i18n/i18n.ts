@@ -48,6 +48,7 @@ export interface I18n {
     searchInputPlaceholder: string;
     searchInputTitle: string;
     clearButtonTitle: string;
+    gotoResultsTitle: string;
     clear: string;
     showAllCollections: string;
     showAllCollectionsTitle: string;

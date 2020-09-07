@@ -6,7 +6,7 @@ import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
 import {timer} from 'rxjs';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent} from '@common/util/misc-utils';
+import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent, isSmallScreenDevice, scrollToView} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {UserService} from '@app/services/user.service';
 import {MIN_DESKTOP_WIDTH, MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
@@ -42,6 +42,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   readonly i18n = I18N.catalogPage;
 
   @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
+  @ViewChild('searchResultsBlock', {static: false, read: ElementRef}) private searchResultsBlock!: ElementRef;
   letterBlocks: LetterBlock[] = [];
   searchValue: string = '';
 
@@ -50,6 +51,8 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   collectionEditorIsOpen = false;
   canCreateNewPublicCollection = false;
   user?: User;
+
+  readonly isVirtualKeyboardShownOnInput = isSmallScreenDevice() || true;
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
@@ -188,9 +191,17 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
         && this.searchValue.replace(/ /g, '').length >= MIN_LEN_FOR_FULL_TEXT_SEARCH;
   }
 
-  toggleCollectionsEditor() {
+  toggleCollectionsEditor(): void {
     this.collectionEditorIsOpen = !this.collectionEditorIsOpen;
   }
+
+  gotoResults(): void {
+    if (this.searchValue.length === 0 || !this.searchResultsBlock) {
+      return;
+    }
+    scrollToView(this.searchResultsBlock.nativeElement, 10);
+  }
+
 }
 
 function createListItemFromCollection(collection: Collection): CollectionListItem {
