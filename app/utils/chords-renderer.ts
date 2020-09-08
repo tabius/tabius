@@ -47,40 +47,41 @@ export function getToneNumberByTone(tone: ChordTone): number {
   throw new Error(`Bad tone: ${tone}`);
 }
 
-export function getToneByToneNumber(toneNumber: number, flat?: boolean): ChordTone {
+export function getToneByToneNumber(toneNumber: number, isFlat = false): ChordTone {
   switch (toneNumber) {
     case 0:
       return 'C';
     case 1:
-      return flat ? 'Db' : 'C#';
+      return isFlat ? 'Db' : 'C#';
     case 2:
       return 'D';
     case 3:
-      return flat ? 'Eb' : 'D#';
+      return isFlat ? 'Eb' : 'D#';
     case 4:
       return 'E';
     case 5:
       return 'F';
     case 6:
-      return flat ? 'Gb' : 'F#';
+      return isFlat ? 'Gb' : 'F#';
     case 7:
       return 'G';
     case 8:
-      return flat ? 'Ab' : 'G#';
+      return isFlat ? 'Ab' : 'G#';
     case 9:
       return 'A';
     case 10:
-      return flat ? 'Bb' : 'A#';
+      return isFlat ? 'Bb' : 'A#';
     case 11:
       return 'B';
   }
   throw new Error(`Illegal tone number: ${toneNumber}`);
 }
 
-function transpose(tone: ChordTone, transpose: number): ChordTone {
+/** Transposes tone up to semi-tones. If isFlat is true, the result value will be flat otherwise sharp if applied. */
+export function transpose(tone: ChordTone, semiTones: number, isFlat = false): ChordTone {
   const oldToneNumber = getToneNumberByTone(tone);
-  const newToneNumber = (oldToneNumber + (transpose % TONES_COUNT) + TONES_COUNT) % TONES_COUNT;
-  return getToneByToneNumber(newToneNumber);
+  const newToneNumber = (oldToneNumber + (semiTones % TONES_COUNT) + TONES_COUNT) % TONES_COUNT;
+  return getToneByToneNumber(newToneNumber, isFlat);
 }
 
 export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, minResultStringLength = 0): string {
