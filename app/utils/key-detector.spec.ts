@@ -1,5 +1,4 @@
 import {Chord, CHORD_TONES} from '@app/utils/chords-parser-lib';
-// import {detectKeyAsMinor} from '@app/utils/key-detector';
 import {parseChord} from '@app/utils/chords-parser';
 import {transpose} from '@app/utils/chords-renderer';
 import * as assert from 'assert';
@@ -74,7 +73,6 @@ describe('Key detector', () => {
     it('should ignore complex chords when needed', () => {
       expect(detectKeyAsMinor(c('Am Dm Em Daug7'))).toBe('A');
     });
-
 
   });
 
