@@ -149,8 +149,17 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   private setupContextMenuActions() {
     this.contextMenuActionService.footerActions$.next([
-      {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
-      {icon: 'arrow-up', target: () => this.transpose(+1), style: {'width.px': 18}},
+      // {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
+      // {icon: 'arrow-up', target: () => this.transpose(+1), style: {'width.px': 18}},
+      {
+        icon: 'note', target: [
+          {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
+          {icon: 'arrow-up', target: () => this.transpose(1), style: {'width.px': 18}},
+          {text: '0', target: () => this.transpose(0), textStyle: {'padding-left': 0, 'font-size.px': 18}},
+          // {text: 'Am', target: () => this.transpose(0)},
+        ],
+        style: {'width.px': 18}
+      },
       {icon: 'minus', target: () => this.decFontSize(), style: {'width.px': 18}},
       {icon: 'plus', target: () => this.incFontSize(), style: {'width.px': 18}},
       {
@@ -158,11 +167,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         target: [
           {
             icon: 'dice4',
-            title: this.i18n.gotoRandomSongInCatalogMenu,
+            text: this.i18n.gotoRandomSongInCatalogMenu,
             target: () => this.shortcutsService.gotoRandomSong()
           }, {
             icon: 'dice4',
-            title: this.i18n.gotoRandomSongInCollectionMenu,
+            text: this.i18n.gotoRandomSongInCollectionMenu,
             target: () => {
               if (this.activeCollection && this.activeCollection.id) {
                 this.shortcutsService.gotoRandomSong(this.activeCollection.id);

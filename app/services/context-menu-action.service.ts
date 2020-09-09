@@ -4,10 +4,11 @@ import {ReplaySubject} from 'rxjs';
 export type ContextMenuTarget = (() => void)|TemplateRef<unknown>|ContextMenuAction[];
 
 export interface ContextMenuAction {
-  icon: string;
-  title?: string;
+  icon?: string;
+  text?: string;
   target: ContextMenuTarget;
   style?: any;
+  textStyle?: any;
 }
 
 @Injectable({
