@@ -21,11 +21,14 @@ const CHORDS_TAG = 'c';
 
 export const SONG_PRINT_FONT_SIZE = 14;
 
+// Keep in sync with SongTextComponent selector
 export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
 
 /** Shows song content (text with chords) with no title and any other meta-info. */
 @Component({
-  selector: SONG_TEXT_COMPONENT_NAME,
+  // Keep in sync with SONG_TEXT_COMPONENT_NAME
+  // Note: not using a variable because typescript 4.0 + IDEA static analyzers fails to detect the element and report error.
+  selector: 'gt-song-text',
   templateUrl: './song-text.component.html',
   styleUrls: ['./song-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
