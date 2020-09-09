@@ -106,6 +106,10 @@
 
       &.btn-level-up {
         width: 24px;
+        gt-svg-icon {
+          width: 22px;
+          height: 22px;
+        }
       }
 
       gt-svg-icon {
@@ -121,6 +125,7 @@
         align-items: center;
 
         .menu-item-title {
+          line-height: 24px;
           padding-left: 8px;
         }
       }

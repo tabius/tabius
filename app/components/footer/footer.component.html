@@ -34,8 +34,8 @@
         </a>
         <a *ngFor="let action of actions" (click)="activateAction(action)" class="btn btn-flat-white">
             <div class="menu-item-content">
-                <gt-svg-icon [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
-                <div *ngIf="action.title" class="menu-item-title">{{action.title}}</div>
+                <gt-svg-icon *ngIf="action.icon" [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
+                <div *ngIf="action.text" class="menu-item-title" [ngStyle]="action.textStyle">{{action.text}}</div>
             </div>
         </a>
         <a *ngIf="menuStack.length > 0" (click)="popMenuState()" class="btn btn-flat-white btn-level-up">
