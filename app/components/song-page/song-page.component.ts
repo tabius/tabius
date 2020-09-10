@@ -155,7 +155,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         icon: 'note', target: [
           {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
           {icon: 'arrow-up', target: () => this.transpose(1), style: {'width.px': 18}},
-          {text: '0', target: () => this.transpose(0), textStyle: {'padding-left': 0, 'font-size.px': 18}},
+          {icon: 'reset', target: () => this.transpose(0), style: {'width.px': 18}},
           // {text: 'Am', target: () => this.transpose(0)},
         ],
         style: {'width.px': 18}
