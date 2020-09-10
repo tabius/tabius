@@ -9,7 +9,7 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
 import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
-import {parseChordsLine} from '@app/utils/chords-parser';
+import {parseChords, parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
@@ -23,6 +23,8 @@ import {ShortcutsService} from '@app/services/shortcuts.service';
 import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
 import {ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
+import {ChordTone} from '@app/utils/chords-parser-lib';
+import {detectKeyAsMinor, getTransposeDistance} from '@app/utils/key-detector';
 
 @Component({
   selector: 'gt-song-page',
@@ -156,7 +158,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
           {icon: 'arrow-up', target: () => this.transpose(1), style: {'width.px': 18}},
           {icon: 'reset', target: () => this.transpose(0), style: {'width.px': 18}},
-          // {text: 'Am', target: () => this.transpose(0)},
+          {text: 'Am', target: () => this.transposeToKey('A'), textStyle: {'font-size.px': 16}},
         ],
         style: {'width.px': 18}
       },
@@ -293,6 +295,18 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     if (this.songSettings) {
       const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
       this.uds.setUserSongSettings({...this.songSettings!, transpose});
+    }
+  }
+
+  transposeToKey(tone: ChordTone): void {
+    if (this.songDetails && this.songSettings) {
+      const chords = parseChords(this.songDetails.content).map(l => l.chord);
+      const key = detectKeyAsMinor(chords.splice(Math.min(chords.length, 12)));
+      if (key) {
+        const transposeDistance = getTransposeDistance(key, tone);
+        const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
+        this.uds.setUserSongSettings({...this.songSettings!, transpose});
+      }
     }
   }
 

@@ -19,7 +19,12 @@ function c(chordsLine: string, transposeSteps = 0, isFlat = false): Chord[] {
 describe('Key detector', () => {
 
   describe('getTransposeDistance', () => {
-    it('should return valid distance', () => {
+    it('should pass minimal sanity tests', () => {
+      expect(getTransposeDistance('A', 'E')).toBe(7);
+      expect(getTransposeDistance('E', 'A')).toBe(-7);
+    });
+
+    it('should return valid distance for all variants', () => {
       let idx1 = 0;
       for (let toneVariant1 of KEY_VARIANTS) {
         idx1++;
@@ -72,6 +77,10 @@ describe('Key detector', () => {
 
     it('should ignore complex chords when needed', () => {
       expect(detectKeyAsMinor(c('Am Dm Em Daug7'))).toBe('A');
+    });
+
+    it('regression test 1', () => {
+      expect(detectKeyAsMinor(c('Dm Dm Gm Dm Bb G Bb G C F Bb G'))).toBe('D');
     });
 
   });
