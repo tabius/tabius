@@ -26,6 +26,7 @@ const KEY_MATCH = 4;
 const PARALLEL_MAJOR_MATCH = 3;
 const STANDARD_MATCH = 2;
 const ALTERNATIVE_HARMONIC_MATCH = 1;
+const MISMATCH = -2;
 
 /** Combines both natural (Em) and harmonic (E) scales. */
 const AM_PATTERN: KeyPattern = {
@@ -80,23 +81,36 @@ export function detectKeyAsMinor(chords: Chord[]): ChordTone|undefined {
     const isMajor = checkIsMajor(type);
     const isMinor = checkIsMinor(type);
     for (const {key, majors, minors} of ALL_MINOR_PATTERNS) {
-      let toneWeightPerKey = -1;
       const match = isMajor ? majors.find(m => m.tone === tone) : (isMinor ? minors.find(m => m.tone === tone) : undefined);
-      toneWeightPerKey = match ? match.score : -1;
+      const toneWeightPerKey = match ? match.score : MISMATCH;
       weightMap.set(key, weightMap.get(key)! + toneWeightPerKey);
     }
   }
 
   // Return tone with the highest weight.
-  let resultTone: ChordTone|undefined = undefined;
+  let resultKey: ChordTone|undefined = undefined;
   let resultWeight = 0;
   for (const [tone, weight] of weightMap.entries()) {
     if (weight > resultWeight) {
-      resultTone = tone;
+      resultKey = tone;
       resultWeight = weight;
+    } else if (resultKey && weight == resultWeight) {
+      resultKey = selectBestKeyForMinor(resultKey, tone);
     }
   }
-  return resultTone;
+  return resultKey;
+}
+
+const MINOR_VARIANTS: [ChordTone, ChordTone][] = [['F#', 'Gb'], ['Db', 'C#'], ['Ab', 'G#'], ['Eb', 'D#'], ['Bb', 'A#']];
+
+/** Selects best minor tone for 2 keys. */
+function selectBestKeyForMinor(key1: ChordTone, key2: ChordTone): ChordTone {
+  for (const v of MINOR_VARIANTS) {
+    if ((v[0] === key1 && v[1] === key2) || (v[0] === key2 || v[1] === key1)) {
+      return v[0];
+    }
+  }
+  return key1;
 }
 
 /** Returns transpose distance (number of semi-tones) between 2 tones. */

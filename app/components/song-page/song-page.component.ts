@@ -301,7 +301,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   transposeToKey(tone: ChordTone): void {
     if (this.songDetails && this.songSettings) {
       const chords = parseChords(this.songDetails.content).map(l => l.chord);
-      const key = detectKeyAsMinor(chords.splice(Math.min(chords.length, 12)));
+      chords.splice(Math.min(chords.length, 12));
+      const key = detectKeyAsMinor(chords);
       if (key) {
         const transposeDistance = getTransposeDistance(key, tone);
         const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
