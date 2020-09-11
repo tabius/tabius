@@ -94,9 +94,6 @@
 
     a {
       width: 100%;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
       user-select: none;
       speak: none;
 
@@ -126,6 +123,7 @@
         align-items: center;
 
         .menu-item-title {
+          user-select: none;
           line-height: 24px;
         }
 
