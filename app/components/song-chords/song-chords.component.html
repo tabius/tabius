@@ -1,20 +1,20 @@
 <div *ngIf="chordLayouts.length > 0">
-    <h3 [ngClass]="{'with-controls' : showControls}">
-        {{i18n.chordsTitle}}
-        <span class="controls-block" *ngIf="showControls">
+    <div class="title" [ngClass]="{'with-controls' : showControls}">
+        <h3>{{i18n.chordsTitle}}</h3>
+        <div class="controls-block" *ngIf="showControls">
             <button class="btn btn-flat-white" (click)="onTransposeClicked(-1)" title="{{i18n.transposeDown}}">
                 <gt-svg-icon icon="arrow-down"></gt-svg-icon>
             </button>
 
             <button class="btn btn-flat-white" (click)="onTransposeClicked(+1)" title="{{i18n.transposeUp}}">
-            <gt-svg-icon icon="arrow-up"></gt-svg-icon>
+                <gt-svg-icon icon="arrow-up"></gt-svg-icon>
             </button>
 
             <button class="btn btn-flat-white" (click)="onTransposeClicked(0)" title="{{i18n.originalKey}}">
-                <gt-svg-icon icon="close-2" class="close-icon"></gt-svg-icon>
+                <gt-svg-icon icon="reset" class="close-icon"></gt-svg-icon>
             </button>
-        </span>
-    </h3>
+        </div>
+    </div>
 
     <gt-chord-image *ngFor="let layout of chordLayouts"
                     [layout]="layout"
