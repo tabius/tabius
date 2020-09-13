@@ -1,5 +1,5 @@
 import {Chord, ChordTone} from '@app/utils/chords-parser-lib';
-import {transpose} from '@app/utils/chords-renderer';
+import {isSharp, transpose} from '@app/utils/chords-renderer';
 
 /** All key variations used by tone detector. */
 export const KEY_VARIANTS = <const>[['A'], ['A#', 'Bb'], ['B'], ['C'], ['C#', 'Db'], ['D'], ['D#', 'Eb'], ['E'], ['F'], ['F#', 'Gb'], ['G'], ['G#', 'Ab']];
@@ -118,4 +118,13 @@ export function getTransposeDistance(tone1: ChordTone, tone2: ChordTone): number
   const index1 = KEY_VARIANTS.findIndex(tones => tones.some(t => t === tone1));
   const index2 = KEY_VARIANTS.findIndex(tones => tones.some(t => t === tone2));
   return index2 - index1;
+}
+
+export function transposeAsMinor(tone: ChordTone, semiTones: number) {
+  const defaultVariant = transpose(tone, semiTones, false);
+  if (isSharp(defaultVariant)) {
+    const flatVariant = transpose(tone, semiTones, true);
+    return selectBestKeyForMinor(defaultVariant, flatVariant);
+  }
+  return defaultVariant;
 }

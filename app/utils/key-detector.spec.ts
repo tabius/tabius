@@ -87,6 +87,10 @@ describe('Key detector', () => {
       expect(detectKeyAsMinor(c('E E A E B A E'))).toBe('Db');
     });
 
+    it('regression test 3', () => {
+      expect(detectKeyAsMinor(c('C C F C G F C'))).toBe('A');
+    });
+
   });
 
 });

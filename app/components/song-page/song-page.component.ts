@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, 
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
-import {combineLatest, of} from 'rxjs';
+import {BehaviorSubject, combineLatest} from 'rxjs';
 import {mergeMap, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
@@ -24,7 +24,7 @@ import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.comp
 import {ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
 import {ChordTone} from '@app/utils/chords-parser-lib';
-import {detectKeyAsMinor, getTransposeDistance} from '@app/utils/key-detector';
+import {detectKeyAsMinor, getTransposeDistance, transposeAsMinor} from '@app/utils/key-detector';
 
 @Component({
   selector: 'gt-song-page',
@@ -56,6 +56,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   songMountBeforeUpdate?: string;
   collectionMount?: string;
+
+  private transposeMenuActionKey: ChordTone = 'A';
+  private readonly transposeMenuActionText$ = new BehaviorSubject<string>(`${this.transposeMenuActionKey}m`);
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
@@ -101,13 +104,14 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const primaryCollection$ = primaryCollectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
     const song$ = collectionId$.pipe(mergeMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
     const songDetails$ = song$.pipe(mergeMap(song => this.cds.getSongDetailsById(song && song.id)));
+    const songSettings$ = song$.pipe(mergeMap(song => this.uds.getUserSongSettings(song && song.id)));
 
-    combineLatest([collection$, primaryCollection$, song$, songDetails$, this.uds.getUser()])
+    combineLatest([collection$, primaryCollection$, song$, songDetails$, this.uds.getUser(), songSettings$])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),
         )
-        .subscribe(([collection, primaryCollection, song, songDetails, user]) => {
+        .subscribe(([collection, primaryCollection, song, songDetails, user, songSettings]) => {
           this.loaded = true;
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           const hadSongBefore = this.song !== undefined;
@@ -130,17 +134,17 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.activeCollection = collection;
           this.primaryCollection = primaryCollection;
           this.user = user;
+          this.songSettings = songSettings;
+
+          const onScreenSongKey = getOnScreenSongKey(songDetails, songSettings);
+          this.transposeMenuActionKey = onScreenSongKey === 'A' ? 'E' : 'A';
+          this.transposeMenuActionText$.next(`${this.transposeMenuActionKey}m`);
+
           this.updateMeta();
           this.hasEditRight = canManageCollectionContent(user, primaryCollection);
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });
-
-    song$.pipe(mergeMap(song => song ? this.uds.getUserSongSettings(song.id) : of(undefined)),
-        takeUntil(this.destroyed$)
-    ).subscribe(songSettings => {
-      this.songSettings = songSettings;
-    });
 
     this.uds.getUserDeviceSettings()
         .pipe(takeUntil(this.destroyed$))
@@ -158,7 +162,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
           {icon: 'arrow-up', target: () => this.transpose(1), style: {'width.px': 18}},
           {icon: 'reset', target: () => this.transpose(0), style: {'width.px': 18}},
-          {text: 'Am', target: () => this.transposeToKey('A'), textStyle: {'font-size.px': 16}},
+          {text$: this.transposeMenuActionText$, target: () => this.transposeToKey(this.transposeMenuActionKey), textStyle: {'font-size.px': 16}},
         ],
         style: {'width.px': 18}
       },
@@ -185,7 +189,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       },
     ]);
   }
-
 
   private handleMountUpdate(): void {
     if (!this.collectionMount || !this.songMountBeforeUpdate) {
@@ -299,15 +302,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   transposeToKey(tone: ChordTone): void {
-    if (this.songDetails && this.songSettings) {
-      const chords = parseChords(this.songDetails.content).map(l => l.chord);
-      chords.splice(Math.min(chords.length, 12));
-      const key = detectKeyAsMinor(chords);
-      if (key) {
-        const transposeDistance = getTransposeDistance(key, tone);
-        const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
-        this.uds.setUserSongSettings({...this.songSettings!, transpose});
-      }
+    const key = getOnScreenSongKey(this.songDetails, {transpose: 0});
+    if (key) {
+      const transposeDistance = getTransposeDistance(key, tone);
+      const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
+      this.uds.setUserSongSettings({...this.songSettings!, transpose});
     }
   }
 
@@ -366,4 +365,14 @@ export function getSongTextWithNoChords(text: string, linesCount: number, mergeL
     position = newPosition + 1;
   }
   return result;
+}
+
+function getOnScreenSongKey(songDetails: ({ content: string })|undefined, userSongSettings: ({ transpose: number })|undefined): ChordTone|undefined {
+  if (!songDetails || !userSongSettings) {
+    return undefined;
+  }
+  const chords = parseChords(songDetails.content).map(l => l.chord);
+  chords.splice(Math.min(chords.length, 12));
+  const originalSongKey = detectKeyAsMinor(chords);
+  return originalSongKey ? transposeAsMinor(originalSongKey, userSongSettings.transpose) : undefined;
 }

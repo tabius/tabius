@@ -77,6 +77,14 @@ export function getToneByToneNumber(toneNumber: number, isFlat = false): ChordTo
   throw new Error(`Illegal tone number: ${toneNumber}`);
 }
 
+export function isSharp(tone: ChordTone): boolean {
+  return tone.endsWith('#');
+}
+
+export function isFlat(tone: ChordTone): boolean {
+  return tone.endsWith('b');
+}
+
 /** Transposes tone up to semi-tones. If isFlat is true, the result value will be flat otherwise sharp if applied. */
 export function transpose(tone: ChordTone, semiTones: number, isFlat = false): ChordTone {
   const oldToneNumber = getToneNumberByTone(tone);

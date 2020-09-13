@@ -1,11 +1,12 @@
 import {Injectable, TemplateRef} from '@angular/core';
-import {ReplaySubject} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 
 export type ContextMenuTarget = (() => void)|TemplateRef<unknown>|ContextMenuAction[];
 
 export interface ContextMenuAction {
   icon?: string;
   text?: string;
+  text$?: Observable<string>;
   target: ContextMenuTarget;
   style?: any;
   textStyle?: any;
