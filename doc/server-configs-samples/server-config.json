@@ -5,12 +5,14 @@
   "corsOriginWhitelist": ["http://localhost:4002", "http://localhost:4201"],
   "ssoConfig": {
     "mode": "mock-user",
-    "id": "1",
-    "username": "test-user",
-    "email": "test-user@test-email.com",
-    "picture": "",
-    "groups": ["moderator"],
-    "collectionId": 1871
+    "value": {
+      "id": "1",
+      "username": "test-user",
+      "email": "test-user@test-email.com",
+      "picture": "",
+      "groups": ["moderator"],
+      "collectionId": 1871
+    }
   },
   "dbConfig": {
     "host": "localhost",

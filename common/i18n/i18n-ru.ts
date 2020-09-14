@@ -151,6 +151,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     songRenderingSettingsHeader: 'Отображение песен',
     fontSize: 'Размер шрифта',
     h4Si: 'Отображать Си как',
+    favoriteSongKey: 'Любимая тональность',
     example: 'Пример:',
     notSignedInPrompt: {
       register: 'Зарегистрируйтесь',

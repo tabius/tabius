@@ -1,5 +1,6 @@
-import {Chord, ChordTone} from '@app/utils/chords-parser-lib';
+
 import {isDigit} from '@common/util/misc-utils';
+import {Chord, ChordTone} from '@app/utils/chords-lib';
 
 export interface ChordLayout {
   chord: Chord,

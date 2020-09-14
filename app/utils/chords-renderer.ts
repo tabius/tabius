@@ -1,6 +1,7 @@
-import {Chord, ChordTone, VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
+import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 import {parseChords} from '@app/utils/chords-parser';
 import {isAlpha} from '@common/util/misc-utils';
+import {Chord, ChordTone} from '@app/utils/chords-lib';
 
 export interface ChordRenderingOptions {
   readonly tag?: string;

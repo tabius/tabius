@@ -1,5 +1,5 @@
 import {isTabsLine, parseChord, parseChords, parseChordsLine} from '@app/utils/chords-parser';
-import {Chord, ChordTone, ChordType} from '@app/utils/chords-parser-lib';
+import {Chord, ChordTone, ChordType} from '@app/utils/chords-lib';
 
 const c = (tone: ChordTone, type: ChordType, bassTone?: ChordTone): Chord => ({tone, type, bassTone});
 

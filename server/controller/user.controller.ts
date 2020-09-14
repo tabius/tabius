@@ -1,9 +1,9 @@
 import {Body, Controller, Get, HttpException, HttpStatus, Logger, Put, Res, Session} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
-import {LoginResponse, TabiusAjaxResponse} from '@common/ajax-model';
+import {LoginResponse, TabiusAjaxResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
 import {conformsTo, validate} from 'typed-validation';
-import {UserSongSettingsValidator} from '@server/util/validators';
+import {UpdateFavoriteSongKeyValidator, UserSongSettingsValidator} from '@server/util/validators';
 import {ServerSsoService} from '@server/service/server-sso.service';
 import {Response} from 'express';
 import {isEqualByStringify} from '@common/util/misc-utils';
@@ -82,13 +82,25 @@ export class UserController {
     return updatedSettings;
   }
 
+  @Put('/settings/favKey')
+  async setFavKey(@Session() session, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
+    validate(request, conformsTo(UpdateFavoriteSongKeyValidator));
+    const user: User = ServerSsoService.getUserOrFail(session);
+    this.logger.log(`set favKey: ${user.email}: ${request.key}`);
+    const settings = await this._getSettings(user);
+    const updatedSettings = {...settings, favKey: request.key};
+    await this.userDbi.updateSettings(user.id, updatedSettings);
+    return updatedSettings;
+  }
+
   //todo: move to dbi?
   private async _getSettings(user: User): Promise<UserSettings> {
     const settings = await this.userDbi.getSettings(user.id);
     if (settings === undefined) {
       throw new HttpException(`Settings not found! User: ${user.email}, id: ${user.id}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return settings == null ? newDefaultUserSettings() : settings;
+    const defaultSettings = newDefaultUserSettings();
+    return settings == null ? defaultSettings : {...defaultSettings, ...settings};
   }
 
   @Get('/sync')

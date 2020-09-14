@@ -26,6 +26,15 @@
         margin-left: 5px;
         min-width: 37px;
       }
+
+      select {
+        margin-left: 5px;
+        border: 1px solid #a9a9a9;
+        height: 32px;
+        background-color: white;
+        padding: 2px 7px;
+        font-size: inherit;
+      }
     }
 
     .font-size {

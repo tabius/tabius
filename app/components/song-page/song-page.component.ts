@@ -23,8 +23,8 @@ import {ShortcutsService} from '@app/services/shortcuts.service';
 import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
 import {ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
-import {ChordTone} from '@app/utils/chords-parser-lib';
 import {detectKeyAsMinor, getTransposeDistance, transposeAsMinor} from '@app/utils/key-detector';
+import {ChordTone} from '@app/utils/chords-lib';
 
 @Component({
   selector: 'gt-song-page',
@@ -105,13 +105,17 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const song$ = collectionId$.pipe(mergeMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
     const songDetails$ = song$.pipe(mergeMap(song => this.cds.getSongDetailsById(song && song.id)));
     const songSettings$ = song$.pipe(mergeMap(song => this.uds.getUserSongSettings(song && song.id)));
+    const user$ = this.uds.getUser();
+    const favoriteTone$ = this.uds.getFavoriteSongKey();
 
-    combineLatest([collection$, primaryCollection$, song$, songDetails$, this.uds.getUser(), songSettings$])
+    const songData$ = combineLatest([collection$, primaryCollection$, song$, songDetails$]);
+    const userData$ = combineLatest([user$, favoriteTone$, songSettings$]);
+    combineLatest([songData$, userData$])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),
         )
-        .subscribe(([collection, primaryCollection, song, songDetails, user, songSettings]) => {
+        .subscribe(([[collection, primaryCollection, song, songDetails], [user, favoriteTone, songSettings]]) => {
           this.loaded = true;
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           const hadSongBefore = this.song !== undefined;
@@ -137,7 +141,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.songSettings = songSettings;
 
           const onScreenSongKey = getOnScreenSongKey(songDetails, songSettings);
-          this.transposeMenuActionKey = onScreenSongKey === 'A' ? 'E' : 'A';
+          // Todo: h4Si
+          this.transposeMenuActionKey = onScreenSongKey === favoriteTone ? (onScreenSongKey === 'A' ? 'E' : 'A') : favoriteTone;
           this.transposeMenuActionText$.next(`${this.transposeMenuActionKey}m`);
 
           this.updateMeta();

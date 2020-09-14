@@ -46,7 +46,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     clear: 'Reset',
     showAllCollections: 'ALL',
     showAllCollectionsTitle: 'Show all collections',
-    gotoResultsTitle: "Go to results",
+    gotoResultsTitle: 'Go to results',
     artistsHeader: 'Artists',
     noArtistsFound: 'No artists found',
     songsHeader: 'Songs',
@@ -150,6 +150,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     songRenderingSettingsHeader: 'Song rendering',
     fontSize: 'Font size',
     h4Si: 'Render Si like ',
+    favoriteSongKey: 'Favorite key',
     example: 'Example:',
     notSignedInPrompt: {
       register: 'Register',

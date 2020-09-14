@@ -1,18 +1,21 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {DEFAULT_FAVORITE_KEY, DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
-import {flatMap, map, switchMap, take} from 'rxjs/operators';
+import {map, mergeMap, switchMap, take} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {isEqualByStringify, isValidId} from '@common/util/misc-utils';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {checkUpdateByReference, checkUpdateByStringify} from '@app/store/check-update-functions';
+import {ChordTone} from '@app/utils/chords-lib';
+import {UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
 const SONG_SETTINGS_KEY_PREFIX = 'ss-';
 const H4SI_FLAG_KEY = 'h4Si';
+const FAV_SONG_KEY_KEY = 'favKey';
 const USER_KEY = 'user';
 
 /** Client-side API to access/update personal user settings. */
@@ -64,7 +67,7 @@ export class UserService {
     }
     return this.httpClient.get<UserSettings>(`/api/user/settings`)
         .pipe(
-            flatMap(userSettings => fromPromise(this.updateUserSettings(userSettings))
+            mergeMap(userSettings => fromPromise(this.updateUserSettings(userSettings))
                 .pipe(map(() => userSettings)))
         );
   }
@@ -77,7 +80,7 @@ export class UserService {
 
     // update settings on the server only if we have valid user session.
     const userSettingsFromServer = await this.getUser().pipe(
-        flatMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings) : of(undefined)),
+        mergeMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings) : of(undefined)),
         take(1)
     ).toPromise();
     if (userSettingsFromServer) {
@@ -107,6 +110,30 @@ export class UserService {
   async setH4SiFlag(h4SiFlag: boolean): Promise<void> {
     await this.store.set<boolean>(H4SI_FLAG_KEY, h4SiFlag, skipUpdateCheck);
     const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}).pipe(take(1)).toPromise();
+    await this.updateUserSettings(settings);
+  }
+
+  getFavoriteSongKey(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<ChordTone> {
+    return this.getUser().pipe(
+        switchMap(user => {
+          if (!user) {
+            return of(DEFAULT_FAVORITE_KEY);
+          }
+          return this.store.get<ChordTone>(
+              FAV_SONG_KEY_KEY,
+              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.favKey)),
+              refreshMode,
+              checkUpdateByReference
+          ).pipe(map(key => key || DEFAULT_FAVORITE_KEY));
+        })
+    );
+  }
+
+  async setFavoriteSongKey(favKey: ChordTone): Promise<void> {
+    await this.store.set<string>(FAV_SONG_KEY_KEY, favKey, skipUpdateCheck);
+    const updateRequest: UpdateFavoriteSongKeyRequest = {key: favKey};
+    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest)
+        .pipe(take(1)).toPromise();
     await this.updateUserSettings(settings);
   }
 

@@ -31,6 +31,14 @@
                             <button (click)="useH4Si(false)" class="btn mono f16px" [class.btn-info]='!h4Si'>B</button>
                         </td>
                     </tr>
+                    <tr>
+                        <td>{{i18n.favoriteSongKey}}</td>
+                        <td>
+                            <select [(ngModel)]="visualFavoriteSongKey" (ngModelChange)="setFavoriteSongKey($event)">
+                                <option *ngFor="let key of visualAllMinorToneKeys" [ngValue]="key">{{key}}m</option>
+                            </select>
+                        </td>
+                    </tr>
                 </table>
 
                 <div class="song-preview-title">{{i18n.example}}</div>

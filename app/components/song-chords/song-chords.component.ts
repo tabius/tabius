@@ -8,9 +8,9 @@ import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
 import {CatalogService} from '@app/services/catalog.service';
 import {newDefaultUserSongSettings} from '@common/user-model';
-import {Chord} from '@app/utils/chords-parser-lib';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
 import {I18N} from '@app/app-i18n';
+import {Chord} from '@app/utils/chords-lib';
 
 @Component({
   selector: 'gt-song-chords',

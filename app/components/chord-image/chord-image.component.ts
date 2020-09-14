@@ -2,8 +2,9 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, I
 import {ChordImagePainter} from '@app/utils/chord-image-painter';
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {isPlatformBrowser} from '@angular/common';
-import {ChordTone, VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
+import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 import {I18N} from '@app/app-i18n';
+import {ChordTone} from '@app/utils/chords-lib';
 
 @Component({
   selector: 'gt-chord-image',

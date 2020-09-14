@@ -151,6 +151,7 @@ export interface I18n {
     songRenderingSettingsHeader: string;
     fontSize: string;
     h4Si: string;
+    favoriteSongKey: string;
     example: string;
     notSignedInPrompt: {
       register: string;

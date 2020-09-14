@@ -1,5 +1,5 @@
-import {Chord, ChordTone} from '@app/utils/chords-parser-lib';
 import {isSharp, transpose} from '@app/utils/chords-renderer';
+import {Chord, ChordTone} from '@app/utils/chords-lib';
 
 /** All key variations used by tone detector. */
 export const KEY_VARIANTS = <const>[['A'], ['A#', 'Bb'], ['B'], ['C'], ['C#', 'Db'], ['D'], ['D#', 'Eb'], ['E'], ['F'], ['F#', 'Gb'], ['G'], ['G#', 'Ab']];
@@ -101,6 +101,7 @@ export function detectKeyAsMinor(chords: Chord[]): ChordTone|undefined {
   return resultKey;
 }
 
+// TODO: sync with MINOR_KEY_TONES
 const MINOR_VARIANTS: [ChordTone, ChordTone][] = [['F#', 'Gb'], ['Db', 'C#'], ['Ab', 'G#'], ['Eb', 'D#'], ['Bb', 'A#']];
 
 /** Selects best minor tone for 2 keys. */

@@ -2,7 +2,7 @@ import {Directive, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Out
 import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {PopoverService} from '@app/popover/popover.service';
-import {Chord} from '@app/utils/chords-parser-lib';
+import {Chord} from '@app/utils/chords-lib';
 
 export type ChordClickInfo = { element: HTMLElement, chord: Chord }|undefined;
 export type ChordClickInfoProvider = (event: MouseEvent, chord?: Chord) => ChordClickInfo;
