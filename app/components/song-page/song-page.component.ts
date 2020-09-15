@@ -9,12 +9,12 @@ import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
 import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
-import {parseChords, parseChordsLine} from '@app/utils/chords-parser';
+import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
-import {TONES_COUNT} from '@app/utils/chords-renderer';
-import {User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
+import {getToneWithH4SiFix, TONES_COUNT} from '@app/utils/chords-renderer';
+import {DEFAULT_FAVORITE_KEY, User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
@@ -23,8 +23,9 @@ import {ShortcutsService} from '@app/services/shortcuts.service';
 import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
 import {ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
-import {detectKeyAsMinor, getTransposeDistance, transposeAsMinor} from '@app/utils/key-detector';
+import {getTransposeDistance} from '@app/utils/key-detector';
 import {ChordTone} from '@app/utils/chords-lib';
+import {getOnScreenSongKey} from '@app/components/song-chords/song-chords.component';
 
 @Component({
   selector: 'gt-song-page',
@@ -57,7 +58,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   songMountBeforeUpdate?: string;
   collectionMount?: string;
 
-  private transposeMenuActionKey: ChordTone = 'A';
+  private transposeMenuActionKey: ChordTone = DEFAULT_FAVORITE_KEY;
   private readonly transposeMenuActionText$ = new BehaviorSubject<string>(`${this.transposeMenuActionKey}m`);
 
   constructor(private readonly cds: CatalogService,
@@ -106,16 +107,17 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const songDetails$ = song$.pipe(mergeMap(song => this.cds.getSongDetailsById(song && song.id)));
     const songSettings$ = song$.pipe(mergeMap(song => this.uds.getUserSongSettings(song && song.id)));
     const user$ = this.uds.getUser();
-    const favoriteTone$ = this.uds.getFavoriteSongKey();
+    const h4Si$ = this.uds.getH4SiFlag();
+    const favoriteKey$ = this.uds.getFavoriteKey();
 
     const songData$ = combineLatest([collection$, primaryCollection$, song$, songDetails$]);
-    const userData$ = combineLatest([user$, favoriteTone$, songSettings$]);
+    const userData$ = combineLatest([user$, h4Si$, favoriteKey$, songSettings$]);
     combineLatest([songData$, userData$])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),
         )
-        .subscribe(([[collection, primaryCollection, song, songDetails], [user, favoriteTone, songSettings]]) => {
+        .subscribe(([[collection, primaryCollection, song, songDetails], [user, h4Si, favoriteKey, songSettings]]) => {
           this.loaded = true;
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           const hadSongBefore = this.song !== undefined;
@@ -141,9 +143,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.songSettings = songSettings;
 
           const onScreenSongKey = getOnScreenSongKey(songDetails, songSettings);
-          // Todo: h4Si
-          this.transposeMenuActionKey = onScreenSongKey === favoriteTone ? (onScreenSongKey === 'A' ? 'E' : 'A') : favoriteTone;
-          this.transposeMenuActionText$.next(`${this.transposeMenuActionKey}m`);
+          this.transposeMenuActionKey = onScreenSongKey === favoriteKey ? (onScreenSongKey === 'A' ? 'E' : 'A') : favoriteKey;
+          this.transposeMenuActionText$.next(`${getToneWithH4SiFix(h4Si, this.transposeMenuActionKey)}m`);
 
           this.updateMeta();
           this.hasEditRight = canManageCollectionContent(user, primaryCollection);
@@ -306,10 +307,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
   }
 
-  transposeToKey(tone: ChordTone): void {
-    const key = getOnScreenSongKey(this.songDetails, {transpose: 0});
-    if (key) {
-      const transposeDistance = getTransposeDistance(key, tone);
+  transposeToKey(key: ChordTone): void {
+    const originalSongKey = getOnScreenSongKey(this.songDetails, {transpose: 0});
+    if (originalSongKey) {
+      const transposeDistance = getTransposeDistance(originalSongKey, key);
       const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
       this.uds.setUserSongSettings({...this.songSettings!, transpose});
     }
@@ -370,14 +371,4 @@ export function getSongTextWithNoChords(text: string, linesCount: number, mergeL
     position = newPosition + 1;
   }
   return result;
-}
-
-function getOnScreenSongKey(songDetails: ({ content: string })|undefined, userSongSettings: ({ transpose: number })|undefined): ChordTone|undefined {
-  if (!songDetails || !userSongSettings) {
-    return undefined;
-  }
-  const chords = parseChords(songDetails.content).map(l => l.chord);
-  chords.splice(Math.min(chords.length, 12));
-  const originalSongKey = detectKeyAsMinor(chords);
-  return originalSongKey ? transposeAsMinor(originalSongKey, userSongSettings.transpose) : undefined;
 }

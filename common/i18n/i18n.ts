@@ -151,7 +151,7 @@ export interface I18n {
     songRenderingSettingsHeader: string;
     fontSize: string;
     h4Si: string;
-    favoriteSongKey: string;
+    favoriteKey: string;
     example: string;
     notSignedInPrompt: {
       register: string;
@@ -199,6 +199,8 @@ export interface I18n {
     transposeUp: string;
     transposeDown: string;
     originalKey: string;
+    favoriteKey: string;
+    simpleKey: string;
   };
   songEditorComponent: {
     loadingMessage: string;

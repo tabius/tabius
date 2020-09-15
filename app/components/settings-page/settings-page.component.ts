@@ -52,7 +52,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
       this.uds.getUserDeviceSettings(),
       //TODO: optimize these 2 parallel fetches! Fetch user settings only once.
       this.uds.getH4SiFlag(RefreshMode.Refresh),
-      this.uds.getFavoriteSongKey(RefreshMode.Refresh),
+      this.uds.getFavoriteKey(RefreshMode.Refresh),
     ])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(([user, settings, h4si, favoriteSongKey]) => {
@@ -94,7 +94,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
 
   setFavoriteSongKey(visualFavoriteSongKey: string): void {
     const tone: ChordTone = visualFavoriteSongKey === 'H' ? 'B' : visualFavoriteSongKey as ChordTone;
-    this.uds.setFavoriteSongKey(tone);
+    this.uds.setFavoriteKey(tone);
   }
 }
 

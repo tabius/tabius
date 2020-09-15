@@ -151,7 +151,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     songRenderingSettingsHeader: 'Отображение песен',
     fontSize: 'Размер шрифта',
     h4Si: 'Отображать Си как',
-    favoriteSongKey: 'Любимая тональность',
+    favoriteKey: 'Любимая тональность',
     example: 'Пример:',
     notSignedInPrompt: {
       register: 'Зарегистрируйтесь',
@@ -205,6 +205,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     transposeUp: 'Транспонировать на полутон выше (SHIFT + ⇧)',
     transposeDown: 'Транспонировать на полутон ниже (SHIFT + ⇩)',
     originalKey: 'Оригинальная тональность (SHIFT + 0)',
+    favoriteKey: 'Любимая тональность',
+    simpleKey: 'Простая тональность',
   },
   songEditorComponent: {
     loadingMessage: 'Загружаем детали песни…',

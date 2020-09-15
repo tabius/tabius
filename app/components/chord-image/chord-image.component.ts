@@ -4,7 +4,7 @@ import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {isPlatformBrowser} from '@angular/common';
 import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 import {I18N} from '@app/app-i18n';
-import {ChordTone} from '@app/utils/chords-lib';
+import {getToneWithH4SiFix} from '@app/utils/chords-renderer';
 
 @Component({
   selector: 'gt-chord-image',
@@ -36,8 +36,8 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
       return;
     }
     const {chord} = this.layout;
-    const visualTone = this.getToneWithH4SiFix(chord.tone);
-    const visualBassToneSuffix = chord.bassTone ? '/' + this.getToneWithH4SiFix(chord.bassTone) : '';
+    const visualTone = getToneWithH4SiFix(this.h4Si, chord.tone);
+    const visualBassToneSuffix = chord.bassTone ? '/' + getToneWithH4SiFix(this.h4Si, chord.bassTone) : '';
     const visualChordName = visualTone + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type) + visualBassToneSuffix;
     this.painter = new ChordImagePainter(visualChordName, this.layout.positions, this.layout.fingers, this.size);
     this.width = this.painter.imageWidth;
@@ -54,10 +54,6 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
 
   getChordTextForTitle(): string {
     const {chord} = this.layout;
-    return this.getToneWithH4SiFix(chord.tone) + chord.type;
-  }
-
-  private getToneWithH4SiFix(tone: ChordTone): string {
-    return this.h4Si && tone.charAt(0) === 'B' ? `H${tone.substring(1)}` : tone;
+    return getToneWithH4SiFix(this.h4Si, chord.tone) + chord.type;
   }
 }

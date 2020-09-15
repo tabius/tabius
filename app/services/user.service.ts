@@ -113,7 +113,7 @@ export class UserService {
     await this.updateUserSettings(settings);
   }
 
-  getFavoriteSongKey(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<ChordTone> {
+  getFavoriteKey(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<ChordTone> {
     return this.getUser().pipe(
         switchMap(user => {
           if (!user) {
@@ -129,7 +129,7 @@ export class UserService {
     );
   }
 
-  async setFavoriteSongKey(favKey: ChordTone): Promise<void> {
+  async setFavoriteKey(favKey: ChordTone): Promise<void> {
     await this.store.set<string>(FAVORITE_TONE_KEY, favKey, skipUpdateCheck);
     const updateRequest: UpdateFavoriteSongKeyRequest = {key: favKey};
     const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest)

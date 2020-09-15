@@ -182,3 +182,7 @@ function containsNonAlphaCharsOnly(text: string): boolean {
   }
   return true;
 }
+
+export function getToneWithH4SiFix(h4Si: boolean, tone: ChordTone): string {
+  return h4Si && tone.charAt(0) === 'B' ? `H${tone.substring(1)}` : tone;
+}

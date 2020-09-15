@@ -32,7 +32,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>{{i18n.favoriteSongKey}}</td>
+                        <td>{{i18n.favoriteKey}}</td>
                         <td>
                             <select [(ngModel)]="visualFavoriteSongKey" (ngModelChange)="setFavoriteSongKey($event)">
                                 <option *ngFor="let key of visualAllMinorToneKeys" [ngValue]="key">{{key}}m</option>

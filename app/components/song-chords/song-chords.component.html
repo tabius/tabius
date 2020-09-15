@@ -13,6 +13,10 @@
             <button class="btn btn-flat-white" (click)="onTransposeClicked(0)" title="{{i18n.originalKey}}">
                 <gt-svg-icon icon="reset" class="close-icon"></gt-svg-icon>
             </button>
+
+            <button class="btn btn-flat-white" (click)="transposeToFavoriteKeyClicked()" title="{{getFavoriteKeyTitle()}}">
+                {{transposeActionText$|async}}
+            </button>
         </div>
     </div>
 

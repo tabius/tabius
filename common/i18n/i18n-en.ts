@@ -150,7 +150,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     songRenderingSettingsHeader: 'Song rendering',
     fontSize: 'Font size',
     h4Si: 'Render Si like ',
-    favoriteSongKey: 'Favorite key',
+    favoriteKey: 'Favorite key',
     example: 'Example:',
     notSignedInPrompt: {
       register: 'Register',
@@ -206,6 +206,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     transposeUp: 'Transpose a half-tone up',
     transposeDown: 'Transpose a half-tone down',
     originalKey: 'Original key',
+    favoriteKey: 'Favorite key',
+    simpleKey: 'Simple key',
   },
   songEditorComponent: {
     loadingMessage: 'Loading song details…',
