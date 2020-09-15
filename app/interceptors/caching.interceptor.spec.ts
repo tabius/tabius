@@ -4,7 +4,7 @@ import {HTTP_INTERCEPTORS, HttpClient, HttpEvent, HttpInterceptor, HttpRequest, 
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {delay} from 'rxjs/operators';
-import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
+import {CachingAndMultiplexingInterceptor} from '@app/interceptors/caching-and-multiplexing-interceptor.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Injectable()
@@ -37,7 +37,7 @@ describe(`CachingInterceptor`, () => {
       imports: [HttpClientTestingModule],
       providers: [
         {provide: BrowserStateService, useValue: {isBrowser: true}},
-        {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true,},
+        {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true,},
         {provide: HTTP_INTERCEPTORS, useValue: responseInterceptor, multi: true,},
       ],
     });

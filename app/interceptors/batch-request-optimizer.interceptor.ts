@@ -1,7 +1,7 @@
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable, timer} from 'rxjs';
-import {flatMap, map, share} from 'rxjs/operators';
+import {map, mergeMap, share} from 'rxjs/operators';
 
 /** Prefix for all 'by-ids' requests. Example: /api/song/by-ids/id1,id2,id3 or /api/song/details-by-ids/ia1,id2,id3.. */
 export const BY_IDS_TOKEN = 'by-ids/';
@@ -37,7 +37,7 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
     const batchIds = new Set<string>(ids);
     const response = timer(this.batchWaitTimeInMillis)
         .pipe(
-            flatMap(() => {
+            mergeMap(() => {
               this.pendingBatchRequests.delete(type); // delete from the pending list right before real run.
               const sortedUniqueIds = [...batchIds.keys()].sort();
               const batchReq = req.clone({url: type + BY_IDS_TOKEN + sortedUniqueIds.join(BY_IDS_SEPARATOR)});

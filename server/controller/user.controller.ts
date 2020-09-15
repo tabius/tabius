@@ -30,7 +30,7 @@ export class UserController {
     }
     this.logger.log(`User is logged in: ${user.email}`);
     await this.userDbi.updateOnLogin(user);
-    const settings = await this._getSettings(user);
+    const settings = await this.getUserSettings(user);
     return {
       user,
       settings,
@@ -48,7 +48,7 @@ export class UserController {
   async getSettings(@Session() session): Promise<UserSettings> {
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`get settings: ${user.email}`);
-    return await this._getSettings(user);
+    return await this.getUserSettings(user);
   }
 
   @Put('/settings/song')
@@ -59,7 +59,7 @@ export class UserController {
     }
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set settings: ${user.email}, song: ${songSettings.songId}`);
-    const settings = await this._getSettings(user);
+    const settings = await this.getUserSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
     const sameAsDefault = isEqualByStringify(defaultSettings, songSettings);
     const updatedSettings = {...settings} as any;
@@ -76,7 +76,7 @@ export class UserController {
   async setH4Si(@Session() session, @Body() {h4SiFlag}: { h4SiFlag: boolean|undefined }): Promise<UserSettings> {
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set h4Si: ${user.email}: ${h4SiFlag}`);
-    const settings = await this._getSettings(user);
+    const settings = await this.getUserSettings(user);
     const updatedSettings = {...settings, h4Si: !!h4SiFlag};
     await this.userDbi.updateSettings(user.id, updatedSettings);
     return updatedSettings;
@@ -87,14 +87,13 @@ export class UserController {
     validate(request, conformsTo(UpdateFavoriteSongKeyValidator));
     const user: User = ServerSsoService.getUserOrFail(session);
     this.logger.log(`set favKey: ${user.email}: ${request.key}`);
-    const settings = await this._getSettings(user);
+    const settings = await this.getUserSettings(user);
     const updatedSettings = {...settings, favKey: request.key};
     await this.userDbi.updateSettings(user.id, updatedSettings);
     return updatedSettings;
   }
 
-  //todo: move to dbi?
-  private async _getSettings(user: User): Promise<UserSettings> {
+  private async getUserSettings(user: User): Promise<UserSettings> {
     const settings = await this.userDbi.getSettings(user.id);
     if (settings === undefined) {
       throw new HttpException(`Settings not found! User: ${user.email}, id: ${user.id}`, HttpStatus.INTERNAL_SERVER_ERROR);

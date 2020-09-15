@@ -15,7 +15,7 @@ const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
 const SONG_SETTINGS_KEY_PREFIX = 'ss-';
 const H4SI_FLAG_KEY = 'h4Si';
-const FAV_SONG_KEY_KEY = 'favKey';
+const FAVORITE_TONE_KEY = 'favoriteKey';
 const USER_KEY = 'user';
 
 /** Client-side API to access/update personal user settings. */
@@ -120,7 +120,7 @@ export class UserService {
             return of(DEFAULT_FAVORITE_KEY);
           }
           return this.store.get<ChordTone>(
-              FAV_SONG_KEY_KEY,
+              FAVORITE_TONE_KEY,
               () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.favKey)),
               refreshMode,
               checkUpdateByReference
@@ -130,7 +130,7 @@ export class UserService {
   }
 
   async setFavoriteSongKey(favKey: ChordTone): Promise<void> {
-    await this.store.set<string>(FAV_SONG_KEY_KEY, favKey, skipUpdateCheck);
+    await this.store.set<string>(FAVORITE_TONE_KEY, favKey, skipUpdateCheck);
     const updateRequest: UpdateFavoriteSongKeyRequest = {key: favKey};
     const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest)
         .pipe(take(1)).toPromise();

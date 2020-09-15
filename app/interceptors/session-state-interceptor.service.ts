@@ -1,12 +1,12 @@
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {flatMap} from 'rxjs/operators';
 import {AjaxSessionInfo} from '@common/ajax-model';
 import {AuthService, LOGOUT_URL, UPDATE_SIGN_IN_STATE_URL} from '@app/services/auth.service';
 import {UserService} from '@app/services/user.service';
 import {waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {mergeMap} from 'rxjs/operators';
 
 /**
  * Checks session state in the response and updates app session state if needed.
@@ -27,15 +27,15 @@ export class SessionStateInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (this.bss.isServer || isSessionStateManagementRequest(req)) {
       return next.handle(req).pipe(
-          flatMap(event => {
+          mergeMap(event => {
             return event instanceof HttpResponse && !!event.body && !!event.body.payload
-                ? of(event.clone({body: event.body.payload}))
-                : of(event);
+                   ? of(event.clone({body: event.body.payload}))
+                   : of(event);
           }));
     }
     return next.handle(req)
         .pipe(
-            flatMap(event => {
+            mergeMap(event => {
               if (!(event instanceof HttpResponse)) {
                 return of(event);
               }

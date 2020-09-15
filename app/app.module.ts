@@ -35,7 +35,7 @@ import {SongVideoComponent} from '@app/components/song-video/song-video.componen
 import {SongEditorComponent} from '@app/components/song-editor/song-editor.component';
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
-import {CachingInterceptor} from '@app/interceptors/caching.interceptor';
+import {CachingAndMultiplexingInterceptor} from '@app/interceptors/caching-and-multiplexing-interceptor.service';
 import {ResourceNotFoundComponent} from '@app/components/resource-not-found/resource-not-found.component';
 import {SongFullTextSearchResultsPanelComponent} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
@@ -118,7 +118,7 @@ import {ShowChordPopoverOnClickDirective} from './directives/show-chord-popover-
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: SessionStateInterceptor, multi: true},
