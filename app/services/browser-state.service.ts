@@ -1,13 +1,14 @@
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
-import {skip} from 'rxjs/operators';
+import {map, skip} from 'rxjs/operators';
 import * as NoSleep from 'nosleep.js/dist/NoSleep';
 import {Router} from '@angular/router';
 import {MOUNT_PRINT_SUFFIX} from '@common/mounts';
 import {I18N} from '@app/app-i18n';
-import {getUserAgentFromRequest} from '@common/util/misc-utils';
+import {getUserAgentFromRequest, isSmallScreenDevice} from '@common/util/misc-utils';
+import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +18,22 @@ export class BrowserStateService {
   readonly isBrowser;
   readonly isServer;
 
+
   private readonly i18n = I18N.browserStateService;
 
   private readonly noSleepMode$ = new BehaviorSubject<boolean>(false);
 
   private readonly printMode$ = new BehaviorSubject<boolean>(false);
+
+  get isWideScreenMode$() {
+    return this.wideScreenMode$ as Observable<boolean>;
+  }
+
+  get isSmallScreenMode$() {
+    return this.isWideScreenMode$.pipe(map(flag => !flag));
+  }
+
+  private readonly wideScreenMode$ = new ReplaySubject<boolean>(1);
 
   private noSleep?: NoSleep;
 
@@ -79,5 +91,18 @@ export class BrowserStateService {
 
   getUserAgentString(request: any): string|undefined {
     return this.isBrowser ? navigator && navigator.userAgent : getUserAgentFromRequest(request);
+  }
+
+  initWideScreenModeState(request?: any): void {
+    if (this.isBrowser) {
+      this.updateWideScreenModeFromWindow();
+    } else {
+      this.wideScreenMode$.next(!isSmallScreenDevice(request));
+    }
+  }
+
+  updateWideScreenModeFromWindow(): void {
+    const isWidescreenMode = window.innerWidth >= MIN_DESKTOP_WIDTH;
+    this.wideScreenMode$.next(isWidescreenMode);
   }
 }

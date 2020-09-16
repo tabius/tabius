@@ -1,9 +1,10 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Inject, OnInit, Optional, TemplateRef, ViewChild} from '@angular/core';
 import {AuthService} from '@app/services/auth.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Observable} from 'rxjs';
 import {HelpService} from '@app/services/help.service';
 import {ShortcutsService} from '@app/services/shortcuts.service';
+import {REQUEST} from '@nguniversal/express-engine/tokens';
 
 @Component({
   selector: 'gt-app',
@@ -18,10 +19,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly printMode$: Observable<boolean>;
 
   constructor(private readonly authService: AuthService,
-              bss: BrowserStateService,
+              private readonly bss: BrowserStateService,
               private readonly shortcutsService: ShortcutsService,
               private readonly helpService: HelpService,
+              @Optional() @Inject(REQUEST) private request: any,
   ) {
+    bss.initWideScreenModeState(request);
     this.printMode$ = bss.getPrintMode();
   }
 
@@ -34,8 +37,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
+  handleKeyboardEvent(event: KeyboardEvent): void {
     this.shortcutsService.handleKeyboardEvent(event);
   }
 
+  @HostListener('window:resize', [])
+  onWindowResize(): void {
+    this.bss.updateWideScreenModeFromWindow();
+  }
 }

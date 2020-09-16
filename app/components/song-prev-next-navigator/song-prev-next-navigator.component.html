@@ -1,28 +1,12 @@
 <div *ngIf="prevLink && nextLink && !isInitializing">
 
-    <div *ngIf="!isWideScreenMode">
-        <div class="mobile-buttons-row">
-            <div>
-                <a class="btn" (click)="gotoRandomSongInCatalog($event)">
-                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
-                    {{i18n.gotoRandomSongInCatalogButton}}
-                </a>
-            </div>
-            <div>
-                <a class="btn" (click)="gotoRandomSongInCollection($event)">
-                    <gt-svg-icon icon="dice" class="random-song-icon"></gt-svg-icon>
-                    {{i18n.gotoRandomSongInCollectionButton}}
-                </a>
-            </div>
-        </div>
-
-        <div class="mobile-buttons-row">
-            <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong}}</a>
-            <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong}}</a>
-        </div>
+    <div *ngIf="bss.isSmallScreenMode$|async" class="mobile-buttons-row">
+        <!-- Note: in small screen mode randon song navigation buttons are located in the app footer. -->
+        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong}}</a>
+        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong}}</a>
     </div>
 
-    <div *ngIf="isWideScreenMode" class="sticky-sidebar">
+    <div *ngIf="bss.isWideScreenMode$|async" class="sticky-sidebar">
         <div class="left-bar"
              (click)="onBarNavigationClick($event, prevLink)"
              title="{{prevLinkIsCollection ? i18n.toCollectionTitle : i18n.prevSongTitle}}"

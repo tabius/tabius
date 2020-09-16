@@ -6,10 +6,10 @@ import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
 import {timer} from 'rxjs';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent, isTouchEventsSupportAvailable, scrollToView} from '@common/util/misc-utils';
+import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent, isTouchDevice, scrollToView} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {UserService} from '@app/services/user.service';
-import {MIN_DESKTOP_WIDTH, MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
+import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {User} from '@common/user-model';
 import {I18N} from '@app/app-i18n';
 import {environment} from '@app/environments/environment';
@@ -52,7 +52,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   canCreateNewPublicCollection = false;
   user?: User;
 
-  readonly isVirtualKeyboardShownOnInput = isTouchEventsSupportAvailable();
+  readonly isVirtualKeyboardShownOnInput = isTouchDevice();
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
@@ -109,7 +109,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
 
   private bringFocusToTheSearchField(): void {
     // do not focus: 1) During SSR, 2) On touch device to avoid virtual keyboard to be opened, 3) On non-default scrolling position to avoid re-scroll.
-    if (this.isBrowser && window.innerWidth >= MIN_DESKTOP_WIDTH && window.pageYOffset === 0) {
+    if (this.isBrowser && !isTouchDevice() && window.pageYOffset === 0) {
       setTimeout(() => {
         if (this.searchField && this.searchField.nativeElement) {
           this.searchField.nativeElement.focus();

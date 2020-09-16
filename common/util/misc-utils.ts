@@ -191,7 +191,7 @@ export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promi
       .pipe(map(arr => arr[0] as T));
 }
 
-export function isTouchEventsSupportAvailable(): boolean {
+export function isTouchDevice(): boolean {
   return document && 'ontouchstart' in document.documentElement;
 }
 

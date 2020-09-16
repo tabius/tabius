@@ -1,11 +1,10 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
-import {flatMap, map, takeUntil} from 'rxjs/operators';
-import {combineLatest0, defined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isElementToIgnoreKeyEvent, isTouchEventsSupportAvailable, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {map, mergeMap, takeUntil} from 'rxjs/operators';
+import {combineLatest0, defined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
-import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 import {Collection, Song} from '@common/catalog-model';
 import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
@@ -34,13 +33,12 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   nextLinkIsCollection = false;
 
   isInitializing = true;
-  isWideScreenMode = false;
 
   private hammer?: HammerManager;
 
   constructor(private readonly cds: CatalogService,
               private readonly cd: ChangeDetectorRef,
-              private readonly bss: BrowserStateService,
+              readonly bss: BrowserStateService,
               private readonly router: Router,
               private readonly ss: ShortcutsService,
   ) {
@@ -48,12 +46,11 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   // TODO: handle changes & re-subscribe!
   ngOnInit(): void {
-    this.updateViewDimensions();
     const collection$ = this.cds.getCollectionById(this.activeCollectionId);
     const allSongs$ = getAllSongsInCollectionsSorted(collection$, this.cds);
     combineLatest([collection$, allSongs$])
         .pipe(
-            flatMap(([collection, allSongs]) => {
+            mergeMap(([collection, allSongs]) => {
               if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined, undefined, undefined]);
               }
@@ -102,13 +99,9 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     this.destroyed$.next();
   }
 
-  private updateViewDimensions(): void {
-    this.isWideScreenMode = window.innerWidth >= MIN_DESKTOP_WIDTH;
-  }
-
   private installHammer(): void {
     this.uninstallHammer();
-    if (this.bss.isBrowser && isTouchEventsSupportAvailable()) {
+    if (this.bss.isBrowser && isTouchDevice()) {
       Hammer.defaults.cssProps.userSelect = 'auto';
       this.hammer = new Hammer(window.document.body, {
         // touchAction: 'auto',
@@ -125,11 +118,6 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
       this.hammer.destroy();
       delete this.hammer;
     }
-  }
-
-  @HostListener('window:resize', [])
-  onWindowResize() {
-    this.updateViewDimensions();
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -179,8 +167,8 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 export function getAllSongsInCollectionsSorted(collection$: Observable<Collection|undefined>, cds: CatalogService) {
   // list of all collection songs sorted by id.
   return collection$.pipe(
-      flatMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
-      flatMap(songIds => combineLatest0((songIds || []).map(id => cds.getSongById(id)))),
+      mergeMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
+      mergeMap(songIds => combineLatest0((songIds || []).map(id => cds.getSongById(id)))),
       map(songs => sortSongsAlphabetically(songs.filter(defined))),
   );
 }

@@ -27,8 +27,8 @@
         <div *ngIf="editorIsOpen" class="edit-song-block">
             <gt-user-registration-prompt *ngIf="!user"
                                          (closeRequest)="closeEditor()"
-                                         class="register-prompt">
-            </gt-user-registration-prompt>
+                                         class="register-prompt"
+            ></gt-user-registration-prompt>
             <gt-moderator-prompt *ngIf="!!user && !hasEditRight"
                                  (closeRequest)="closeEditor()"
                                  class="has-no-rights-prompt">
