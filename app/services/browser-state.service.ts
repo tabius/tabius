@@ -1,6 +1,6 @@
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
-import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
 import {map, skip} from 'rxjs/operators';
 import * as NoSleep from 'nosleep.js/dist/NoSleep';
@@ -33,7 +33,15 @@ export class BrowserStateService {
     return this.isWideScreenMode$.pipe(map(flag => !flag));
   }
 
-  private readonly wideScreenMode$ = new ReplaySubject<boolean>(1);
+  get isWideScreenMode() {
+    return this.wideScreenMode$.getValue();
+  }
+
+  get isSmallScreenMode() {
+    return !this.isWideScreenMode;
+  }
+
+  private readonly wideScreenMode$ = new BehaviorSubject<boolean>(true);
 
   private noSleep?: NoSleep;
 

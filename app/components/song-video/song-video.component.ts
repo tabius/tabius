@@ -3,10 +3,6 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
 import {isBotUserAgent} from '@common/util/misc-utils';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
-import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
-
-const DEFAULT_VIDEO_WIDTH = 300;
-const DEFAULT_VIDEO_HEIGHT = 169;
 
 @Component({
   selector: 'gt-song-video',
@@ -37,13 +33,18 @@ export class SongVideoComponent implements OnChanges {
     this.isBot = isBotUserAgent(this.bss.getUserAgentString(request));
     this.updateVisibleFlag();
 
-
-    // Up-scale video in mobile phone screen size range to make it consume the whole width of the screen.
-    const videoWidth = bss.isBrowser && window.innerWidth <= MIN_DESKTOP_WIDTH
-                       ? Math.min(500, Math.max(DEFAULT_VIDEO_WIDTH, window.innerWidth - 20))
-                       : DEFAULT_VIDEO_WIDTH;
-    const videoHeight = DEFAULT_VIDEO_HEIGHT * (videoWidth / DEFAULT_VIDEO_WIDTH);
-    this.videoCssStyle = {'width.px': videoWidth, 'height.px': videoHeight};
+    // Up-scale video in mobile phone screen size range to make it use the whole width of the screen.
+    if (bss.isSmallScreenMode) {
+      const defaultVideoWidth = 300;
+      const defaultVideoHeight = 169;
+      const videoWidth = bss.isBrowser
+                         ? Math.min(480, Math.max(defaultVideoWidth, window.innerWidth - 20))
+                         : defaultVideoWidth;
+      const videoHeight = defaultVideoHeight * (videoWidth / defaultVideoWidth);
+      this.videoCssStyle = {'width.px': videoWidth, 'height.px': videoHeight};
+    } else { // Wide screen (desktop).
+      this.videoCssStyle = {'width.px': 480, 'height.px': 270};
+    }
   }
 
   ngOnChanges(): void {
