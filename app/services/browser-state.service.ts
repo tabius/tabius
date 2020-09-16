@@ -105,7 +105,8 @@ export class BrowserStateService {
     if (this.isBrowser) {
       this.updateWideScreenModeFromWindow();
     } else {
-      this.wideScreenMode$.next(!isSmallScreenDevice(request));
+      const userAgent = getUserAgentFromRequest(request);
+      this.wideScreenMode$.next(!isSmallScreenDevice(userAgent));
     }
   }
 

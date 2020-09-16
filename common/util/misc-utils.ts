@@ -94,7 +94,7 @@ export function getChordsDiscussionUrl(): string {
  *  Example: columns count on the song page.
  */
 export function isSmallScreenDevice(userAgent?: string): boolean {
-  return userAgent != undefined && !!userAgent.match(/(android.*mobile|iphone|ipod|ipad|blackberry|iemobile|opera (mini|mobi))/i);
+  return userAgent !== undefined && !!userAgent.match(/(android.*mobile|iphone|ipod|ipad|blackberry|iemobile|opera (mini|mobi))/i);
 }
 
 /** Accepts 1 argument and returns true if the argument !== undefined. */
