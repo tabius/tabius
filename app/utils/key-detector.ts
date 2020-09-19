@@ -1,5 +1,6 @@
 import {isSharp, transpose} from '@app/utils/chords-renderer';
 import {Chord, ChordTone} from '@app/utils/chords-lib';
+import {parseChords} from '@app/utils/chords-parser';
 
 /** All key variations used by tone detector. */
 export const KEY_VARIANTS = <const>[['A'], ['A#', 'Bb'], ['B'], ['C'], ['C#', 'Db'], ['D'], ['D#', 'Eb'], ['E'], ['F'], ['F#', 'Gb'], ['G'], ['G#', 'Ab']];
@@ -129,3 +130,13 @@ export function transposeAsMinor(tone: ChordTone, semiTones: number) {
   }
   return defaultVariant;
 }
+
+export function getSongKey(songDetails: ({ content: string })|undefined): ChordTone|undefined {
+  if (!songDetails) {
+    return undefined;
+  }
+  const chords = parseChords(songDetails.content).map(l => l.chord);
+  chords.splice(Math.min(chords.length, 12));
+  return detectKeyAsMinor(chords);
+}
+

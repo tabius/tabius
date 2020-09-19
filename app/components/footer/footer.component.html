@@ -35,12 +35,11 @@
         <a *ngFor="let action of actions" (click)="activateAction(action)" class="btn btn-flat-white">
             <div class="menu-item-content">
                 <gt-svg-icon *ngIf="action.icon" [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
-                <div *ngIf="action.text || action.text$"
+                <div *ngIf="action.text || (action.text$|async)"
                      class="menu-item-title"
                      [ngClass]="{'menu-item-title-with-icon' : !!action.icon}"
                      [ngStyle]="action.textStyle">
-                    <span *ngIf="action.text && !action.text$">{{action.text}}</span>
-                    <span *ngIf="action.text$">{{action.text$|async}}</span>
+                    <span>{{action.text}}{{action.text$|async}}</span>
                 </div>
             </div>
         </a>

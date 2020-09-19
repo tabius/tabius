@@ -14,7 +14,7 @@ import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.s
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
 import {getToneWithH4SiFix, TONES_COUNT} from '@app/utils/chords-renderer';
-import {DEFAULT_FAVORITE_KEY, User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
+import {User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
@@ -23,9 +23,9 @@ import {ShortcutsService} from '@app/services/shortcuts.service';
 import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
 import {ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
-import {getTransposeDistance} from '@app/utils/key-detector';
+import {getSongKey, transposeAsMinor} from '@app/utils/key-detector';
 import {ChordTone} from '@app/utils/chords-lib';
-import {getOnScreenSongKey} from '@app/components/song-chords/song-chords.component';
+import {getTransposeActionKey, updateUserSongSetting} from '@app/components/song-chords/song-chords.component';
 
 @Component({
   selector: 'gt-song-page',
@@ -58,8 +58,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   songMountBeforeUpdate?: string;
   collectionMount?: string;
 
-  private transposeMenuActionKey: ChordTone = DEFAULT_FAVORITE_KEY;
-  private readonly transposeMenuActionText$ = new BehaviorSubject<string>(`${this.transposeMenuActionKey}m`);
+  originalSongKey?: ChordTone;
+  transposeActionKey?: ChordTone;
+  transposeMenuActionText$ = new BehaviorSubject<string|undefined>(undefined);
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
@@ -142,9 +143,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.user = user;
           this.songSettings = songSettings;
 
-          const onScreenSongKey = getOnScreenSongKey(songDetails, songSettings);
-          this.transposeMenuActionKey = onScreenSongKey === favoriteKey ? (onScreenSongKey === 'A' ? 'E' : 'A') : favoriteKey;
-          this.transposeMenuActionText$.next(`${getToneWithH4SiFix(h4Si, this.transposeMenuActionKey)}m`);
+          this.originalSongKey = getSongKey(this.songDetails);
+          this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
+          this.transposeMenuActionText$.next(this.transposeActionKey ? `${getToneWithH4SiFix(h4Si, this.transposeActionKey)}m` : undefined);
 
           this.updateMeta();
           this.hasEditRight = canManageCollectionContent(user, primaryCollection);
@@ -161,14 +162,12 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   private setupContextMenuActions() {
     this.contextMenuActionService.footerActions$.next([
-      // {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
-      // {icon: 'arrow-up', target: () => this.transpose(+1), style: {'width.px': 18}},
       {
         icon: 'note', target: [
           {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
           {icon: 'arrow-up', target: () => this.transpose(1), style: {'width.px': 18}},
           {icon: 'reset', target: () => this.transpose(0), style: {'width.px': 18}},
-          {text$: this.transposeMenuActionText$, target: () => this.transposeToKey(this.transposeMenuActionKey), textStyle: {'font-size.px': 16}},
+          {text$: this.transposeMenuActionText$, target: () => this.transposeToKey(), textStyle: {'font-size.px': 16}},
         ],
         style: {'width.px': 18}
       },
@@ -307,13 +306,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
   }
 
-  transposeToKey(key: ChordTone): void {
-    const originalSongKey = getOnScreenSongKey(this.songDetails, {transpose: 0});
-    if (originalSongKey) {
-      const transposeDistance = getTransposeDistance(originalSongKey, key);
-      const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
-      this.uds.setUserSongSettings({...this.songSettings!, transpose});
-    }
+  transposeToKey(): void {
+    updateUserSongSetting(this.originalSongKey, this.transposeActionKey, this.songSettings, this.uds);
   }
 
   incFontSize(): void {

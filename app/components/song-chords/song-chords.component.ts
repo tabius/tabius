@@ -3,15 +3,15 @@ import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {ChordRenderingOptions, getToneWithH4SiFix, renderChord, TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserService} from '@app/services/user.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
-import {BehaviorSubject, combineLatest, ReplaySubject, Subject} from 'rxjs';
+import {combineLatest, ReplaySubject, Subject} from 'rxjs';
 import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
 import {CatalogService} from '@app/services/catalog.service';
-import {DEFAULT_FAVORITE_KEY, newDefaultUserSongSettings} from '@common/user-model';
+import {newDefaultUserSongSettings, UserSongSettings} from '@common/user-model';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
 import {I18N} from '@app/app-i18n';
 import {Chord, ChordTone} from '@app/utils/chords-lib';
-import {detectKeyAsMinor, getTransposeDistance, transposeAsMinor} from '@app/utils/key-detector';
+import {getSongKey, getTransposeDistance, transposeAsMinor} from '@app/utils/key-detector';
 import {SongDetails} from '@common/catalog-model';
 
 @Component({
@@ -39,9 +39,9 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
 
   popoverChordLayout?: ChordLayout;
 
-  transposeActionKey = DEFAULT_FAVORITE_KEY;
   favoriteKey?: ChordTone;
-  readonly transposeActionText$ = new BehaviorSubject<string>(`${this.transposeActionKey}m`);
+  originalSongKey?: ChordTone;
+  transposeActionKey?: ChordTone;
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly uds: UserService,
@@ -65,9 +65,8 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
           this.content = details ? details.content : '';
           this.songDetails = songDetails;
 
-          const onScreenSongKey = getOnScreenSongKey(songDetails, songSettings);
-          this.transposeActionKey = onScreenSongKey === favoriteKey ? (onScreenSongKey === 'A' ? 'E' : 'A') : favoriteKey;
-          this.transposeActionText$.next(`${getToneWithH4SiFix(this.h4Si, this.transposeActionKey)}m`);
+          this.originalSongKey = getSongKey(this.songDetails);
+          this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
 
           this.updateChordsList();
           this.cd.detectChanges();
@@ -111,25 +110,33 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   transposeToFavoriteKeyClicked(): void {
-    const originalSongKey = getOnScreenSongKey(this.songDetails, {transpose: 0});
-    if (originalSongKey) {
-      const transposeDistance = getTransposeDistance(originalSongKey, this.transposeActionKey);
-      const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
-      this.uds.setUserSongSettings({...this.songSettings!, transpose});
-    }
+    updateUserSongSetting(this.originalSongKey, this.transposeActionKey, this.songSettings, this.uds);
   }
 
-  getFavoriteKeyTitle(): string {
+  getTransposeKeyTitle(): string {
     return this.transposeActionKey === this.favoriteKey ? this.i18n.favoriteKey : this.i18n.simpleKey;
+  }
+
+  getTransposeKeyAsMinor(): string {
+    return this.transposeActionKey ? `${getToneWithH4SiFix(this.h4Si, this.transposeActionKey)}m` : '?';
   }
 }
 
-export function getOnScreenSongKey(songDetails: ({ content: string })|undefined, userSongSettings: ({ transpose: number })|undefined): ChordTone|undefined {
-  if (!songDetails || !userSongSettings) {
+export function updateUserSongSetting(originalSongKey: ChordTone|undefined,
+                                      transposeActionKey: ChordTone|undefined,
+                                      songSettings: UserSongSettings|undefined,
+                                      uds: UserService): void {
+  if (originalSongKey && transposeActionKey && songSettings) {
+    const transposeDistance = getTransposeDistance(originalSongKey, transposeActionKey);
+    const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
+    uds.setUserSongSettings({...songSettings!, transpose});
+  }
+}
+
+export function getTransposeActionKey(originalKey: ChordTone|undefined, favoriteKey: ChordTone, currentTranspose: number): ChordTone|undefined {
+  if (originalKey === undefined) {
     return undefined;
   }
-  const chords = parseChords(songDetails.content).map(l => l.chord);
-  chords.splice(Math.min(chords.length, 12));
-  const originalSongKey = detectKeyAsMinor(chords);
-  return originalSongKey ? transposeAsMinor(originalSongKey, userSongSettings.transpose) : undefined;
+  const onScreenSongKey = originalKey ? transposeAsMinor(originalKey, currentTranspose) : undefined;
+  return favoriteKey ? (onScreenSongKey === 'A' ? 'E' : 'A') : favoriteKey;
 }

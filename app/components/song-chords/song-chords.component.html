@@ -14,8 +14,8 @@
                 <gt-svg-icon icon="reset" class="close-icon"></gt-svg-icon>
             </button>
 
-            <button class="btn btn-flat-white" (click)="transposeToFavoriteKeyClicked()" title="{{getFavoriteKeyTitle()}}">
-                {{transposeActionText$|async}}
+            <button *ngIf="transposeActionKey" class="btn btn-flat-white" (click)="transposeToFavoriteKeyClicked()" title="{{getTransposeKeyTitle()}}">
+                {{getTransposeKeyAsMinor()}}
             </button>
         </div>
     </div>

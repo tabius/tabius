@@ -6,7 +6,7 @@ export type ContextMenuTarget = (() => void)|TemplateRef<unknown>|ContextMenuAct
 export interface ContextMenuAction {
   icon?: string;
   text?: string;
-  text$?: Observable<string>;
+  text$?: Observable<string|undefined>;
   target: ContextMenuTarget;
   style?: any;
   textStyle?: any;
