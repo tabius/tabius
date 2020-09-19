@@ -36,14 +36,8 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     maxIdx = Math.min(maxIdx, text.length);
   }
 
-  let lineText = text;
-  const tabLineStatus = isTabsLine(text, minIdx, maxIdx);
-  if (tabLineStatus !== 'no') {
-    if (tabLineStatus === 'yes-tabs-only') {
-      return [];
-    }
-    // tabs with chords.
-    lineText = text.replace(/-/g, ' ');
+  if (isTabsLine(text, minIdx, maxIdx)) {
+    return [];
   }
 
   let prevIsChordSep = true;
@@ -57,7 +51,7 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
       continue;
     }
     prevIsChordSep = isChordSep;
-    const chordLocation = parseChord(lineText, idx, maxIdx);
+    const chordLocation = parseChord(text, idx, maxIdx);
     if (chordLocation === undefined) {
       idx++;
       continue;
@@ -65,7 +59,7 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
     chordLocations.push(chordLocation);
     idx += chordLocation.endIdx - chordLocation.startIdx;
   }
-  if (isMostlyNonChordsTextLine(chordLocations, lineText, minIdx, maxIdx)) {
+  if (isMostlyNonChordsTextLine(chordLocations, text, minIdx, maxIdx)) {
     return [];
   }
   return chordLocations;
@@ -102,7 +96,7 @@ export function isMostlyNonChordsTextLine(chordLocations: ChordLocation[], text:
 }
 
 /** Returns 'true' if the line looks like tabs: A|--1-2-3--x- */
-export function isTabsLine(text: string, startIdx: number, endIdx: number): 'yes-tabs-only'|'yes-with-chords'|'no' {
+export function isTabsLine(text: string, startIdx: number, endIdx: number): boolean {
   let tabCharsCount = 0;
   for (let idx = startIdx; idx < endIdx; idx++) {
     const c = text.charAt(idx);
@@ -111,17 +105,7 @@ export function isTabsLine(text: string, startIdx: number, endIdx: number): 'yes
     }
   }
   const textLen = endIdx - startIdx;
-  if (tabCharsCount < textLen / 2) {
-    return 'no';
-  }
-  let digitCount = 0;
-  let alphaCount = 0;
-  for (let idx = startIdx; idx < endIdx; idx++) {
-    const c = text.charAt(idx);
-    digitCount += isDigit(c) ? 1 : 0;
-    alphaCount += isAlpha(c) ? 1 : 0;
-  }
-  return digitCount > alphaCount ? 'yes-tabs-only' : 'yes-with-chords';
+  return tabCharsCount >= textLen / 2;
 }
 
 /** All possible chord letters (including H). */
