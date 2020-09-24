@@ -56,6 +56,7 @@ import {HelpService} from '@app/services/help.service';
 import {CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent} from './components/head-contributor/head-contributor.component';
 import {ChordPopoverComponent} from './components/chord-popover/chord-popover.component';
 import {ShowChordPopoverOnClickDirective} from './directives/show-chord-popover-on-click.directive';
+import { JsonLdComponent } from './components/json-ld/json-ld.component';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import {ShowChordPopoverOnClickDirective} from './directives/show-chord-popover-
     UserRegistrationPromptComponent,
     ChordPopoverComponent,
     ShowChordPopoverOnClickDirective,
+    JsonLdComponent,
   ],
   imports: [
     BrowserAnimationsModule,

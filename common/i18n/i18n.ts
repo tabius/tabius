@@ -17,6 +17,7 @@ export interface I18n {
     unexpectedError: string;
     serverRequestError: string;
     failedToCreateCollection: string;
+    catalog: string;
   };
   navbar: {
     catalog: string;

@@ -9,7 +9,7 @@ import {INVALID_ID} from '@common/common-constants';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
+import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media-links-utils';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'

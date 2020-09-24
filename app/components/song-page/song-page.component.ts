@@ -23,9 +23,11 @@ import {ShortcutsService} from '@app/services/shortcuts.service';
 import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
 import {ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
-import {getSongKey, transposeAsMinor} from '@app/utils/key-detector';
+import {getSongKey} from '@app/utils/key-detector';
 import {ChordTone} from '@app/utils/chords-lib';
 import {getTransposeActionKey, updateUserSongSetting} from '@app/components/song-chords/song-chords.component';
+import {BreadcrumbList, WithContext} from 'schema-dts';
+import {getSongJsonLdBreadcrumbList} from '@common/util/json-ld';
 
 @Component({
   selector: 'gt-song-page',
@@ -61,6 +63,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   originalSongKey?: ChordTone;
   transposeActionKey?: ChordTone;
   transposeMenuActionText$ = new BehaviorSubject<string|undefined>(undefined);
+
+  jsonLdBreadcrumb?: WithContext<BreadcrumbList>;
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
@@ -146,6 +150,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.originalSongKey = getSongKey(this.songDetails);
           this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
           this.transposeMenuActionText$.next(this.transposeActionKey ? `${getToneWithH4SiFix(h4Si, this.transposeActionKey)}m` : undefined);
+
+          this.jsonLdBreadcrumb = getSongJsonLdBreadcrumbList(this.activeCollection, this.song, this.primaryCollection);
 
           this.updateMeta();
           this.hasEditRight = canManageCollectionContent(user, primaryCollection);

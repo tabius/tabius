@@ -12,6 +12,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     unexpectedError: 'Ошибка в работе приложения!',
     serverRequestError: 'Ошибка при обращении к серверу!',
     failedToCreateCollection: 'Не удалось создать коллекцию!',
+    catalog: 'Каталог',
   },
   navbar: {
     catalog: 'КАТАЛОГ',

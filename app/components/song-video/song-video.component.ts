@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Inject, Input, OnChanges, Optional} from '@angular/core';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media_links_utils';
+import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media-links-utils';
 import {isBotUserAgent} from '@common/util/misc-utils';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
 

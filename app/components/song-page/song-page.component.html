@@ -16,6 +16,7 @@
 
         <div class="breadcrumb-block">
             <gt-collection-breadcrumb [collection]="activeCollection"></gt-collection-breadcrumb>
+            <gt-json-ld *ngIf="jsonLdBreadcrumb" [json]="jsonLdBreadcrumb"></gt-json-ld>
         </div>
 
         <gt-song [songId]="song.id" [activeCollectionId]="activeCollection?.id"></gt-song>

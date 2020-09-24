@@ -12,6 +12,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     unexpectedError: 'Unexpected internal error!',
     serverRequestError: 'Error connecting to server!',
     failedToCreateCollection: 'Failed to create new collection!',
+    catalog: 'Catalog',
   },
   navbar: {
     catalog: 'CATALOG',
