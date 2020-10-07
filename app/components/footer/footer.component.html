@@ -32,7 +32,7 @@
         <a *ngIf="menuStack.length === 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white">
             <gt-svg-icon icon="menu"></gt-svg-icon>
         </a>
-        <a *ngFor="let action of actions" (click)="activateAction(action)" class="btn btn-flat-white">
+        <a *ngFor="let action of actions" (click)="activateAction(action, $event)" class="btn btn-flat-white">
             <div class="menu-item-content">
                 <gt-svg-icon *ngIf="action.icon" [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
                 <div *ngIf="action.text || (action.text$|async)"

@@ -110,7 +110,8 @@ export class FooterComponent implements OnInit, OnDestroy {
     }
   }
 
-  activateAction(action: ContextMenuAction): void {
+  activateAction(action: ContextMenuAction, event: MouseEvent): void {
+    event.preventDefault();
     if (isSubmenuTarget(action.target)) {
       this.menuStack.push(this.actions);
       this.actions = action.target;

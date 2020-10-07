@@ -1,5 +1,6 @@
 @import "app/styles/colors";
 @import "app/styles/dimensions";
+@import "app/styles/utils";
 
 :host {
   line-height: $footer-info-line-height; /* Vertically center the text there */
@@ -94,8 +95,7 @@
 
     a {
       width: 100%;
-      user-select: none;
-      speak: none;
+      @include disable-selection;
 
       &.btn-flat-white:focus, &.btn-flat-white:hover {
         background-color: white;
@@ -121,10 +121,15 @@
         white-space: nowrap;
         justify-content: center;
         align-items: center;
+        @include disable-selection;
 
         .menu-item-title {
-          user-select: none;
+          @include disable-selection;
           line-height: 24px;
+
+          span {
+            @include disable-selection;
+          }
         }
 
         .menu-item-title-with-icon {
