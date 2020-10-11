@@ -6,8 +6,9 @@ import {User} from '@common/user-model';
 import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_SUFFIX} from '@common/common-constants';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {I18N} from '@server/server-i18n';
+import {OkPacket, RowDataPacket} from 'mysql2';
 
-interface CollectionRow {
+interface CollectionRow extends RowDataPacket {
   id: number;
   name: string;
   type: CollectionType;
@@ -36,8 +37,8 @@ export class CollectionDbi {
 
   getAllCollections(kind: 'listed-only'|'all'): Promise<Collection[]> {
     return this.db.pool.promise()
-        .query(SELECT_COLLECTION_SQL + (kind === 'listed-only' ? ' WHERE listed = 1' : ''))
-        .then(([rows]: [CollectionRow[]]) => rows.map(row => rowToCollection(row)));
+        .query<CollectionRow[]>(SELECT_COLLECTION_SQL + (kind === 'listed-only' ? ' WHERE listed = 1' : ''))
+        .then(([rows]) => rows.map(row => rowToCollection(row)));
   }
 
   async getCollectionById(collectionId: number): Promise<Collection|undefined> {
@@ -47,26 +48,26 @@ export class CollectionDbi {
 
   getCollectionsByIds(collectionIds: readonly number[]): Promise<Collection[]> {
     return this.db.pool.promise()
-        .query(`${SELECT_COLLECTION_SQL} WHERE id IN (${collectionIds.join(',')})`)
-        .then(([rows]: [CollectionRow[]]) => rows.map(row => rowToCollection(row)));
+        .query<CollectionRow[]>(`${SELECT_COLLECTION_SQL} WHERE id IN (${collectionIds.join(',')})`)
+        .then(([rows]) => rows.map(row => rowToCollection(row)));
   }
 
   getCollectionDetails(collectionId: number): Promise<CollectionDetails|undefined> {
     return this.db.pool.promise()
-        .query(`${SELECT_COLLECTION_DETAILS_SQL} WHERE id  = ?`, [collectionId])
-        .then(([rows]: [CollectionWithDetailsRow[]]) => rows.length === 0 ? undefined : rowToCollectionDetails(rows[0]));
+        .query<CollectionWithDetailsRow[]>(`${SELECT_COLLECTION_DETAILS_SQL} WHERE id  = ?`, [collectionId])
+        .then(([rows]) => rows.length === 0 ? undefined : rowToCollectionDetails(rows[0]));
   }
 
   async getByMount(mount: string): Promise<Collection|undefined> {
     return this.db.pool.promise()
-        .query(`${SELECT_COLLECTION_SQL} WHERE mount = ?`, mount)
-        .then(([rows]: [CollectionRow[]]) => rows.length === 0 ? undefined : rowToCollection(rows[0]));
+        .query<CollectionRow[]>(`${SELECT_COLLECTION_SQL} WHERE mount = ?`, mount)
+        .then(([rows]) => rows.length === 0 ? undefined : rowToCollection(rows[0]));
   }
 
   async createListedCollection(name: string, mount: string, type: CollectionType): Promise<number> {
     this.logger.debug(`Creating new collection: ${name}, ${mount}, ${type}`);
     const result = await this.db.pool.promise()
-        .query('INSERT IGNORE INTO collection(name, type, mount, listed) VALUES (?,?,?,?)',
+        .query<OkPacket>('INSERT IGNORE INTO collection(name, type, mount, listed) VALUES (?,?,?,?)',
             [name, type, mount, 1])
         .then(([result]) => result);
 
@@ -81,28 +82,29 @@ export class CollectionDbi {
 
     const collectionMount = generateCollectionMountForUser(user, USER_FAV_COLLECTION_SUFFIX);
     const result = await this.db.pool.promise()
-        .query('INSERT IGNORE INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
+        .query<OkPacket>('INSERT IGNORE INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
             [I18N.common.favoritesCollectionName, CollectionType.Compilation, collectionMount, 0, user.id])
         .then(([result]) => result);
 
-    let collectionId = result.insertId;
+    let collectionId: number|undefined = result.insertId;
     if (collectionId > 0) {
       this.logger.debug(`Primary collection was successfully created: ${user.email}, collection-id: ${collectionId}`);
       return result.insertId;
     }
 
     collectionId = await this.db.pool.promise()
-        .query(`${SELECT_COLLECTION_DETAILS_SQL} WHERE user_id  = ?`, [user.id])
-        .then(([rows]: [CollectionWithDetailsRow[]]) => rows.length === 0 ? undefined : rows[0].id);
+        .query<CollectionWithDetailsRow[]>(`${SELECT_COLLECTION_DETAILS_SQL} WHERE user_id  = ?`, [user.id])
+        .then(([rows]) => rows.length === 0 ? undefined : rows[0].id);
 
     this.logger.debug(`Reusing existing collection record: ${user.email}, collection-id: ${collectionId}`);
-    return collectionId;
+    //TODO: handle undefined!
+    return collectionId!;
   }
 
   async createSecondaryUserCollection(userId: string, name: string, mount: string): Promise<number> {
     this.logger.debug(`Creating secondary collection for user: ${userId}, name: ${name}, mount: ${mount}`);
     const result = await this.db.pool.promise()
-        .query('INSERT INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
+        .query<OkPacket>('INSERT INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
             [name, CollectionType.Compilation, mount, 0, userId])
         .then(([result]) => result);
 
@@ -124,8 +126,8 @@ export class CollectionDbi {
 
   getAllUserCollections(userId: string): Promise<Collection[]> {
     return this.db.pool.promise()
-        .query(`${SELECT_COLLECTION_SQL} WHERE user_id = ?`, [userId])
-        .then(([rows]: [CollectionRow[]]) => rows.map(row => rowToCollection(row)));
+        .query<CollectionRow[]>(`${SELECT_COLLECTION_SQL} WHERE user_id = ?`, [userId])
+        .then(([rows]) => rows.map(row => rowToCollection(row)));
   }
 }
 

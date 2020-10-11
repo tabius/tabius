@@ -1,6 +1,7 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {DbService} from './db.service';
 import {newDefaultUserSettings, User, UserSettings} from '@common/user-model';
+import {RowDataPacket} from 'mysql2';
 
 @Injectable()
 export class UserDbi {
@@ -27,14 +28,7 @@ export class UserDbi {
         .query('UPDATE user SET login_date = ? WHERE id = ? ', [now, user.id]);
   }
 
-  //
-  // async hasUserWithId(userId: string): Promise<boolean> {
-  //   return await this.db.pool.promise()
-  //       .query('SELECT COUNT(id) AS n  FROM user WHERE id = ?', [userId])
-  //       .then(([rows]) => rows[0].n !== 0);
-  // }
-
-  updateSettings(userId: string, userSettings: UserSettings): Promise<void> {
+  updateSettings(userId: string, userSettings: UserSettings): Promise<unknown> {
     const settingsJson = JSON.stringify(userSettings);
     return this.db.pool.promise()
         .query('UPDATE user SET settings = ? WHERE id = ?',
@@ -43,21 +37,21 @@ export class UserDbi {
 
   getSettings(userId: string): Promise<UserSettings|undefined> {
     return this.db.pool.promise()
-        .query('SELECT settings FROM user WHERE id = ?', [userId])
-        .then(([rows]: [{ settings: string }[]]) =>
-            rows.length === 0 || rows[0].settings.length === 0
+        .query<RowDataPacket[]>('SELECT settings FROM user WHERE id = ?', [userId])
+        .then(([rows]) =>
+            rows.length === 0
             ? undefined
-            : {...newDefaultUserSettings(), ...JSON.parse(rows[0].settings)}
+            : {...newDefaultUserSettings(), ...JSON.parse(rows[0]['settings'])}
         );
   }
 
   getUserCollectionId(userId: string): Promise<number|undefined> {
     return this.db.pool.promise()
-        .query('SELECT collection_id FROM user WHERE id = ?', [userId])
+        .query<RowDataPacket[]>('SELECT collection_id FROM user WHERE id = ?', [userId])
         .then(([rows]) => rows.length === 0 ? undefined : rows[0]['collection_id']);
   }
 
-  updateUserCollection(user: User): Promise<void> {
+  updateUserCollection(user: User): Promise<unknown> {
     return this.db.pool.promise()
         .query('UPDATE user SET collection_id = ? WHERE id = ?',
             [user.collectionId, user.id]);

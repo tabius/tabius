@@ -3,8 +3,9 @@ import {Song, SongDetails} from '@common/catalog-model';
 import {DbService} from './db.service';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {INVALID_ID} from '@common/common-constants';
+import {OkPacket, RowDataPacket} from 'mysql2';
 
-interface SongRow {
+interface SongRow extends RowDataPacket {
   id: number;
   mount: string;
   title: string;
@@ -15,7 +16,7 @@ interface SongRow {
   version: number;
 }
 
-interface IdRow {
+interface IdRow extends RowDataPacket {
   id: number;
 }
 
@@ -33,29 +34,23 @@ export class SongDbi {
   async getSongs(songIds: readonly number[]): Promise<Song[]> {
     const idList = songIds.join(',');
     return await this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
-        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
+        .query<SongRow[]>(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
+        .then(([rows]) => rows.map(row2Song));
   }
 
   async getSongsDetails(songIds: readonly number[]): Promise<SongDetails[]> {
     const idList = songIds.join(',');
     return await this.db.pool.promise()
-        .query(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
-        .then(([rows]: [SongRow[]]) => rows.map(row2SongDetails));
-  }
-
-  private getSongsBySecondaryCollectionId(collectionId: number): Promise<Song[]> {
-    return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?) ORDER BY s.id`, [collectionId])
-        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
+        .query<SongRow[]>(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
+        .then(([rows]) => rows.map(row2SongDetails));
   }
 
   async getPrimaryAndSecondarySongIdsByCollectionId(collectionId: number): Promise<number[]> {
     const [primarySongsIds, secondarySongIds] = await Promise.all([
-      this.db.pool.promise().query('SELECT id FROM song WHERE collection_id = ?', [collectionId])
-          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
-      this.db.pool.promise().query('SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ?', [collectionId])
-          .then(([rows]: [IdRow[]]) => rows.map(r => r.id)),
+      this.db.pool.promise().query<IdRow[]>('SELECT id FROM song WHERE collection_id = ?', [collectionId])
+          .then(([rows]) => rows.map(r => r.id)),
+      this.db.pool.promise().query<IdRow[]>('SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ?', [collectionId])
+          .then(([rows]) => rows.map(r => r.id)),
     ]);
     return [...primarySongsIds, ...secondarySongIds];
   }
@@ -63,10 +58,10 @@ export class SongDbi {
   /** Returns all songs in the collection. */
   async getPrimaryAndSecondarySongsByCollectionId(collectionId: number): Promise<Song[]> {
     return this.db.pool.promise()
-        .query(`${SELECT_SONG_SQL} WHERE s.collection_id = ? UNION ` +
+        .query<SongRow[]>(`${SELECT_SONG_SQL} WHERE s.collection_id = ? UNION ` +
             `${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?)` +
             ' ORDER BY id', [collectionId, collectionId])
-        .then(([rows]: [SongRow[]]) => rows.map(row2Song));
+        .then(([rows]) => rows.map(row2Song));
   }
 
 
@@ -74,7 +69,7 @@ export class SongDbi {
     const con$$ = this.db.pool.promise();
     const mount = await generateUniqueSongMount(song, con$$);
     return con$$
-        .query('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
+        .query<OkPacket>('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
             [song.collectionId, mount, song.title, details.content, packMediaLinks(details.mediaLinks)])
         .then(([result]) => result.insertId);
   }
@@ -146,10 +141,9 @@ export class SongDbi {
   }
 
   async getRandomSongFromPublicCatalog(): Promise<number|undefined> {
-    const sql = `SELECT s.id FROM song s, collection c WHERE s.collection_id = c.id AND c.listed = 1 ORDER BY RAND() LIMIT 1`;
     return await this.db.pool.promise()
-        .query(sql)
-        .then(([rows]: [SongRow[]]) => rows.length > 0 && rows[0].id);
+        .query<SongRow[]>(`SELECT s.id FROM song s, collection c WHERE s.collection_id = c.id AND c.listed = 1 ORDER BY RAND() LIMIT 1`)
+        .then(([rows]) => rows[0]?.id);
   }
 
   async getRandomSongFromCollection(collectionId: number): Promise<number|undefined> {
@@ -157,8 +151,8 @@ export class SongDbi {
         'UNION SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ? ' +
         'ORDER BY RAND() LIMIT 1';
     return await this.db.pool.promise()
-        .query(sql, [collectionId, collectionId])
-        .then(([rows]: [SongRow[]]) => rows.length > 0 && rows[0].id);
+        .query<SongRow[]>(sql, [collectionId, collectionId])
+        .then(([rows]) => rows[0]?.id);
   }
 }
 
