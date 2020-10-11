@@ -2,11 +2,13 @@
   <code_scheme name="Project" version="173">
     <option name="RIGHT_MARGIN" value="160" />
     <DB2CodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -24,11 +26,13 @@
       <option name="TABLE_CLOSING" value="3" />
     </DB2CodeStyleSettings>
     <DerbyCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -46,11 +50,13 @@
       <option name="TABLE_CLOSING" value="3" />
     </DerbyCodeStyleSettings>
     <H2CodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -68,11 +74,13 @@
       <option name="TABLE_CLOSING" value="3" />
     </H2CodeStyleSettings>
     <HSQLCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -98,30 +106,22 @@
     <JSON>
       <option name="ARRAY_WRAPPING" value="5" />
     </JSON>
-    <JetCodeStyleSettings>
-      <option name="PACKAGES_TO_USE_STAR_IMPORTS">
-        <value>
-          <package name="java.util" alias="false" withSubpackages="false" />
-          <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
-          <package name="io.ktor" alias="false" withSubpackages="true" />
-        </value>
-      </option>
-      <option name="PACKAGES_IMPORT_LAYOUT">
-        <value>
-          <package name="" alias="false" withSubpackages="true" />
-          <package name="java" alias="false" withSubpackages="true" />
-          <package name="javax" alias="false" withSubpackages="true" />
-          <package name="kotlin" alias="false" withSubpackages="true" />
-          <package name="" alias="true" withSubpackages="true" />
-        </value>
-      </option>
-    </JetCodeStyleSettings>
+    <MSSQLCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
+      <option name="KEYWORD_CASE" value="2" />
+      <option name="IDENTIFIER_CASE" value="2" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="2" />
+    </MSSQLCodeStyleSettings>
     <MySQLCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -139,11 +139,13 @@
       <option name="TABLE_CLOSING" value="3" />
     </MySQLCodeStyleSettings>
     <OracleCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -161,11 +163,13 @@
       <option name="TABLE_CLOSING" value="3" />
     </OracleCodeStyleSettings>
     <PostgresCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -183,11 +187,13 @@
       <option name="TABLE_CLOSING" value="3" />
     </PostgresCodeStyleSettings>
     <SQLiteCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -205,11 +211,13 @@
       <option name="TABLE_CLOSING" value="3" />
     </SQLiteCodeStyleSettings>
     <SqlCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
       <option name="DISABLE_FORMATTING" value="true" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="KEYWORD_CASE" value="0" />
-      <option name="TYPE_CASE" value="0" />
+      <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="1" />
       <option name="SET_EL_LINE" value="1" />
       <option name="SET_EL_WRAP" value="0" />
       <option name="SELECT_EL_LINE" value="0" />
@@ -226,6 +234,14 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </SqlCodeStyleSettings>
+    <SybaseCodeStyleSettings version="2">
+      <option name="myVersion" value="2" />
+      <option name="KEYWORD_CASE" value="2" />
+      <option name="IDENTIFIER_CASE" value="2" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="ALIAS_CASE" value="2" />
+    </SybaseCodeStyleSettings>
     <TransactSQLCodeStyleSettings version="2">
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="ALIAS_CASE" value="1" />
