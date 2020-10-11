@@ -138,5 +138,5 @@ export function getTransposeActionKey(originalKey: ChordTone|undefined, favorite
     return undefined;
   }
   const onScreenSongKey = originalKey ? transposeAsMinor(originalKey, currentTranspose) : undefined;
-  return favoriteKey ? (onScreenSongKey === 'A' ? 'E' : 'A') : favoriteKey;
+  return onScreenSongKey !== favoriteKey ? favoriteKey : onScreenSongKey === 'A' ? 'E' : 'A';
 }
