@@ -5,6 +5,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
 import {I18N} from '@app/app-i18n';
 import {getToneWithH4SiFix} from '@app/utils/chords-renderer';
+import {getDefaultH4SiFlag} from '@common/user-model';
 
 @Component({
   selector: 'gt-chord-image',
@@ -15,7 +16,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
 
   @Input() layout!: ChordLayout;
   @Input() size = 2.3;
-  @Input() h4Si = false;
+  @Input() h4Si = getDefaultH4SiFlag();
 
   width = 70;
   height = 90;

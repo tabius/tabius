@@ -3,6 +3,7 @@ import {getChordsDiscussionUrl} from '@common/util/misc-utils';
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {I18N} from '@app/app-i18n';
+import {getDefaultH4SiFlag} from '@common/user-model';
 
 @Component({
   selector: 'gt-chord-popover',
@@ -13,7 +14,7 @@ import {I18N} from '@app/app-i18n';
 export class ChordPopoverComponent {
 
   @Input() chordLayout?: ChordLayout;
-  @Input() h4Si = true;
+  @Input() h4Si = getDefaultH4SiFlag();
   @Input() popover!: PopoverRef;
 
   readonly chordDiscussionUrl = getChordsDiscussionUrl();

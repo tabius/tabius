@@ -76,10 +76,15 @@ export function newDefaultUserSongSettings(songId: number): UserSongSettings {
 export const DEFAULT_H4SI_FLAG = false;
 export const DEFAULT_FAVORITE_KEY: ChordTone = 'A';
 
+export function getDefaultH4SiFlag(): boolean {
+  //TODO: make true for RU, make false for ORG.
+  return true;
+}
+
 export function newDefaultUserSettings(): UserSettings {
   return {
     songs: {},
-    h4Si: false,
+    h4Si: getDefaultH4SiFlag(),
     favKey: 'A',
   };
 }

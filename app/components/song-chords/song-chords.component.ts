@@ -7,7 +7,7 @@ import {combineLatest, ReplaySubject, Subject} from 'rxjs';
 import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {defined} from '@common/util/misc-utils';
 import {CatalogService} from '@app/services/catalog.service';
-import {newDefaultUserSongSettings, UserSongSettings} from '@common/user-model';
+import {getDefaultH4SiFlag, newDefaultUserSongSettings, UserSongSettings} from '@common/user-model';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
 import {I18N} from '@app/app-i18n';
 import {Chord, ChordTone} from '@app/utils/chords-lib';
@@ -32,7 +32,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
 
   private songDetails?: SongDetails;
   private songSettings = newDefaultUserSongSettings(0);
-  h4Si = false;
+  h4Si = getDefaultH4SiFlag();
   private content = '';
 
   private readonly songId$ = new ReplaySubject<number>(1);
