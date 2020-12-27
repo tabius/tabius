@@ -2,7 +2,7 @@
   "serverHost": "localhost",
   "serverPort": 4001,
   "resourcesDir": "/opt/tabius",
-  "corsOriginWhitelist": ["http://localhost:4002", "http://localhost:4201"],
+  "corsOriginWhitelist": ["http://localhost:4001", "http://localhost:4200", "http://localhost:4201"],
   "ssoConfig": {
     "mode": "mock-user",
     "value": {

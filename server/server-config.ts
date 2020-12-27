@@ -23,7 +23,14 @@ const CONFIG_FROM_FILE: TabiusServerConfig = JSON.parse(serverConfigAsString) as
 
 const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
   serverPort: 4001,
-  corsOriginWhitelist: ['http://localhost:4001', 'http://localhost:4201'],
+  corsOriginWhitelist: [
+    // The server itself.
+    'http://localhost:4001',
+    // SSR app port.
+    'http://localhost:4200',
+    // Non-SSR app port.
+    'http://localhost:4201'
+  ],
   sessionCookieName: 'tabius.sid',
 };
 
