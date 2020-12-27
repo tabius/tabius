@@ -10,6 +10,7 @@ import {map} from 'rxjs/operators';
 import * as cookieParser from 'cookie-parser';
 import {SERVER_CONFIG} from '@server/server-config';
 import {INVALID_ID} from '@common/common-constants';
+import * as Express from 'express-session';
 
 const USER_SESSION_KEY = 'user';
 
