@@ -41,7 +41,7 @@ import {SongFullTextSearchResultsPanelComponent} from '@app/components/song-full
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 import {SongPrevNextNavigatorComponent} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
 import {SessionStateInterceptor} from '@app/interceptors/session-state-interceptor.service';
-import {AppBrowserStore, CatalogBrowserStore, UserBrowserStore} from '@app/store/stores';
+import {AppBrowserStore, CatalogBrowserStore, UserBrowserStore} from '@app/app-store';
 import {SongPrintPageComponent} from '@app/components/song-print-page/song-print-page.component';
 import {CollectionEditorComponent} from '@app/components/collection-editor/collection-editor.component';
 import {SongListComponent} from '@app/components/song-list/song-list.component';
@@ -56,7 +56,7 @@ import {HelpService} from '@app/services/help.service';
 import {CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent} from './components/head-contributor/head-contributor.component';
 import {ChordPopoverComponent} from './components/chord-popover/chord-popover.component';
 import {ShowChordPopoverOnClickDirective} from './directives/show-chord-popover-on-click.directive';
-import { JsonLdComponent } from './components/json-ld/json-ld.component';
+import {JsonLdComponent} from './components/json-ld/json-ld.component';
 
 @NgModule({
   declarations: [

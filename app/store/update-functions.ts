@@ -1,5 +1,12 @@
-import {Versioned} from '@common/common-model';
-import {isEqualByShallowArrayCompare, isEqualByStringify} from '@common/util/misc-utils';
+import {isEqualByShallowArrayCompare, isEqualByStringify} from './equality-functions';
+
+export interface Versioned {
+  readonly version: number;
+}
+
+// noinspection JSUnusedGlobalSymbols
+/** A predefined and easy to read constant for 'no-prefetch' mode. */
+export const DO_NOT_PREFETCH = undefined;
 
 /** Returns true if update is needed. */
 export function checkUpdateByVersion(oldValue: Versioned|undefined, newValue: Versioned|undefined): boolean {

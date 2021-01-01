@@ -1,11 +1,25 @@
 import {Observable, of, ReplaySubject} from 'rxjs';
-import {KV, StoreAdapter} from '@app/store/store-adapter';
-import {makeStateKey, TransferState} from '@angular/platform-browser';
+import {AsyncStore, KV} from './async-store';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {catchError, shareReplay, switchMap, take, tap} from 'rxjs/operators';
-import {FetchFn, NeedUpdateFn, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
+import {CheckUpdateFn, FetchFn, ObservableStore, RefreshMode, skipUpdateCheck} from './observable-store';
 
-const SERVER_STATE_TIMESTAMP_KEY = 'server-state-timestamp';
+export interface TransferStateAdapter {
+  getInitialStoreState(): { [key: string]: unknown }|undefined;
+
+  setSnapshotProvider(snapshotProvider: () => object): void;
+}
+
+
+/** TransferStateAdapter that does nothing. */
+class NoOpTransferStateAdapter implements TransferStateAdapter {
+  getInitialStoreState(): { [key: string]: unknown }|undefined {
+    return undefined;
+  }
+
+  setSnapshotProvider(): void {
+  }
+}
 
 /** Low level key->value storage. */
 export class ObservableStoreImpl implements ObservableStore {
@@ -13,70 +27,76 @@ export class ObservableStoreImpl implements ObservableStore {
   readonly initialized$$ = new Promise<void>(resolve => this.markAsInitialized = resolve);
 
   private readonly dataMap = new Map<string, ReplaySubject<any>>();
+
   /** Set of refreshed during current session ids. */
   private readonly refreshSet = new Set<string>();
-  private readonly storeAdapter$$: Promise<StoreAdapter>;
+
+  private readonly asyncStore$$: Promise<AsyncStore>;
 
   /** Queue to make 'set' opts sequential (synchronized).*/
   readonly setOpsQueue = new Map<string, SetOp<any>[]>();
+
   readonly inFlightFetchOps = new Map<string, FetchOp<unknown>>();
+
   readonly inFlightInitRxOps = new Map<string, InitOp>();
 
-  constructor(storeName: string,
-              browser: boolean,
-              adapterFactory: (name: string, browser: boolean) => StoreAdapter,
-              serverState?: TransferState,
-              schemaVersion?: number,
-              private readonly freezeFn = noFreeze) {
-    this.storeAdapter$$ = new Promise<StoreAdapter>(resolve => {
-      const adapter = adapterFactory(storeName, browser);
-      const t0 = Date.now();
-      adapter.init(schemaVersion || 0).then(() => {
-        if (!serverState) {
-          resolve(adapter);
-          this.markAsInitialized();
-          return;
-        }
-        const serverStateKey = makeStateKey(`db-${storeName}`);
-        if (browser) {
-          const serverStateValue = serverState.get(serverStateKey, {});
-          this.updateDbStateFromServerState(adapter, serverStateValue).then(() => {
-            console.debug(`[${storeName}] store init time: ${Date.now() - t0}ms`);
-            resolve(adapter);
-            this.markAsInitialized();
-          });
-        } else {
-          serverState.onSerialize(serverStateKey, () => {
-            const kvPairs = adapter.snapshot();
-            kvPairs.push({key: SERVER_STATE_TIMESTAMP_KEY, value: new Date().toUTCString()});
-            return pairsToObject(kvPairs);
-          });
-          resolve(adapter);
-          this.markAsInitialized();
-        }
+  constructor(asyncStoreFactory: () => AsyncStore,
+              transferStateAdapter: TransferStateAdapter = new NoOpTransferStateAdapter(),
+              private readonly freezeFn = noFreeze,
+  ) {
+    this.asyncStore$$ = new Promise<AsyncStore>(resolve => {
+      const asyncStore = asyncStoreFactory();
+      transferStateAdapter?.setSnapshotProvider(() => pairsToObject(asyncStore.snapshot()));
+      const initialState = transferStateAdapter?.getInitialStoreState();
+      const asyncStoreInit$$: Promise<void> = initialState === undefined
+                                              ? Promise.resolve()
+                                              : this.setInitialAsyncStoreState(asyncStore, initialState);
+      asyncStoreInit$$.then(() => {
+        resolve(asyncStore);
+        this.markAsInitialized();
       });
     });
+  }
+
+  private async setInitialAsyncStoreState(asyncStore: AsyncStore, initialState: { [p: string]: unknown }): Promise<void> {
+    // const serverStateTimestamp = serverState[SERVER_STATE_TIMESTAMP_KEY];
+    // const dbVersionOfServerState = await adapter.get(SERVER_STATE_TIMESTAMP_KEY);
+    // if (serverStateTimestamp === dbVersionOfServerState) {
+    //    return;
+    // }
+    await asyncStore.clear();
+    await asyncStore.setAll(initialState);
+
+    // Instantiate reactive streams as initialized & refreshed.
+    for (const [key, value] of Object.entries(initialState)) {
+      this.registerNewRxStreamForKey(key, value);
+      this.refreshSet.add(key);
+    }
   }
 
   get<T>(key: string|undefined,
          fetchFn: FetchFn<T>|undefined,
          refreshMode: RefreshMode,
-         needUpdateFn: NeedUpdateFn<T>,
+         checkUpdateFn: CheckUpdateFn<T>,
   ): Observable<T|undefined> {
     if (!key) {
       return of(undefined);
     }
     let rs$ = this.dataMap.get(key) as ReplaySubject<T|undefined>;
     if (rs$) {
-      return this.refreshRxStreamIfNeeded(rs$, key, fetchFn, refreshMode, needUpdateFn);
+      return this.refreshRxStreamIfNeeded(rs$, key, fetchFn, refreshMode, checkUpdateFn);
     }
     // Create new replay subject for the key and run initialization code for it.
     rs$ = this.registerNewRxStreamForKey<T>(key);
-    return fromPromise(this.initializeRxStream(rs$, key, fetchFn, refreshMode, needUpdateFn))
+    return fromPromise(this.initializeRxStream(rs$, key, fetchFn, refreshMode, checkUpdateFn))
         .pipe(switchMap(() => rs$));
   }
 
-  private async initializeRxStream<T>(rs$: ReplaySubject<T|undefined>, key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): Promise<void> {
+  private async initializeRxStream<T>(rs$: ReplaySubject<T|undefined>,
+                                      key: string,
+                                      fetchFn: FetchFn<T>|undefined,
+                                      refreshMode: RefreshMode,
+                                      checkUpdateFn: CheckUpdateFn<T>): Promise<void> {
     // First get op. First create a blocking promise for concurrent first gets.
     let firstGetResolveFn: (() => void)|undefined = undefined;
     const firstGetOp: InitOp = {
@@ -85,14 +105,14 @@ export class ObservableStoreImpl implements ObservableStore {
     try {
       this.inFlightInitRxOps.set(key, firstGetOp);
 
-      const store = await this.storeAdapter$$;
+      const store = await this.asyncStore$$;
       const valueFromStore = await store.get<T>(key);
       if (valueFromStore) { // emit the value from store and check if refresh is needed.
         rs$.next(this.freezeFn(valueFromStore));
-        this.runAsyncRefresh(key, fetchFn, refreshMode, needUpdateFn);
+        this.runAsyncRefresh(key, fetchFn, refreshMode, checkUpdateFn);
       } else { // there is no value in the store -> fetch initial value.
         const valueFromFetch = fetchFn ? await this.doFetch(fetchFn, key) : undefined;
-        await this.set(key, valueFromFetch, needUpdateFn);
+        await this.set(key, valueFromFetch, checkUpdateFn);
       }
     } finally {
       firstGetResolveFn!();
@@ -104,35 +124,35 @@ export class ObservableStoreImpl implements ObservableStore {
                                      key: string,
                                      fetchFn: FetchFn<T>|undefined,
                                      refreshMode: RefreshMode,
-                                     needUpdateFn: NeedUpdateFn<T>): Observable<T|undefined> {
+                                     checkUpdateFn: CheckUpdateFn<T>): Observable<T|undefined> {
     const initOp = this.inFlightInitRxOps.get(key);
     const initOp$: Observable<unknown> = initOp ? fromPromise(initOp.promise) : of(undefined);
 
     // Wait until first get is completed and call refresh next.
     return initOp$.pipe(
-        tap(() => this.runAsyncRefresh(key, fetchFn, refreshMode, needUpdateFn)), // do refresh
+        tap(() => this.runAsyncRefresh(key, fetchFn, refreshMode, checkUpdateFn)), // do refresh
         take(1),
         switchMap(() => rs$), // return the rs$
     );
   }
 
   // refresh action is performed async (non-blocking).
-  private runAsyncRefresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): void {
-    fromPromise(this._refresh(key, fetchFn, refreshMode, needUpdateFn)).pipe(take(1));
+  private runAsyncRefresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, checkUpdateFn: CheckUpdateFn<T>): void {
+    fromPromise(this._refresh(key, fetchFn, refreshMode, checkUpdateFn)).pipe(take(1));
   }
 
-  private async _refresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, needUpdateFn: NeedUpdateFn<T>): Promise<void> {
+  private async _refresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, checkUpdateFn: CheckUpdateFn<T>): Promise<void> {
     if (!fetchFn || refreshMode === RefreshMode.DoNotRefresh) {
       return;
     }
 
-    if (refreshMode === RefreshMode.RefreshOncePerSession && this.refreshSet.has(key)) {
+    if (refreshMode === RefreshMode.RefreshOnce && this.refreshSet.has(key)) {
       return;
     }
 
     const value = await this.doFetch(fetchFn, key);
     if (value !== undefined) {
-      await this.set(key, value, needUpdateFn);
+      await this.set(key, value, checkUpdateFn);
     }
   }
 
@@ -166,7 +186,7 @@ export class ObservableStoreImpl implements ObservableStore {
     return rs$;
   }
 
-  async set<T>(key: string|undefined, value: T|undefined, needUpdateFn: NeedUpdateFn<T>): Promise<void> {
+  async set<T>(key: string|undefined, value: T|undefined, checkUpdateFn: CheckUpdateFn<T>): Promise<void> {
     if (!key) {
       return;
     }
@@ -176,7 +196,7 @@ export class ObservableStoreImpl implements ObservableStore {
         const prevSetOp = queue[queue.length - 1];
         try {
           await prevSetOp.promise; // wait previous set to complete first.
-          if (isSameSetOp(value, needUpdateFn, prevSetOp.value, prevSetOp.needUpdateFn)) {
+          if (isSameSetOp(value, checkUpdateFn, prevSetOp.value, prevSetOp.checkUpdateFn)) {
             return;
           }
         } catch (e) {
@@ -185,9 +205,9 @@ export class ObservableStoreImpl implements ObservableStore {
       }
     }
     try {
-      const setImplPromise$$ = this.setImpl(key, value, needUpdateFn);
+      const setImplPromise$$ = this.setImpl(key, value, checkUpdateFn);
       const queue = this.setOpsQueue.get(key) || [];
-      queue.push({promise: setImplPromise$$, value, needUpdateFn});
+      queue.push({promise: setImplPromise$$, value, checkUpdateFn});
       if (queue.length === 1) {
         this.setOpsQueue.set(key, queue);
       }
@@ -203,12 +223,12 @@ export class ObservableStoreImpl implements ObservableStore {
     }
   }
 
-  private async setImpl<T>(key: string, value: T|undefined, needUpdateFn: NeedUpdateFn<T>): Promise<void> {
+  private async setImpl<T>(key: string, value: T|undefined, checkUpdateFn: CheckUpdateFn<T>): Promise<void> {
     const inRefreshSet = this.refreshSet.has(key);
-    const store = await this.storeAdapter$$;
-    if (needUpdateFn !== skipUpdateCheck) {
+    const store = await this.asyncStore$$;
+    if (checkUpdateFn !== skipUpdateCheck) {
       const oldValue = await store.get<T>(key);
-      if (!needUpdateFn(oldValue, value)) {
+      if (!checkUpdateFn(oldValue, value)) {
         const firstUpdate = !inRefreshSet;
         const forceUpdate = firstUpdate && value === undefined && oldValue === undefined;
         if (!forceUpdate) {
@@ -226,36 +246,19 @@ export class ObservableStoreImpl implements ObservableStore {
     }
   }
 
-  async remove<T>(key: string|undefined): Promise<void> {
-    this.set(key, undefined, skipUpdateCheck);
+  async remove(key: string|undefined): Promise<void> {
+    return this.set(key, undefined, skipUpdateCheck);
   }
 
-  async list<T>(keyPrefix: string): Promise<KV<T>[]> {
-    const store = await this.storeAdapter$$;
+  async snapshot<T>(keyPrefix: string): Promise<KV<T>[]> {
+    const store = await this.asyncStore$$;
     return store.list(keyPrefix);
   }
 
   async clear(): Promise<void> {
-    const store = await this.storeAdapter$$;
+    const store = await this.asyncStore$$;
     this.dataMap.forEach(subj$ => subj$.next(undefined));
     return store.clear();
-  }
-
-  /**
-   * When PWA is initialized it receives server state as an input. This server state may already be outdated (new data is fetched by AJAX).
-   * This method checks if the state is new (never seen before) and runs DB data update only if server state was never seen before.
-   */
-  private async updateDbStateFromServerState(adapter: StoreAdapter, serverState: any): Promise<void> {
-    const serverStateTimestamp = serverState[SERVER_STATE_TIMESTAMP_KEY];
-    const dbVersionOfServerState = await adapter.get(SERVER_STATE_TIMESTAMP_KEY);
-    if (serverStateTimestamp === dbVersionOfServerState) {
-      return;
-    }
-    await adapter.setAll(serverState);
-    for (const [key, value] of Object.entries(serverState)) { // instantiate subjects -> they will be needed on browser re-render.
-      this.registerNewRxStreamForKey(key, value);
-      this.refreshSet.add(key);
-    }
   }
 }
 
@@ -272,7 +275,7 @@ function noFreeze<T>(obj: T|undefined): T|undefined {
 }
 
 // noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
-function deepFreeze<T>(obj: T|undefined): T|undefined {
+export function deepFreeze<T>(obj: T|undefined): T|undefined {
   if (obj === undefined) {
     return undefined;
   }
@@ -289,7 +292,7 @@ function deepFreeze<T>(obj: T|undefined): T|undefined {
 interface SetOp<T> {
   promise: Promise<void>,
   value: T|undefined;
-  needUpdateFn: NeedUpdateFn<T>;
+  checkUpdateFn: CheckUpdateFn<T>;
 }
 
 interface FetchOp<T> {
@@ -300,14 +303,13 @@ interface InitOp {
   promise: Promise<void>,
 }
 
-
-function isSameSetOp(value1: any, needUpdateFn1: NeedUpdateFn<any>, value2: any, needUpdateFn2: NeedUpdateFn<any>): boolean {
-  if ((needUpdateFn1 === skipUpdateCheck && needUpdateFn2 === skipUpdateCheck) || needUpdateFn1 !== needUpdateFn2) {
+function isSameSetOp(value1: any, checkUpdateFn1: CheckUpdateFn<any>, value2: any, checkUpdateFn2: CheckUpdateFn<any>): boolean {
+  if ((checkUpdateFn1 === skipUpdateCheck && checkUpdateFn2 === skipUpdateCheck) || checkUpdateFn1 !== checkUpdateFn2) {
     return false;
   }
   if (value1 === value2) {
     return true;
   }
-  return !needUpdateFn1(value1, value2);
+  return !checkUpdateFn1(value1, value2);
 }
 

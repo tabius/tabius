@@ -9,7 +9,7 @@ import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionRespons
 import {combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion} from '@app/store/check-update-functions';
+import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion} from '@app/store';
 import {I18N} from '@app/app-i18n';
 
 const COLLECTION_LIST_KEY = 'catalog';
@@ -42,7 +42,7 @@ export class CatalogService {
                 flatMap(collections => waitForAllPromisesAndReturnFirstArg(collections, collections.map(a => this.updateCollectionOnFetch(a)))),
                 map(collections => collections.map(a => a.id)),
             ),
-        RefreshMode.RefreshOncePerSession,
+        RefreshMode.RefreshOnce,
         checkUpdateByShallowArrayCompare,
     )
         //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
@@ -56,7 +56,7 @@ export class CatalogService {
     return this.store.get<Collection>(
         getCollectionKey(collectionId),
         () => this.httpClient.get<Collection[]>(`/api/collection/by-ids/${collectionId}`).pipe(mapToFirstInArray),
-        RefreshMode.RefreshOncePerSession,
+        RefreshMode.RefreshOnce,
         checkUpdateByVersion,
     );
   }
@@ -79,7 +79,7 @@ export class CatalogService {
     return this.store.get<CollectionDetails>(
         getCollectionDetailsKey(collectionId),
         () => this.httpClient.get<CollectionDetails|undefined>(`/api/collection/details-by-id/${collectionId}`),
-        RefreshMode.RefreshOncePerSession,
+        RefreshMode.RefreshOnce,
         checkUpdateByVersion
     );
   }
@@ -92,7 +92,7 @@ export class CatalogService {
             .pipe(
                 flatMap(songs => fromPromise(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))
             ),
-        RefreshMode.RefreshOncePerSession,
+        RefreshMode.RefreshOnce,
         checkUpdateByShallowArrayCompare
     );
   }
@@ -122,7 +122,7 @@ export class CatalogService {
                 flatMap(a => waitForAllPromisesAndReturnFirstArg(a, [this.updateCollectionOnFetch(a)])),
                 map(a => a && a.id)
             ),
-        RefreshMode.RefreshOncePerSession,
+        RefreshMode.RefreshOnce,
         checkUpdateByReference,
     );
   }
@@ -131,7 +131,7 @@ export class CatalogService {
     return this.store.get<Song>(
         getSongKey(songId),
         () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
-        RefreshMode.RefreshOncePerSession,
+        RefreshMode.RefreshOnce,
         checkUpdateByVersion,
     );
   }
@@ -144,7 +144,7 @@ export class CatalogService {
     return this.store.get<SongDetails>(
         getSongDetailsKey(songId),
         () => this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songId}`).pipe(mapToFirstInArray),
-        refreshCachedVersion ? RefreshMode.RefreshOncePerSession : RefreshMode.DoNotRefresh,
+        refreshCachedVersion ? RefreshMode.RefreshOnce : RefreshMode.DoNotRefresh,
         checkUpdateByVersion
     );
   }
@@ -197,8 +197,8 @@ export class CatalogService {
     }
     const {updatedCollections} = await this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`).pipe(take(1)).toPromise();
     await Promise.all([
-      this.store.remove<Song>(getSongDetailsKey(songId)),
-      this.store.remove<SongDetails>(getSongDetailsKey(songId))
+      this.store.remove(getSongDetailsKey(songId)),
+      this.store.remove(getSongDetailsKey(songId))
     ]);
     const collectionsUpdate$$ =
         updatedCollections.map(({collectionId, songs}) => this.updateCollectionSongsOnFetch(collectionId, songs, true));
@@ -286,7 +286,7 @@ export class CatalogService {
                         response.collectionInfos.map(info => this.updateCollectionOnFetch(info.collection)))),
                 map((response) => response.collectionInfos.map(info => info.collection.id))
             ),
-        RefreshMode.RefreshOncePerSession,
+        RefreshMode.RefreshOnce,
         checkUpdateByShallowArrayCompare,
     ).pipe(map(collectionIds => !!collectionIds ? collectionIds : []));
   }
