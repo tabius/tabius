@@ -5,7 +5,11 @@ import {catchError, shareReplay, switchMap, take, tap} from 'rxjs/operators';
 import {CheckUpdateFn, FetchFn, ObservableStore, RefreshMode, skipUpdateCheck} from './observable-store';
 
 export interface TransferStateAdapter {
-  getInitialStoreState(): { [key: string]: unknown }|undefined;
+  /**
+   * Initializes (upgrades) the store and returns list of updated values.
+   * The list of updated values is used to initialize reactive streams and avoid extra calls of fetch function.
+   */
+  initialize: (asyncStore: AsyncStore) => Promise<{ [key: string]: unknown }|undefined>;
 
   setSnapshotProvider(snapshotProvider: () => object): void;
 }
@@ -13,8 +17,8 @@ export interface TransferStateAdapter {
 
 /** TransferStateAdapter that does nothing. */
 class NoOpTransferStateAdapter implements TransferStateAdapter {
-  getInitialStoreState(): { [key: string]: unknown }|undefined {
-    return undefined;
+  initialize(): Promise<{ [key: string]: unknown }|undefined> {
+    return Promise.resolve(undefined);
   }
 
   setSnapshotProvider(): void {
@@ -47,10 +51,7 @@ export class ObservableStoreImpl implements ObservableStore {
     this.asyncStore$$ = new Promise<AsyncStore>(resolve => {
       const asyncStore = asyncStoreFactory();
       transferStateAdapter?.setSnapshotProvider(() => pairsToObject(asyncStore.snapshot()));
-      const initialState = transferStateAdapter?.getInitialStoreState();
-      const asyncStoreInit$$: Promise<void> = initialState === undefined
-                                              ? Promise.resolve()
-                                              : this.setInitialAsyncStoreState(asyncStore, initialState);
+      const asyncStoreInit$$: Promise<void> = this.setInitialAsyncStoreState(asyncStore, transferStateAdapter);
       asyncStoreInit$$.then(() => {
         resolve(asyncStore);
         this.markAsInitialized();
@@ -58,17 +59,10 @@ export class ObservableStoreImpl implements ObservableStore {
     });
   }
 
-  private async setInitialAsyncStoreState(asyncStore: AsyncStore, initialState: { [p: string]: unknown }): Promise<void> {
-    // const serverStateTimestamp = serverState[SERVER_STATE_TIMESTAMP_KEY];
-    // const dbVersionOfServerState = await adapter.get(SERVER_STATE_TIMESTAMP_KEY);
-    // if (serverStateTimestamp === dbVersionOfServerState) {
-    //    return;
-    // }
-    await asyncStore.clear();
-    await asyncStore.setAll(initialState);
-
+  private async setInitialAsyncStoreState(asyncStore: AsyncStore, transferStateAdapter: TransferStateAdapter): Promise<void> {
+    const updatedEntries = await transferStateAdapter.initialize(asyncStore);
     // Instantiate reactive streams as initialized & refreshed.
-    for (const [key, value] of Object.entries(initialState)) {
+    for (const [key, value] of Object.entries(updatedEntries || {})) {
       this.registerNewRxStreamForKey(key, value);
       this.refreshSet.add(key);
     }

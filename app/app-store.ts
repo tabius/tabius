@@ -43,9 +43,14 @@ class AngularTransferStateAdapter implements TransferStateAdapter {
 
   }
 
-  getInitialStoreState(): { [p: string]: unknown }|undefined {
+  async initialize(asyncStore: AsyncStore): Promise<{ [p: string]: unknown }|undefined> {
+    if (!this.isBrowser) {
+      return undefined;
+    }
     const serverStateKey = makeStateKey(`db-${this.storeName}`);
-    return this.isBrowser ? this.serverState.get(serverStateKey, {}) : undefined;
+    const serverState = await this.serverState.get(serverStateKey, {});
+    await asyncStore.setAll(serverState);
+    return serverState;
   }
 
   setSnapshotProvider(snapshotProvider: () => object): void {
