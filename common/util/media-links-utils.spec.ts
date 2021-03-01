@@ -1,4 +1,4 @@
-import {getYoutubeVideoIdFromLink, isValidYoutubeId} from '@common/util/media_links_utils';
+import {getYoutubeVideoIdFromLink, isValidYoutubeId} from '@common/util/media-links-utils';
 
 describe('Media Links Utils', () => {
 
