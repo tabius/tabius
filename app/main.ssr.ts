@@ -12,6 +12,7 @@ export {AppServerModule} from './app.ssr.module';
 export {renderModule, renderModuleFactory} from '@angular/platform-server';
 
 function applyDomino(): void {
+  global['Element'] = (domino as any).impl.Element;
   const dominoWindow = domino.createWindow('<body></body>');
 
   global['window'] = dominoWindow as Window&typeof globalThis;
