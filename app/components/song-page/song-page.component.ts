@@ -14,7 +14,7 @@ import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.s
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
 import {getToneWithH4SiFix, TONES_COUNT} from '@app/utils/chords-renderer';
-import {User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
+import {getDefaultUserSongFontSize, User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
@@ -267,19 +267,36 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       this.openEditor();
       return;
     }
+
+    // Key codes with or with no SHIFT.
+    switch (event.code) {
+      case 'Underscore':  // Same button with 'Minus' on laptop keyboard.
+      case 'Minus':
+        this.decFontSize();
+        return;
+      case 'Equal': // Same button with 'Plus' on laptop keyboard.
+      case 'Plus':
+        this.incFontSize();
+        return;
+      case 'Digit0':
+        this.updateSongFontSize(getDefaultUserSongFontSize());
+        return;
+    }
+
+    // Key codes with SHIFT only.
     if (!event.shiftKey) {
       return;
     }
     switch (event.code) {
       case 'ArrowDown':
         this.transpose(-1);
-        break;
+        return;
       case 'ArrowUp':
         this.transpose(1);
-        break;
+        return;
       case 'Digit0':
         this.transpose(0);
-        break;
+        return;
       case 'BracketLeft':
       case 'BracketRight':
         const songTextEl = this.getSongTextElement();
@@ -288,7 +305,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         } else {
           scrollToViewByEndPos(songTextEl);
         }
-        break;
+        return;
     }
   }
 

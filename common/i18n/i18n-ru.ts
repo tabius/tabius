@@ -125,6 +125,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       resetTranspose: 'Отменить транспонирование',
       transposeDown: 'Транспонировать на полутон ниже',
       transposeUp: 'Транспонировать на полутон выше',
+      changeSongFontSize: 'Изменить размер шрифта',
       scrollToSongStart: 'Скролл на начало песни',
       scrollPageUp: 'Скролл на одну страницу назад',
       scrollPageDown: 'Скролл на одну страницу вперёд',
