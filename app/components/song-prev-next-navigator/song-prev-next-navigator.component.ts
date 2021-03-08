@@ -32,6 +32,8 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   nextLink = '';
   nextLinkIsCollection = false;
 
+  private activeCollectionMount?: string;
+
   isInitializing = true;
 
   private hammer?: HammerManager;
@@ -40,7 +42,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
               private readonly cd: ChangeDetectorRef,
               readonly bss: BrowserStateService,
               private readonly router: Router,
-              private readonly ss: ShortcutsService,
+              private readonly shortcutsService: ShortcutsService,
   ) {
   }
 
@@ -66,6 +68,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
             takeUntil(this.destroyed$),
         )
         .subscribe(([collection, prevSong, prevSongPrimaryCollection, nextSong, nextSongPrimaryCollection]) => {
+          this.activeCollectionMount = collection?.mount;
           if (!collection) {
             return;
           }
@@ -122,16 +125,29 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (this.ss.isDoubleShiftRightPressEvent) {
+    if (this.shortcutsService.isDoubleShiftRightPressEvent) {
       this.gotoRandomSongInCollection();
       return;
     }
 
     if (event.shiftKey && !isElementToIgnoreKeyEvent(event.target as HTMLElement)) {
-      if (event.code === 'ArrowLeft') {
-        this.navigate(this.prevLink);
-      } else if (event.code === 'ArrowRight') {
-        this.navigate(this.nextLink);
+      switch (event.code) {
+        case 'ArrowLeft':
+          this.navigate(this.prevLink);
+          break;
+        case 'ArrowRight':
+          this.navigate(this.nextLink);
+          break;
+        case 'ArrowUp': // Shift + ArrowDown work only on the song page and navigates up to the collection level.
+          if (this.activeCollectionMount && this.songId) {
+            this.navigate(getCollectionPageLink(this.activeCollectionMount));
+          }
+          break;
+        case 'ArrowDown':
+          if (!this.songId) { // Shift + ArrowDown work only on the collection page and navigates down to the song level.
+            this.navigate(this.nextLink);
+          }
+          break;
       }
     }
   }
@@ -152,13 +168,13 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   }
 
   gotoRandomSongInCatalog(event?: MouseEvent): void {
-    this.ss.gotoRandomSong();
+    this.shortcutsService.gotoRandomSong();
     stopAndPreventDefaultOnRandomSongButtonClick(event);
   }
 
   gotoRandomSongInCollection(event?: MouseEvent): void {
     if (!!this.activeCollectionId) {
-      this.ss.gotoRandomSong(this.activeCollectionId);
+      this.shortcutsService.gotoRandomSong(this.activeCollectionId);
     }
     stopAndPreventDefaultOnRandomSongButtonClick(event);
   }
