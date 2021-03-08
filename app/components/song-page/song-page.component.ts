@@ -129,9 +129,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           const hadSongBefore = this.song !== undefined;
           const haveSongNow = song !== undefined && songDetails !== undefined;
-          if (hadSongBefore && !haveSongNow) {
+          const isSongMountUpdated = !!this.songMountBeforeUpdate && song?.mount !== this.songMountBeforeUpdate;
+          if (hadSongBefore && !haveSongNow || isSongMountUpdated) {
             // handle song removal or mount update
-            if (!!this.songMountBeforeUpdate && this.songMountBeforeUpdate !== songMount) {
+            if (isSongMountUpdated) {
               this.handleMountUpdate();
             } else {
               this.handleSongRemovalFromCatalog();
