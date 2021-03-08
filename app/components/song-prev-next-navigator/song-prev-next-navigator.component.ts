@@ -138,16 +138,16 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
         case 'ArrowRight':
           this.navigate(this.nextLink);
           break;
-          //   case 'ArrowUp': // Shift + ArrowDown work only on the song page and navigates up to the collection level.
-          //     if (this.activeCollectionMount && this.songId) {
-          //       this.navigate(getCollectionPageLink(this.activeCollectionMount));
-          //     }
-          //     break;
-          //   case 'ArrowDown':
-          //     if (!this.songId) { // Shift + ArrowDown work only on the collection page and navigates down to the song level.
-          //       this.navigate(this.nextLink);
-          //     }
-          //     break;
+        case 'PageUp': // Shift + PageUp work only on the song page and navigates up to the collection level.
+          if (this.activeCollectionMount && this.songId) {
+            this.navigate(getCollectionPageLink(this.activeCollectionMount));
+          }
+          break;
+        case 'PageDown':
+          if (!this.songId) { // Shift + PageDown work only on the collection page and navigates down to the song level.
+            this.navigate(this.nextLink);
+          }
+          break;
       }
     }
   }
