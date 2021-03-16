@@ -158,7 +158,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   // Minor Major 7th
   'Aminmaj7': 'x02110',
   'A#minmaj7': 'x13221',
-  'Bminmaj7': 'x20302',
+  'Bminmaj7': 'x24332',
   'Cminmaj7': 'x31003',
   'C#minmaj7': 'x42114',
   'Dminmaj7': 'xx0221',
