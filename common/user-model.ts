@@ -102,3 +102,17 @@ export function getDefaultUserSongFontSize(): number {
            : SONG_FONT_SIZE_HIRES_DESKTOP;
 }
 
+export interface CatalogNavigationHistory {
+  steps: CatalogNavigationHistoryStep[];
+}
+
+export interface CatalogNavigationHistoryStep {
+  name: string;
+  url: string;
+}
+
+export function newEmptyCatalogNavigationHistory(): CatalogNavigationHistory {
+  return {
+    steps: [],
+  };
+}

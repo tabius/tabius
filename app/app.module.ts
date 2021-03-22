@@ -51,25 +51,29 @@ import {AddSongToCollectionComponent} from '@app/components/add-song-to-collecti
 import {UserCollectionsListComponent} from '@app/components/user-collections-list/user-collections-list.component';
 import {UserCollectionEditorComponent} from '@app/components/user-collection-editor/user-collection-editor.component';
 import {PopoverModule} from '@app/popover/popover.module';
-import {KeyboardShortcutsPopupComponent} from './components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
+import {KeyboardShortcutsPopupComponent} from '@app/components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 import {HelpService} from '@app/services/help.service';
-import {CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent} from './components/head-contributor/head-contributor.component';
-import {ChordPopoverComponent} from './components/chord-popover/chord-popover.component';
-import {ShowChordPopoverOnClickDirective} from './directives/show-chord-popover-on-click.directive';
-import {JsonLdComponent} from './components/json-ld/json-ld.component';
+import {CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent} from '@app/components/head-contributor/head-contributor.component';
+import {ChordPopoverComponent} from '@app/components/chord-popover/chord-popover.component';
+import {ShowChordPopoverOnClickDirective} from '@app/directives/show-chord-popover-on-click.directive';
+import {JsonLdComponent} from '@app/components/json-ld/json-ld.component';
+import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-navigation-history-popup/catalog-navigation-history-popup.component';
 
 @NgModule({
   declarations: [
     AddSongToCollectionComponent,
     AppComponent,
     CanonicalLinkHeadContributorComponent,
+    CatalogNavigationHistoryPopupComponent,
     CatalogPageComponent,
     ChordImageComponent,
+    ChordPopoverComponent,
     CollectionBreadcrumbComponent,
     CollectionEditorComponent,
     CollectionPageComponent,
     FooterComponent,
     HeadContributorComponent,
+    JsonLdComponent,
     KeyboardShortcutsPopupComponent,
     LinkHeadContributorComponent,
     LoadingIndicatorComponent,
@@ -81,6 +85,7 @@ import {JsonLdComponent} from './components/json-ld/json-ld.component';
     SafeHtmlPipe,
     SafeResourceUrlPipe,
     SettingsPageComponent,
+    ShowChordPopoverOnClickDirective,
     SigninSignoutButtonComponent,
     SiteHomePageComponent,
     SongChordsComponent,
@@ -101,9 +106,6 @@ import {JsonLdComponent} from './components/json-ld/json-ld.component';
     UserCollectionEditorComponent,
     UserCollectionsListComponent,
     UserRegistrationPromptComponent,
-    ChordPopoverComponent,
-    ShowChordPopoverOnClickDirective,
-    JsonLdComponent,
   ],
   imports: [
     BrowserAnimationsModule,

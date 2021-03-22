@@ -264,4 +264,5 @@ export function getUserAgentFromRequest(request: any): string|undefined {
   return request && request.headers ? request.headers ['user-agent'] : undefined;
 }
 
-
+export function nothingThen() {
+}

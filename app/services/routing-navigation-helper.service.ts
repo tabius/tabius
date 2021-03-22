@@ -18,9 +18,9 @@ export class RoutingNavigationHelper {
   ) {
     if (bss.isBrowser) {
       this.router.events
-          .pipe(filter(events => events instanceof NavigationStart || events instanceof NavigationEnd))
-          .subscribe(events => {
-            if (events instanceof NavigationStart) {
+          .pipe(filter(event => event instanceof NavigationStart || event instanceof NavigationEnd))
+          .subscribe(event => {
+            if (event instanceof NavigationStart) {
               this.helpService.setActiveHelpPage(undefined);
               this.pageOffsetYPerRoute.set(this.router.url, window.pageYOffset);
             }

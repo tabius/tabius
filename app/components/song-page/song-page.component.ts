@@ -8,7 +8,7 @@ import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
+import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -158,6 +158,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
           this.updateMeta();
           this.hasEditRight = canManageCollectionContent(user, primaryCollection);
+          this.registerStateInCatalogNavigationHistory();
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
         });
@@ -357,6 +358,15 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   onMountChangeBeforeUpdate(mountBeforeUpdate: string): void {
     this.songMountBeforeUpdate = mountBeforeUpdate;
+  }
+
+  private registerStateInCatalogNavigationHistory(): void {
+    if (!this.song || !this.activeCollection) {
+      return;
+    }
+    const name = `${this.song.title}, ${getNameFirstFormArtistName(this.activeCollection)} | `;
+    const url = getSongPageLink(this.activeCollection.mount, this.song.mount, this.primaryCollection?.mount);
+    this.uds.addCatalogNavigationHistoryStep({name, url}).then(nothingThen);
   }
 }
 

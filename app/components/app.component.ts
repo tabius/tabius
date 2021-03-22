@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {HelpService} from '@app/services/help.service';
 import {ShortcutsService} from '@app/services/shortcuts.service';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
+import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-history.service';
 
 @Component({
   selector: 'gt-app',
@@ -15,6 +16,7 @@ import {REQUEST} from '@nguniversal/express-engine/tokens';
 export class AppComponent implements OnInit, AfterViewInit {
 
   @ViewChild('keyboardShortcuts', {static: true}) keyboardShortcuts!: TemplateRef<{}>;
+  @ViewChild('navigationHistory', {static: true}) navigationHistory!: TemplateRef<{}>;
 
   readonly printMode$: Observable<boolean>;
 
@@ -22,6 +24,7 @@ export class AppComponent implements OnInit, AfterViewInit {
               private readonly bss: BrowserStateService,
               private readonly shortcutsService: ShortcutsService,
               private readonly helpService: HelpService,
+              private readonly navigationHistoryService: CatalogNavigationHistoryService,
               @Optional() @Inject(REQUEST) private request: any,
   ) {
     bss.initWideScreenModeState(request);
@@ -34,6 +37,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.helpService.keyboardShortcutsTemplate = this.keyboardShortcuts;
+    this.navigationHistoryService.navigationHistoryTemplate = this.navigationHistory;
   }
 
   @HostListener('document:keydown', ['$event'])

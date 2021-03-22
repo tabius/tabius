@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {DEFAULT_FAVORITE_KEY, DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {CatalogNavigationHistory, CatalogNavigationHistoryStep, DEFAULT_FAVORITE_KEY, DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, newEmptyCatalogNavigationHistory, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
 import {map, mergeMap, switchMap, take} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
@@ -16,6 +16,9 @@ const SONG_SETTINGS_KEY_PREFIX = 'ss-';
 const H4SI_FLAG_KEY = 'h4Si';
 const FAVORITE_TONE_KEY = 'favoriteKey';
 const USER_KEY = 'user';
+const MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY = 15;
+
+const CATALOG_NAVIGATION_HISTORY_KEY = 'catalog-navigation-history';
 
 /** Client-side API to access/update personal user settings. */
 @Injectable({
@@ -197,6 +200,39 @@ export class UserService {
     console.debug('Cleaning up user data on sign-out: ', user);
     await this.store.remove(USER_KEY);
     await this.updateUserSettings(newDefaultUserSettings());
+    await this.setCatalogNavigationHistory(newEmptyCatalogNavigationHistory());
+  }
+
+  getCatalogNavigationHistory(): Observable<CatalogNavigationHistory> {
+    return this.store.get<CatalogNavigationHistory>(
+        CATALOG_NAVIGATION_HISTORY_KEY,
+        DO_NOT_PREFETCH,
+        RefreshMode.DoNotRefresh,
+        skipUpdateCheck
+    ).pipe(map(s => s || newEmptyCatalogNavigationHistory()));
+  }
+
+  async setCatalogNavigationHistory(history: CatalogNavigationHistory): Promise<void> {
+    await this.store.set<CatalogNavigationHistory>(CATALOG_NAVIGATION_HISTORY_KEY, history, checkUpdateByStringify);
+  }
+
+  async removeStepFromCatalogNavigationHistory(url: string): Promise<void> {
+    const history = {...await this.getCatalogNavigationHistory().pipe(take(1)).toPromise()};
+    history.steps = history.steps.filter(s => s.url !== url);
+    await this.setCatalogNavigationHistory(history);
+  }
+
+  async addCatalogNavigationHistoryStep(step: CatalogNavigationHistoryStep|undefined): Promise<void> {
+    if (!step) {
+      return;
+    }
+    await this.removeStepFromCatalogNavigationHistory(step.url);
+    const history = {...await this.getCatalogNavigationHistory().pipe(take(1)).toPromise()};
+    if (history.steps.length >= MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY) {
+      history.steps.splice(history.steps.length - MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY + 1);
+    }
+    history.steps.push(step);
+    await this.setCatalogNavigationHistory(history);
   }
 }
 

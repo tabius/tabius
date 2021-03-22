@@ -7,7 +7,7 @@ import {combineLatest, Observable} from 'rxjs';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
@@ -114,6 +114,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
           this.canAddSongs = canManageCollectionContent(this.user, collection);
           this.canEditCollection = canRemoveCollection(this.user, collection);
           this.updateMeta(songs);
+          this.registerStateInCatalogNavigationHistory();
           this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
 
@@ -181,6 +182,14 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     }
   }
 
+  private registerStateInCatalogNavigationHistory(): void {
+    if (!this.collectionViewModel) {
+      return;
+    }
+    const name = this.collectionViewModel.collection.name;
+    const url = getCollectionPageLink(this.collectionViewModel.collection.mount);
+    this.uds.addCatalogNavigationHistoryStep({name, url}).then(nothingThen);
+  }
 }
 
 function getFirstSongsNames(songs: Song[]): string {

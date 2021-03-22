@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {flatMap, take} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
-import {getSongPageLink, isInputEvent} from '@common/util/misc-utils';
+import {getSongPageLink, isInputEvent, nothingThen} from '@common/util/misc-utils';
 import {Router} from '@angular/router';
 import {HelpService} from '@app/services/help.service';
+import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-history.service';
 
 const DOUBLE_PRESS_TIMEOUT_MILLIS = 500;
 
@@ -20,6 +21,7 @@ export class ShortcutsService {
   constructor(private readonly cds: CatalogService,
               private readonly router: Router,
               private readonly helpService: HelpService,
+              private readonly catalogNavigationHistoryService: CatalogNavigationHistoryService,
   ) {
   }
 
@@ -32,21 +34,24 @@ export class ShortcutsService {
       this.isDoubleShiftLeftPressEvent = this.isDoublePressEvent(event, 'ShiftLeft');
       this.isDoubleShiftRightPressEvent = this.isDoublePressEvent(event, 'ShiftRight');
 
-      if (this.isShowHelpEvent(event)) {
+      if (ShortcutsService.isShowHelpEvent(event)) {
         this.helpService.showKeyboardShortcuts();
-        return;
-      }
-      if (this.isDoubleShiftLeftPressEvent) {
+      } else if (ShortcutsService.isShowNavigationHistoryEvent(event)) {
+        this.catalogNavigationHistoryService.showCatalogNavigationHistory();
+      } else if (this.isDoubleShiftLeftPressEvent) {
         this.gotoRandomSong();
-        return;
       }
     } finally {
       this.lastEvent = {time: Date.now(), code: event.code};
     }
   }
 
-  private isShowHelpEvent(event: KeyboardEvent): boolean {
+  private static isShowHelpEvent(event: KeyboardEvent): boolean {
     return event.shiftKey && event.code === 'Slash';
+  }
+
+  private static isShowNavigationHistoryEvent(event: KeyboardEvent): boolean {
+    return event.shiftKey && event.code === 'KeyH';
   }
 
   private isDoublePressEvent(event: KeyboardEvent, eventCode: string): boolean {
@@ -65,7 +70,7 @@ export class ShortcutsService {
         return;
       }
       const link = getSongPageLink(collection.mount, song.mount);
-      this.router.navigate([link]);
+      this.router.navigate([link]).then(nothingThen);
     });
   }
 }
