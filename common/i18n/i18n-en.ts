@@ -15,8 +15,12 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     catalog: 'Catalog',
   },
   navbar: {
+    accountInfoNotLoggedInToast: 'You are not logged in',
+    accountInfoToast: (user: User) => `Account: ${user.username}, ${user.email}`,
     catalog: 'CATALOG',
     forum: 'FORUM',
+    historyButton: 'HISTORY',
+    historyButtonTitle: 'Show catalog browing history',
     logo2: 'chords & tabs',
     noSleep: 'NO SLEEP',
     noSleepTitle: 'Keep mobile phone screen always on',
@@ -24,8 +28,6 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     studio: 'STUDIO',
     tuner: 'TUNER',
     userIconTitle: (username: string) => `Account: ${username}`,
-    accountInfoToast: (user: User) => `Account: ${user.username}, ${user.email}`,
-    accountInfoNotLoggedInToast: 'You are not logged in',
   },
   page404: {
     message: 'Page not found!',
@@ -355,5 +357,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   loadingIndicatorWarning: {
     reloadLink: 'Reload',
     reloadNotice: 'If loading takes too long try to reload whole page.',
+  },
+  navigationHistoryPopup: {
+    title: 'History'
   }
 };

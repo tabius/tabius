@@ -48,6 +48,21 @@
             </a>
         </div>
     </nav>
+    <div class="sub-nav">
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item history">
+            <a href="#" class="btn btn-flat-white" #showHistoryButton
+               [attr.title]="i18n.historyButtonTitle"
+               (click)="onShowHistoryClicked($event)"
+            >
+                ☰ {{i18n.historyButton}}
+            </a>
+        </div>
+    </div>
 </div>
 
 <!-- mobile layout (see footer component for the global menu popover.) -->

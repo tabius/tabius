@@ -1,4 +1,9 @@
-<h3>History</h3>
-<div *ngFor="let step of visibleSteps">
-    <a routerLink="{{step.url}}" (click)="popover.close()">{{ step.name}}</a>
+<div class="container">
+
+    <div class="title">{{i18n.title}}</div>
+
+    <div *ngFor="let step of visibleSteps" class="list-item">
+        <a routerLink="{{step.url}}" (click)="popover.close()">{{ step.name }}</a>
+    </div>
+
 </div>

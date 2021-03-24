@@ -364,7 +364,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     if (!this.song || !this.activeCollection) {
       return;
     }
-    const name = `${this.song.title}, ${getNameFirstFormArtistName(this.activeCollection)} | `;
+    const name = `${this.song.title} [${getNameFirstFormArtistName(this.activeCollection)}]`;
     const url = getSongPageLink(this.activeCollection.mount, this.song.mount, this.primaryCollection?.mount);
     this.uds.addCatalogNavigationHistoryStep({name, url}).then(nothingThen);
   }

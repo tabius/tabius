@@ -15,7 +15,11 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     catalog: 'Каталог',
   },
   navbar: {
+    accountInfoNotLoggedInToast: 'Вы не вошли в систему',
+    accountInfoToast: (user: User) => `Аккаунт: ${user.username}, ${user.email}`,
     catalog: 'КАТАЛОГ',
+    historyButton: 'ИСТОРИЯ',
+    historyButtonTitle: 'История просмотра каталога',
     forum: 'ФОРУМ',
     logo2: 'табы и аккорды',
     noSleep: 'БЛОК. СНА',
@@ -24,8 +28,6 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     studio: 'СТУДИЯ',
     tuner: 'ТЮНЕР',
     userIconTitle: (username: string) => `Аккаунт: ${username}`,
-    accountInfoToast: (user: User) => `Аккаунт: ${user.username}, ${user.email}`,
-    accountInfoNotLoggedInToast: 'Вы не вошли в систему',
   },
   page404: {
     message: 'Страница не найдена!',
@@ -355,6 +357,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   loadingIndicatorWarning: {
     reloadLink: 'Перегрузить',
     reloadNotice: 'При зависшей загрузке попробуйте перезагрузить страницу.',
+  },
+  navigationHistoryPopup: {
+    title: 'История просмотров'
   }
-
 };

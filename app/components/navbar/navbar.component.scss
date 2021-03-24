@@ -170,6 +170,34 @@ a {
       }
     }
   }
+
+  .sub-nav {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: transparent;
+    pointer-events: none;
+
+    .item {
+      text-align: center;
+      width: 100%;
+      margin: 0;
+
+      &.history {
+        text-align: left;
+        text-transform: uppercase;
+
+        a {
+          pointer-events: auto;
+          margin-left: 10px;
+          margin-top: 10px;
+          color: slategray;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
 }
 
 @media only screen and (max-height: $hires-desktop-height) {

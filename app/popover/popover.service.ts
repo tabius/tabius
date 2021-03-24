@@ -95,7 +95,7 @@ export class PopoverService {
     const {arrowSize, arrowOffset} = popoverConfig;
     const panelOffset = arrowSize / 2;
 
-    // preferred positions, in order of priority
+    // Preferred positions, in order of priority.
     const positions: ConnectionPositionPair[] = [
       // top center
       {
@@ -156,6 +156,11 @@ export class PopoverService {
         offsetY: panelOffset
       }
     ];
+
+    if (popoverConfig.preferredPosition) {
+      const {overlayX, overlayY} = popoverConfig.preferredPosition;
+      positions.sort(p => p.overlayX === overlayX && p.overlayY === overlayY ? -1 : 0);
+    }
 
     return this.overlay
         .position()

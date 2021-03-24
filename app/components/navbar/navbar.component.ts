@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
@@ -12,6 +12,7 @@ import {I18N} from '@app/app-i18n';
 import {USER_COLLECTION_MOUNT_SEPARATOR} from '@common/common-constants';
 import {ContextMenuAction, ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
+import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-history.service';
 
 enum NavSection {
   Home = 1,
@@ -48,12 +49,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   readonly noSleepMode$: Observable<boolean>;
 
+  @ViewChild('showHistoryButton', {static: true, read: ElementRef}) private showHistoryButton?: ElementRef;
+
   constructor(private readonly uds: UserService,
               private readonly router: Router,
               private readonly toast: ToastService,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly cd: ChangeDetectorRef,
               private readonly bss: BrowserStateService,
+              private readonly navigationHistoryService: CatalogNavigationHistoryService,
               contextMenuActionService: ContextMenuActionService,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
@@ -131,5 +135,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.contextMenuAction && typeof this.contextMenuAction.target === 'function') {
       this.contextMenuAction.target();
     }
+  }
+
+  onShowHistoryClicked($event: MouseEvent): void {
+    $event.preventDefault();
+    // Style history.
+    // Show right under the button.
+    this.navigationHistoryService.showCatalogNavigationHistory(this.showHistoryButton);
   }
 }

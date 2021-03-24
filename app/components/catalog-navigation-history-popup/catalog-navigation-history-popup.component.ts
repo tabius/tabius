@@ -6,6 +6,7 @@ import {PopoverRef} from '@app/popover/popover-ref';
 import {NavigationEnd, Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import {checkUpdateByShallowArrayCompare} from '@app/store';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-catalog-navigation-history-popup',
@@ -24,6 +25,8 @@ export class CatalogNavigationHistoryPopupComponent implements OnInit, OnDestroy
   private currentUrl = '';
 
   visibleSteps: CatalogNavigationHistoryStep[] = [];
+
+  readonly i18n = I18N.navigationHistoryPopup;
 
   constructor(private readonly uds: UserService,
               private readonly cd: ChangeDetectorRef,

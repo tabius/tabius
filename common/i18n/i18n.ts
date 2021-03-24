@@ -20,8 +20,12 @@ export interface I18n {
     catalog: string;
   };
   navbar: {
+    accountInfoNotLoggedInToast: string;
+    accountInfoToast(user: User): string;
     catalog: string;
     forum: string;
+    historyButton: string;
+    historyButtonTitle: string;
     logo2: string;
     noSleep: string;
     noSleepTitle: string;
@@ -29,8 +33,6 @@ export interface I18n {
     studio: string;
     tuner: string;
     userIconTitle(username: string): string;
-    accountInfoToast(user: User): string;
-    accountInfoNotLoggedInToast: string;
   };
   page404: {
     message: string;
@@ -340,4 +342,7 @@ export interface I18n {
     reloadNotice: string;
     reloadLink: string;
   };
+  navigationHistoryPopup: {
+    title: string;
+  }
 }

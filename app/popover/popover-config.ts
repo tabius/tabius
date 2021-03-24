@@ -8,4 +8,8 @@ export interface PopoverConfig<T = any> {
   panelClass: string|string[];
   arrowOffset: number;
   arrowSize: number;
+  preferredPosition?: {
+    overlayX: string;
+    overlayY: string;
+  }
 }
