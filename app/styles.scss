@@ -3,9 +3,7 @@
 @import "app/styles/colors";
 @import "app/styles/buttons";
 @import "app/styles/checkboxes";
-@import "~@angular/cdk/overlay/overlay";
-
-@include cdk-overlay();
+@import "~@angular/cdk/overlay-prebuilt.css";
 
 html {
   overflow: -moz-scrollbars-vertical;

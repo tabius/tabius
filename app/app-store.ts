@@ -48,7 +48,7 @@ class AngularTransferStateAdapter implements TransferStateAdapter {
       return undefined;
     }
     const serverStateKey = makeStateKey(`db-${this.storeName}`);
-    const serverState = await this.serverState.get(serverStateKey, {});
+    const serverState = this.serverState.get<{ [p: string]: unknown }>(serverStateKey, {});
     await asyncStore.setAll(serverState);
     return serverState;
   }

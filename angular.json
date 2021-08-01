@@ -8,11 +8,6 @@
       "sourceRoot": "app",
       "projectType": "application",
       "prefix": "gt",
-      "schematics": {
-        "@schematics/angular:component": {
-          "styleext": "scss"
-        }
-      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -144,34 +139,18 @@
     }
   },
   "schematics": {
-    "@schematics/angular:class": {
-      "spec": false
-    },
     "@schematics/angular:component": {
-      "spec": false,
       "inlineStyle": false,
       "inlineTemplate": false,
       "prefix": "gt",
-      "styleext": "scss",
       "changeDetection": "OnPush",
       "module": "app"
     },
     "@schematics/angular:directive": {
-      "spec": false,
       "prefix": "gt",
-      "changeDetection": "OnPush",
       "module": "app"
     },
-    "@schematics/angular:guard": {
-      "spec": false
-    },
     "@schematics/angular:module": {
-      "spec": false
-    },
-    "@schematics/angular:pipe": {
-      "spec": false
-    },
-    "@schematics/angular:service": {
       "spec": false
     }
   }

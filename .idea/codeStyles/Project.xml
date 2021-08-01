@@ -1,7 +1,7 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <option name="RIGHT_MARGIN" value="180" />
-    <DB2CodeStyleSettings version="5">
+    <DB2CodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -23,7 +23,7 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </DB2CodeStyleSettings>
-    <DerbyCodeStyleSettings version="5">
+    <DerbyCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -45,7 +45,7 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </DerbyCodeStyleSettings>
-    <H2CodeStyleSettings version="5">
+    <H2CodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -67,7 +67,29 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </H2CodeStyleSettings>
-    <HSQLCodeStyleSettings version="5">
+    <H2CodeStyleSettings version="6">
+      <option name="USE_GENERAL_STYLE" value="false" />
+      <option name="DISABLE_FORMATTING" value="true" />
+      <option name="IDENTIFIER_CASE" value="1" />
+      <option name="CUSTOM_TYPE_CASE" value="0" />
+      <option name="ALIAS_CASE" value="1" />
+      <option name="SET_EL_LINE" value="1" />
+      <option name="SET_EL_WRAP" value="0" />
+      <option name="SELECT_EL_LINE" value="0" />
+      <option name="SELECT_EL_WRAP" value="2" />
+      <option name="FROM_EL_LINE" value="0" />
+      <option name="FROM_EL_WRAP" value="2" />
+      <option name="FROM_WRAP_JOIN_1" value="false" />
+      <option name="FROM_WRAP_JOIN_2" value="false" />
+      <option name="FROM_INDENT_JOIN" value="false" />
+      <option name="WHERE_EL_LINE" value="0" />
+      <option name="WHERE_EL_WRAP" value="2" />
+      <option name="WHERE_EL_BOUND" value="0" />
+      <option name="TABLE_OPENING" value="1" />
+      <option name="TABLE_CONTENT" value="2" />
+      <option name="TABLE_CLOSING" value="3" />
+    </H2CodeStyleSettings>
+    <HSQLCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -98,11 +120,11 @@
     <JSON>
       <option name="ARRAY_WRAPPING" value="5" />
     </JSON>
-    <MSSQLCodeStyleSettings version="5">
+    <MSSQLCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="CUSTOM_TYPE_CASE" value="0" />
     </MSSQLCodeStyleSettings>
-    <MySQLCodeStyleSettings version="5">
+    <MySQLCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -124,7 +146,7 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </MySQLCodeStyleSettings>
-    <OracleCodeStyleSettings version="5">
+    <OracleCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -146,7 +168,7 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </OracleCodeStyleSettings>
-    <PostgresCodeStyleSettings version="5">
+    <PostgresCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -168,7 +190,7 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </PostgresCodeStyleSettings>
-    <SQLiteCodeStyleSettings version="5">
+    <SQLiteCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -190,7 +212,7 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </SQLiteCodeStyleSettings>
-    <SqlCodeStyleSettings version="5">
+    <SqlCodeStyleSettings version="6">
       <option name="DISABLE_FORMATTING" value="true" />
       <option name="IDENTIFIER_CASE" value="1" />
       <option name="CUSTOM_TYPE_CASE" value="0" />
@@ -211,7 +233,7 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </SqlCodeStyleSettings>
-    <SybaseCodeStyleSettings version="5">
+    <SybaseCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="CUSTOM_TYPE_CASE" value="0" />
     </SybaseCodeStyleSettings>
