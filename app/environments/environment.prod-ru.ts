@@ -3,7 +3,6 @@ import {TabiusEnv} from '@app/environments';
 
 const APP_DOMAIN = 'tabius.ru';
 
-// noinspection JSUnusedGlobalSymbols
 export const environment: TabiusEnv = {
   lang: 'ru',
   domain: APP_DOMAIN,
@@ -11,6 +10,7 @@ export const environment: TabiusEnv = {
   production: true,
   backendUrl: `https://${APP_DOMAIN}`,
   ssrBackendUrl: 'http://localhost:4001',
+  telegramUrl: 'https://t.me/tabius_ru',
   nodeBbUrl: `https://forum.${APP_DOMAIN}`,
   nodeBbChordsDiscussionTopicId: 19999,
   buildInfo,

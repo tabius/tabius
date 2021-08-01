@@ -139,7 +139,7 @@ export interface I18n {
     but: string;
     butLine1: string;
     butLine2: string;
-    butForum: string;
+    butTelegram: string;
     also: string;
     alsoLine1: string;
     alsoLine2: string;

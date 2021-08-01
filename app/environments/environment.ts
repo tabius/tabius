@@ -10,6 +10,7 @@ export const environment: TabiusEnv = {
   production: false,
   backendUrl: `http://${APP_DOMAIN}:4001`,
   ssrBackendUrl: `http://${APP_DOMAIN}:4001`,
+  telegramUrl: 'https://t.me/tabius_ru',
   nodeBbUrl: `https://forum.tabius.ru`,
   nodeBbChordsDiscussionTopicId: 19999,
   buildInfo,

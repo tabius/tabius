@@ -18,6 +18,9 @@ export interface TabiusEnv {
   /** Backend URL for API calls during server side rendering. */
   ssrBackendUrl: string;
 
+  /** Link to the official telegram channel. */
+  telegramUrl: string;
+
   /** NodeBB (forum) URL. */
   nodeBbUrl: string,
 

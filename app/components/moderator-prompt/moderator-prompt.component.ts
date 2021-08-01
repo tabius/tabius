@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output} from '@angular/core';
-import {NODE_BB_ADD_NEW_CATEGORY_URL} from '@app/app-constants';
+import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
 import {scrollToView} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -12,7 +12,7 @@ import {LINK_STUDIO} from '@common/mounts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModeratorPromptComponent implements AfterViewInit {
-  readonly forumLink = NODE_BB_ADD_NEW_CATEGORY_URL;
+  readonly telegramLink = TELEGRAM_CHANNEL_URL;
   readonly studioLink = LINK_STUDIO;
   readonly i18n = I18N.moderatorPrompt;
 
