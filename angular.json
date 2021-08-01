@@ -67,8 +67,14 @@
               "outputHashing": "all",
               "serviceWorker": true,
               "sourceMap": true
+            },
+            "dev": {
+              "aot": false,
+              "buildOptimizer": false,
+              "optimization": false
             }
-          }
+          },
+          "defaultConfiguration": "dev"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -82,6 +88,9 @@
             },
             "org": {
               "browserTarget": "tabius:build:org"
+            },
+            "dev": {
+              "browserTarget": "tabius:build:dev"
             }
           }
         },
