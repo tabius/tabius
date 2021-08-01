@@ -175,8 +175,7 @@ a {
     display: flex;
     justify-content: flex-start;
     width: 100%;
-    background-color: transparent;
-    pointer-events: none;
+    height: 0; // Do not occupy any space or catch any mouse events.
 
     .item {
       text-align: center;
