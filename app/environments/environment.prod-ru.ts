@@ -3,6 +3,8 @@ import {TabiusEnv} from '@app/environments';
 
 const APP_DOMAIN = 'tabius.ru';
 
+const backendUrl = `https://${APP_DOMAIN}`;
+
 export const environment: TabiusEnv = {
   lang: 'ru',
   domain: APP_DOMAIN,
@@ -11,7 +13,24 @@ export const environment: TabiusEnv = {
   backendUrl: `https://${APP_DOMAIN}`,
   ssrBackendUrl: 'http://localhost:4001',
   telegramUrl: 'https://t.me/tabius_ru',
-  nodeBbUrl: `https://forum.${APP_DOMAIN}`,
-  nodeBbChordsDiscussionTopicId: 19999,
   buildInfo,
+  authConfig: {
+    domain: 'tabius.us.auth0.com',
+    clientId: 'HsyF6TwzMaKVFhjlLdlBUJf3gs9oihFt',
+    cacheLocation: 'localstorage',
+    audience: 'web-client-api-id',
+    httpInterceptor: {
+      allowedList: [
+        {
+          uri: backendUrl + '/api/*',
+          tokenOptions: {
+            /** The attached token should target this audience. */
+            audience: 'web-client-api-id',
+            /** The attached token should have these scopes. */
+            scope: 'read:current_user'
+          }
+        }
+      ]
+    }
+  }
 };

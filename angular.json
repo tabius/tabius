@@ -149,11 +149,13 @@
   },
   "schematics": {
     "@schematics/angular:component": {
+      "changeDetection": "OnPush",
       "inlineStyle": false,
       "inlineTemplate": false,
+      "module": "app",
       "prefix": "gt",
-      "changeDetection": "OnPush",
-      "module": "app"
+      "skipTests": true,
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "gt",

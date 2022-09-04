@@ -11,7 +11,10 @@ export const environment: TabiusEnv = {
   backendUrl: `https://${APP_DOMAIN}`,
   ssrBackendUrl: 'http://localhost:24001',
   telegramUrl: 'https://t.me/tabius_ru',
-  nodeBbUrl: `https://forum.${APP_DOMAIN}`,
-  nodeBbChordsDiscussionTopicId: 2,
   buildInfo,
+  authConfig: {
+    // TODO:
+    'domain': 'tabius-org.us.auth0.com',
+    'clientId': 'HsyF6TwzMaKVFhjlLdlBUJf3gs9oihFt',
+  }
 };

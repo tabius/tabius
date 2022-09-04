@@ -1,8 +1,8 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output} from '@angular/core';
-import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {scrollToView} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {I18N} from '@app/app-i18n';
+import {ClientAuthService} from '@app/services/client-auth.service';
 
 @Component({
   selector: 'gt-user-registration-prompt',
@@ -11,15 +11,16 @@ import {I18N} from '@app/app-i18n';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserRegistrationPromptComponent implements AfterViewInit {
-  readonly i18n = I18N.userRegistrationPromptComponent
-  readonly loginLink = NODE_BB_LOGIN_URL;
-  readonly registrationLink = NODE_BB_REGISTRATION_URL;
+  readonly i18n = I18N.userRegistrationPromptComponent;
+
+  @Input() showCloseButton = true;
 
   /** Emitted when panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
   constructor(private readonly el: ElementRef,
               private readonly bss: BrowserStateService,
+              public authService: ClientAuthService,
   ) {
   }
 
@@ -40,5 +41,13 @@ export class UserRegistrationPromptComponent implements AfterViewInit {
         scrollToView(this.el.nativeElement);
       }, 200);
     }
+  }
+
+  onRegisterClicked(): void {
+    this.authService.signup();
+  }
+
+  onSignInClicked(): void {
+    this.authService.signin();
   }
 }

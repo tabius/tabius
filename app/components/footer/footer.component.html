@@ -50,16 +50,16 @@
 
     <div *ngIf="isMainMenuDrawerOpen" class="drawer">
         <div class="drawer-items">
-            <div class="item forum">
-                <a href="{{forumLink}}" (click)="closeMainMenuDrawer()">
-                    <gt-svg-icon icon="forum"></gt-svg-icon>
-                    <div class="title">{{i18nNav.forum}}</div>
-                </a>
-            </div>
             <div class="item catalog">
                 <a routerLink="{{catalogLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="artist"></gt-svg-icon>
                     <div class="title">{{i18nNav.catalog}}</div>
+                </a>
+            </div>
+            <div class="item scene">
+                <a href="{{forumLink}}" (click)="closeMainMenuDrawer()">
+                    <gt-svg-icon icon="scene"></gt-svg-icon>
+                    <div class="title">{{i18nNav.scene}}</div>
                 </a>
             </div>
             <div class="item studio">

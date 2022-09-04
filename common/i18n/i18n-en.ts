@@ -16,9 +16,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   },
   navbar: {
     accountInfoNotLoggedInToast: 'You are not logged in',
-    accountInfoToast: (user: User) => `Account: ${user.username}, ${user.email}`,
+    accountInfoToast: (user: User) => `Account: ${user.nickname}, ${user.email}`,
     catalog: 'CATALOG',
-    forum: 'FORUM',
+    scene: 'SCENE',
     historyButton: 'HISTORY',
     historyButtonTitle: 'Show catalog browing history',
     logo2: 'chords & tabs',
@@ -64,6 +64,10 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       description: 'Full list of all artists and collections on Tabius. Search songs by artist name, title and song.',
       keywords: ['tabs', 'chords', 'guitar', 'artists list', 'search song by text'],
     },
+  },
+  scenePage: {
+    title: 'Scene',
+    underConstructionMessage: 'Page is under construction. Please come back to us in several days',
   },
   chordImage: {
     chordsLayoutTitleSuffix: ', chord layout',

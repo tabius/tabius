@@ -10,7 +10,6 @@ import {I18N} from '@app/app-i18n';
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
 @Component({
-  selector: 'gt-tuner-page',
   templateUrl: './tuner-page.component.html',
   styleUrls: ['./tuner-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -43,8 +42,6 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.uds.syncSessionStateAsync();
-
     this.uds.getUserDeviceSettings()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(deviceSettings => {

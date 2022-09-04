@@ -10,8 +10,4 @@ export const TABIUS_USER_BROWSER_STORE_TOKEN = 'user';
 export const TABIUS_CATALOG_BROWSER_STORE_TOKEN = 'catalog';
 export const APP_BROWSER_STORE_TOKEN = 'tabius';
 
-export const NODE_BB_URL = environment.nodeBbUrl;
-export const NODE_BB_LOGIN_URL = `${environment.nodeBbUrl}/login`;
-export const NODE_BB_REGISTRATION_URL = `${environment.nodeBbUrl}/register`;
-
 export const TELEGRAM_CHANNEL_URL = environment.telegramUrl;

@@ -8,7 +8,8 @@ import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {isEqualByStringify, isValidId} from '@common/util/misc-utils';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {ChordTone} from '@app/utils/chords-lib';
-import {UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
+import {LoginResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
+import {ClientAuthService} from '@app/services/client-auth.service';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
@@ -19,6 +20,7 @@ const USER_KEY = 'user';
 const MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY = 15;
 
 const CATALOG_NAVIGATION_HISTORY_KEY = 'catalog-navigation-history';
+export const UPDATE_SIGN_IN_STATE_URL = '/api/user/login';
 
 /** Client-side API to access/update personal user settings. */
 @Injectable({
@@ -27,8 +29,26 @@ const CATALOG_NAVIGATION_HISTORY_KEY = 'catalog-navigation-history';
 export class UserService {
 
   constructor(private readonly httpClient: HttpClient,
+              authService: ClientAuthService,
               @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: ObservableStore,
   ) {
+    authService.user$.subscribe(async (user) => {
+      if (user) {
+        try {
+          const {user, settings} = await this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL).pipe(take(1)).toPromise();
+          if (user) {
+            await this.setUserOnSignIn(user);
+            await this.updateUserSettings(settings);
+          } else {
+            await this.resetStoreStateOnSignOut();
+          }
+        } catch (e) {
+          console.warn(e);
+        }
+      } else {
+        await this.resetStoreStateOnSignOut();
+      }
+    });
   }
 
   getUserDeviceSettings(): Observable<UserDeviceSettings> {
@@ -139,7 +159,7 @@ export class UserService {
     await this.updateUserSettings(settings);
   }
 
-  /** Used to dedup updates triggered by the same de-multiplexed fetch call.*/
+  /** Used to dedupe updates triggered by the same de-multiplexed fetch call.*/
   private lastUpdatedSettings?: UserSettings;
 
   async updateUserSettings(userSettings: UserSettings): Promise<void> {
@@ -174,14 +194,6 @@ export class UserService {
 
   getUser(): Observable<User|undefined> {
     return this.store.get<User>(USER_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck);
-  }
-
-  syncSessionStateAsync(): void {
-    this.syncSessionState().catch(err => console.error(err));
-  }
-
-  async syncSessionState(): Promise<void> {
-    await this.httpClient.get('/api/user/sync').pipe(take(1)).toPromise();
   }
 
   async setUserOnSignIn(user: User): Promise<void> {

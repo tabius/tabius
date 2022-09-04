@@ -1,3 +1,5 @@
+import {AuthConfig} from '@auth0/auth0-angular';
+
 export interface TabiusEnv {
 
   /** Language: en, ru.. */
@@ -21,11 +23,8 @@ export interface TabiusEnv {
   /** Link to the official telegram channel. */
   telegramUrl: string;
 
-  /** NodeBB (forum) URL. */
-  nodeBbUrl: string,
-
-  /** Topic id where chord fingering is discussed. */
-  nodeBbChordsDiscussionTopicId: number,
-
   buildInfo: { buildDate: number; },
+
+  /** Auth0 configuration. */
+  authConfig: AuthConfig,
 }

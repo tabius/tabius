@@ -14,7 +14,10 @@ export class ApiUrlInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const completeUrlRequest = req.clone({url: `${this.backendUrl}${req.url}`});
+    const completeUrlRequest = req.clone({
+      url: `${this.backendUrl}${req.url}`,
+      withCredentials: true,
+    });
     return next.handle(completeUrlRequest);
   }
 }

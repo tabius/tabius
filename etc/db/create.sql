@@ -46,7 +46,9 @@ CREATE TABLE song (
 CREATE INDEX song_collection_id_index on song(collection_id);
 
 CREATE TABLE user (
-    id         VARCHAR(40) PRIMARY KEY,
+    id VARCHAR(40) PRIMARY KEY,
+    email VARCHAR(128) NOT NULL,
+    nickname VARCHAR(64) NOT NULL DEFAULT '',
     collection_id  INT NOT NULL REFERENCES collection (id),
     reg_date   DATETIME NOT NULL DEFAULT NOW(),
     login_date DATETIME     NOT NULL,

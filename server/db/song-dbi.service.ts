@@ -12,7 +12,6 @@ interface SongRow extends RowDataPacket {
   content: string;
   media_links: string;
   collection_id: number;
-  forum_topic_id: number;
   version: number;
 }
 
@@ -20,7 +19,7 @@ interface IdRow extends RowDataPacket {
   id: number;
 }
 
-const SONG_FIELDS = 's.id, s.collection_id, s.mount, s.title, s.forum_topic_id, s.version';
+const SONG_FIELDS = 's.id, s.collection_id, s.mount, s.title, s.version';
 const SONG_DETAILS_FIELDS = `s.id, s.content, s.media_links, s.version`;
 const SELECT_SONG_SQL = `SELECT ${SONG_FIELDS} FROM song s`;
 const SELECT_SONG_DETAILS_SQL = `SELECT ${SONG_DETAILS_FIELDS} FROM song s`;
@@ -162,7 +161,6 @@ function row2Song(row: SongRow): Song {
     collectionId: row.collection_id,
     mount: row.mount,
     title: row.title,
-    tid: row.forum_topic_id,
     version: row.version,
   };
 }

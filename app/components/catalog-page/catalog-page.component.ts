@@ -33,7 +33,6 @@ interface CollectionListItem extends Collection {
 let letterBlockFilters: string[] = [];
 
 @Component({
-  selector: 'gt-catalog-page',
   templateUrl: './catalog-page.component.html',
   styleUrls: ['./catalog-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -65,7 +64,6 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   }
 
   ngOnInit() {
-    this.uds.syncSessionStateAsync();
     this.uds.getUser()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {

@@ -1,7 +1,5 @@
 import {Versioned, WithId} from '@common/common-model';
 
-export const CATALOG_STORE_SCHEMA_VERSION = 5;
-
 export enum CollectionType {
   /* Artist, person. Example: Michael Jackson. */
   Person = 1,
@@ -60,8 +58,6 @@ export interface Song extends WithId, Versioned {
   readonly title: string;
   /** Collection. */
   readonly collectionId: number;
-  /** Forum topic id.*/
-  readonly tid: number;
 }
 
 export const MIN_SONG_CONTENT_LENGTH = 10;

@@ -32,6 +32,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SongComponent} from '@app/components/song/song.component';
 import {SongHeaderComponent} from '@app/components/song-header/song-header.component';
 import {SongVideoComponent} from '@app/components/song-video/song-video.component';
+import {AuthHttpInterceptor, AuthModule} from '@auth0/auth0-angular';
 import {SongEditorComponent} from '@app/components/song-editor/song-editor.component';
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
@@ -40,7 +41,6 @@ import {ResourceNotFoundComponent} from '@app/components/resource-not-found/reso
 import {SongFullTextSearchResultsPanelComponent} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 import {SongPrevNextNavigatorComponent} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
-import {SessionStateInterceptor} from '@app/interceptors/session-state-interceptor.service';
 import {AppBrowserStore, CatalogBrowserStore, UserBrowserStore} from '@app/app-store';
 import {SongPrintPageComponent} from '@app/components/song-print-page/song-print-page.component';
 import {CollectionEditorComponent} from '@app/components/collection-editor/collection-editor.component';
@@ -58,6 +58,7 @@ import {ChordPopoverComponent} from '@app/components/chord-popover/chord-popover
 import {ShowChordPopoverOnClickDirective} from '@app/directives/show-chord-popover-on-click.directive';
 import {JsonLdComponent} from '@app/components/json-ld/json-ld.component';
 import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-navigation-history-popup/catalog-navigation-history-popup.component';
+import { ScenePageComponent } from './components/scene-page/scene-page.component';
 
 @NgModule({
   declarations: [
@@ -106,6 +107,7 @@ import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-na
     UserCollectionEditorComponent,
     UserCollectionsListComponent,
     UserRegistrationPromptComponent,
+    ScenePageComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -119,13 +121,14 @@ import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-na
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     PopoverModule,
     ToastModule,
+    AuthModule.forRoot(environment.authConfig),
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: SessionStateInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_CATALOG_BROWSER_STORE_TOKEN, useClass: CatalogBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},

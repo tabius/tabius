@@ -3,11 +3,10 @@ import {User} from '@common/user-model';
 import {takeUntil} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {Router} from '@angular/router';
-import {LINK_CATALOG, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
+import {LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {UserService} from '@app/services/user.service';
 import {ToastService} from '@app/toast/toast.service';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {NODE_BB_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
 import {USER_COLLECTION_MOUNT_SEPARATOR} from '@common/common-constants';
 import {ContextMenuAction, ContextMenuActionService} from '@app/services/context-menu-action.service';
@@ -35,7 +34,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   user?: User;
 
-  readonly forumLink = NODE_BB_URL;
+  readonly sceneLink = LINK_SCENE;
   readonly catalogLink = LINK_CATALOG;
   readonly studioLink = LINK_STUDIO;
   readonly tunerLink = LINK_TUNER;
@@ -86,7 +85,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
   }
 
-  //todo: make an utility in routing module.
+  // TODO: make an utility in the routing module.
   getActiveSection(): NavSection {
     const url = this.router.url.toLocaleLowerCase();
     if (url.startsWith(LINK_TUNER)) {
@@ -109,7 +108,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!user) {
       return '-';
     }
-    return user.username && user.username.length > 0 ? user.username.charAt(0).toUpperCase() : '+';
+    return user.nickname && user.nickname.length > 0 ? user.nickname.charAt(0).toUpperCase() : '+';
   }
 
   showUserInfo(): void {

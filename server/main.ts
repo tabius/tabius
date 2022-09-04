@@ -2,18 +2,17 @@ import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
-import * as cookieParser from 'cookie-parser';
 import {SERVER_CONFIG} from '@server/server-config';
+import {ServerAuthService} from '@server/service/server-auth.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerMainModule);
   app.enableCors(buildCorsOptions());
-  app.use(cookieParser());
   app.use(session({
     secret: 'we have no secret',
     name: SERVER_CONFIG.sessionCookieName,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
   }));
   await app.listen(SERVER_CONFIG.serverPort);
 }

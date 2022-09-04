@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {LINK_CATALOG, LINK_STUDIO} from '@common/mounts';
-import {NODE_BB_URL} from '@app/app-constants';
 import {I18N} from '@app/app-i18n';
+import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 
 @Component({
   selector: 'gt-site-home-page',
@@ -10,7 +10,7 @@ import {I18N} from '@app/app-i18n';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SiteHomePageComponent {
-  readonly forumNewsLink = `${NODE_BB_URL}/category/1`;
+  readonly forumNewsLink = TELEGRAM_CHANNEL_URL;
   readonly catalogLink = LINK_CATALOG;
   readonly studioLink = LINK_STUDIO;
   readonly i18n = I18N.homePage;

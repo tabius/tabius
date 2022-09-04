@@ -4,7 +4,6 @@ import {addStatus404ToResponse} from '@app/utils/component-utils';
 import {I18N} from '@app/app-i18n';
 
 @Component({
-  selector: 'gt-page-404',
   template: `<p>{{i18n.message}}</p>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

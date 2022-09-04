@@ -4,7 +4,7 @@ import {ServerDbModule} from '@server/db/server-db.module';
 import {UserController} from '@server/controller/user.controller';
 import {SongController} from '@server/controller/song.controller';
 import {CollectionController} from '@server/controller/collection.controller';
-import {ServerSsoService} from '@server/service/server-sso.service';
+import {ServerAuthService} from '@server/service/server-auth.service';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import {ServerSsoService} from '@server/service/server-sso.service';
   ],
   providers: [
     Logger,
-    {provide: APP_INTERCEPTOR, useClass: ServerSsoService},
+    {provide: APP_INTERCEPTOR, useClass: ServerAuthService},
   ],
   controllers: [
     UserController,

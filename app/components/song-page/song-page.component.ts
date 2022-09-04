@@ -8,11 +8,11 @@ import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, hasValidForumTopic, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
+import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
-import {getCollectionImageUrl, getSongForumTopicLink} from '@app/utils/url-utils';
+import {getCollectionImageUrl} from '@app/utils/url-utils';
 import {getToneWithH4SiFix, TONES_COUNT} from '@app/utils/chords-renderer';
 import {getDefaultUserSongFontSize, User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
 import {HelpService} from '@app/services/help.service';
@@ -28,9 +28,9 @@ import {ChordTone} from '@app/utils/chords-lib';
 import {getTransposeActionKey, updateUserSongSetting} from '@app/components/song-chords/song-chords.component';
 import {BreadcrumbList, WithContext} from 'schema-dts';
 import {getSongJsonLdBreadcrumbList} from '@common/util/json-ld';
+import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 
 @Component({
-  selector: 'gt-song-page',
   templateUrl: './song-page.component.html',
   styleUrls: ['./song-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -52,8 +52,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   editorIsOpen = false;
   private isUserCollection = false;
 
-  readonly hasValidForumTopic = hasValidForumTopic;
-  readonly getSongForumTopicLink = getSongForumTopicLink;
+  readonly discussSongLink = TELEGRAM_CHANNEL_URL;
 
   notFound = false;
 
@@ -84,10 +83,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   ngOnInit() {
     this.helpService.setActiveHelpPage('song');
-    if (this.isBrowser) {
-      this.uds.syncSessionStateAsync(); //TODO: find a better place to do it for every page. Sync state every N seconds??
-    }
-
     const params = this.route.snapshot.params;
     this.collectionMount = params[PARAM_COLLECTION_MOUNT];
     let primaryCollectionMount = params[PARAM_PRIMARY_COLLECTION_MOUNT];
@@ -327,10 +322,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     this.editorIsOpen = false;
   }
 
-  transpose(steps: number): void {
+  async transpose(steps: number): Promise<void> {
     if (this.songSettings) {
       const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
-      this.uds.setUserSongSettings({...this.songSettings!, transpose});
+      await this.uds.setUserSongSettings({...this.songSettings!, transpose});
     }
   }
 
@@ -350,9 +345,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
   }
 
-  private updateSongFontSize(songFontSize: number) {
+  private async updateSongFontSize(songFontSize: number): Promise<void> {
     if (this.deviceSettings) {
-      this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize});
+      await this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize});
     }
   }
 

@@ -6,6 +6,7 @@ import {combineLatest, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {environment} from '@app/environments/environment';
+import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length === 0) {
@@ -59,10 +60,6 @@ export function getNameFirstFormArtistName(collection: { type: CollectionType, n
   return sepIdx > 0 ? collection.name.substring(sepIdx + 1) + ' ' + collection.name.substring(0, sepIdx) : collection.name;
 }
 
-export function hasValidForumTopic(song?: Song): song is Song {
-  return song !== undefined && isValidId(song.tid);
-}
-
 export function getCollectionPageLink(collectionOrMount: string|{ mount: string }): string {
   const mount = typeof collectionOrMount === 'string' ? collectionOrMount : collectionOrMount.mount;
   return `/${MOUNT_COLLECTION_PREFIX}${mount}`;
@@ -85,7 +82,7 @@ export function getFullLink(localLink: string): string {
 }
 
 export function getChordsDiscussionUrl(): string {
-  return `${environment.nodeBbUrl}/topic/${environment.nodeBbChordsDiscussionTopicId}`;
+  return TELEGRAM_CHANNEL_URL;
 }
 
 /**

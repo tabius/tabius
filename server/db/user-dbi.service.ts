@@ -12,12 +12,12 @@ export class UserDbi {
   }
 
   async createUser(user: User): Promise<void> {
-    this.logger.debug('Creating/updating user record: ' + user.email);
+    this.logger.debug(`Creating/updating user record: ${user.email}`);
 
     const now = new Date();
     await this.db.pool.promise()
-        .query('INSERT INTO user(id, collection_id, login_date, settings) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE collection_id = ?',
-            [user.id, user.collectionId, now, '{}', user.collectionId]);
+        .query('INSERT INTO user(id, email, nickname, collection_id, login_date, settings) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE collection_id = ?',
+            [user.id, user.email, user.nickname, user.collectionId, now, '{}', user.collectionId]);
 
     this.logger.debug(`User record successfully created/updated: ${user.email}`);
   }

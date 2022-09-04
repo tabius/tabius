@@ -8,7 +8,6 @@ import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from 
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
-  selector: 'gt-song-print-page-component',
   templateUrl: './song-print-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -26,8 +25,6 @@ export class SongPrintPageComponent {
   }
 
   ngOnInit() {
-    this.uds.syncSessionStateAsync();
-
     const params = this.activatedRoute.snapshot.params;
     const collectionMount = params[PARAM_COLLECTION_MOUNT];
     const songMount = params[PARAM_SONG_MOUNT];

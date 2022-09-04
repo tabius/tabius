@@ -149,7 +149,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   }
 
   private async createImpl(): Promise<void> {
-    const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.title, collectionId: this.collectionId, tid: INVALID_ID};
+    const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.title, collectionId: this.collectionId};
     const songDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError()};
     const createdSong = await this.cds.createSong(song, songDetails);
     this.close({type: 'created', song: createdSong});

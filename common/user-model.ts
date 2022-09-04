@@ -1,26 +1,24 @@
 import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/common-constants';
 import {ChordTone} from '@app/utils/chords-lib';
 
-export const USERS_STORE_SCHEMA_VERSION = 3;
-
 export const enum UserGroup {
   /** The only role we have today. Can add new collections and songs. */
   Moderator = 'moderator',
 }
 
 export interface User {
-  /** Unique user identifier. Shared with NodeBB server (forum). */
-  readonly id: string;
-  /** Username (login). Shared with NodeBB server (forum). */
-  readonly username: string;
+  /** Unique user identifier provided by Auth0. 'sub' field in Auth0 profile. */
+  id: string;
+  /** User nickname. Provided by auth0. */
+  nickname: string;
   /** User email. */
-  readonly email: string;
+  email: string;
   /** Full avatar URL. */
-  readonly picture: string;
+  picture: string;
   /** List of user groups. */
-  readonly groups: UserGroup[];
+  groups: UserGroup[];
   /** Default collection associated with the user. */
-  readonly collectionId: number;
+  collectionId: number;
 }
 
 
@@ -33,10 +31,10 @@ export type TunerToneType = 'c'|'e';
  */
 export interface UserDeviceSettings {
   /** Font size in pixels. */
-  readonly songFontSize: number;
+  songFontSize: number;
   /** If true -> repeat mode is checked by default in tuner. */
-  readonly tunerRepeatMode: boolean;
-  readonly tunerToneType: TunerToneType;
+  tunerRepeatMode: boolean;
+  tunerToneType: TunerToneType;
 }
 
 export function newDefaultUserDeviceSettings(): UserDeviceSettings {
@@ -50,20 +48,20 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 /** User settings stored on the server. */
 export interface UserSettings {
   /** Per-song settings. */
-  readonly songs: { readonly [songId: number]: UserSongSettings },
+  songs: { readonly [songId: number]: UserSongSettings },
 
   /** If true => 'B' will be rendered as 'H' for the tone Si. */
-  readonly h4Si: boolean,
+  h4Si: boolean,
 
   /** Favorite minor key. Default: 'Am'. */
-  readonly favKey: ChordTone;
+  favKey: ChordTone;
 
 }
 
 /** Per song settings. */
 export interface UserSongSettings {
-  readonly songId: number;
-  readonly transpose: number;
+  songId: number;
+  transpose: number;
 }
 
 export function newDefaultUserSongSettings(songId: number): UserSongSettings {

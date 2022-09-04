@@ -1,5 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Inject, OnInit, Optional, TemplateRef, ViewChild} from '@angular/core';
-import {AuthService} from '@app/services/auth.service';
+import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Inject, Optional, TemplateRef, ViewChild} from '@angular/core';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Observable} from 'rxjs';
 import {HelpService} from '@app/services/help.service';
@@ -13,15 +12,14 @@ import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-
   styleUrls: ['app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements AfterViewInit {
 
   @ViewChild('keyboardShortcuts', {static: true}) keyboardShortcuts!: TemplateRef<{}>;
   @ViewChild('navigationHistory', {static: true}) navigationHistory!: TemplateRef<{}>;
 
   readonly printMode$: Observable<boolean>;
 
-  constructor(private readonly authService: AuthService,
-              private readonly bss: BrowserStateService,
+  constructor(private readonly bss: BrowserStateService,
               private readonly shortcutsService: ShortcutsService,
               private readonly helpService: HelpService,
               private readonly navigationHistoryService: CatalogNavigationHistoryService,
@@ -29,10 +27,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   ) {
     bss.initWideScreenModeState(request);
     this.printMode$ = bss.getPrintMode();
-  }
-
-  ngOnInit(): void {
-    this.authService.updateSignInState().catch(err => console.warn(err));
   }
 
   ngAfterViewInit(): void {

@@ -4,7 +4,7 @@ import {CollectionDbi, generateCollectionMountForUser} from '@server/db/collecti
 import {CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
 import {CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
 import {User, UserGroup} from '@common/user-model';
-import {ServerSsoService} from '@server/service/server-sso.service';
+import {ServerAuthService} from '@server/service/server-auth.service';
 import {conformsTo, validate} from 'typed-validation';
 import {canManageCollectionContent, isValidUserId} from '@common/util/misc-utils';
 import {SongDbi} from '@server/db/song-dbi.service';
@@ -59,7 +59,8 @@ export class CollectionController {
   }
 
   @Get('/by-ids/:ids')
-  getCollectionsByIds(@Param('ids') idsParam: string): Promise<Collection[]> {
+  getCollectionsByIds(@Param('ids') idsParam: string, @Session() session): Promise<Collection[]> {
+    console.error('getCollectionsByIds', session)
     this.logger.log(`by-ids: ${idsParam}`);
     const collectionIds = paramToArrayOfNumericIds(idsParam);
     return this.collectionDbi.getCollectionsByIds(collectionIds);
@@ -79,7 +80,7 @@ export class CollectionController {
   @Post()
   async createListedCollection(@Session() session, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
     this.logger.log(`create-collection: ${request.name}, ${request.mount}`);
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     if (!user.groups.includes(UserGroup.Moderator)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
@@ -106,7 +107,7 @@ export class CollectionController {
   @Post('/user')
   async createUserCollection(@Session() session, @Body() request: CreateUserCollectionRequest): Promise<CreateUserCollectionResponse> {
     this.logger.log(`create secondary user collection: ${request.name}`);
-    const user = ServerSsoService.getUserOrFail(session);
+    const user = ServerAuthService.getUserOrFail(session);
     const vr = validate(request, conformsTo(CreateUserCollectionRequestValidator));
     if (!vr.success) {
       throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
@@ -134,7 +135,7 @@ export class CollectionController {
   @Put('/user')
   async updateUserCollection(@Session() session, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
     this.logger.log('update user collection');
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.id);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -152,7 +153,7 @@ export class CollectionController {
   @Delete('/user/:collectionId')
   async deleteUserCollection(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
     this.logger.log(`delete user collection ${idParam}`);
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     const collectionId = +idParam;
     if (collectionId === user.collectionId) {
       throw new HttpException(`Can't remove primary user collection`, HttpStatus.BAD_REQUEST);

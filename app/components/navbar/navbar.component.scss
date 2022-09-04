@@ -82,16 +82,8 @@ a {
         background-color: #1D1B29;
       }
 
-      &.forum {
-        &.active {
-          .indicator-block:before {
-            background: $color-nav-forum;
-          }
-        }
-
-        gt-svg-icon {
-          fill: $color-nav-forum;
-        }
+      &.home {
+        justify-content: center;
       }
 
       &.catalog {
@@ -103,6 +95,18 @@ a {
 
         gt-svg-icon {
           fill: $color-nav-catalog;
+        }
+      }
+
+      &.scene {
+        &.active {
+          .indicator-block:before {
+            background: $color-nav-scene;
+          }
+        }
+
+        gt-svg-icon {
+          fill: $color-nav-scene;
         }
       }
 

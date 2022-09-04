@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit
 import {environment} from '@app/environments/environment';
 import {Router} from '@angular/router';
 import {I18N} from '@app/app-i18n';
-import {NODE_BB_URL} from '@app/app-constants';
 import {LINK_CATALOG, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER} from '@common/mounts';
 import {LocationStrategy} from '@angular/common';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -11,6 +10,7 @@ import {Subject} from 'rxjs';
 import {PopoverService} from '@app/popover/popover.service';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {takeUntil} from 'rxjs/operators';
+import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 
 @Component({
   selector: 'gt-footer',
@@ -32,7 +32,7 @@ export class FooterComponent implements OnInit, OnDestroy {
                          : undefined;
 
   readonly githubLink = 'https://github.com/tabius/tabius/commits/master';
-  readonly forumLink = NODE_BB_URL;
+  readonly forumLink = TELEGRAM_CHANNEL_URL;
   readonly catalogLink = LINK_CATALOG;
   readonly studioLink = LINK_STUDIO;
   readonly tunerLink = LINK_TUNER;

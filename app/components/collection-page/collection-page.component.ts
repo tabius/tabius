@@ -37,7 +37,6 @@ export class CollectionViewModel {
 }
 
 @Component({
-  selector: 'gt-collection-page',
   templateUrl: './collection-page.component.html',
   styleUrls: ['./collection-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -74,7 +73,6 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
 
   ngOnInit() {
     this.helpService.setActiveHelpPage('collection');
-    this.uds.syncSessionStateAsync();
 
     const collectionMount = this.route.snapshot.params[PARAM_COLLECTION_MOUNT];
     const collectionId$: Observable<number|undefined> = this.cds.getCollectionIdByMount(collectionMount);

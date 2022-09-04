@@ -1,11 +1,10 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Logger, Put, Res, Session} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Logger, Put, Session} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
 import {LoginResponse, TabiusAjaxResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
 import {conformsTo, validate} from 'typed-validation';
 import {UpdateFavoriteSongKeyValidator, UserSongSettingsValidator} from '@server/util/validators';
-import {ServerSsoService} from '@server/service/server-sso.service';
-import {Response} from 'express';
+import {ServerAuthService} from '@server/service/server-auth.service';
 import {isEqualByStringify} from '@common/util/misc-utils';
 
 @Controller('/api/user')
@@ -13,15 +12,13 @@ export class UserController {
 
   private readonly logger = new Logger(UserController.name);
 
-  constructor(private readonly userDbi: UserDbi,
-              private ssoService: ServerSsoService,
-  ) {
+  constructor(private readonly userDbi: UserDbi) {
   }
 
   /** Login callback. Called on successful user login. */
   @Get('/login')
   async login(@Session() session): Promise<LoginResponse> {
-    const user = ServerSsoService.getUserOrUndefined(session);
+    const user = ServerAuthService.getUserOrUndefined(session);
     if (!user) {
       return {
         user: undefined,
@@ -37,16 +34,9 @@ export class UserController {
     };
   }
 
-  @Get('/logout')
-  async logout(@Res() response: Response, @Session() session): Promise<void> {
-    this.logger.log('/logout ' + JSON.stringify(ServerSsoService.getUserOrUndefined(session)));
-    this.ssoService.logout(response);
-    response.status(HttpStatus.OK).send();
-  }
-
   @Get('/settings')
   async getSettings(@Session() session): Promise<UserSettings> {
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     this.logger.log(`get settings: ${user.email}`);
     return await this.getUserSettings(user);
   }
@@ -57,7 +47,7 @@ export class UserController {
     if (!vr.success) {
       throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
     }
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     this.logger.log(`set settings: ${user.email}, song: ${songSettings.songId}`);
     const settings = await this.getUserSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
@@ -74,7 +64,7 @@ export class UserController {
 
   @Put('/settings/h4Si')
   async setH4Si(@Session() session, @Body() {h4SiFlag}: { h4SiFlag: boolean|undefined }): Promise<UserSettings> {
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     this.logger.log(`set h4Si: ${user.email}: ${h4SiFlag}`);
     const settings = await this.getUserSettings(user);
     const updatedSettings = {...settings, h4Si: !!h4SiFlag};
@@ -85,7 +75,7 @@ export class UserController {
   @Put('/settings/favKey')
   async setFavKey(@Session() session, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
     validate(request, conformsTo(UpdateFavoriteSongKeyValidator));
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     this.logger.log(`set favKey: ${user.email}: ${request.key}`);
     const settings = await this.getUserSettings(user);
     const updatedSettings = {...settings, favKey: request.key};
@@ -100,10 +90,5 @@ export class UserController {
     }
     const defaultSettings = newDefaultUserSettings();
     return settings == null ? defaultSettings : {...defaultSettings, ...settings};
-  }
-
-  @Get('/sync')
-  async sync(): Promise<TabiusAjaxResponse> {
-    return {}; // sso interceptor will append session info to this response.
   }
 }

@@ -7,11 +7,12 @@ import {CatalogPageComponent} from '@app/components/catalog-page/catalog-page.co
 import {CollectionPageComponent} from '@app/components/collection-page/collection-page.component';
 import {SongPageComponent} from '@app/components/song-page/song-page.component';
 import {SettingsPageComponent} from '@app/components/settings-page/settings-page.component';
-import {MOUNT_CATALOG, MOUNT_COLLECTION, MOUNT_PAGE_NOT_FOUND, MOUNT_SETTINGS, MOUNT_SONG, MOUNT_SONG_IN_SECONDARY_COLLECTION, MOUNT_SONG_PRINT, MOUNT_STUDIO, MOUNT_TUNER} from '@common/mounts';
+import {MOUNT_CATALOG, MOUNT_COLLECTION, MOUNT_PAGE_NOT_FOUND, MOUNT_SCENE, MOUNT_SETTINGS, MOUNT_SONG, MOUNT_SONG_IN_SECONDARY_COLLECTION, MOUNT_SONG_PRINT, MOUNT_STUDIO, MOUNT_TUNER} from '@common/mounts';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {ObservableStore} from '@app/store/observable-store';
 import {StudioPageComponent} from '@app/components/studio-page/studio-page.component';
 import {SongPrintPageComponent} from '@app/components/song-print-page/song-print-page.component';
+import {ScenePageComponent} from '@app/components/scene-page/scene-page.component';
 
 //TODO: move to a separate file. Use for the most routes?
 @Injectable({providedIn: 'root'})
@@ -30,12 +31,13 @@ const routes: Routes = [
   {path: '', component: SiteHomePageComponent, pathMatch: 'full'},
   {path: MOUNT_TUNER, component: TunerPageComponent},
   {path: MOUNT_CATALOG, component: CatalogPageComponent, resolve: {storeFlag: BrowserStoreStateResolver}},
+  {path: MOUNT_SCENE, component: ScenePageComponent},
   {path: MOUNT_COLLECTION, component: CollectionPageComponent},
   {path: MOUNT_SONG, component: SongPageComponent},
   {path: MOUNT_SONG_PRINT, component: SongPrintPageComponent}, // Note: print page must go before the secondary collection page
   {path: MOUNT_SONG_IN_SECONDARY_COLLECTION, component: SongPageComponent},
   {path: MOUNT_SETTINGS, component: SettingsPageComponent},
-  {path: MOUNT_STUDIO, component: StudioPageComponent,},
+  {path: MOUNT_STUDIO, component: StudioPageComponent},
   {path: MOUNT_PAGE_NOT_FOUND, component: Page404Component},
   {path: '**', redirectTo: `/${MOUNT_PAGE_NOT_FOUND}`}
 ];

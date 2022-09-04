@@ -1,5 +1,9 @@
 @import "app/styles/dimensions";
 
+a {
+  cursor: pointer;
+}
+
 .content {
   text-align: center;
   line-height: 1.5em;
@@ -10,6 +14,7 @@
   .close-button-block {
     margin-top: 10px;
     text-align: center;
+
     a {
       cursor: pointer;
       color: #999;

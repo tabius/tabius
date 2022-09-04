@@ -15,7 +15,6 @@ import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-i
 import {I18N} from '@app/app-i18n';
 
 @Component({
-  selector: 'gt-studio-page',
   templateUrl: './studio-page.component.html',
   styleUrls: ['./studio-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -45,8 +44,6 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
 
 
   ngOnInit() {
-    this.uds.syncSessionStateAsync();
-
     const user$ = this.uds.getUser();
     const allUserCollectionIds$ = user$.pipe(flatMap(user => this.cds.getUserCollectionIds(user && user.id)));
     const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
@@ -84,6 +81,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
         )
         .subscribe(([user, primaryUserCollection, songs, primarySongCollections]) => {
           this.loaded = true;
+          console.error('User', user);
           if (!user || !primaryUserCollection || !songs || !primarySongCollections) {
             //TODO: switchToNotFoundMode(this);
             this.cd.detectChanges();

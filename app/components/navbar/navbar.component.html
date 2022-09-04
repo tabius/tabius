@@ -1,17 +1,10 @@
 <!-- desktop layout -->
 <div class="desktop">
     <nav>
-        <div class="item" style="justify-content: center;">
+        <div class="item home">
             <a routerLink="/">
                 <div class="logo">tabius</div>
                 <div class="logo2">{{i18n.logo2}}</div>
-            </a>
-        </div>
-        <div class="item forum" [class.active]="getActiveSection() === NavSection.Forum">
-            <a href="{{forumLink}}">
-                <div class="indicator-block"></div>
-                <gt-svg-icon icon="forum"></gt-svg-icon>
-                <div class="title">{{i18n.forum}}</div>
             </a>
         </div>
         <div class="item catalog" [class.active]="getActiveSection() === NavSection.Catalog">
@@ -19,6 +12,13 @@
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="artist"></gt-svg-icon>
                 <div class="title">{{i18n.catalog}}</div>
+            </a>
+        </div>
+        <div class="item scene" [class.active]="getActiveSection() === NavSection.Forum">
+            <a href="{{sceneLink}}">
+                <div class="indicator-block"></div>
+                <gt-svg-icon icon="scene"></gt-svg-icon>
+                <div class="title">{{i18n.scene}}</div>
             </a>
         </div>
         <div class="item studio" [class.active]="getActiveSection()=== NavSection.Studio">
@@ -38,7 +38,7 @@
         <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
             <a routerLink="{{settingsLink}}">
                 <div *ngIf="user" class="user-icon-desktop"
-                     title="{{i18n.userIconTitle(user.username)}}"
+                     title="{{i18n.userIconTitle(user.nickname)}}"
                      (click)="showUserInfo()">
                     {{getUserIconText()}}
                 </div>

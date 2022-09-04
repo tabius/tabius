@@ -6,7 +6,10 @@
 
     <div *ngIf="loaded">
 
-        <gt-user-registration-prompt *ngIf="!user" class="register-prompt"></gt-user-registration-prompt>
+        <gt-user-registration-prompt *ngIf="!user"
+                                     [showCloseButton]="false"
+                                     class="register-prompt"
+        ></gt-user-registration-prompt>
 
         <div *ngIf="user" class="collection-block">
             <div>

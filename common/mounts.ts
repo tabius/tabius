@@ -5,6 +5,9 @@ export const PARAM_SONG_MOUNT = 'songMount';
 export const MOUNT_CATALOG = 'catalog';
 export const LINK_CATALOG = `/${MOUNT_CATALOG}`;
 
+export const MOUNT_SCENE = 'scene';
+export const LINK_SCENE = `/${MOUNT_SCENE}`;
+
 export const MOUNT_COLLECTION_PREFIX = 'chords/';
 export const MOUNT_COLLECTION = `${MOUNT_COLLECTION_PREFIX}:${PARAM_COLLECTION_MOUNT}`;
 

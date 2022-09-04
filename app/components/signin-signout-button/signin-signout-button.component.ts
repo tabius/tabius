@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '@app/services/auth.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {UserService} from '@app/services/user.service';
 import {I18N} from '@app/app-i18n';
+import {ClientAuthService} from '@app/services/client-auth.service';
 
 @Component({
   selector: 'gt-signin-signout-button',
@@ -20,16 +20,16 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
   private readonly destroyed$ = new Subject();
 
   constructor(private readonly uds: UserService,
-              private readonly authService: AuthService,
               private readonly cd: ChangeDetectorRef,
+              public authService: ClientAuthService,
   ) {
   }
 
   ngOnInit(): void {
-    this.uds.getUser()
+    this.authService.user$
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {
-          this.username = user && user.username;
+          this.username = user?.name || user?.email;
           this.cd.detectChanges();
         });
   }
@@ -39,11 +39,11 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
   }
 
   signIn(): void {
-    AuthService.signIn();
+    this.authService.signin();
   }
 
   signOut(): void {
-    this.authService.signOut(); //todo: show toast on error?
+    this.authService.signout();
   }
 
 }

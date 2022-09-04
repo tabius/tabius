@@ -16,11 +16,11 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   navbar: {
     accountInfoNotLoggedInToast: 'Вы не вошли в систему',
-    accountInfoToast: (user: User) => `Аккаунт: ${user.username}, ${user.email}`,
+    accountInfoToast: (user: User) => `Аккаунт: ${user.nickname}, ${user.email}`,
     catalog: 'КАТАЛОГ',
     historyButton: 'ИСТОРИЯ',
     historyButtonTitle: 'История просмотра каталога',
-    forum: 'ФОРУМ',
+    scene: 'СЦЕНА',
     logo2: 'табы и аккорды',
     noSleep: 'БЛОК. СНА',
     noSleepTitle: 'Режим всегда включенного экрана',
@@ -65,6 +65,10 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       description: 'Полный список всех исполнителей и коллекций на Tabius. Поиск песен и аккордов по тексту и исполнителю.',
       keywords: ['табы', 'аккорды', 'гитара', 'список артистов', 'поиск песни по тексту'],
     }
+  },
+  scenePage: {
+    title: 'Сцена',
+    underConstructionMessage: 'Раздел в разработке. Заходите сюда через несколько дней.'
   },
   chordImage: {
     chordsLayoutTitleSuffix: ', аппликатура аккорда',
@@ -273,8 +277,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     editSongButtonTitle: 'Исправить подбор песни (Shift + E)',
     editSongButtonDesktop: 'Исправить подбор',
     editSongButtonMobile: 'Исправить',
-    discussSongButtonTitle: 'Обсудить подбор песни на форуме',
-    discussSongButtonDesktop: 'Обсудить на форуме',
+    discussSongButtonTitle: 'Обсудить подбор песни',
+    discussSongButtonDesktop: 'Обсудить в чате',
     discussSongButtonMobile: 'Обсудить',
     fontSize: 'Размер шрифта',
     gotoRandomSongInCollectionMenu: 'Коллекция',

@@ -8,9 +8,14 @@ export interface TabiusServerConfig {
   resourcesDir: string;
   corsOriginWhitelist: string[];
   sessionCookieName: string;
-  ssoConfig: any;
   /** MariaDB/MySQL connector config. */
   dbConfig: any;
+
+  /** Auth0 domain and client id. */
+  auth: {
+    domain: string;
+    clientId: string;
+  };
 
   /** Name of the song index in Sphinx.*/
   sphinxSongIndex: string;
@@ -24,7 +29,7 @@ const CONFIG_FROM_FILE: TabiusServerConfig = JSON.parse(serverConfigAsString) as
 const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
   serverPort: 4001,
   corsOriginWhitelist: [
-    // The server itself.
+    // The server.
     'http://localhost:4001',
     // SSR app port.
     'http://localhost:4200',

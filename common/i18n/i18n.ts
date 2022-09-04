@@ -23,7 +23,7 @@ export interface I18n {
     accountInfoNotLoggedInToast: string;
     accountInfoToast(user: User): string;
     catalog: string;
-    forum: string;
+    scene: string;
     historyButton: string;
     historyButtonTitle: string;
     logo2: string;
@@ -67,6 +67,10 @@ export interface I18n {
       description: string;
       keywords: string[];
     }
+  };
+  scenePage: {
+    title: string;
+    underConstructionMessage: string;
   };
   chordImage: {
     chordsLayoutTitleSuffix: string;
@@ -344,5 +348,5 @@ export interface I18n {
   };
   navigationHistoryPopup: {
     title: string;
-  }
+  };
 }

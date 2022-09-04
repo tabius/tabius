@@ -1,7 +1,7 @@
 <div class="content">
-    <a href="{{registrationLink}}">{{i18n.register}}</a> {{i18n.or}} <a href="{{loginLink}}">{{i18n.signIn}}</a> {{i18n.toAddSongs}}
+    <a (click)="onRegisterClicked()">{{i18n.register}}</a> {{i18n.or}} <a (click)="onSignInClicked()">{{i18n.signIn}}</a> {{i18n.toAddSongs}}
 
-    <div class="close-button-block">
+    <div *ngIf="showCloseButton" class="close-button-block">
         <a (click)="close()">{{i18n.close}}</a>
     </div>
 </div>

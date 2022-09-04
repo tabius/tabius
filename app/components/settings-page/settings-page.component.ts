@@ -4,17 +4,16 @@ import {DEFAULT_FAVORITE_KEY, getDefaultUserSongFontSize, User, UserDeviceSettin
 import {takeUntil} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
 import {SongDetails} from '@common/catalog-model';
-import {NODE_BB_LOGIN_URL, NODE_BB_REGISTRATION_URL} from '@app/app-constants';
 import {RefreshMode} from '@app/store/observable-store';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
 import {ChordTone, MINOR_KEY_TONES} from '@app/utils/chords-lib';
+import {ClientAuthService} from '@app/services/client-auth.service';
 
 export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;
 
 @Component({
-  selector: 'gt-settings-page',
   templateUrl: './settings-page.component.html',
   styleUrls: ['./settings-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -27,26 +26,21 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
   user?: User;
   h4Si!: boolean;
 
-  readonly loginLink = NODE_BB_LOGIN_URL;
-  readonly registrationLink = NODE_BB_REGISTRATION_URL;
-
   readonly defaultFontSize = getDefaultUserSongFontSize();
   readonly settingsDemoSong = SETTINGS_DEMO_SONG;
 
   visualAllMinorToneKeys: ReadonlyArray<string> = MINOR_KEY_TONES;
   visualFavoriteSongKey: string = DEFAULT_FAVORITE_KEY;
 
-  constructor(private readonly uds: UserService,
-              injector: Injector,
+  constructor(
+      private readonly uds: UserService,
+      private readonly authService: ClientAuthService,
+      injector: Injector,
   ) {
     super(injector);
   }
 
   ngOnInit() {
-    if (this.isBrowser) {
-      this.uds.syncSessionStateAsync();
-    }
-
     combineLatest([
       this.uds.getUser(),
       this.uds.getUserDeviceSettings(),
@@ -96,6 +90,15 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
     const tone: ChordTone = visualFavoriteSongKey === 'H' ? 'B' : visualFavoriteSongKey as ChordTone;
     this.uds.setFavoriteKey(tone);
   }
+
+  openRegistrationDialog(): void {
+    this.authService.signup();
+  }
+
+  openSignInDialog(): void {
+    this.authService.signin();
+  }
+
 }
 
 const SETTINGS_DEMO_SONG: SongDetails = {

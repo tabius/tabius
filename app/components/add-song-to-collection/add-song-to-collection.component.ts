@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy} from '@angular/core';
 import {combineLatest, Subject, Subscription} from 'rxjs';
 import {UserService} from '@app/services/user.service';
-import {AuthService} from '@app/services/auth.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {ToastService} from '@app/toast/toast.service';
 import {combineLatest0, getCollectionPageLink, trackById} from '@common/util/misc-utils';
@@ -38,7 +37,6 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
   constructor(
       private readonly uds: UserService,
       private readonly cds: CatalogService,
-      private readonly authService: AuthService,
       private readonly cd: ChangeDetectorRef,
       private readonly toastService: ToastService,
   ) {

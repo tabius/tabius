@@ -8,7 +8,7 @@
 }
 
 .c1 {
-  color: $color-nav-forum;
+  color: $color-nav-scene;
 }
 
 .c2 {
@@ -193,8 +193,8 @@ $close-button-line-height: 60px;
         font-size: 18px;
       }
 
-      &.forum gt-svg-icon {
-        fill: $color-nav-forum;
+      &.scene gt-svg-icon {
+        fill: $color-nav-scene;
       }
 
       &.catalog gt-svg-icon {

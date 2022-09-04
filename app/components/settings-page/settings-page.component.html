@@ -50,9 +50,9 @@
 
         <div class="signin-sign-out-block">
             <div *ngIf="!user" class="register-prompt">
-                <a href="{{registrationLink}}">{{i18n.notSignedInPrompt.register}}</a>
+                <a (click)="openRegistrationDialog()">{{i18n.notSignedInPrompt.register}}</a>
                 {{i18n.notSignedInPrompt.or}}
-                <a href="{{loginLink}}">{{i18n.notSignedInPrompt.signIn}}</a>
+                <a (click)="openSignInDialog()">{{i18n.notSignedInPrompt.signIn}}</a>
                 {{i18n.notSignedInPrompt.toGetAccess}}
             </div>
 

@@ -4,8 +4,7 @@ import {SongDbi} from './song-dbi.service';
 import {DbService} from './db.service';
 import {CollectionDbi} from './collection-dbi.service';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
-import {NodeBBService} from '@server/db/node-bb.service';
-import {ServerSsoService} from '@server/service/server-sso.service';
+import {ServerAuthService} from '@server/service/server-auth.service';
 
 @Module({
   imports: [
@@ -15,16 +14,14 @@ import {ServerSsoService} from '@server/service/server-sso.service';
     CollectionDbi,
     DbService,
     FullTextSearchDbi,
-    NodeBBService,
-    ServerSsoService,
+    ServerAuthService,
     SongDbi,
     UserDbi,
   ],
   exports: [
     CollectionDbi,
     FullTextSearchDbi,
-    NodeBBService,
-    ServerSsoService,
+    ServerAuthService,
     SongDbi,
     UserDbi,
   ]

@@ -4,11 +4,10 @@ import {Song, SongDetails} from '@common/catalog-model';
 import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
 import {User, UserGroup} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
-import {ServerSsoService} from '@server/service/server-sso.service';
+import {ServerAuthService} from '@server/service/server-auth.service';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {canManageCollectionContent, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
-import {NodeBBService} from '@server/db/node-bb.service';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
 
 @Controller('/api/song')
@@ -19,7 +18,6 @@ export class SongController {
   constructor(private readonly songDbi: SongDbi,
               private readonly collectionDbi: CollectionDbi,
               private readonly fullTextSearchDbi: FullTextSearchDbi,
-              private readonly nodeBBService: NodeBBService,
   ) {
   }
 
@@ -61,7 +59,7 @@ export class SongController {
   @Post()
   async create(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     this.logger.log('/create-song' + JSON.stringify(request));
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -88,7 +86,7 @@ export class SongController {
   @Put()
   async update(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     this.logger.log('/update-song');
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -124,7 +122,7 @@ export class SongController {
   @Delete(':songId')
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {
     this.logger.log(`/delete song ${idParam}`);
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     if (!user.groups.includes(UserGroup.Moderator)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
@@ -133,15 +131,6 @@ export class SongController {
     if (songsArray.length === 0) {
       throw new HttpException(`Song is not found ${idParam}`, HttpStatus.NOT_FOUND);
     }
-    const song = songsArray[0];
-    if (isValidId(song.tid)) {
-      try {
-        await this.nodeBBService.deleteTopic(song.tid);
-      } catch (e) {
-        this.logger.error(e);
-      }
-    }
-
     const allSongCollectionIds = await this.songDbi.getPrimaryAndSecondarySongCollectionIds(songId);
     await this.songDbi.delete(songId);
     const songs$$: Promise<Song[]>[] = allSongCollectionIds.map(collectionId => this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId));
@@ -157,7 +146,7 @@ export class SongController {
       : Promise<AddSongToSecondaryCollectionResponse> {
     const {songId, collectionId} = request;
     this.logger.log(`/add-to-secondary-collection, song ${songId}, collection-id: ${collectionId}`);
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     //todo: check if song exists & is in the listed collection or is in the user collection.
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
@@ -181,7 +170,7 @@ export class SongController {
       : Promise<RemoveSongFromSecondaryCollectionResponse> {
     const {songId, collectionId} = request;
     this.logger.log(`/remove-from-secondary-collection, song: ${songId}, collection-id: ${collectionId}`);
-    const user: User = ServerSsoService.getUserOrFail(session);
+    const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
