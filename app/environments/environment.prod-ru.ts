@@ -12,7 +12,7 @@ export const environment: TabiusEnv = {
   production: true,
   backendUrl: `https://${APP_DOMAIN}`,
   ssrBackendUrl: 'http://localhost:4001',
-  telegramUrl: 'https://t.me/tabius_ru',
+  telegramUrl: 'https://t.me/tabiusru',
   buildInfo,
   authConfig: {
     domain: 'tabius.us.auth0.com',
