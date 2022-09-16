@@ -36,7 +36,7 @@ export class ServerAuthService implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest();
-    const accessToken = req.headers['authorization'].split(' ')[1];
+    const accessToken = req.headers['authorization']?.split(' ')[1];
     let user: User|undefined = req.session[USER_SESSION_KEY];
     if (!user && accessToken) {
       const auth0Profile = await this.getAuth0UserProfileWithMutex(accessToken);
