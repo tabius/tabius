@@ -1,5 +1,5 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule, BrowserTransferStateModule} from '@angular/platform-browser';
 import {AppComponent} from '@app/components/app.component';
 import {SiteHomePageComponent} from '@app/components/site-home-page/site-home-page.component';
@@ -60,6 +60,8 @@ import {JsonLdComponent} from '@app/components/json-ld/json-ld.component';
 import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-navigation-history-popup/catalog-navigation-history-popup.component';
 import {ScenePageComponent} from './components/scene-page/scene-page.component';
 import {AuthInterceptor} from '@app/interceptors/auth.interceptor';
+import * as Sentry from '@sentry/angular';
+
 
 @NgModule({
   declarations: [
@@ -125,6 +127,7 @@ import {AuthInterceptor} from '@app/interceptors/auth.interceptor';
     AuthModule.forRoot(environment.authConfig),
   ],
   providers: [
+    {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: true,})},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},

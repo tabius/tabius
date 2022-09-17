@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="item scene" [class.active]="getActiveSection() === NavSection.Forum">
-            <a href="{{sceneLink}}">
+            <a routerLink="{{sceneLink}}">
                 <div class="indicator-block"></div>
                 <gt-svg-icon icon="scene"></gt-svg-icon>
                 <div class="title">{{i18n.scene}}</div>
