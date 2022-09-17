@@ -11,7 +11,6 @@ CREATE TABLE collection (
     # Comma separated band ids. If the collection is a person this field may link it to the related band ids.
     band_ids VARCHAR(1024) NOT NULL  DEFAULT '',
     version INT NOT NULL DEFAULT 0,
-    forum_category_id INT NOT NULL DEFAULT 0,
     listed INT(1) NOT NULL DEFAULT 0,
     user_id VARCHAR(40) DEFAULT NULL
 ) ENGINE InnoDB
@@ -37,8 +36,7 @@ CREATE TABLE song (
     content              TEXT         NOT NULL,
     # Set of media links for the song. One link per line.
     media_links VARCHAR(1024) NOT NULL DEFAULT '',
-    version INT NOT NULL DEFAULT 0,
-    forum_topic_id INT NOT NULL DEFAULT 0
+    version INT NOT NULL DEFAULT 0
 ) ENGINE InnoDB
   ROW_FORMAT = COMPRESSED
   DEFAULT CHARSET = utf8mb4

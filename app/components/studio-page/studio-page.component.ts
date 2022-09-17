@@ -81,7 +81,6 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
         )
         .subscribe(([user, primaryUserCollection, songs, primarySongCollections]) => {
           this.loaded = true;
-          console.error('User', user);
           if (!user || !primaryUserCollection || !songs || !primarySongCollections) {
             //TODO: switchToNotFoundMode(this);
             this.cd.detectChanges();
