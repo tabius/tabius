@@ -23,6 +23,7 @@ export const environment: TabiusEnv = {
       allowedList: [
         {
           uri: backendUrl + '/api/*',
+          allowAnonymous: true,
           tokenOptions: {
             /** The attached token should target this audience. */
             audience: 'web-client-api-id',
