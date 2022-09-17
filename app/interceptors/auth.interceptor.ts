@@ -5,6 +5,10 @@ import {Auth0ClientService, AuthClientConfig, AuthHttpInterceptor, AuthState} fr
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Auth0Client} from '@auth0/auth0-spa-js';
 
+/**
+ * Adds authentication token to the requests in client mode.
+ * Does nothing in server mode.
+ */
 @Injectable()
 export class AuthInterceptor extends AuthHttpInterceptor {
 

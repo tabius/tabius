@@ -15,8 +15,8 @@ import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-
 
 enum NavSection {
   Home = 1,
-  Forum = 2,
-  Catalog = 3,
+  Catalog = 2,
+  Scene = 3,
   Studio = 4,
   Tuner = 5,
   Settings = 6

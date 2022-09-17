@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {environment} from '@app/environments/environment';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
+/** Sets correct backend URL to requests and adds 'withCredentials:true' option. */
 @Injectable()
 export class ApiUrlInterceptor implements HttpInterceptor {
 
