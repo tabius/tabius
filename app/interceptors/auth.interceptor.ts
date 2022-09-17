@@ -1,31 +1,35 @@
-import {HttpEvent, HttpHandler, HttpRequest} from '@angular/common/http';
-import {Inject, Injectable} from '@angular/core';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {Injectable, Injector} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Auth0ClientService, AuthClientConfig, AuthHttpInterceptor, AuthState} from '@auth0/auth0-angular';
 import {BrowserStateService} from '@app/services/browser-state.service';
-import {Auth0Client} from '@auth0/auth0-spa-js';
+import {truthy} from '@common/util/misc-utils';
 
 /**
  * Adds authentication token to the requests in client mode.
  * Does nothing in server mode.
  */
 @Injectable()
-export class AuthInterceptor extends AuthHttpInterceptor {
+export class AuthInterceptor implements HttpInterceptor {
+  auth0Interceptor?: AuthHttpInterceptor;
 
   constructor(
-      private readonly bss: BrowserStateService,
-      configFactory: AuthClientConfig,
-      @Inject(Auth0ClientService) auth0Client: Auth0Client,
-      authState: AuthState,
+      private readonly browserStateService: BrowserStateService,
+      injector: Injector,
   ) {
-    super(configFactory, auth0Client, authState);
+    if (browserStateService.isBrowser) {
+      const configFactory = injector.get(AuthClientConfig);
+      const auth0Client = injector.get(Auth0ClientService);
+      const authState = injector.get(AuthState);
+      this.auth0Interceptor = new AuthHttpInterceptor(configFactory, auth0Client, authState);
+    }
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (this.bss.isServer) {
+    if (this.browserStateService.isServer) {
       return next.handle(req);
     }
-    console.debug('AuthInterceptor:', req.url);
-    return super.intercept(req, next);
+    console.debug('Auth0Interceptor:', req.url);
+    return truthy(this.auth0Interceptor).intercept(req, next);
   }
 }
