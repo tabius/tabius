@@ -16,8 +16,8 @@ export class UserDbi {
 
     const now = new Date();
     await this.db.pool.promise()
-        .query('INSERT INTO user(id, email, nickname, collection_id, login_date, settings) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE collection_id = ?',
-            [user.id, user.email, user.nickname, user.collectionId, now, '{}', user.collectionId]);
+        .query('INSERT INTO user(id, email, nickname, collection_id, mount, login_date, settings) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE collection_id = ?',
+            [user.id, user.email, user.nickname, user.collectionId, user.mount, now, '{}', user.collectionId]);
 
     this.logger.debug(`User record successfully created/updated: ${user.email}`);
   }
@@ -51,9 +51,9 @@ export class UserDbi {
         .then(([rows]) => rows.length === 0 ? undefined : rows[0]['collection_id']);
   }
 
-  updateUserCollection(user: User): Promise<unknown> {
+  getUserMount(userId: string): Promise<string|undefined> {
     return this.db.pool.promise()
-        .query('UPDATE user SET collection_id = ? WHERE id = ?',
-            [user.collectionId, user.id]);
+        .query<RowDataPacket[]>('SELECT mount FROM user WHERE id = ?', [userId])
+        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['mount']);
   }
 }

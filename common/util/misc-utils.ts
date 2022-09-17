@@ -263,3 +263,13 @@ export function getUserAgentFromRequest(request: any): string|undefined {
 
 export function nothingThen() {
 }
+
+
+export function assertTruthy(value: unknown, error?: string): asserts value {
+  value || new Error(error ?? 'Assertion error');
+}
+
+export function truthy<T>(value: T, error?: string): NonNullable<T> {
+  assertTruthy(value, error);
+  return value as NonNullable<T>;
+}

@@ -19,6 +19,8 @@ export interface User {
   groups: UserGroup[];
   /** Default collection associated with the user. */
   collectionId: number;
+  /** Mount used for all user resources. */
+  mount: string;
 }
 
 

@@ -132,7 +132,7 @@ export class CollectionDbi {
 }
 
 export function generateCollectionMountForUser(user: User, nameForSuffix: string): string {
-  return `u${user.id}${USER_COLLECTION_MOUNT_SEPARATOR}${getTranslitLowerCase(nameForSuffix)}`;
+  return `${user.mount}${USER_COLLECTION_MOUNT_SEPARATOR}${getTranslitLowerCase(nameForSuffix)}`;
 }
 
 function rowToCollection(row: CollectionRow): Collection {

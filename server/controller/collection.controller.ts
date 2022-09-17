@@ -60,7 +60,6 @@ export class CollectionController {
 
   @Get('/by-ids/:ids')
   getCollectionsByIds(@Param('ids') idsParam: string, @Session() session): Promise<Collection[]> {
-    console.error('getCollectionsByIds', session)
     this.logger.log(`by-ids: ${idsParam}`);
     const collectionIds = paramToArrayOfNumericIds(idsParam);
     return this.collectionDbi.getCollectionsByIds(collectionIds);

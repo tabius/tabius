@@ -47,6 +47,7 @@ CREATE TABLE user (
     id VARCHAR(40) PRIMARY KEY,
     email VARCHAR(128) NOT NULL,
     nickname VARCHAR(64) NOT NULL DEFAULT '',
+    mount VARCHAR(32) NOT NULL,
     collection_id  INT NOT NULL REFERENCES collection (id),
     reg_date   DATETIME NOT NULL DEFAULT NOW(),
     login_date DATETIME     NOT NULL,

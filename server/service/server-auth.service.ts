@@ -2,13 +2,14 @@ import {CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, Lo
 import {Observable} from 'rxjs';
 import {User} from '@common/user-model';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
-import {isValidId} from '@common/util/misc-utils';
+import {isValidId, truthy} from '@common/util/misc-utils';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {INVALID_ID} from '@common/common-constants';
 import * as Express from 'express-session';
 import {AuthenticationClient} from 'auth0';
 import {SERVER_CONFIG} from '@server/server-config';
 import {Mutex} from 'async-mutex';
+import {nanoid} from 'nanoid';
 
 const USER_SESSION_KEY = 'user';
 
@@ -48,6 +49,7 @@ export class ServerAuthService implements NestInterceptor {
           nickname: auth0Profile.nickname,
           collectionId: INVALID_ID,
           groups: [],
+          mount: '',
         };
       }
     } else if (user) {
@@ -58,8 +60,11 @@ export class ServerAuthService implements NestInterceptor {
         user.collectionId = await this.getUserCollectionId(user.id) || 0;
         if (!isValidId(user.collectionId)) {
           user.collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
+          user.mount = nanoid(8);
           this.logger.log(`Creating new user: ${user.email}`);
           await this.userDbi.createUser(user);
+        } else {
+          user.mount = truthy(await this.userDbi.getUserMount(user.id));
         }
       }
       (req.session)[USER_SESSION_KEY] = user;
