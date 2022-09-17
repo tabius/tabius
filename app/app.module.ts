@@ -32,7 +32,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SongComponent} from '@app/components/song/song.component';
 import {SongHeaderComponent} from '@app/components/song-header/song-header.component';
 import {SongVideoComponent} from '@app/components/song-video/song-video.component';
-import {AuthHttpInterceptor, AuthModule} from '@auth0/auth0-angular';
+import {AuthModule} from '@auth0/auth0-angular';
 import {SongEditorComponent} from '@app/components/song-editor/song-editor.component';
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
@@ -58,7 +58,8 @@ import {ChordPopoverComponent} from '@app/components/chord-popover/chord-popover
 import {ShowChordPopoverOnClickDirective} from '@app/directives/show-chord-popover-on-click.directive';
 import {JsonLdComponent} from '@app/components/json-ld/json-ld.component';
 import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-navigation-history-popup/catalog-navigation-history-popup.component';
-import { ScenePageComponent } from './components/scene-page/scene-page.component';
+import {ScenePageComponent} from './components/scene-page/scene-page.component';
+import {AuthInterceptor} from '@app/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -128,7 +129,7 @@ import { ScenePageComponent } from './components/scene-page/scene-page.component
     {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_CATALOG_BROWSER_STORE_TOKEN, useClass: CatalogBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
