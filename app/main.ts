@@ -14,6 +14,7 @@ if (environment.production) {
       // }),
     ],
     tracesSampleRate: 0,
+    sendClientReports: false,
   });
 
   enableProdMode();
