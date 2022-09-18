@@ -194,4 +194,11 @@ export class SongController {
     return await this.songDbi.getRandomSongFromPublicCatalog();
   }
 
+  /** Returns song ID for the scene page. Returns the smae result during the calendar day (UTC). */
+  @Get(['/scene-song-id', '/random-song-id/:collectionId'])
+  async getSceneSong(): Promise<number> {
+    this.logger.log(`scene-song-id`);
+    return await this.songDbi.getSceneSongId();
+  }
+
 }

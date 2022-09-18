@@ -66,8 +66,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     },
   },
   scenePage: {
-    title: 'Scene',
-    underConstructionMessage: 'Page is under construction. Please come back to us in several days',
+    title: 'Scene: a new song every day',
+    loadingMessage: 'Loading…',
   },
   chordImage: {
     chordsLayoutTitleSuffix: ', chord layout',

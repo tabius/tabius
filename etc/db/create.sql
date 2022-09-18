@@ -36,12 +36,14 @@ CREATE TABLE song (
     content              TEXT         NOT NULL,
     # Set of media links for the song. One link per line.
     media_links VARCHAR(1024) NOT NULL DEFAULT '',
-    version INT NOT NULL DEFAULT 0
+    version INT NOT NULL DEFAULT 0,
+    song SMALLINT DEFAULT 0
 ) ENGINE InnoDB
   ROW_FORMAT = COMPRESSED
   DEFAULT CHARSET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
 CREATE INDEX song_collection_id_index on song(collection_id);
+CREATE INDEX song_collection_scene on song(scene);
 
 CREATE TABLE user (
     id VARCHAR(40) PRIMARY KEY,

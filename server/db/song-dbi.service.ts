@@ -4,6 +4,7 @@ import {DbService} from './db.service';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {INVALID_ID} from '@common/common-constants';
 import {OkPacket, RowDataPacket} from 'mysql2';
+import {assertTruthy} from '@common/util/misc-utils';
 
 interface SongRow extends RowDataPacket {
   id: number;
@@ -152,6 +153,16 @@ export class SongDbi {
     return await this.db.pool.promise()
         .query<SongRow[]>(sql, [collectionId, collectionId])
         .then(([rows]) => rows[0]?.id);
+  }
+
+  async getSceneSongId(): Promise<number> {
+    const sql = 'SELECT id FROM song WHERE scene=1 ORDER BY id';
+    // TODO: optimize. Cache for a time period?
+    const allSongIdsForScene = await this.db.pool.promise().query<SongRow[]>(sql).then(([rows]) => rows.map(r => r.id));
+    assertTruthy(Array.isArray(allSongIdsForScene) && allSongIdsForScene.length > 0);
+    const todayStartDate = new Date(new Date().toISOString().substring(0, 10));
+    const songIndex = todayStartDate.getTime() % allSongIdsForScene.length;
+    return allSongIdsForScene[songIndex];
   }
 }
 

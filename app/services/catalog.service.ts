@@ -320,8 +320,14 @@ export class CatalogService {
    */
   getRandomSongId(collectionId?: number): Observable<number|undefined> {
     const url = `/api/song/random-song-id/${isValidId(collectionId) ? collectionId : ''}`;
-    return this.httpClient.get<number|undefined>(url)
-        .pipe(shareReplay(1));
+    return this.httpClient.get<number|undefined>(url).pipe(shareReplay(1));
+  }
+
+  /** Returns 1 song to be shown on the scene for today. */
+  getSceneSongId(collectionId?: number): Observable<number> {
+    const url = `/api/song/scene-song-id/${isValidId(collectionId) ? collectionId : ''}`;
+    // TODO: cache for some period? up to 1 day.
+    return this.httpClient.get<number>(url).pipe(shareReplay(1));
   }
 }
 

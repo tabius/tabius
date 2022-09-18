@@ -1,5 +1,15 @@
-<h1>{{i18n.title}}</h1>
+<div class="content">
 
-<div style="text-align: center; margin-top: 50px">
-    <p>{{i18n.underConstructionMessage}}</p>
+    <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
+        <div class="message">{{i18n.loadingMessage}}</div>
+        <gt-loading-indicator></gt-loading-indicator>
+    </div>
+
+    <div *ngIf="(songId$ | async) as songId">
+
+        <h2>{{i18n.title}}</h2>
+
+        <gt-song [songId]="songId"></gt-song>
+    </div>
+
 </div>

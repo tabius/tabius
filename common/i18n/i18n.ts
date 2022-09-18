@@ -70,7 +70,7 @@ export interface I18n {
   };
   scenePage: {
     title: string;
-    underConstructionMessage: string;
+    loadingMessage: string;
   };
   chordImage: {
     chordsLayoutTitleSuffix: string;
