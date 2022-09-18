@@ -8,16 +8,17 @@ app/environments/build.ts
 !.idea/vcs.xml
 
 # Build artifacts
-/node_modules
 /dist
 /local
-*.log
+/node_modules
 /npm-debug.log.*
+*.log
+.angular
 webpack.records.json
 
 # Angular
-*.ngfactory.ts
 *.css.shim.ts
-*.ngsummary.json
 *.metadata.json
+*.ngfactory.ts
+*.ngsummary.json
 *.shim.ngstyle.ts
