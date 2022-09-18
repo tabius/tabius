@@ -99,7 +99,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   ngOnDestroy(): void {
     this.uninstallHammer();
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   private installHammer(): void {

@@ -128,7 +128,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   create(): void {

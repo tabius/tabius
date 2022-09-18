@@ -52,7 +52,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
     this.destroyed = true;
     this.stop();
   }

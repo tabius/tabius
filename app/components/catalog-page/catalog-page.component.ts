@@ -95,7 +95,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   @HostListener('document:keydown', ['$event'])

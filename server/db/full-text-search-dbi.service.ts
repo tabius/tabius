@@ -1,10 +1,9 @@
 import {HttpService, Injectable, Logger} from '@nestjs/common';
 import {FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
-import {take} from 'rxjs/operators';
-import {AxiosResponse} from 'axios';
 import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
 import {toSafeSearchText} from '@common/util/misc-utils';
 import {SERVER_CONFIG} from '@server/server-config';
+import {firstValueFrom} from 'rxjs';
 
 const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 
@@ -69,9 +68,7 @@ export class FullTextSearchDbi {
     const encodedQuery = encodeURIComponent(query);
     const params = `query=${encodedQuery}`;
     try {
-      const axiosResponse: AxiosResponse<SphinxSearchResult> = await this.nestHttpService.post<SphinxSearchResult>(SPHINX_SQL_URL, params)
-          .pipe(take(1))
-          .toPromise();
+      const axiosResponse = await firstValueFrom(this.nestHttpService.post<SphinxSearchResult>(SPHINX_SQL_URL, params));
       return axiosResponse.data;
     } catch (e) {
       this.logger.error(`Error querying sphinx: ${e}`);

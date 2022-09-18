@@ -74,7 +74,7 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   createCollection(): void {

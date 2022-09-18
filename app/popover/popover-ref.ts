@@ -9,7 +9,7 @@ import {PopoverConfig} from './popover-config';
  */
 export class PopoverRef<T = any> {
 
-  private afterClosed$ = new Subject<T>();
+  private afterClosed$ = new Subject<T|undefined>();
 
   constructor(private overlayRef: OverlayRef,
               private positionStrategy: PositionStrategy,
@@ -35,13 +35,13 @@ export class PopoverRef<T = any> {
     this.overlayRef.dispose();
   }
 
-  afterClosed(): Observable<T> {
+  afterClosed(): Observable<T|undefined> {
     return this.afterClosed$.asObservable();
   }
 
   positionChanges(): Observable<ConnectedOverlayPositionChange> {
     return this.positionStrategy instanceof FlexibleConnectedPositionStrategy
-        ? this.positionStrategy.positionChanges
-        : of();
+           ? this.positionStrategy.positionChanges
+           : of();
   }
 }

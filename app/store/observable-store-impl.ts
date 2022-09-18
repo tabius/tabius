@@ -1,6 +1,5 @@
-import {Observable, of, ReplaySubject} from 'rxjs';
+import {firstValueFrom, from, Observable, of, ReplaySubject} from 'rxjs';
 import {AsyncStore, KV} from './async-store';
-import {fromPromise} from 'rxjs/internal-compatibility';
 import {catchError, shareReplay, switchMap, take, tap} from 'rxjs/operators';
 import {CheckUpdateFn, FetchFn, ObservableStore, RefreshMode, skipUpdateCheck} from './observable-store';
 
@@ -82,7 +81,7 @@ export class ObservableStoreImpl implements ObservableStore {
     }
     // Create new replay subject for the key and run initialization code for it.
     rs$ = this.registerNewRxStreamForKey<T>(key);
-    return fromPromise(this.initializeRxStream(rs$, key, fetchFn, refreshMode, checkUpdateFn))
+    return from(this.initializeRxStream(rs$, key, fetchFn, refreshMode, checkUpdateFn))
         .pipe(switchMap(() => rs$));
   }
 
@@ -120,7 +119,7 @@ export class ObservableStoreImpl implements ObservableStore {
                                      refreshMode: RefreshMode,
                                      checkUpdateFn: CheckUpdateFn<T>): Observable<T|undefined> {
     const initOp = this.inFlightInitRxOps.get(key);
-    const initOp$: Observable<unknown> = initOp ? fromPromise(initOp.promise) : of(undefined);
+    const initOp$: Observable<unknown> = initOp ? from(initOp.promise) : of(undefined);
 
     // Wait until first get is completed and call refresh next.
     return initOp$.pipe(
@@ -132,7 +131,7 @@ export class ObservableStoreImpl implements ObservableStore {
 
   // refresh action is performed async (non-blocking).
   private runAsyncRefresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, checkUpdateFn: CheckUpdateFn<T>): void {
-    fromPromise(this._refresh(key, fetchFn, refreshMode, checkUpdateFn)).pipe(take(1));
+    from(this._refresh(key, fetchFn, refreshMode, checkUpdateFn)).pipe(take(1));
   }
 
   private async _refresh<T>(key: string, fetchFn: FetchFn<T>|undefined, refreshMode: RefreshMode, checkUpdateFn: CheckUpdateFn<T>): Promise<void> {
@@ -161,7 +160,7 @@ export class ObservableStoreImpl implements ObservableStore {
         fetchOp = {fetch$};
         this.inFlightFetchOps.set(key, fetchOp);
       }
-      const result = await fetchOp.fetch$.pipe(take(1)).toPromise();
+      const result = await firstValueFrom(fetchOp.fetch$);
       if (result !== undefined) {
         this.refreshSet.add(key);
       }
@@ -270,7 +269,7 @@ function noFreeze<T>(obj: T|undefined): T|undefined {
 
 // noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
 export function deepFreeze<T>(obj: T|undefined): T|undefined {
-  if (obj === undefined) {
+  if (obj === undefined || obj === null) {
     return undefined;
   }
   Object.freeze(obj);

@@ -1,10 +1,9 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {firstValueFrom, from, Observable, of} from 'rxjs';
 import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-model';
-import {flatMap, map, shareReplay, take} from 'rxjs/operators';
+import {flatMap, map, shareReplay} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
-import {fromPromise} from 'rxjs/internal-compatibility';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
 import {combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
@@ -90,7 +89,7 @@ export class CatalogService {
         getCollectionSongListKey(collectionId),
         () => this.httpClient.get<Song[]>(`/api/song/by-collection/${collectionId}`)
             .pipe(
-                flatMap(songs => fromPromise(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))
+                flatMap(songs => from(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))
             ),
         RefreshMode.RefreshOnce,
         checkUpdateByShallowArrayCompare
@@ -163,7 +162,7 @@ export class CatalogService {
   async createSong(song: Song, details: SongDetails): Promise<Song> {
     const request: UpdateSongRequest = {song, details};
     try {
-      const response = await this.httpClient.post<UpdateSongResponse>('/api/song', request).pipe(take(1)).toPromise();
+      const response = await firstValueFrom(this.httpClient.post<UpdateSongResponse>('/api/song', request));
       await this.processSongUpdateResponse(response);
       return response.song;
     } catch (httpError) {
@@ -175,7 +174,7 @@ export class CatalogService {
   async updateSong(song: Song, details: SongDetails): Promise<void> {
     const request: UpdateSongRequest = {song, details};
     try {
-      const response = await this.httpClient.put<UpdateSongResponse>('/api/song', request).pipe(take(1)).toPromise();
+      const response = await firstValueFrom(this.httpClient.put<UpdateSongResponse>('/api/song', request));
       await this.processSongUpdateResponse(response);
     } catch (httpError) {
       console.error(httpError);
@@ -195,7 +194,7 @@ export class CatalogService {
     if (!isValidId(songId)) {
       return;
     }
-    const {updatedCollections} = await this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`).pipe(take(1)).toPromise();
+    const {updatedCollections} = await firstValueFrom(this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`));
     await Promise.all([
       this.store.remove(getSongDetailsKey(songId)),
       this.store.remove(getSongDetailsKey(songId))
@@ -206,7 +205,7 @@ export class CatalogService {
   }
 
   async createListedCollection(createCollectionRequest: CreateListedCollectionRequest): Promise<Collection> {
-    const response = await this.httpClient.post<CreateListedCollectionResponse>('/api/collection', createCollectionRequest).pipe(take(1)).toPromise();
+    const response = await firstValueFrom(this.httpClient.post<CreateListedCollectionResponse>('/api/collection', createCollectionRequest));
     const collectionsUpdateArray$$ = response.collections
         .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
     const collectionIds = response.collections.map(collection => collection.id);
@@ -223,7 +222,7 @@ export class CatalogService {
   }
 
   async createUserCollection(userId: string, createCollectionRequest: CreateUserCollectionRequest): Promise<Collection> {
-    const response = await this.httpClient.post<CreateUserCollectionResponse>('/api/collection/user', createCollectionRequest).pipe(take(1)).toPromise();
+    const response = await firstValueFrom(this.httpClient.post<CreateUserCollectionResponse>('/api/collection/user', createCollectionRequest));
     await this.updateUserCollections(userId, response.collections);
     const collection = response.collections.find(collection => collection.id === response.collectionId);
     if (!collection) {
@@ -236,14 +235,14 @@ export class CatalogService {
     if (!isValidId(collectionId)) {
       return;
     }
-    const {userId, collections} = await this.httpClient.delete<DeleteUserCollectionResponse>(`/api/collection/user/${collectionId}`).pipe(take(1)).toPromise();
+    const {userId, collections} = await firstValueFrom(this.httpClient.delete<DeleteUserCollectionResponse>(`/api/collection/user/${collectionId}`));
     // todo: personal songs were moved to the 'favorite'. Update it?
     await this.updateUserCollections(userId, collections);
   }
 
   private async updateUserCollections(userId: string, collections: Collection[]): Promise<void> {
     const userCollectionsKey = getUserCollectionsKey(userId);
-    const collectionIdsInStore = await this.store.get<number[]>(userCollectionsKey, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    const collectionIdsInStore = await firstValueFrom(this.store.get<number[]>(userCollectionsKey, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
     const collectionsRemoveArray$$: Promise<void>[] = [];
     for (const collectionId of (collectionIdsInStore || [])) {
       if (!collections.find(c => c.id === collectionId)) {
@@ -294,8 +293,8 @@ export class CatalogService {
   async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
     const request: AddSongToSecondaryCollectionRequest = {songId, collectionId};
     try {
-      const {songIds} = await this.httpClient.put<AddSongToSecondaryCollectionResponse>(
-          '/api/song/add-to-secondary-collection', request).pipe(take(1)).toPromise();
+      const {songIds} = await firstValueFrom(this.httpClient.put<AddSongToSecondaryCollectionResponse>(
+          '/api/song/add-to-secondary-collection', request));
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
@@ -306,8 +305,8 @@ export class CatalogService {
   async removeSongFromSecondaryCollection(songId: number, collectionId: number): Promise<void> {
     const request: RemoveSongFromSecondaryCollectionRequest = {songId, collectionId};
     try {
-      const {songIds} = await this.httpClient.put<RemoveSongFromSecondaryCollectionResponse>(
-          '/api/song/remove-from-secondary-collection', request).pipe(take(1)).toPromise();
+      const {songIds} = await firstValueFrom(this.httpClient.put<RemoveSongFromSecondaryCollectionResponse>(
+          '/api/song/remove-from-secondary-collection', request));
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);

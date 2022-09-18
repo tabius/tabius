@@ -95,7 +95,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   updateMeta() {

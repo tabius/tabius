@@ -78,7 +78,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   getChordInfo(event: MouseEvent, chord: Chord|undefined): ChordClickInfo {

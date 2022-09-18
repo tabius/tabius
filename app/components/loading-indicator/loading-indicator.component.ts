@@ -11,7 +11,7 @@ import {Subject, timer} from 'rxjs';
 })
 export class LoadingIndicatorComponent implements OnInit, OnDestroy {
   readonly i18n = I18N.loadingIndicatorWarning;
-  readonly destroyed$ = new Subject<void>();
+  readonly destroyed$ = new Subject<boolean>();
   isReloadWarningVisible = false;
 
   constructor(private readonly cdr: ChangeDetectorRef) {
@@ -25,7 +25,7 @@ export class LoadingIndicatorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   onReloadButtonClicked(): void {

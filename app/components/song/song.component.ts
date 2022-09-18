@@ -75,7 +75,7 @@ export class SongComponent extends ComponentWithLoadingIndicator implements OnDe
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   private updateSchemaFields(): void {

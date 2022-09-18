@@ -47,7 +47,7 @@ class AngularTransferStateAdapter implements TransferStateAdapter {
     if (!this.isBrowser) {
       return undefined;
     }
-    const serverStateKey = makeStateKey(`db-${this.storeName}`);
+    const serverStateKey = makeStateKey<{ [p: string]: unknown }>(`db-${this.storeName}`);
     const serverState = this.serverState.get<{ [p: string]: unknown }>(serverStateKey, {});
     await asyncStore.setAll(serverState);
     return serverState;

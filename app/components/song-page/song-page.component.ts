@@ -234,7 +234,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
     this.contextMenuActionService.footerActions$.next([]);
   }
 

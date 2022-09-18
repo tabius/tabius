@@ -63,7 +63,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   incFontSize(): void {

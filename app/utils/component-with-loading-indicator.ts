@@ -21,10 +21,10 @@ export class ComponentWithLoadingIndicator {
 
   set loaded(loaded: boolean) {
     this._loaded = loaded;
-    this.loaded$.next();
+    this.loaded$.next(true);
   }
 
-  private readonly loaded$ = new Subject();
+  private readonly loaded$ = new Subject<boolean>();
   private _loaded = false;
 
   constructor(injector: Injector, loadingTimeout = 800) {

@@ -12,7 +12,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongPrintPageComponent {
-  readonly destroyed$ = new Subject();
+  readonly destroyed$ = new Subject<boolean>();
   songId = 0;
 
   constructor(private readonly cds: CatalogService,
@@ -54,6 +54,6 @@ export class SongPrintPageComponent {
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 }

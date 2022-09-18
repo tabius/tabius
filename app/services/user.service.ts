@@ -1,12 +1,11 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {firstValueFrom, from, Observable, of} from 'rxjs';
 import {CatalogNavigationHistory, CatalogNavigationHistoryStep, DEFAULT_FAVORITE_KEY, DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, newEmptyCatalogNavigationHistory, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
-import {map, mergeMap, switchMap, take} from 'rxjs/operators';
+import {map, mergeMap, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {isEqualByStringify, isValidId} from '@common/util/misc-utils';
-import {fromPromise} from 'rxjs/internal-compatibility';
 import {ChordTone} from '@app/utils/chords-lib';
 import {LoginResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
 import {ClientAuthService} from '@app/services/client-auth.service';
@@ -35,7 +34,7 @@ export class UserService {
     authService.user$.subscribe(async (user) => {
       if (user) {
         try {
-          const {user, settings} = await this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL).pipe(take(1)).toPromise();
+          const {user, settings} = await firstValueFrom(this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL));
           if (user) {
             await this.setUserOnSignIn(user);
             await this.updateUserSettings(settings);
@@ -89,7 +88,7 @@ export class UserService {
     }
     return this.httpClient.get<UserSettings>(`/api/user/settings`)
         .pipe(
-            mergeMap(userSettings => fromPromise(this.updateUserSettings(userSettings))
+            mergeMap(userSettings => from(this.updateUserSettings(userSettings))
                 .pipe(map(() => userSettings)))
         );
   }
@@ -101,10 +100,12 @@ export class UserService {
     await this.store.set<UserSongSettings>(key, processedSettings, checkUpdateByStringify);
 
     // update settings on the server only if we have valid user session.
-    const userSettingsFromServer = await this.getUser().pipe(
-        mergeMap(user => user ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings) : of(undefined)),
-        take(1)
-    ).toPromise();
+    const userSettingsFromServer = await firstValueFrom(
+        this.getUser().pipe(
+            mergeMap(user => user
+                             ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings)
+                             : of(undefined)))
+    );
     if (userSettingsFromServer) {
       await this.updateUserSettings(userSettingsFromServer);
     }
@@ -131,7 +132,7 @@ export class UserService {
 
   async setH4SiFlag(h4SiFlag: boolean): Promise<void> {
     await this.store.set<boolean>(H4SI_FLAG_KEY, h4SiFlag, skipUpdateCheck);
-    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}).pipe(take(1)).toPromise();
+    const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}));
     await this.updateUserSettings(settings);
   }
 
@@ -154,8 +155,7 @@ export class UserService {
   async setFavoriteKey(favKey: ChordTone): Promise<void> {
     await this.store.set<string>(FAVORITE_TONE_KEY, favKey, skipUpdateCheck);
     const updateRequest: UpdateFavoriteSongKeyRequest = {key: favKey};
-    const settings = await this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest)
-        .pipe(take(1)).toPromise();
+    const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest));
     await this.updateUserSettings(settings);
   }
 
@@ -197,7 +197,7 @@ export class UserService {
   }
 
   async setUserOnSignIn(user: User): Promise<void> {
-    const oldUser = await this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    const oldUser = await firstValueFrom(this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
     if (oldUser && oldUser.id !== user.id) {
       await this.resetStoreStateOnSignOut();
     }
@@ -205,7 +205,7 @@ export class UserService {
   }
 
   async resetStoreStateOnSignOut(): Promise<void> {
-    const user = await this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    const user = await firstValueFrom(this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
     if (!user) { // already signed out
       return;
     }
@@ -229,7 +229,7 @@ export class UserService {
   }
 
   async removeStepFromCatalogNavigationHistory(url: string): Promise<void> {
-    const history = {...await this.getCatalogNavigationHistory().pipe(take(1)).toPromise()};
+    const history = {...await firstValueFrom(this.getCatalogNavigationHistory())};
     history.steps = history.steps.filter(s => s.url !== url);
     await this.setCatalogNavigationHistory(history);
   }
@@ -239,7 +239,7 @@ export class UserService {
       return;
     }
     await this.removeStepFromCatalogNavigationHistory(step.url);
-    const history = {...await this.getCatalogNavigationHistory().pipe(take(1)).toPromise()};
+    const history = {...await firstValueFrom(this.getCatalogNavigationHistory())};
     if (history.steps.length >= MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY) {
       history.steps.splice(history.steps.length - MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY + 1);
     }

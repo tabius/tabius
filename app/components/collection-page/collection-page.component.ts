@@ -125,7 +125,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   updateMeta(songs: Song[]): void {

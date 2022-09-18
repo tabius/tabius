@@ -107,7 +107,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -164,5 +164,8 @@
     "@schematics/angular:module": {
       "spec": false
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

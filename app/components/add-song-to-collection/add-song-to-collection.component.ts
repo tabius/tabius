@@ -81,7 +81,7 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   async toggleCollection(collection: ComponentCollectionData, checkboxElement: any = {}) {

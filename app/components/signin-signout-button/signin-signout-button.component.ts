@@ -35,7 +35,7 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   signIn(): void {

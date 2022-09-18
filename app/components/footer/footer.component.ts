@@ -52,8 +52,7 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   private actionMenuPopoverRef?: PopoverRef;
 
-  readonly defaultMenuIconSize = 24;
-  readonly destroyed$ = new Subject<void>();
+  readonly destroyed$ = new Subject<boolean>();
 
   constructor(readonly router: Router,
               private readonly location: LocationStrategy,
@@ -82,7 +81,7 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.closeMenuPopover();
-    this.destroyed$.next();
+    this.destroyed$.next(true);
   }
 
   openMainMenuDrawer(): void {

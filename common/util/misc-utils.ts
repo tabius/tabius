@@ -2,9 +2,8 @@ import {Collection, CollectionType, Song} from '@common/catalog-model';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {map} from 'rxjs/operators';
 import {DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
-import {combineLatest, Observable, of} from 'rxjs';
+import {combineLatest, from, Observable, of} from 'rxjs';
 import {User, UserGroup} from '@common/user-model';
-import {fromPromise} from 'rxjs/internal-compatibility';
 import {environment} from '@app/environments/environment';
 import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 
@@ -184,7 +183,7 @@ export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promi
   if (promises.length === 0) {
     return first$;
   }
-  return combineLatest([first$, ...promises.map(p => fromPromise(p))])
+  return combineLatest([first$, ...promises.map(p => from(p))])
       .pipe(map(arr => arr[0] as T));
 }
 
