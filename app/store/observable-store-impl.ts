@@ -49,7 +49,7 @@ export class ObservableStoreImpl implements ObservableStore {
   ) {
     this.asyncStore$$ = new Promise<AsyncStore>(resolve => {
       const asyncStore = asyncStoreFactory();
-      transferStateAdapter?.setSnapshotProvider(() => pairsToObject(asyncStore.snapshot()));
+      transferStateAdapter.setSnapshotProvider(() => pairsToObject(asyncStore.snapshot()));
       const asyncStoreInit$$: Promise<void> = this.setInitialAsyncStoreState(asyncStore, transferStateAdapter);
       asyncStoreInit$$.then(() => {
         resolve(asyncStore);

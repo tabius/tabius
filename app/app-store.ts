@@ -55,7 +55,8 @@ class AngularTransferStateAdapter implements TransferStateAdapter {
 
   setSnapshotProvider(snapshotProvider: () => object): void {
     if (!this.isBrowser) {
-      const serverStateKey = makeStateKey(`db-${this.storeName}`);
+      const serverStateKey = makeStateKey<object>(`db-${this.storeName}`);
+      this.serverState.set(serverStateKey, {});
       this.serverState.onSerialize(serverStateKey, snapshotProvider);
     }
   }

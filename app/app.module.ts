@@ -1,6 +1,6 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {ErrorHandler, NgModule} from '@angular/core';
-import {BrowserModule, BrowserTransferStateModule} from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from '@app/components/app.component';
 import {SiteHomePageComponent} from '@app/components/site-home-page/site-home-page.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
@@ -115,7 +115,6 @@ import * as Sentry from '@sentry/angular';
   imports: [
     BrowserAnimationsModule,
     BrowserModule.withServerTransition({appId: 'tabius'}),
-    BrowserTransferStateModule,
     FormsModule,
     //TODO: HammerModule,
     HttpClientModule,

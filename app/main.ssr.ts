@@ -8,9 +8,6 @@ if (environment.production) {
   enableProdMode();
 }
 
-export {AppServerModule} from './app.ssr.module';
-export {renderModule, renderModuleFactory} from '@angular/platform-server';
-
 function applyDomino(): void {
   global['Element'] = (domino as any).impl.Element;
   const dominoWindow = domino.createWindow('<body></body>');
@@ -31,4 +28,6 @@ function applyDomino(): void {
   global['CSS'] = {escape: (value) => value, supports: () => false};
   global['Prism'] = null;
 }
+
+export {AppServerModule} from './app.ssr.module';
 

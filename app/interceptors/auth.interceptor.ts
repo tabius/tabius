@@ -29,7 +29,6 @@ export class AuthInterceptor implements HttpInterceptor {
     if (this.browserStateService.isServer) {
       return next.handle(req);
     }
-    console.debug('Auth0Interceptor:', req.url);
     return truthy(this.auth0Interceptor).intercept(req, next);
   }
 }
