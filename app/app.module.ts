@@ -127,7 +127,7 @@ import * as Sentry from '@sentry/angular';
     AuthModule.forRoot(environment.authConfig),
   ],
   providers: [
-    {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: true,})},
+    {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
