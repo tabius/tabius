@@ -40,7 +40,7 @@ export class ServerAuthService implements NestInterceptor {
     const accessToken = req.headers['authorization']?.split(' ')[1];
     let user: User|undefined = req.session[USER_SESSION_KEY];
     if (!user && accessToken) {
-      const auth0Profile = await this.getAuth0UserProfileWithMutex(accessToken);
+      const auth0Profile: Auth0UserProfile|undefined = await this.getAuth0UserProfileWithMutex(accessToken);
       if (auth0Profile) {
         user = {
           id: auth0Profile.sub,
@@ -48,7 +48,7 @@ export class ServerAuthService implements NestInterceptor {
           picture: auth0Profile.picture,
           nickname: auth0Profile.nickname,
           collectionId: INVALID_ID,
-          groups: [],
+          roles: [],
           mount: '',
         };
       }
@@ -65,6 +65,7 @@ export class ServerAuthService implements NestInterceptor {
           await this.userDbi.createUser(user);
         } else {
           user.mount = truthy(await this.userDbi.getUserMount(user.id));
+          user.roles = truthy(await this.userDbi.getUserRoles(user.id));
         }
       }
       (req.session)[USER_SESSION_KEY] = user;

@@ -53,7 +53,9 @@ CREATE TABLE user (
     collection_id  INT NOT NULL REFERENCES collection (id),
     reg_date   DATETIME NOT NULL DEFAULT NOW(),
     login_date DATETIME     NOT NULL,
-    settings TEXT
+    settings TEXT,
+    #  Comma separated list of roles.
+    roles VARCHAR(128) NOT NULL DEFAULT ''
 ) ENGINE InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE utf8mb4_unicode_ci;

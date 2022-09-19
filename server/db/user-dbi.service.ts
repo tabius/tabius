@@ -1,6 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {DbService} from './db.service';
-import {newDefaultUserSettings, User, UserSettings} from '@common/user-model';
+import {newDefaultUserSettings, User, UserRole, UserSettings} from '@common/user-model';
 import {RowDataPacket} from 'mysql2';
 
 @Injectable()
@@ -55,5 +55,11 @@ export class UserDbi {
     return this.db.pool.promise()
         .query<RowDataPacket[]>('SELECT mount FROM user WHERE id = ?', [userId])
         .then(([rows]) => rows.length === 0 ? undefined : rows[0]['mount']);
+  }
+
+  getUserRoles(userId: string): Promise<Array<UserRole>> {
+    return this.db.pool.promise()
+        .query<RowDataPacket[]>('SELECT roles FROM user WHERE id = ?', [userId])
+        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['roles'].split(',').map(v => v.trim()));
   }
 }

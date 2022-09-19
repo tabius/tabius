@@ -3,10 +3,10 @@ import {Collection, CollectionDetails} from '@common/catalog-model';
 import {CollectionDbi, generateCollectionMountForUser} from '@server/db/collection-dbi.service';
 import {CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
 import {CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
-import {User, UserGroup} from '@common/user-model';
+import {User} from '@common/user-model';
 import {ServerAuthService} from '@server/service/server-auth.service';
 import {conformsTo, validate} from 'typed-validation';
-import {canManageCollectionContent, isValidUserId} from '@common/util/misc-utils';
+import {canManageCollectionContent, isModerator, isValidUserId} from '@common/util/misc-utils';
 import {SongDbi} from '@server/db/song-dbi.service';
 
 @Controller('/api/collection')
@@ -80,7 +80,7 @@ export class CollectionController {
   async createListedCollection(@Session() session, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
     this.logger.log(`create-collection: ${request.name}, ${request.mount}`);
     const user: User = ServerAuthService.getUserOrFail(session);
-    if (!user.groups.includes(UserGroup.Moderator)) {
+    if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     const vr1 = validate(request, conformsTo(CreateListedCollectionRequestValidator));

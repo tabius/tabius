@@ -3,7 +3,7 @@ import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@c
 import {map} from 'rxjs/operators';
 import {DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
 import {combineLatest, from, Observable, of} from 'rxjs';
-import {User, UserGroup} from '@common/user-model';
+import {User} from '@common/user-model';
 import {environment} from '@app/environments/environment';
 import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 
@@ -152,7 +152,7 @@ export function scrollToViewByEndPos(element: HTMLElement|undefined, paddingBott
 }
 
 export function canManageCollectionContent(user: User|undefined, collection: Collection): user is User {
-  if (!!user && user.groups.includes(UserGroup.Moderator)) {
+  if (isModerator(user)) {
     return true;
   }
   if (!user || !collection.userId) {
@@ -174,8 +174,13 @@ export function canRemoveCollection(user: User|undefined, collection: Collection
 
 }
 
+/** Returns true if the user has 'moderator' role. */
+export function isModerator(user: User|undefined): boolean {
+  return !!user && user.roles && user.roles.includes('moderator');
+}
+
 export function canCreateNewPublicCollection(user: User|undefined): boolean {
-  return !!user && (user.groups.includes(UserGroup.Moderator));
+  return isModerator(user);
 }
 
 export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promise<unknown>[]): Observable<T> {

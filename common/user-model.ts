@@ -1,10 +1,8 @@
 import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/common-constants';
 import {ChordTone} from '@app/utils/chords-lib';
 
-export const enum UserGroup {
-  /** The only role we have today. Can add new collections and songs. */
-  Moderator = 'moderator',
-}
+/** The only role we have today. Can add new collections and songs. */
+export type UserRole = 'moderator'
 
 export interface User {
   /** Unique user identifier provided by Auth0. 'sub' field in Auth0 profile. */
@@ -15,8 +13,8 @@ export interface User {
   email: string;
   /** Full avatar URL. */
   picture: string;
-  /** List of user groups. */
-  groups: UserGroup[];
+  /** List of user roles. */
+  roles: Array<UserRole>;
   /** Default collection associated with the user. */
   collectionId: number;
   /** Mount used for all user resources. */

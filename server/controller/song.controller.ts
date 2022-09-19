@@ -2,11 +2,11 @@ import {SongDbi} from '@server/db/song-dbi.service';
 import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
 import {Song, SongDetails} from '@common/catalog-model';
 import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
-import {User, UserGroup} from '@common/user-model';
+import {User} from '@common/user-model';
 import {conformsTo, validate} from 'typed-validation';
 import {ServerAuthService} from '@server/service/server-auth.service';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
-import {canManageCollectionContent, isValidId} from '@common/util/misc-utils';
+import {canManageCollectionContent, isModerator, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
 
@@ -123,7 +123,7 @@ export class SongController {
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {
     this.logger.log(`/delete song ${idParam}`);
     const user: User = ServerAuthService.getUserOrFail(session);
-    if (!user.groups.includes(UserGroup.Moderator)) {
+    if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
     const songId = +idParam;
