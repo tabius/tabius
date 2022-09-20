@@ -160,10 +160,20 @@ export class SongDbi {
     // TODO: optimize. Cache for a time period?
     const allSongIdsForScene = await this.db.pool.promise().query<SongRow[]>(sql).then(([rows]) => rows.map(r => r.id));
     assertTruthy(Array.isArray(allSongIdsForScene) && allSongIdsForScene.length > 0);
-    const todayStartDate = new Date(new Date().toISOString().substring(0, 10));
-    const songIndex = todayStartDate.getTime() % allSongIdsForScene.length;
+    const todayStartTime = new Date(new Date().toISOString().substring(0, 10)).getTime();
+
+    const songIndex = getRandomValue(todayStartTime) % allSongIdsForScene.length;
     return allSongIdsForScene[songIndex];
   }
+}
+
+/** Pseudo-random number, stable by seed. */
+function getRandomValue(seed: number, iterations = 50): number {
+  let result = seed;
+  for (let i = 0; i < iterations; i++) {
+    result = result ^ (result << 1) ^ (result >> 1);
+  }
+  return Math.abs(result);
 }
 
 function row2Song(row: SongRow): Song {
