@@ -57,9 +57,10 @@ export class UserDbi {
         .then(([rows]) => rows.length === 0 ? undefined : rows[0]['mount']);
   }
 
-  getUserRoles(userId: string): Promise<Array<UserRole>> {
-    return this.db.pool.promise()
+  async getUserRoles(userId: string): Promise<Array<UserRole>> {
+    const roles: string = await this.db.pool.promise()
         .query<RowDataPacket[]>('SELECT roles FROM user WHERE id = ?', [userId])
-        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['roles'].split(',').map(v => v.trim()));
+        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['roles']);
+    return roles.trim().split(',').map(r => <UserRole>r.trim());
   }
 }

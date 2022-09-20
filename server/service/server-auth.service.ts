@@ -1,4 +1,4 @@
-import {CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, Logger, NestInterceptor} from '@nestjs/common';
+import {CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, NestInterceptor} from '@nestjs/common';
 import {Observable} from 'rxjs';
 import {User} from '@common/user-model';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
@@ -28,8 +28,6 @@ interface Auth0UserProfile {
 @Injectable()
 export class ServerAuthService implements NestInterceptor {
 
-  private readonly logger = new Logger(ServerAuthService.name);
-
   constructor(private readonly userDbi: UserDbi,
               private readonly collectionDbi: CollectionDbi,
   ) {
@@ -53,19 +51,21 @@ export class ServerAuthService implements NestInterceptor {
         };
       }
     } else if (user) {
-      this.logger.debug(`ServerAuthService: found user in session: ${user.email}`);
+      console.debug(`ServerAuthService: found user in session: ${user.email}`);
     }
     if (user) {
       if (!isValidId(user.collectionId)) {
+        // First auth service interception in the session: create or populate cached user structure.
         user.collectionId = await this.getUserCollectionId(user.id) || 0;
         if (!isValidId(user.collectionId)) {
           user.collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
           user.mount = nanoid(8);
-          this.logger.log(`Creating new user: ${user.email}`);
+          console.log('Creating new user: ', user);
           await this.userDbi.createUser(user);
         } else {
           user.mount = truthy(await this.userDbi.getUserMount(user.id));
           user.roles = truthy(await this.userDbi.getUserRoles(user.id));
+          console.log('Signing user in: ', user);
         }
       }
       (req.session)[USER_SESSION_KEY] = user;
@@ -104,7 +104,7 @@ export class ServerAuthService implements NestInterceptor {
 
   private async getAuth0UserProfileWithMutex(accessToken: string): Promise<Auth0UserProfile|undefined> {
     const cachedAuth0Profile1 = auth0ProfileByAccessToken.get(accessToken);
-    this.logger.debug(`getAuth0UserProfileWithMutex: Using cached info: ${!!cachedAuth0Profile1}`);
+    console.debug(`getAuth0UserProfileWithMutex: Using cached info: ${!!cachedAuth0Profile1}`);
     if (cachedAuth0Profile1 || cachedAuth0Profile1 === null) {
       return cachedAuth0Profile1 || undefined;
     }
@@ -114,10 +114,10 @@ export class ServerAuthService implements NestInterceptor {
       // Run DCL first.
       const cachedAuth0Profile2 = auth0ProfileByAccessToken.get(accessToken);
       if (cachedAuth0Profile2 !== undefined) {
-        this.logger.debug(`getAuth0UserProfileWithMutex: Found auth0 user profile info in cache after double checking`);
+        console.debug(`getAuth0UserProfileWithMutex: Found auth0 user profile info in cache after double checking`);
         return cachedAuth0Profile2;
       }
-      this.logger.log('getAuth0UserProfileWithMutex: Fetching user profile from auth0 server');
+      console.log('getAuth0UserProfileWithMutex: Fetching user profile from auth0 server');
       const auth0Profile = await auth0.getProfile(accessToken);
       auth0ProfileByAccessToken.set(accessToken, auth0Profile);
       return auth0Profile;
