@@ -161,8 +161,8 @@ export class SongDbi {
     const allSongIdsForScene = await this.db.pool.promise().query<SongRow[]>(sql).then(([rows]) => rows.map(r => r.id));
     assertTruthy(Array.isArray(allSongIdsForScene) && allSongIdsForScene.length > 0);
     const todayStartTime = new Date(new Date().toISOString().substring(0, 10)).getTime();
-
     const songIndex = getRandomValue(todayStartTime) % allSongIdsForScene.length;
+    console.trace(`SongDbi.getSceneSongId: songs: ${allSongIdsForScene.length}, index: ${songIndex}`);
     return allSongIdsForScene[songIndex];
   }
 }

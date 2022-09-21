@@ -195,7 +195,7 @@ export class SongController {
   /** Returns song ID for the scene page. Returns the same result during the calendar day (UTC). */
   @Get('/scene-song-id')
   async getSceneSong(): Promise<number> {
-    console.error('SongController.getSceneSong');
+    console.log('SongController.getSceneSong');
     return await this.songDbi.getSceneSongId();
   }
 }
