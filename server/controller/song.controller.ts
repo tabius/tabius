@@ -1,5 +1,5 @@
 import {SongDbi} from '@server/db/song-dbi.service';
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session} from '@nestjs/common';
 import {Song, SongDetails} from '@common/catalog-model';
 import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
 import {User} from '@common/user-model';
@@ -13,8 +13,6 @@ import {CollectionDbi} from '@server/db/collection-dbi.service';
 @Controller('/api/song')
 export class SongController {
 
-  private readonly logger = new Logger(SongController.name);
-
   constructor(private readonly songDbi: SongDbi,
               private readonly collectionDbi: CollectionDbi,
               private readonly fullTextSearchDbi: FullTextSearchDbi,
@@ -24,7 +22,7 @@ export class SongController {
   /** Returns found songs  by ids. The order of results is not specified. */
   @Get('/by-ids/:ids')
   async getSongs(@Param('ids') idsParam: string): Promise<Song[]> {
-    this.logger.log(`by-ids: ${idsParam}`);
+    console.log('SongController.getSongs', idsParam);
     const ids = paramToArrayOfNumericIds(idsParam);
     return await this.songDbi.getSongs(ids);
   }
@@ -32,7 +30,7 @@ export class SongController {
   /** Returns list of songs in the collection. */
   @Get('/by-collection/:collectionId')
   async getSongsByCollectionId(@Param('collectionId') collectionIdParam: string): Promise<Song[]> {
-    this.logger.log(`by-collection: ${collectionIdParam}`);
+    console.log('SongController.getSongsByCollectionId', collectionIdParam);
     const collectionId = paramToId(collectionIdParam);
     return await this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId);
   }
@@ -40,7 +38,7 @@ export class SongController {
   /** Returns found song details by ids. The order of results is not specified. */
   @Get('/details-by-ids/:ids')
   async getSongDetails(@Param('ids') idsParam: string): Promise<SongDetails[]> {
-    this.logger.log(`details-by-ids: ${idsParam}`);
+    console.log('SongController.getSongDetails', idsParam);
     const ids = paramToArrayOfNumericIds(idsParam);
     return await this.songDbi.getSongsDetails(ids);
   }
@@ -48,7 +46,7 @@ export class SongController {
   /** Returns found songs  by ids. The order of results is not specified. */
   @Post('/by-text')
   async searchSongsByText(@Body() searchRequest: FullTextSongSearchRequest): Promise<FullTextSongSearchResponse> {
-    this.logger.log(`by-text:` + searchRequest.text);
+    console.log('SongController.searchSongsByText', searchRequest.text);
     const results = await this.fullTextSearchDbi.searchForSongsByText(searchRequest.text);
     return {
       results
@@ -58,7 +56,7 @@ export class SongController {
   /** Creates song and returns updated song & details. */
   @Post()
   async create(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
-    this.logger.log('/create-song' + JSON.stringify(request));
+    console.log('SongController.create', request);
     const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
@@ -85,7 +83,7 @@ export class SongController {
   /** Updates song and returns updated song & details. */
   @Put()
   async update(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
-    this.logger.log('/update-song');
+    console.log('SongController.update', request);
     const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
@@ -121,7 +119,7 @@ export class SongController {
   /** Deletes the song and returns updated collection details. */
   @Delete(':songId')
   async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {
-    this.logger.log(`/delete song ${idParam}`);
+    console.log('SongController.delete', idParam);
     const user: User = ServerAuthService.getUserOrFail(session);
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
@@ -142,10 +140,10 @@ export class SongController {
 
   /** Adds song to secondary collection. */
   @Put('add-to-secondary-collection')
-  async addSongToCollection(@Session() session, @Body() request: AddSongToSecondaryCollectionRequest)
+  async addSongToSecondaryCollection(@Session() session, @Body() request: AddSongToSecondaryCollectionRequest)
       : Promise<AddSongToSecondaryCollectionResponse> {
+    console.log('SongController.addSongToCollection', request);
     const {songId, collectionId} = request;
-    this.logger.log(`/add-to-secondary-collection, song ${songId}, collection-id: ${collectionId}`);
     const user: User = ServerAuthService.getUserOrFail(session);
     //todo: check if song exists & is in the listed collection or is in the user collection.
     const collection = await this.collectionDbi.getCollectionById(collectionId);
@@ -168,8 +166,8 @@ export class SongController {
   @Put('remove-from-secondary-collection')
   async removeSongFromSecondaryCollection(@Session() session, @Body() request: RemoveSongFromSecondaryCollectionRequest)
       : Promise<RemoveSongFromSecondaryCollectionResponse> {
+    console.log('SongController.removeSongFromSecondaryCollection', request);
     const {songId, collectionId} = request;
-    this.logger.log(`/remove-from-secondary-collection, song: ${songId}, collection-id: ${collectionId}`);
     const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
@@ -186,7 +184,7 @@ export class SongController {
   /** Returns random song from public collection. */
   @Get(['/random-song-id', '/random-song-id/:collectionId'])
   async getRandomSong(@Param('collectionId') collectionIdParam: string): Promise<number|undefined> {
-    this.logger.log(`random-song-id: ${collectionIdParam || '<catalog>'}`);
+    console.log('SongController.getRandomSong', collectionIdParam);
     if (collectionIdParam) {
       const collectionId = paramToId(collectionIdParam);
       return await this.songDbi.getRandomSongFromCollection(collectionId);
@@ -194,11 +192,10 @@ export class SongController {
     return await this.songDbi.getRandomSongFromPublicCatalog();
   }
 
-  /** Returns song ID for the scene page. Returns the smae result during the calendar day (UTC). */
-  @Get(['/scene-song-id', '/random-song-id/:collectionId'])
+  /** Returns song ID for the scene page. Returns the same result during the calendar day (UTC). */
+  @Get('/scene-song-id')
   async getSceneSong(): Promise<number> {
-    this.logger.log(`scene-song-id`);
+    console.error('SongController.getSceneSong');
     return await this.songDbi.getSceneSongId();
   }
-
 }

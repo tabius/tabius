@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, Put, Session} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session} from '@nestjs/common';
 import {Collection, CollectionDetails} from '@common/catalog-model';
 import {CollectionDbi, generateCollectionMountForUser} from '@server/db/collection-dbi.service';
 import {CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
@@ -11,8 +11,6 @@ import {SongDbi} from '@server/db/song-dbi.service';
 
 @Controller('/api/collection')
 export class CollectionController {
-  private readonly logger = new Logger(CollectionController.name);
-
   constructor(private readonly collectionDbi: CollectionDbi,
               private readonly songDbi: SongDbi) {
   }
@@ -20,14 +18,14 @@ export class CollectionController {
   /** Returns list of all 'listed' collections. */
   @Get('/all-listed')
   getAllListedCollections(): Promise<Collection[]> {
-    this.logger.log('all-listed');
+    console.log('CollectionController.getAllListedCollections');
     return this.collectionDbi.getAllCollections('listed-only');
   }
 
   /** Returns list of all user collections. */
   @Get('/user/:userId')
   async getAllUserCollections(@Param('userId') userId: string): Promise<GetUserCollectionsResponse> {
-    this.logger.log(`user/${userId}`);
+    console.log('CollectionController.getAllUserCollections', userId);
     if (!isValidUserId(userId)) {
       throw new HttpException(`Invalid user id: ${userId}`, HttpStatus.BAD_REQUEST);
     }
@@ -46,7 +44,7 @@ export class CollectionController {
   /** Returns collection by mount. */
   @Get('/by-mount/:mount')
   async getByMount(@Param('mount') mountParam: string): Promise<Collection> {
-    this.logger.log(`by-mount: ${mountParam}`);
+    console.log('CollectionController.getByMount', mountParam);
     const vr = isCollectionMount()(mountParam);
     if (!vr.success) {
       throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
@@ -60,14 +58,14 @@ export class CollectionController {
 
   @Get('/by-ids/:ids')
   getCollectionsByIds(@Param('ids') idsParam: string, @Session() session): Promise<Collection[]> {
-    this.logger.log(`by-ids: ${idsParam}`);
+    console.log('CollectionController.getCollectionsByIds', idsParam);
     const collectionIds = paramToArrayOfNumericIds(idsParam);
     return this.collectionDbi.getCollectionsByIds(collectionIds);
   }
 
   @Get('/details-by-id/:id')
   async getCollectionDetailsById(@Param('id') idParam: string): Promise<CollectionDetails> {
-    this.logger.log(`details-by-id: ${idParam}`);
+    console.log('CollectionController.getCollectionDetailsById', idParam);
     const collectionId = paramToId(idParam);
     const details = await this.collectionDbi.getCollectionDetails(collectionId);
     if (!details) {
@@ -78,7 +76,7 @@ export class CollectionController {
 
   @Post()
   async createListedCollection(@Session() session, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
-    this.logger.log(`create-collection: ${request.name}, ${request.mount}`);
+    console.log('CollectionController.createListedCollection', request);
     const user: User = ServerAuthService.getUserOrFail(session);
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
@@ -94,7 +92,7 @@ export class CollectionController {
     }
     const collectionId = await this.collectionDbi.createListedCollection(request.name, request.mount, request.type);
     if (collectionId <= 0) {
-      this.logger.error(`Failed to create collection: ${request.name}, ${request.mount}`);
+      console.error(`CollectionController.createListedCollection: failed to create collection: ${request.name}, ${request.mount}`);
       throw new HttpException('Failed to create collection', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return {
@@ -105,7 +103,7 @@ export class CollectionController {
 
   @Post('/user')
   async createUserCollection(@Session() session, @Body() request: CreateUserCollectionRequest): Promise<CreateUserCollectionResponse> {
-    this.logger.log(`create secondary user collection: ${request.name}`);
+    console.log('CollectionController.createUserCollection', request);
     const user = ServerAuthService.getUserOrFail(session);
     const vr = validate(request, conformsTo(CreateUserCollectionRequestValidator));
     if (!vr.success) {
@@ -133,7 +131,7 @@ export class CollectionController {
   /** Updates collection and returns updated song & details. */
   @Put('/user')
   async updateUserCollection(@Session() session, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
-    this.logger.log('update user collection');
+    console.log('CollectionController.updateUserCollection', request);
     const user: User = ServerAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.id);
     if (!collection) {
@@ -151,7 +149,7 @@ export class CollectionController {
   /** Deletes collection and returns list of all user collection. */
   @Delete('/user/:collectionId')
   async deleteUserCollection(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
-    this.logger.log(`delete user collection ${idParam}`);
+    console.log('CollectionController.deleteUserCollection', idParam);
     const user: User = ServerAuthService.getUserOrFail(session);
     const collectionId = +idParam;
     if (collectionId === user.collectionId) {

@@ -51,7 +51,7 @@ export class ServerAuthService implements NestInterceptor {
         };
       }
     } else if (user) {
-      console.debug(`ServerAuthService: found user in session: ${user.email}`);
+      console.debug(`ServerAuthService.intercept: Found user in session: ${user.email}`);
     }
     if (user) {
       if (!isValidId(user.collectionId)) {
@@ -60,12 +60,11 @@ export class ServerAuthService implements NestInterceptor {
         if (!isValidId(user.collectionId)) {
           user.collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
           user.mount = nanoid(8);
-          console.log('Creating new user: ', user);
           await this.userDbi.createUser(user);
         } else {
+          console.log('ServerAuthService.intercept: Filling user properties: ', user);
           user.mount = truthy(await this.userDbi.getUserMount(user.id));
           user.roles = truthy(await this.userDbi.getUserRoles(user.id));
-          console.log('Signing user in: ', user);
         }
       }
       (req.session)[USER_SESSION_KEY] = user;
@@ -104,7 +103,7 @@ export class ServerAuthService implements NestInterceptor {
 
   private async getAuth0UserProfileWithMutex(accessToken: string): Promise<Auth0UserProfile|undefined> {
     const cachedAuth0Profile1 = auth0ProfileByAccessToken.get(accessToken);
-    console.debug(`getAuth0UserProfileWithMutex: Using cached info: ${!!cachedAuth0Profile1}`);
+    console.debug(`ServerAuthService.getAuth0UserProfileWithMutex: Using cached info: ${!!cachedAuth0Profile1}`);
     if (cachedAuth0Profile1 || cachedAuth0Profile1 === null) {
       return cachedAuth0Profile1 || undefined;
     }
@@ -114,10 +113,10 @@ export class ServerAuthService implements NestInterceptor {
       // Run DCL first.
       const cachedAuth0Profile2 = auth0ProfileByAccessToken.get(accessToken);
       if (cachedAuth0Profile2 !== undefined) {
-        console.debug(`getAuth0UserProfileWithMutex: Found auth0 user profile info in cache after double checking`);
+        console.debug(`ServerAuthService.getAuth0UserProfileWithMutex: Found auth0 user profile info in cache after double checking`);
         return cachedAuth0Profile2;
       }
-      console.log('getAuth0UserProfileWithMutex: Fetching user profile from auth0 server');
+      console.log('ServerAuthService.getAuth0UserProfileWithMutex: Fetching user profile from auth0 server');
       const auth0Profile = await auth0.getProfile(accessToken);
       auth0ProfileByAccessToken.set(accessToken, auth0Profile);
       return auth0Profile;

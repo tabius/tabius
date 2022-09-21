@@ -1,4 +1,4 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
 import {Collection, CollectionDetails, CollectionType} from '@common/catalog-model';
 import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
@@ -29,8 +29,6 @@ const SELECT_COLLECTION_DETAILS_SQL = 'SELECT id, version, band_ids, listed FROM
 
 @Injectable()
 export class CollectionDbi {
-
-  private readonly logger = new Logger(CollectionDbi.name);
 
   constructor(private readonly db: DbService) {
   }
@@ -65,7 +63,7 @@ export class CollectionDbi {
   }
 
   async createListedCollection(name: string, mount: string, type: CollectionType): Promise<number> {
-    this.logger.debug(`Creating new collection: ${name}, ${mount}, ${type}`);
+    console.log(`CollectionDbi.createListedCollection: ${name}, ${mount}, ${type}`);
     const result = await this.db.pool.promise()
         .query<OkPacket>('INSERT IGNORE INTO collection(name, type, mount, listed) VALUES (?,?,?,?)',
             [name, type, mount, 1])
@@ -78,7 +76,7 @@ export class CollectionDbi {
     if (isValidId(user.collectionId)) {
       throw new Error(`User already has valid primary collection id assigned: ${user.id}, collectionId: ${user.collectionId}`);
     }
-    this.logger.debug(`Creating primary user collection for user: ${user.email}`);
+    console.log(`CollectionDbi.createPrimaryUserCollection: ${user.email}`);
 
     const collectionMount = generateCollectionMountForUser(user, USER_FAV_COLLECTION_SUFFIX);
     const result = await this.db.pool.promise()
@@ -88,7 +86,7 @@ export class CollectionDbi {
 
     let collectionId: number|undefined = result.insertId;
     if (collectionId > 0) {
-      this.logger.debug(`Primary collection was successfully created: ${user.email}, collection-id: ${collectionId}`);
+      console.log(`CollectionDbi.createPrimaryUserCollection: successfully created: ${user.email}, collectionId: ${collectionId}`);
       return result.insertId;
     }
 
@@ -96,13 +94,13 @@ export class CollectionDbi {
         .query<CollectionWithDetailsRow[]>(`${SELECT_COLLECTION_DETAILS_SQL} WHERE user_id  = ?`, [user.id])
         .then(([rows]) => rows.length === 0 ? undefined : rows[0].id);
 
-    this.logger.debug(`Reusing existing collection record: ${user.email}, collection-id: ${collectionId}`);
+    console.log(`CollectionDbi.createPrimaryUserCollection: reusing existing collection record: ${user.email}, collectionId: ${collectionId}`);
     //TODO: handle undefined!
     return collectionId!;
   }
 
   async createSecondaryUserCollection(userId: string, name: string, mount: string): Promise<number> {
-    this.logger.debug(`Creating secondary collection for user: ${userId}, name: ${name}, mount: ${mount}`);
+    console.log(`CollectionDbi.createSecondaryUserCollection: user: ${userId}, name: ${name}, mount: ${mount}`);
     const result = await this.db.pool.promise()
         .query<OkPacket>('INSERT INTO collection(name, type, mount, listed, user_id) VALUES (?,?,?,?,?)',
             [name, CollectionType.Compilation, mount, 0, userId])
@@ -110,7 +108,7 @@ export class CollectionDbi {
 
     let collectionId = result.insertId;
     if (collectionId > 0) {
-      this.logger.debug(`Secondary user collection was successfully created! Name: ${userId}, name: ${name}, collection-id: ${collectionId}`);
+      console.log(`CollectionDbi.createSecondaryUserCollection: collection was successfully created! Name: ${userId}, name: ${name}, collectionId: ${collectionId}`);
     }
     return collectionId;
   }

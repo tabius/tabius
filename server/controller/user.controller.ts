@@ -1,7 +1,7 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Logger, Put, Session} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Put, Session} from '@nestjs/common';
 import {UserDbi} from '@server/db/user-dbi.service';
 import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
-import {LoginResponse, TabiusAjaxResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
+import {LoginResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
 import {conformsTo, validate} from 'typed-validation';
 import {UpdateFavoriteSongKeyValidator, UserSongSettingsValidator} from '@server/util/validators';
 import {ServerAuthService} from '@server/service/server-auth.service';
@@ -9,8 +9,6 @@ import {isEqualByStringify} from '@common/util/misc-utils';
 
 @Controller('/api/user')
 export class UserController {
-
-  private readonly logger = new Logger(UserController.name);
 
   constructor(private readonly userDbi: UserDbi) {
   }
@@ -25,7 +23,7 @@ export class UserController {
         settings: newDefaultUserSettings(),
       };
     }
-    this.logger.log(`User is logged in: ${user.email}`);
+    console.log(`UserController.login: user is logged in: ${user.email}`);
     await this.userDbi.updateOnLogin(user);
     const settings = await this.getUserSettings(user);
     return {
@@ -37,18 +35,18 @@ export class UserController {
   @Get('/settings')
   async getSettings(@Session() session): Promise<UserSettings> {
     const user: User = ServerAuthService.getUserOrFail(session);
-    this.logger.log(`get settings: ${user.email}`);
+    console.log('UserController.getSettings', user.email);
     return await this.getUserSettings(user);
   }
 
   @Put('/settings/song')
-  async setSettings(@Session() session, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
+  async setSongSettings(@Session() session, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
     const vr = validate(songSettings, conformsTo(UserSongSettingsValidator));
     if (!vr.success) {
       throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
     }
     const user: User = ServerAuthService.getUserOrFail(session);
-    this.logger.log(`set settings: ${user.email}, song: ${songSettings.songId}`);
+    console.log('UserController.setSongSettings', user.email, songSettings);
     const settings = await this.getUserSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
     const sameAsDefault = isEqualByStringify(defaultSettings, songSettings);
@@ -65,7 +63,7 @@ export class UserController {
   @Put('/settings/h4Si')
   async setH4Si(@Session() session, @Body() {h4SiFlag}: { h4SiFlag: boolean|undefined }): Promise<UserSettings> {
     const user: User = ServerAuthService.getUserOrFail(session);
-    this.logger.log(`set h4Si: ${user.email}: ${h4SiFlag}`);
+    console.log('UserController.setH4Si', user.email, h4SiFlag);
     const settings = await this.getUserSettings(user);
     const updatedSettings = {...settings, h4Si: !!h4SiFlag};
     await this.userDbi.updateSettings(user.id, updatedSettings);
@@ -76,7 +74,7 @@ export class UserController {
   async setFavKey(@Session() session, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
     validate(request, conformsTo(UpdateFavoriteSongKeyValidator));
     const user: User = ServerAuthService.getUserOrFail(session);
-    this.logger.log(`set favKey: ${user.email}: ${request.key}`);
+    console.log('UserController.setFavKey', user.email, request);
     const settings = await this.getUserSettings(user);
     const updatedSettings = {...settings, favKey: request.key};
     await this.userDbi.updateSettings(user.id, updatedSettings);

@@ -1,8 +1,11 @@
+import {installLogFunctions} from '@server/util/log';
 import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
 import * as session from 'express-session';
 import {SERVER_CONFIG} from '@server/server-config';
+
+installLogFunctions();
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerMainModule);

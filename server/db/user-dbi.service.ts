@@ -1,4 +1,4 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
 import {newDefaultUserSettings, User, UserRole, UserSettings} from '@common/user-model';
 import {RowDataPacket} from 'mysql2';
@@ -6,20 +6,18 @@ import {RowDataPacket} from 'mysql2';
 @Injectable()
 export class UserDbi {
 
-  private readonly logger = new Logger(UserDbi.name);
-
   constructor(private readonly db: DbService) {
   }
 
   async createUser(user: User): Promise<void> {
-    this.logger.debug(`Creating/updating user record: ${user.email}`);
+    console.log('UserDbi.createUser', user);
 
     const now = new Date();
     await this.db.pool.promise()
         .query('INSERT INTO user(id, email, nickname, collection_id, mount, login_date, settings) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE collection_id = ?',
             [user.id, user.email, user.nickname, user.collectionId, user.mount, now, '{}', user.collectionId]);
 
-    this.logger.debug(`User record successfully created/updated: ${user.email}`);
+    console.log('UserDbi.createUser: user record successfully created/updated', user.email);
   }
 
   async updateOnLogin(user: User): Promise<void> {
