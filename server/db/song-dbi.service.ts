@@ -162,7 +162,7 @@ export class SongDbi {
     assertTruthy(Array.isArray(allSongIdsForScene) && allSongIdsForScene.length > 0);
     const todayStartTime = new Date(new Date().toISOString().substring(0, 10)).getTime();
     const songIndex = getRandomValue(todayStartTime) % allSongIdsForScene.length;
-    console.trace(`SongDbi.getSceneSongId: songs: ${allSongIdsForScene.length}, index: ${songIndex}`);
+    console.debug(`SongDbi.getSceneSongId: songs: ${allSongIdsForScene.length}, index: ${songIndex}`);
     return allSongIdsForScene[songIndex];
   }
 }
