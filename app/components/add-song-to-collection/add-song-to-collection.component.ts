@@ -1,12 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy} from '@angular/core';
-import {combineLatest, Subject, Subscription} from 'rxjs';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import {combineLatest, Subject, Subscription, switchMap} from 'rxjs';
 import {UserService} from '@app/services/user.service';
-import {flatMap, map, takeUntil} from 'rxjs/operators';
+import {map, takeUntil} from 'rxjs/operators';
 import {ToastService} from '@app/toast/toast.service';
-import {combineLatest0, getCollectionPageLink, trackById} from '@common/util/misc-utils';
+import {assertTruthy, combineLatest0, getCollectionPageLink, isModerator, isValidId, trackById} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {Collection, Song} from '@common/catalog-model';
+import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {I18N} from '@app/app-i18n';
 
 interface ComponentCollectionData extends Collection {
@@ -20,53 +20,67 @@ interface ComponentCollectionData extends Collection {
   styleUrls: ['./add-song-to-collection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
+export class AddSongToCollectionComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() song!: Song;
+  @Input() songId!: number;
 
   user?: User;
+  song?: Song;
+  songDetails?: SongDetails;
   collections: ComponentCollectionData[] = [];
   showRegistrationPrompt = false;
 
   readonly trackById = trackById;
+  readonly isModerator = isModerator;
   readonly i18n = I18N.addSongToCollection;
 
   private songSubscription?: Subscription;
   private readonly destroyed$ = new Subject();
 
   constructor(
-      private readonly uds: UserService,
-      private readonly cds: CatalogService,
-      private readonly cd: ChangeDetectorRef,
+      private readonly userService: UserService,
+      private readonly catalogService: CatalogService,
+      private readonly cdr: ChangeDetectorRef,
       private readonly toastService: ToastService,
   ) {
   }
 
-  ngOnChanges() {
+  private checkRequiredInputs(): void {
+    assertTruthy(isValidId(this.songId), 'songId is required');
+  }
+
+  ngOnInit(): void {
+    this.checkRequiredInputs();
+  }
+
+  ngOnChanges(): void {
+    this.checkRequiredInputs();
     this.resetComponentState();
-    const user$ = this.uds.getUser();
-    const collections$ = user$.pipe(flatMap(user => !!user ? this.cds.getUserCollections(user.id) : []));
+    const user$ = this.userService.getUser();
+    const collections$ = user$.pipe(switchMap(user => !!user ? this.catalogService.getUserCollections(user.id) : []));
     const isSongInCollection$ = collections$.pipe(
-        flatMap(collections => combineLatest0(collections.map(c => this.cds.getSongIdsByCollection(c.id)))),
+        switchMap(collections => combineLatest0(collections.map(c => this.catalogService.getSongIdsByCollection(c.id)))),
         map((songIdsPerCollection: (number[]|undefined)[]) =>
-            songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.song.id))),
+            songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.songId))),
     );
+    const song$ = this.catalogService.getSongById(this.songId);
+    const songDetails$ = this.catalogService.getSongDetailsById(this.songId);
 
-    this.songSubscription = combineLatest([user$, collections$, isSongInCollection$])
+    this.songSubscription = combineLatest([user$, collections$, isSongInCollection$, song$, songDetails$])
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(([user, collections, isSongInCollection]) => {
+        .subscribe(([user, collections, isSongInCollection, song, songDetails]) => {
           this.user = user;
-          this.collections = collections
-              .map((collection, index) => ({
-                ...collection,
-                isSongInCollection: isSongInCollection[index],
-                // today we have only 1 collection,
-                name: collection.name,
-                routerLink: getCollectionPageLink(collection),
-              }))
-              .filter(c => c.id !== this.song.collectionId); // do not show primary collection in the list
+          this.song = song;
+          this.songDetails = songDetails;
+          this.collections = collections.map((collection, index) => ({
+            ...collection,
+            isSongInCollection: isSongInCollection[index],
+            // Today we have only 1 collection.
+            name: collection.name,
+            routerLink: getCollectionPageLink(collection),
+          })).filter(c => c.id !== song?.collectionId); // do not show primary collection in the list
 
-          this.cd.detectChanges();
+          this.cdr.detectChanges();
         });
   }
 
@@ -76,6 +90,8 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
       this.songSubscription = undefined;
     }
     this.user = undefined;
+    this.song = undefined;
+    this.songDetails = undefined;
     this.collections = [];
     this.showRegistrationPrompt = false;
   }
@@ -84,24 +100,35 @@ export class AddSongToCollectionComponent implements OnChanges, OnDestroy {
     this.destroyed$.next(true);
   }
 
-  async toggleCollection(collection: ComponentCollectionData, checkboxElement: any = {}) {
+  async toggleCollection(collection: ComponentCollectionData, checkboxElement: EventTarget): Promise<void> {
     try {
       if (collection.isSongInCollection) {
-        await this.cds.removeSongFromSecondaryCollection(this.song.id, collection.id);
+        await this.catalogService.removeSongFromSecondaryCollection(this.songId, collection.id);
       } else {
-        await this.cds.addSongToSecondaryCollection(this.song.id, collection.id);
+        await this.catalogService.addSongToSecondaryCollection(this.songId, collection.id);
       }
     } catch (err) {
       console.error(err);
       this.toastService.warning(err, I18N.common.unexpectedError);
-      //todo: this code unsafe, checkbox may not exist!
       const updatedCollection = this.collections.find(c => c.id == collection.id);
-      checkboxElement.checked = updatedCollection && updatedCollection.isSongInCollection;
+      (checkboxElement as HTMLInputElement).checked = !!updatedCollection && updatedCollection.isSongInCollection;
     }
   }
 
   toggleRegistrationPrompt(checkboxElement: any = {}) {
     this.showRegistrationPrompt = !this.showRegistrationPrompt;
     checkboxElement.checked = false;
+  }
+
+  async toggleSceneFlag(checkboxElement: EventTarget): Promise<void> {
+    const checkbox = checkboxElement as HTMLInputElement;
+    try {
+      await this.catalogService.toggleSongSceneFlag(this.songId, checkbox.checked);
+      this.toastService.info(checkbox.checked ? this.i18n.sceneFlagOnMessage : this.i18n.sceneFlagOffMessage);
+    } catch (err: unknown) {
+      console.error(err);
+      this.toastService.warning(err, I18N.common.unexpectedError);
+      checkbox.checked = !!this.songDetails?.scene;
+    }
   }
 }

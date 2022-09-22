@@ -62,11 +62,16 @@ export interface UpdateSongRequest {
   details: SongDetails;
 }
 
+export interface UpdateSongSceneFlagRequest {
+  songId: number;
+  flag: boolean;
+}
+
 export interface UpdateSongResponse {
   song: Song;
   details: SongDetails;
-  /** All songs (owned and secondary) in the primary song collection.*/
-  songs: Song[];
+  /** When provided: all songs (owned and secondary) in the primary song collection.*/
+  songs?: Song[];
 }
 
 export interface DeleteSongResponseCollectionInfo {
@@ -105,7 +110,7 @@ export interface RemoveSongFromSecondaryCollectionRequest {
 }
 
 export interface RemoveSongFromSecondaryCollectionResponse {
-  songIds: number[]
+  songIds: number[];
 }
 
 export const MAX_FULL_TEXT_SEARCH_TITLE_RESULTS = 50;

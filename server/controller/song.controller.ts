@@ -1,11 +1,11 @@
 import {SongDbi} from '@server/db/song-dbi.service';
 import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session} from '@nestjs/common';
 import {Song, SongDetails} from '@common/catalog-model';
-import {NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
+import {isNumericId, NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
 import {User} from '@common/user-model';
-import {conformsTo, validate} from 'typed-validation';
+import {conformsTo, isBoolean, validate} from 'typed-validation';
 import {ServerAuthService} from '@server/service/server-auth.service';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
 import {canManageCollectionContent, isModerator, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
@@ -104,11 +104,31 @@ export class SongController {
     return this.getSongUpdateResponse(request.song.id, request.song.collectionId);
   }
 
-  private async getSongUpdateResponse(songId: number, collectionId: number): Promise<UpdateSongResponse> {
+  /** Updates song's 'scene' flag and returns updated song & details. */
+  @Put('scene')
+  async updateSceneFlag(@Session() session, @Body() request: UpdateSongSceneFlagRequest): Promise<UpdateSongResponse> {
+    console.log('SongController.updateSceneFlag', request);
+    const user: User = ServerAuthService.getUserOrFail(session);
+    if (!isModerator(user)) {
+      throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
+    }
+    const songIdVr = validate(request.songId, isNumericId());
+    if (!songIdVr.success) {
+      throw new HttpException(songIdVr.toString(), HttpStatus.BAD_REQUEST);
+    }
+    const flagVr = validate(request.flag, isBoolean());
+    if (!flagVr.success) {
+      throw new HttpException(flagVr.toString(), HttpStatus.BAD_REQUEST);
+    }
+    await this.songDbi.updateSceneFlag(request.songId, request.flag);
+    return this.getSongUpdateResponse(request.songId, undefined);
+  }
+
+  private async getSongUpdateResponse(songId: number, collectionId: number|undefined): Promise<UpdateSongResponse> {
     const [songFromDb, detailsFromDb, songs] = await Promise.all([
       this.songDbi.getSongs([songId]),
       this.songDbi.getSongsDetails([songId]),
-      this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId),
+      collectionId !== undefined ? this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId) : Promise.resolve(undefined),
     ]);
     if (songFromDb.length === 0 || detailsFromDb.length === 0) {
       throw new HttpException(`Failed to build response ${songId}/${collectionId}`, HttpStatus.BAD_REQUEST);

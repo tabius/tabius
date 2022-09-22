@@ -12,6 +12,13 @@
             </label>
         </div>
 
+        <div class="collection-item scene-item" *ngIf="isModerator(user) && songDetails">
+            <label class="checkbox">
+                <input type="checkbox" [checked]="!!songDetails.scene" (change)="toggleSceneFlag($event.target)">
+                <span>{{i18n.sceneFlagCheckboxName}}</span>
+            </label>
+        </div>
+
         <div *ngIf="!user" class="collection-item">
             <label class="checkbox" title="{{i18n.addToFavoritesCheckboxTitle}}">
                 <input type="checkbox" (change)="toggleRegistrationPrompt($event.target)">

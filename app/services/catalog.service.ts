@@ -4,7 +4,7 @@ import {firstValueFrom, from, Observable, of} from 'rxjs';
 import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-model';
 import {flatMap, map, shareReplay} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse} from '@common/ajax-model';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
 import {combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -182,11 +182,22 @@ export class CatalogService {
     }
   }
 
+  async toggleSongSceneFlag(songId: number, flag: boolean): Promise<void> {
+    const request: UpdateSongSceneFlagRequest = {songId, flag};
+    try {
+      const response = await firstValueFrom(this.httpClient.put<UpdateSongResponse>('/api/song/scene', request));
+      await this.processSongUpdateResponse(response);
+    } catch (httpError: unknown) {
+      console.error(httpError);
+      throw new Error(I18N.common.serverRequestError);
+    }
+  }
+
   private async processSongUpdateResponse(response: UpdateSongResponse): Promise<void> {
     await Promise.all([
       this.store.set<Song>(getSongKey(response.song.id), response.song, checkUpdateByVersion),
       this.store.set<SongDetails>(getSongDetailsKey(response.details.id), response.details, checkUpdateByVersion),
-      this.updateCollectionSongsOnFetch(response.song.collectionId, response.songs, true),
+      response.songs ? this.updateCollectionSongsOnFetch(response.song.collectionId, response.songs, true) : Promise.resolve(),
     ]);
   }
 
@@ -261,7 +272,6 @@ export class CatalogService {
 
     ]);
   }
-
 
   getUserCollections(userId?: string): Observable<Collection[]> {
     const collectionIds$ = this.getUserCollectionIds(userId);

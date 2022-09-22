@@ -12,6 +12,10 @@ h3 {
     margin-bottom: 2px;
     line-height: $mobile-lists-line-height;
 
+    &.scene-item {
+      color: #7E5100;
+    }
+
     label {
       cursor: pointer;
 

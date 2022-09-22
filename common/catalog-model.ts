@@ -29,13 +29,13 @@ export const MAX_COLLECTION_NAME_LENGTH = 64;
 
 export interface Collection extends WithId, Versioned {
   /** Name of the collection. For person it is '<Last Name> <First Name>'. */
-  readonly name: string;
+  name: string;
   /** Mount part of the collection page. Unique for all collections. */
-  readonly mount: string;
+  mount: string;
   /** Type of the collection: Band, Person, Compilation. */
-  readonly type: CollectionType;
+  type: CollectionType;
   /** Collection owner. Undefined for the public catalog collections. */
-  readonly userId?: string;
+  userId?: string;
 }
 
 export interface CollectionDetails extends WithId, Versioned {
@@ -53,11 +53,11 @@ export const MAX_SONG_MOUNT_LENGTH = 64;
 
 export interface Song extends WithId, Versioned {
   /** Mount part of the song page. Unique for all songs per collection. */
-  readonly mount: string;
+  mount: string;
   /** Title of the song. */
-  readonly title: string;
+  title: string;
   /** Collection. */
-  readonly collectionId: number;
+  collectionId: number;
 }
 
 export const MIN_SONG_CONTENT_LENGTH = 10;
@@ -65,7 +65,9 @@ export const MAX_SONG_CONTENT_LENGTH = 10000;
 
 export interface SongDetails extends WithId, Versioned {
   /** Text of the song with tabs & chords. */
-  readonly content: string;
+  content: string;
   /** List of media links: Youtube, etc...*/
-  readonly mediaLinks: string[];
+  mediaLinks: string[];
+  /** If 'true' the song is included into the 'Song Of The Day' list shown on the Scene page. */
+  scene?: boolean;
 }

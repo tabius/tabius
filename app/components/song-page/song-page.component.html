@@ -22,7 +22,7 @@
         <gt-song [songId]="song.id" [activeCollectionId]="activeCollection?.id"></gt-song>
 
         <div class="user-controls">
-            <gt-add-song-to-collection *ngIf="isBrowser" [song]="song"></gt-add-song-to-collection>
+            <gt-add-song-to-collection *ngIf="isBrowser" [songId]="song.id"></gt-add-song-to-collection>
         </div>
 
         <div *ngIf="editorIsOpen" class="edit-song-block">

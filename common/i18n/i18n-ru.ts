@@ -39,6 +39,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     gotoCollectionTitle: 'Перейти на страницу коллекции',
     addToFavoritesCheckboxTitle: 'Добавить песню в коллекцию',
     favorites: FAVORITES_COLLECTION_NAME,
+    sceneFlagCheckboxName: 'Сцена',
+    sceneFlagOnMessage: 'Песня добавлена на Сцену',
+    sceneFlagOffMessage: 'Песня убрана со Сцены',
   },
   catalogPage: {
     title: 'Каталог',

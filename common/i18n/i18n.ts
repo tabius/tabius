@@ -44,6 +44,9 @@ export interface I18n {
     gotoCollectionTitle: string;
     addToFavoritesCheckboxTitle: string;
     favorites: string;
+    sceneFlagCheckboxName: string;
+    sceneFlagOnMessage: string;
+    sceneFlagOffMessage: string;
   };
   catalogPage: {
     title: string;

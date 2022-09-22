@@ -21,7 +21,7 @@ interface IdRow extends RowDataPacket {
 }
 
 const SONG_FIELDS = 's.id, s.collection_id, s.mount, s.title, s.version';
-const SONG_DETAILS_FIELDS = `s.id, s.content, s.media_links, s.version`;
+const SONG_DETAILS_FIELDS = `s.id, s.content, s.media_links, s.version, s.scene`;
 const SELECT_SONG_SQL = `SELECT ${SONG_FIELDS} FROM song s`;
 const SELECT_SONG_DETAILS_SQL = `SELECT ${SONG_DETAILS_FIELDS} FROM song s`;
 
@@ -64,7 +64,6 @@ export class SongDbi {
         .then(([rows]) => rows.map(row2Song));
   }
 
-
   async create(song: Song, details: SongDetails): Promise<number> {
     const con$$ = this.db.pool.promise();
     const mount = await generateUniqueSongMount(song, con$$);
@@ -82,6 +81,11 @@ export class SongDbi {
     await this.db.pool.promise()
         .query('UPDATE song SET title = ?, mount = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
             [song.title, song.mount, details.content, packMediaLinks(details.mediaLinks), details.id]);
+  }
+
+  async updateSceneFlag(songId: number, flag: boolean): Promise<void> {
+    await this.db.pool.promise()
+        .query('UPDATE song SET scene = ?, version = version + 1 WHERE id = ?', [flag, songId]);
   }
 
   async delete(songId: number): Promise<void> {
@@ -161,8 +165,9 @@ export class SongDbi {
     const allSongIdsForScene = await this.db.pool.promise().query<SongRow[]>(sql).then(([rows]) => rows.map(r => r.id));
     assertTruthy(Array.isArray(allSongIdsForScene) && allSongIdsForScene.length > 0);
     const todayStartTime = new Date(new Date().toISOString().substring(0, 10)).getTime();
-    const songIndex = getRandomValue(todayStartTime) % allSongIdsForScene.length;
-    console.debug(`SongDbi.getSceneSongId: songs: ${allSongIdsForScene.length}, index: ${songIndex}`);
+    const randomValue = getRandomValue(todayStartTime);
+    const songIndex = randomValue % allSongIdsForScene.length;
+    console.debug(`SongDbi.getSceneSongId: songs: ${allSongIdsForScene.length}, index: ${songIndex}, random: ${randomValue}`);
     return allSongIdsForScene[songIndex];
   }
 }
@@ -187,12 +192,16 @@ function row2Song(row: SongRow): Song {
 }
 
 function row2SongDetails(row: SongRow): SongDetails {
-  return {
+  const details: SongDetails = {
     id: row.id,
     content: row.content,
     mediaLinks: unpackLinks(row.media_links),
     version: row.version,
   };
+  if (!!row.scene) {
+    details.scene = true;
+  }
+  return details;
 }
 
 /** Packs media links into DB representation. */
