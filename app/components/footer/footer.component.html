@@ -29,8 +29,12 @@
 
 <div class="footer-menu">
     <div class="footer-menu-line" *ngIf="!isMainMenuDrawerOpen">
-        <a *ngIf="menuStack.length === 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white">
+        <a *ngIf="menuStack.length === 0 && actions.length > 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white">
             <gt-svg-icon icon="menu"></gt-svg-icon>
+        </a>
+        <a *ngIf="menuStack.length === 0 && actions.length === 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white main-menu-button">
+            <gt-svg-icon icon="menu"></gt-svg-icon>
+            <div class="menu-button-text">{{i18n.menu}}</div>
         </a>
         <a *ngFor="let action of actions" (click)="activateAction(action, $event)" class="btn btn-flat-white">
             <div class="menu-item-content">

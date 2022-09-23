@@ -83,10 +83,11 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     studioLinkTitle: 'Перейти к списку своих коллекций',
   },
   footer: {
-    twitterLinkTitle: 'Последние новости сервиса в Твиттер.',
+    closeMenu: 'ЗАКРЫТЬ МЕНЮ',
     githubLinkTitle: 'Текущая версия приложения.\nПосмотреть последние изменения',
     homePageLinkTitle: 'Перейти на главную страницу сайта.',
-    closeMenu: 'ЗАКРЫТЬ МЕНЮ',
+    menu: 'меню',
+    twitterLinkTitle: 'Последние новости сервиса в Твиттер.',
   },
   collectionEditor: {
     header: 'Добавление коллекции',

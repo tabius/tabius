@@ -82,10 +82,11 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     studioLinkTitle: 'Go to personal collections',
   },
   footer: {
-    twitterLinkTitle: 'Read the latest site news in Twitter.',
+    closeMenu: 'CLOSE',
     githubLinkTitle: 'Current version.\nClick to see the latest changes.',
     homePageLinkTitle: 'Home',
-    closeMenu: 'CLOSE'
+    menu: 'menu',
+    twitterLinkTitle: 'Read the latest site news in Twitter.',
   },
   collectionEditor: {
     header: 'Add collection',

@@ -85,10 +85,11 @@ export interface I18n {
     studioLinkTitle: string,
   };
   footer: {
-    twitterLinkTitle: string;
+    closeMenu: string;
     githubLinkTitle: string;
     homePageLinkTitle: string;
-    closeMenu: string;
+    menu: string;
+    twitterLinkTitle: string;
   };
   collectionEditor: {
     header: string;

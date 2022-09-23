@@ -85,7 +85,7 @@
   height: $footer-menu-height;
   width: 100%;
   background-color: white;
-  box-shadow: 0 -2px 6px -6px black;
+  box-shadow: 0 -1px 6px -6px black;
 
   .footer-menu-line {
     display: flex;
@@ -99,6 +99,26 @@
 
       &.btn-flat-white:focus, &.btn-flat-white:hover {
         background-color: white;
+      }
+
+      &.main-menu-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        gap: 12px;
+        // Same as other borders.
+        border-bottom-color: rgba(0, 0, 0, 0.1);
+
+        gt-svg-icon {
+          opacity: 0.95; // Align contrast with the text.
+        }
+
+        .menu-button-text {
+          font-size: 16px;
+          letter-spacing: 2px;
+          padding-bottom: 3px;;
+        }
       }
 
       &.btn-level-up {
