@@ -29,7 +29,7 @@ export class ModeratorPromptComponent implements AfterViewInit {
   }
 
   @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
+  handleKeyboardEvent(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.close();
     }

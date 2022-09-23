@@ -58,6 +58,7 @@ export class CollectionController {
 
   @Get('/by-ids/:ids')
   getCollectionsByIds(@Param('ids') idsParam: string, @Session() session): Promise<Collection[]> {
+    // TODO: check permissions?
     console.log('CollectionController.getCollectionsByIds', idsParam);
     const collectionIds = paramToArrayOfNumericIds(idsParam);
     return this.collectionDbi.getCollectionsByIds(collectionIds);

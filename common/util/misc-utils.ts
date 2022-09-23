@@ -212,7 +212,7 @@ export function isInputEvent(event: KeyboardEvent): boolean {
 /** Returns true if the element is input element: <textarea> or <input>. */
 export function isElementToIgnoreKeyEvent(element: HTMLElement|undefined): boolean {
   const tagName = element ? element.tagName.toLowerCase() : '';
-  return tagName === 'textarea' || (tagName === 'input' && element!.getAttribute('type') !== 'checkbox');
+  return tagName === 'textarea' || (tagName === 'input' && element?.getAttribute('type') !== 'checkbox');
 }
 
 const ALPHA_EN = /^[A-Z]+$/i;
@@ -265,7 +265,7 @@ export function getUserAgentFromRequest(request: any): string|undefined {
   return request && request.headers ? request.headers ['user-agent'] : undefined;
 }
 
-export function nothingThen() {
+export function nothingThen(): void {
 }
 
 

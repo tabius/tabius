@@ -27,7 +27,7 @@ export function parseChords(text: string): ChordLocation[] {
 export function parseChordsLine(text: string, startIdx?: number, endIdx?: number): ChordLocation[] {
   const minIdx = startIdx === undefined ? 0 : startIdx;
   let idx = minIdx;
-  let chordLocations: ChordLocation[] = [];
+  const chordLocations: Array<ChordLocation> = [];
   let maxIdx = endIdx;
   if (maxIdx === undefined) {
     const lineSepIdx = text.indexOf('\n');
@@ -125,7 +125,7 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
   const chord: Chord = {tone, type: 'maj', bassTone: undefined};
   let parsedType: ChordType|undefined = undefined;
   idx += tone.length;
-  let maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
+  const maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
 
   // Loop until inside of the chord. Skip parts in brackets.
   while (idx < maxIdx) {

@@ -27,7 +27,7 @@ interface SongImport {
   mount: string;
 }
 
-async function main() {
+async function main(): Promise<void> {
   const dir = getCollectionDir();
 
   const collection = await loadCollection(dir);

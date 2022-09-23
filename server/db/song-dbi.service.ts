@@ -198,7 +198,7 @@ function row2SongDetails(row: SongRow): SongDetails {
     mediaLinks: unpackLinks(row.media_links),
     version: row.version,
   };
-  if (!!row.scene) {
+  if (row.scene) {
     details.scene = true;
   }
   return details;
@@ -221,7 +221,7 @@ async function getAllSingMountsInCollection(con$$: any, song: Song): Promise<str
 async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> {
   const allMounts = await getAllSingMountsInCollection(con$$, song);
   const allMountsSet = new Set<string>(allMounts);
-  let baseMount = song.mount.length > 0 ? song.mount : getTranslitLowerCase(song.title);
+  const baseMount = song.mount.length > 0 ? song.mount : getTranslitLowerCase(song.title);
   if (baseMount.length === 0) {
     throw new Error(`Failed to generate song mount for song: ${song.title}`);
   }

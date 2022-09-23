@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
-import {combineLatest, Subject, Subscription, switchMap} from 'rxjs';
+import {combineLatest, Observable, Subject, Subscription, switchMap} from 'rxjs';
 import {UserService} from '@app/services/user.service';
 import {map, takeUntil} from 'rxjs/operators';
 import {ToastService} from '@app/toast/toast.service';
@@ -57,8 +57,8 @@ export class AddSongToCollectionComponent implements OnInit, OnChanges, OnDestro
     this.checkRequiredInputs();
     this.resetComponentState();
     const user$ = this.userService.getUser();
-    const collections$ = user$.pipe(switchMap(user => !!user ? this.catalogService.getUserCollections(user.id) : []));
-    const isSongInCollection$ = collections$.pipe(
+    const collections$ = user$.pipe(switchMap(user => user ? this.catalogService.getUserCollections(user.id) : []));
+    const isSongInCollection$: Observable<boolean[]> = collections$.pipe(
         switchMap(collections => combineLatest0(collections.map(c => this.catalogService.getSongIdsByCollection(c.id)))),
         map((songIdsPerCollection: (number[]|undefined)[]) =>
             songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.songId))),
@@ -96,7 +96,7 @@ export class AddSongToCollectionComponent implements OnInit, OnChanges, OnDestro
     this.showRegistrationPrompt = false;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroyed$.next(true);
   }
 
@@ -115,9 +115,9 @@ export class AddSongToCollectionComponent implements OnInit, OnChanges, OnDestro
     }
   }
 
-  toggleRegistrationPrompt(checkboxElement: any = {}) {
+  toggleRegistrationPrompt(checkboxElement: EventTarget): void {
     this.showRegistrationPrompt = !this.showRegistrationPrompt;
-    checkboxElement.checked = false;
+    (checkboxElement as HTMLInputElement).checked = false;
   }
 
   async toggleSceneFlag(checkboxElement: EventTarget): Promise<void> {

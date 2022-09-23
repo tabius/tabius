@@ -15,7 +15,6 @@ export function app() {
 
   // Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
   server.engine('html',
-      // @ts-ignore
       ngExpressEngine({
         bootstrap: AppServerModule,
       })

@@ -25,19 +25,19 @@ export class BrowserStateService {
 
   private readonly printMode$ = new BehaviorSubject<boolean>(false);
 
-  get isWideScreenMode$() {
+  get isWideScreenMode$(): Observable<boolean> {
     return this.wideScreenMode$ as Observable<boolean>;
   }
 
-  get isSmallScreenMode$() {
+  get isSmallScreenMode$(): Observable<boolean> {
     return this.isWideScreenMode$.pipe(map(flag => !flag));
   }
 
-  get isWideScreenMode() {
+  get isWideScreenMode(): boolean {
     return this.wideScreenMode$.getValue();
   }
 
-  get isSmallScreenMode() {
+  get isSmallScreenMode(): boolean {
     return !this.isWideScreenMode;
   }
 
@@ -46,6 +46,7 @@ export class BrowserStateService {
   private noSleep?: NoSleep;
 
   constructor(
+      // eslint-disable-next-line @typescript-eslint/ban-types
       @Inject(PLATFORM_ID) readonly platformId: Object,
       router: Router,
       toaster: ToastService,

@@ -25,13 +25,13 @@ describe('Key detector', () => {
 
     it('should return valid distance for all variants', () => {
       let idx1 = 0;
-      for (let toneVariant1 of KEY_VARIANTS) {
+      for (const toneVariant1 of KEY_VARIANTS) {
         idx1++;
-        for (let tone1 of toneVariant1) {
+        for (const tone1 of toneVariant1) {
           let idx2 = 0;
-          for (let toneVariant2 of KEY_VARIANTS) {
+          for (const toneVariant2 of KEY_VARIANTS) {
             idx2++;
-            for (let tone2 of toneVariant2) {
+            for (const tone2 of toneVariant2) {
               expect(getTransposeDistance(tone1, tone2)).toBe(idx2 - idx1);
             }
           }
@@ -49,7 +49,7 @@ describe('Key detector', () => {
     it('should detect valid tones in simple case', () => {
       for (const key of CHORD_TONES) {
         const isFlat = checkToneIsFlat(key);
-        let i = getTransposeDistance('A', key);
+        const i = getTransposeDistance('A', key);
         expect(detectKeyAsMinor(c('Am', i, isFlat))).toBe(key);
         expect(detectKeyAsMinor(c('Am C', i, isFlat))).toBe(key);
         expect(detectKeyAsMinor(c('Am Dm E', i, isFlat))).toBe(key);

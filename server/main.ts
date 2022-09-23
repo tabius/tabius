@@ -7,7 +7,7 @@ import {SERVER_CONFIG} from '@server/server-config';
 
 installLogFunctions();
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(ServerMainModule);
   app.enableCors(buildCorsOptions());
   app.use(session({

@@ -21,7 +21,7 @@ function upgradeIndexDb(db: IDBDatabase, event: IDBVersionChangeEvent): void {
   }
   for (const storeName of [USER_STORE_NAME, CATALOG_STORE_NAME]) {
     const request = db.transaction(storeName).objectStore(storeName).clear();
-    request.onerror = err => {
+    request.onerror = (err): void => {
       console.error(`IndexDb.clean error in ${storeName}!`, err);
       throw new Error(`IndexDb.clean error in ${storeName}!`);
     };

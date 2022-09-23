@@ -4,7 +4,7 @@ export type ToastType = 'warning'|'info'|'success';
 
 export class Toast {
   type: ToastType = 'warning';
-  text: string = '';
+  text = '';
 }
 
 export class ToastRef {

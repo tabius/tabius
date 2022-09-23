@@ -43,7 +43,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
   }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
     const user$ = this.uds.getUser();
     const allUserCollectionIds$ = user$.pipe(flatMap(user => this.cds.getUserCollectionIds(user && user.id)));
     const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
@@ -98,7 +98,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
     this.destroyed$.next(true);
   }
 
-  updateMeta() {
+  updateMeta(): void {
     updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 

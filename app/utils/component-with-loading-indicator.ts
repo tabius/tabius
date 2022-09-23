@@ -15,7 +15,7 @@ export class ComponentWithLoadingIndicator {
   readonly isBrowser: boolean;
   readonly cd: ChangeDetectorRef;
 
-  get loaded() {
+  get loaded(): boolean {
     return this._loaded;
   }
 
@@ -36,7 +36,7 @@ export class ComponentWithLoadingIndicator {
           take(1),
           takeUntil(merge(this.loaded$, this.destroyed$)),
       ).subscribe(() => {
-        if (!this.loaded) { 
+        if (!this.loaded) {
           this.isLoadingIndicatorVisible$.next(true);
         }
       });

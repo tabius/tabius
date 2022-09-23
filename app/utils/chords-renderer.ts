@@ -126,9 +126,9 @@ export function renderChords(text: string, options: ChordRenderingOptions = {}):
   }
   let result = '';
   let prevChordEndIdx = 0;
-  let linesWithStrippedChords = new Set<number>();
+  const linesWithStrippedChords = new Set<number>();
   let currentLineNum = 0;
-  for (let chordLocation of chordLocations) {
+  for (const chordLocation of chordLocations) {
     if (prevChordEndIdx < chordLocation.startIdx) {
       const dText = text.substring(prevChordEndIdx, chordLocation.startIdx);
       result += dText;

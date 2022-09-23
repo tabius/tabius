@@ -56,18 +56,18 @@ export class CollectionEditorComponent implements OnInit {
   }
 
 
-  create() {
+  create(): void {
     this.createImpl().catch(err => {
       console.error(err);
       this.toastService.warning(I18N.common.error(err));
     });
   }
 
-  close() {
+  close(): void {
     this.closeRequest.emit();
   }
 
-  onNameChanged() {
+  onNameChanged(): void {
     this.mount = getTranslitLowerCase(this.name);
   }
 

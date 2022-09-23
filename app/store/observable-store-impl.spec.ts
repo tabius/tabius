@@ -14,32 +14,27 @@ class NoOpAsyncStore implements AsyncStore {
     return Promise.resolve();
   }
 
-  // @ts-ignore
-  get<T = unknown>(key: string): Promise<T|undefined> {
+  get<T = unknown>(): Promise<T|undefined> {
     this.calls.push('get');
     return Promise.resolve(undefined);
   }
 
-  // @ts-ignore
-  getAll<T = unknown>(keys: ReadonlyArray<string>): Promise<(T|undefined)[]> {
+  getAll<T = unknown>(): Promise<(T|undefined)[]> {
     this.calls.push('getAll');
     return Promise.resolve([]);
   }
 
-  // @ts-ignore
-  list<T = unknown>(keyPrefix?: string): Promise<KV<T>[]> {
+  list(): Promise<KV<T>[]> {
     this.calls.push('list');
     return Promise.resolve([]);
   }
 
-  // @ts-ignore
-  set<T = unknown>(key: string, value: T|undefined): Promise<void> {
+  set(): Promise<void> {
     this.calls.push('set');
     return Promise.resolve();
   }
 
-  // @ts-ignore
-  setAll<T = unknown>(map: { [p: string]: T }): Promise<void> {
+  setAll(): Promise<void> {
     this.calls.push('setAll');
     return Promise.resolve();
   }

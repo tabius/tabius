@@ -40,7 +40,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
     super(injector);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     combineLatest([
       this.uds.getUser(),
       this.uds.getUserDeviceSettings(),
@@ -78,7 +78,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
     this.updateSongFontSize(getDefaultUserSongFontSize());
   }
 
-  private updateSongFontSize(songFontSize: number) {
+  private updateSongFontSize(songFontSize: number): void {
     this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize});
   }
 

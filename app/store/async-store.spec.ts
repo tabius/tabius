@@ -23,7 +23,7 @@ describe('Async Store Adapter', () => {
 
   describe('should support "get" and "set"', () => {
     async function test(store: AsyncStore): Promise<void> {
-      let key = 'k1';
+      const key = 'k1';
       const value1 = {a: 1};
       await store.set(key, value1);
       let result = await store.get(key);

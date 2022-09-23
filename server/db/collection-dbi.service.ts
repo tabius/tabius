@@ -106,7 +106,7 @@ export class CollectionDbi {
             [name, CollectionType.Compilation, mount, 0, userId])
         .then(([result]) => result);
 
-    let collectionId = result.insertId;
+    const collectionId = result.insertId;
     if (collectionId > 0) {
       console.log(`CollectionDbi.createSecondaryUserCollection: collection was successfully created! Name: ${userId}, name: ${name}, collectionId: ${collectionId}`);
     }

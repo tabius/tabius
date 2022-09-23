@@ -40,11 +40,11 @@ export function getYoutubeVideoIdFromLink(origUrl: string|undefined): string|und
       return undefined;
     }
   }
-  let lcResult = match[groupNumber];
+  const lcResult = match[groupNumber];
   if (!isValidYoutubeId(lcResult)) {
     return undefined;
   }
-  let idx = lcUrl.indexOf(lcResult);
+  const idx = lcUrl.indexOf(lcResult);
   return url.substring(yIdx + idx, yIdx + idx + lcResult.length);
 }
 

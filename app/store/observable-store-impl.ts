@@ -2,6 +2,7 @@ import {firstValueFrom, from, Observable, of, ReplaySubject} from 'rxjs';
 import {AsyncStore, KV} from './async-store';
 import {catchError, shareReplay, switchMap, take, tap} from 'rxjs/operators';
 import {CheckUpdateFn, FetchFn, ObservableStore, RefreshMode, skipUpdateCheck} from './observable-store';
+import {truthy} from '@common/util/misc-utils';
 
 export interface TransferStateAdapter {
   /**
@@ -206,7 +207,7 @@ export class ObservableStoreImpl implements ObservableStore {
       }
       await setImplPromise$$;
     } finally {
-      const queue = this.setOpsQueue.get(key)!;
+      const queue = truthy(this.setOpsQueue.get(key));
       if (queue.length === 1) {
         this.setOpsQueue.delete(key);
       } else {

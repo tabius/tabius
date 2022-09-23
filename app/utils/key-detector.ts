@@ -8,7 +8,7 @@ export const KEY_VARIANTS = <const>[['A'], ['A#', 'Bb'], ['B'], ['C'], ['C#', 'D
 /** Match score per tone. */
 interface ChordToneMatch {
   tone: ChordTone;
-  score: number
+  score: number;
 }
 
 /** Key representation used by key-detector algorithm. */

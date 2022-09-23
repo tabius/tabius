@@ -7,7 +7,7 @@ import {combineLatest, Observable} from 'rxjs';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, sortSongsAlphabetically, truthy} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
@@ -71,7 +71,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     super(injector);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.helpService.setActiveHelpPage('collection');
 
     const collectionMount = this.route.snapshot.params[PARAM_COLLECTION_MOUNT];
@@ -154,8 +154,8 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     this.cd.detectChanges();
     if (editResult.type === 'created') {
       // go to the newly created song.
-      const songMount = editResult.song!.mount;
-      const collectionMount = this.collectionViewModel!.collection.mount;
+      const songMount = truthy(editResult.song).mount;
+      const collectionMount = truthy(this.collectionViewModel).collection.mount;
       this.router.navigate([getSongPageLink(collectionMount, songMount)]);
     }
   }

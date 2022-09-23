@@ -22,7 +22,7 @@ export function updatePageMetadata(title: Title, meta: Meta, page: DeepReadonly<
 
   meta.addTag({name: 'keywords', content: page.keywords.join(',')});
 
-  if (!!page.image) {
+  if (page.image) {
     // meta.addTag({name: 'image_src', content: page.image});
     meta.addTag({name: 'og:image', content: page.image});
     meta.addTag({name: 'twitter:image', content: page.image});
