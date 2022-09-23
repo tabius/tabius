@@ -10,7 +10,7 @@
     "strictPropertyInitialization": true,
     "strictNullChecks": true,
     "downlevelIteration": true,
-    "target": "es5",
+    "target": "ES2015",
     "baseUrl": "./",
     "paths": {
       "@app/*": ["./app/*"],

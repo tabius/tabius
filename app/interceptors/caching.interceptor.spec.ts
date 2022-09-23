@@ -44,7 +44,7 @@ describe(`CachingInterceptor`, () => {
     responseInterceptor.reset();
   });
 
-  it('does not deduplicate different GET requests', async done => {
+  it('does not deduplicate different GET requests', async () => {
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
@@ -57,11 +57,9 @@ describe(`CachingInterceptor`, () => {
     expect(results[0]).toBeDefined();
     expect(results[0]).not.toBe(null);
     expect(results[0]).not.toBe(results[1]);
-
-    done();
   });
 
-  it('deduplicates simultaneous GET requests with the same Url', async done => {
+  it('deduplicates simultaneous GET requests with the same Url', async () => {
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
@@ -76,11 +74,9 @@ describe(`CachingInterceptor`, () => {
     expect(results[0]).not.toBe(null);
     expect(results[0]).toBe(results[1]);
     expect(results[1]).toBe(results[2]);
-
-    done();
   });
 
-  it('runs new requests after successful de-dup', async done => {
+  it('runs new requests after successful de-dup', async () => {
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
 
@@ -104,8 +100,6 @@ describe(`CachingInterceptor`, () => {
     expect(results2.length).toBe(2);
 
     expect(results1[0]).not.toBe(results2[0]);
-
-    done();
   });
 
 });

@@ -1,8 +1,8 @@
 import {ObservableStoreImpl} from './observable-store-impl';
 import {AsyncStore, KV} from './async-store';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from './observable-store';
-import {delay, switchMap, take} from 'rxjs/operators';
-import {of, ReplaySubject} from 'rxjs';
+import {delay, switchMap} from 'rxjs/operators';
+import {firstValueFrom, of, ReplaySubject} from 'rxjs';
 import {checkUpdateByStringify} from './update-functions';
 
 /** No-Op impl used in tests. */
@@ -14,27 +14,27 @@ class NoOpAsyncStore implements AsyncStore {
     return Promise.resolve();
   }
 
-  get<T = unknown>(): Promise<T|undefined> {
+  get<T = unknown>(key: string): Promise<T|undefined> {
     this.calls.push('get');
     return Promise.resolve(undefined);
   }
 
-  getAll<T = unknown>(): Promise<(T|undefined)[]> {
+  getAll<T = unknown>(keys: ReadonlyArray<string>): Promise<(T|undefined)[]> {
     this.calls.push('getAll');
     return Promise.resolve([]);
   }
 
-  list(): Promise<KV<T>[]> {
+  list<T = unknown>(keyPrefix?: string): Promise<KV<T>[]> {
     this.calls.push('list');
     return Promise.resolve([]);
   }
 
-  set(): Promise<void> {
+  set<T = unknown>(key: string, value: T|undefined): Promise<void> {
     this.calls.push('set');
     return Promise.resolve();
   }
 
-  setAll(): Promise<void> {
+  setAll<T = unknown>(map: { [p: string]: T }): Promise<void> {
     this.calls.push('setAll');
     return Promise.resolve();
   }
@@ -53,7 +53,7 @@ function newObservableStoreForTest(asyncStore = new NoOpAsyncStore()): Observabl
 
 describe('ObservableStore', () => {
 
-  it('fetches and sets value to adapter if it was missed', async (done) => {
+  it('fetches and sets value to adapter if it was missed', async () => {
     let setKey = '';
     let setValue: any = undefined;
 
@@ -69,16 +69,14 @@ describe('ObservableStore', () => {
 
     const getKey = 'key';
     const fetchedValue = 'fetched';
-    const returnValue = await store.get<string>(getKey, () => of(fetchedValue), RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    const returnValue = await firstValueFrom(store.get<string>(getKey, () => of(fetchedValue), RefreshMode.DoNotRefresh, skipUpdateCheck));
 
     expect(returnValue).toBe(fetchedValue);
     expect(setKey).toBe(getKey);
     expect(setValue).toBe(fetchedValue);
-
-    done();
   });
 
-  it('should respect RefreshMode.RefreshOncePerSession', async (done) => {
+  it('should respect RefreshMode.RefreshOncePerSession', async () => {
     let nFetchesCalled = 0;
     const fetchFn = () => {
       nFetchesCalled++;
@@ -86,14 +84,13 @@ describe('ObservableStore', () => {
     };
     const store = newObservableStoreForTest();
     const key = 'Key';
-    const v1 = await store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
-    const v2 = await store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
+    const v1 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    const v2 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
     expect(v1).toBe(v2);
     expect(nFetchesCalled).toBe(1);
-    done();
   });
 
-  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel', async (done) => {
+  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel', async () => {
     let nFetchesCalled = 0;
     const key = 'Key';
     const value = 'Value';
@@ -103,16 +100,15 @@ describe('ObservableStore', () => {
       return resolver$.pipe(switchMap(() => of(value)));
     };
     const store = newObservableStoreForTest();
-    const v1$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
-    const v2$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
-    resolver$.next();
+    const v1$$ = firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    const v2$$ = firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    resolver$.next(true);
     const res = await Promise.all([v1$$, v2$$]);
     expect(nFetchesCalled).toBe(1);
     expect(res).toEqual([value, value]);
-    done();
   });
 
-  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel with delay', async (done) => {
+  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel with delay', async () => {
     let nFetchesCalled = 0;
     const key = 'Key';
     const value = 'Value';
@@ -122,16 +118,15 @@ describe('ObservableStore', () => {
       return resolver$.pipe(delay(100), switchMap(() => of(value)));
     };
     const store = newObservableStoreForTest();
-    const v1$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
-    const v2$$ = store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
-    resolver$.next();
+    const v1$$ = firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    const v2$$ = firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    resolver$.next(true);
     const res = await Promise.all([v1$$, v2$$]);
     expect(nFetchesCalled).toBe(1);
     expect(res).toEqual([value, value]);
-    done();
   });
 
-  it('should not call fetchFn for RefreshMode.RefreshOncePerSession if there was set before', async (done) => {
+  it('should not call fetchFn for RefreshMode.RefreshOncePerSession if there was set before', async () => {
     const key = 'Key';
     const value = 'Value';
 
@@ -147,12 +142,11 @@ describe('ObservableStore', () => {
 
     const store = new ObservableStoreImpl(() => new TestStoreAdapter());
     await store.set<string>(key, value, skipUpdateCheck);
-    await store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
+    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
     expect(nFetchesCalled).toBe(0);
-    done();
   });
 
-  it('should not call fetchFn for RefreshMode.DoNotRefresh', async (done) => {
+  it('should not call fetchFn for RefreshMode.DoNotRefresh', async () => {
     let nFetchesCalled = 0;
     const key = 'Key';
     const value = 'Value';
@@ -167,13 +161,12 @@ describe('ObservableStore', () => {
     };
     const store = new ObservableStoreImpl(() => new TestStoreAdapter());
     await store.set<string>(key, value, skipUpdateCheck);
-    const result = await store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify).pipe(take(1)).toPromise();
+    const result = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify));
     expect(nFetchesCalled).toBe(0);
     expect(result).toBe(value);
-    done();
   });
 
-  it('should call fetchFn for RefreshMode.Refresh for all gets', async (done) => {
+  it('should call fetchFn for RefreshMode.Refresh for all gets', async () => {
     let nFetchesCalled = 0;
     const key = 'Key';
     const value = 'Value';
@@ -182,23 +175,21 @@ describe('ObservableStore', () => {
       return of(value);
     };
     const store = newObservableStoreForTest();
-    await store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify).pipe(take(1)).toPromise();
-    await store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify).pipe(take(1)).toPromise();
-    await store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify).pipe(take(1)).toPromise();
-    await store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify).pipe(take(1)).toPromise();
-    await store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify).pipe(take(1)).toPromise();
+    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
+    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
+    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
+    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify));
     expect(nFetchesCalled).toBe(3);
-    done();
   });
 
-  it('should return store value when RefreshMode.DoNotRefresh and no fetchFn provided', async (done) => {
+  it('should return store value when RefreshMode.DoNotRefresh and no fetchFn provided', async () => {
     const store = newObservableStoreForTest();
-    const result = await store.get<string>('some key', undefined, RefreshMode.DoNotRefresh, skipUpdateCheck).pipe(take(1)).toPromise();
+    const result = await firstValueFrom(store.get<string>('some key', undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
     expect(result).toBeUndefined();
-    done();
   });
 
-  it('should not be blocked by gets with no subscription', async (done) => {
+  it('should not be blocked by gets with no subscription', async () => {
     const key = 'Key';
     const value = 'Value';
     const fetchFn = () => {
@@ -206,13 +197,11 @@ describe('ObservableStore', () => {
     };
     const store = newObservableStoreForTest();
     store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck);
-    const o2 = store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck);
-    const res = await o2.pipe(take(1)).toPromise();
+    const res = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck));
     expect(res).toBe(value);
-    done();
   });
 
-  it('should not fetch twice with RefreshMode.RefreshOncePerSession when init is delayed', async (done) => {
+  it('should not fetch twice with RefreshMode.RefreshOncePerSession when init is delayed', async () => {
     const key = 'Key';
     const value = 'Value';
     let nFetchesCalled = 0;
@@ -221,14 +210,11 @@ describe('ObservableStore', () => {
       return of(value);
     };
     const store = newObservableStoreForTest();
-    const o1 = store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck);
-    const o2 = store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck);
-    const res1 = await o1.pipe(take(1)).toPromise();
-    const res2 = await o2.pipe(take(1)).toPromise();
+    const res1 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck));
+    const res2 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck));
     expect(res1).toBe(value);
     expect(res2).toBe(value);
     expect(nFetchesCalled).toBe(1);
-    done();
   });
 
   // TODO: add tests for error handling!

@@ -25,7 +25,7 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     responseInterceptor.reset();
   });
 
-  it('merges multiple get requests into batches', async done => {
+  it('merges multiple get requests into batches', async () => {
     responseInterceptor.response = new HttpResponse({body: [{id: '0'}, {id: '1'}]});
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
@@ -40,11 +40,9 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     expect(results.length).toBe(2);
     expect(results[0]).toEqual([{id: '0'}]);
     expect(results[1]).toEqual([{id: '1'}]);
-
-    done();
   });
 
-  it('does not merge different kind of requests into a single batch', async done => {
+  it('does not merge different kind of requests into a single batch', async () => {
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     await Promise.all([
@@ -54,11 +52,10 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
       http.post('/api/collection/by-ids/2').toPromise(),
     ]);
     expect(responseInterceptor.count).toBe(4);
-    done();
   });
 
 
-  it('correctly matched ids to the results', async done => {
+  it('correctly matched ids to the results', async () => {
     responseInterceptor.response = new HttpResponse({body: [{id: '1'}, {id: '2'}, {id: '0'}, {id: '5'}]});
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
@@ -81,11 +78,9 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     expect(results[3]).toEqual([]);
     expect(results[4]).toEqual([{id: '1'}, {id: '2'}]);
     expect(results[5]).toEqual([{id: '1'}, {id: '1'}, {id: '1'}]);
-
-    done();
   });
 
-  it('correctly compares result ids', async done => {
+  it('correctly compares result ids', async () => {
     responseInterceptor.response = new HttpResponse({body: [{id: 100}]});
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
@@ -95,8 +90,6 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     expect(responseInterceptor.count).toBe(1);
     expect(results.length).toBe(1);
     expect(results[0]).toEqual([{id: 100}]);
-
-    done();
   });
 
 });
