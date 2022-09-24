@@ -42,7 +42,7 @@ export class ServerAuthService implements NestInterceptor {
 
     // Check if the current session is still valid for the user saved in the session.
     const accessTokenInSession = req.session[ACCESS_TOKEN_SESSION_KEY];
-    if (accessToken !== accessTokenInSession) {
+    if ((accessTokenInSession || user) && accessToken !== accessTokenInSession) {
       console.log('Access token in session does not match access token in request. Resetting.');
       delete req.session[USER_SESSION_KEY];
       delete req.session[ACCESS_TOKEN_SESSION_KEY];
