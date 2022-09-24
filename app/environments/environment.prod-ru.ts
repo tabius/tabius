@@ -14,6 +14,9 @@ export const environment: TabiusEnv = {
   ssrBackendUrl: 'http://localhost:4001',
   telegramUrl: 'https://t.me/tabiusru',
   buildInfo,
+  sentryConfig: {
+    dsn: 'https://fc6fba35084549b6a9fdf8843dc74887@o1134925.ingest.sentry.io/6755287',
+  },
   authConfig: {
     domain: 'tabius.us.auth0.com',
     clientId: 'HsyF6TwzMaKVFhjlLdlBUJf3gs9oihFt',

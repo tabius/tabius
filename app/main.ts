@@ -7,7 +7,7 @@ import {BrowserTracing} from '@sentry/tracing';
 
 if (environment.production) {
   Sentry.init({
-    dsn: 'https://fc6fba35084549b6a9fdf8843dc74887@o1134925.ingest.sentry.io/6755287',
+    dsn: environment.sentryConfig.dsn,
     integrations: [new BrowserTracing()],
     tracesSampleRate: 0.2,
   });

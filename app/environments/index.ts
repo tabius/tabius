@@ -27,4 +27,6 @@ export interface TabiusEnv {
 
   /** Auth0 configuration. */
   authConfig: AuthConfig,
+
+  sentryConfig: {dsn: string}
 }

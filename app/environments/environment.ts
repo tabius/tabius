@@ -14,6 +14,9 @@ export const environment: TabiusEnv = {
   ssrBackendUrl: `http://${APP_DOMAIN}:4001`,
   telegramUrl: 'https://t.me/tabiusru',
   buildInfo,
+  sentryConfig: {
+    dsn: 'not used in dev',
+  },
   authConfig: {
     domain: 'tabius.us.auth0.com',
     clientId: 'HsyF6TwzMaKVFhjlLdlBUJf3gs9oihFt',
