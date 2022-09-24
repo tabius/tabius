@@ -44,7 +44,7 @@ export class ServerAuthService implements NestInterceptor {
     const accessTokenInSession = req.session[ACCESS_TOKEN_SESSION_KEY];
     if ((user || accessTokenInSession) && accessToken !== accessTokenInSession) {
       console.log('Access token in session does not match access token in request. Resetting.');
-      delete req.session[USER_SESSION_KEY];
+      req.session[USER_SESSION_KEY] = undefined;
       req.session[ACCESS_TOKEN_SESSION_KEY] = accessToken;
       user = undefined;
     }
@@ -79,9 +79,9 @@ export class ServerAuthService implements NestInterceptor {
           user.roles = truthy(await this.userDbi.getUserRoles(user.id));
         }
       }
-      (req.session)[USER_SESSION_KEY] = user;
+      req.session[USER_SESSION_KEY] = user;
     } else {
-      delete (req.session)[USER_SESSION_KEY];
+      req.session[USER_SESSION_KEY] = undefined;
     }
     return next.handle();
   }
