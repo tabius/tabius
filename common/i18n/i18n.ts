@@ -196,7 +196,7 @@ export interface I18n {
     discussionLink: string;
     discussionLinkTitle: string;
     tabiusHasNoChordLayout: string;
-    forumLink: {
+    discussLink: {
       title: string;
       prefix: string;
       link: string;

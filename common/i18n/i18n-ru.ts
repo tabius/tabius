@@ -202,7 +202,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     discussionLink: 'обсудить »',
     discussionLinkTitle: 'Перейти на страницу с обсуждением аппликатур аккордов',
     tabiusHasNoChordLayout: 'К сожалению Tabius не знает аппликатуру для этого аккорда.',
-    forumLink: {
+    discussLink: {
       title: 'Добавить свою аппликатуру аккорда',
       prefix: 'Вы можете помочь и',
       link: 'добавить',

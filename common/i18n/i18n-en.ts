@@ -203,7 +203,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     discussionLink: 'improve »',
     discussionLinkTitle: 'Go to the chords discussion page',
     tabiusHasNoChordLayout: 'Unfortunately Tabius does not have a visual layout for this chord.',
-    forumLink: {
+    discussLink: {
       title: 'Add visual layout for the chord',
       prefix: 'You can help Tabius and',
       link: 'add',
@@ -282,8 +282,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     editSongButtonTitle: 'Open song editor (Shift + E)',
     editSongButtonDesktop: 'Edit song',
     editSongButtonMobile: 'Edit',
-    discussSongButtonTitle: 'Discuss song chords on forum',
-    discussSongButtonDesktop: 'Discuss on forum',
+    discussSongButtonTitle: 'Discuss song chords in chat',
+    discussSongButtonDesktop: 'Discuss in chat',
     discussSongButtonMobile: 'Discuss',
     fontSize: 'Font size',
     gotoRandomSongInCollectionMenu: 'Collection',
