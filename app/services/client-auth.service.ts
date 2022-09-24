@@ -32,11 +32,17 @@ export class ClientAuthService {
   }
 
   signin(): void {
-    this.getAuthService().loginWithRedirect({audience: environment.authConfig.audience});
+    this.getAuthService().loginWithRedirect({
+      audience: environment.authConfig.audience,
+      prompt: 'select_account',
+    });
   }
 
   signup(): void {
-    this.getAuthService().loginWithRedirect({audience: environment.authConfig.audience});
+    this.getAuthService().loginWithRedirect({
+      audience: environment.authConfig.audience,
+      prompt: 'select_account',
+    });
   }
 
   signout(): void {

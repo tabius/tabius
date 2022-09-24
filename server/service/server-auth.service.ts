@@ -12,6 +12,7 @@ import {Mutex} from 'async-mutex';
 import {nanoid} from 'nanoid';
 
 const USER_SESSION_KEY = 'user';
+const ACCESS_TOKEN_SESSION_KEY = 'access-token';
 
 const auth0 = new AuthenticationClient({
   domain: SERVER_CONFIG.auth.domain,
@@ -35,8 +36,19 @@ export class ServerAuthService implements NestInterceptor {
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest();
+    // TODO: validate input data.
     const accessToken = req.headers['authorization']?.split(' ')[1];
     let user: User|undefined = req.session[USER_SESSION_KEY];
+
+    // Check if the current session is still valid for the user saved in the session.
+    const accessTokenInSession = req.session[ACCESS_TOKEN_SESSION_KEY];
+    if (accessToken !== accessTokenInSession) {
+      console.log('Access token in session does not match access token in request. Resetting.');
+      delete req.session[USER_SESSION_KEY];
+      delete req.session[ACCESS_TOKEN_SESSION_KEY];
+      user = undefined;
+    }
+
     if (!user && accessToken) {
       const auth0Profile: Auth0UserProfile|undefined = await this.getAuth0UserProfileWithMutex(accessToken);
       if (auth0Profile) {

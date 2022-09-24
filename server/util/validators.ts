@@ -32,14 +32,14 @@ export function paramToArrayOfNumericIds(value: string): number[] {
 const end = (v) => success(v);
 type Next<T> = (arg: T) => ValidationResult<T>
 
-export const isVersion = () => min(0);
-export const isNumericId = () => min(1);
-export const checkStringLength = (minLen: number, maxLen: number, next: Next<string> = end) =>
+export const isVersion = (): Next<number> => min(0);
+export const isNumericId = (): Next<number> => min(1);
+export const checkStringLength = (minLen: number, maxLen: number, next: Next<string> = end): Next<string> =>
     isString(minLength(minLen, maxLength(maxLen, next)));
-export const isSongMount = () => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
-export const isNewSongMount = () => checkStringLength(0, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
-export const isCollectionMount = () => checkStringLength(MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
-export const isCollectionType = () => equals(CollectionType.Band, CollectionType.Person, CollectionType.Compilation);
+export const isSongMount = (): Next<string> => checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
+export const isNewSongMount = (): Next<string> => checkStringLength(0, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
+export const isCollectionMount = (): Next<string> => checkStringLength(MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
+export const isCollectionType = (): Next<CollectionType> => equals(CollectionType.Band, CollectionType.Person, CollectionType.Compilation);
 export const checkChordTone = () => equals(...CHORD_TONES);
 
 export function isTranslitLowerCase(next: Next<string> = end): (arg: string) => ValidationResult<string> {
