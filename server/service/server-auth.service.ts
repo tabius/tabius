@@ -58,8 +58,8 @@ export class ServerAuthService implements NestInterceptor {
         // First auth service interception in the session: create or populate cached user structure.
         user.collectionId = await this.getUserCollectionId(user.id) || 0;
         if (!isValidId(user.collectionId)) {
-          user.collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
           user.mount = nanoid(8);
+          user.collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
           await this.userDbi.createUser(user);
         } else {
           console.log('ServerAuthService.intercept: Filling user properties: ', user);

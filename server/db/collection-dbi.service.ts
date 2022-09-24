@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
 import {Collection, CollectionDetails, CollectionType} from '@common/catalog-model';
-import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
+import {isValidId, toArrayOfInts, truthy} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
 import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_SUFFIX} from '@common/common-constants';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
@@ -95,8 +95,7 @@ export class CollectionDbi {
         .then(([rows]) => rows.length === 0 ? undefined : rows[0].id);
 
     console.log(`CollectionDbi.createPrimaryUserCollection: reusing existing collection record: ${user.email}, collectionId: ${collectionId}`);
-    //TODO: handle undefined!
-    return collectionId!;
+    return truthy(collectionId); //TODO: handle undefined!
   }
 
   async createSecondaryUserCollection(userId: string, name: string, mount: string): Promise<number> {
