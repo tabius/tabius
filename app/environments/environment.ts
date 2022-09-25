@@ -21,20 +21,8 @@ export const environment: TabiusEnv = {
     domain: 'tabius.us.auth0.com',
     clientId: 'HsyF6TwzMaKVFhjlLdlBUJf3gs9oihFt',
     cacheLocation: 'localstorage',
-    audience: 'web-client-api-id',
     httpInterceptor: {
-      allowedList: [
-        {
-          uri: backendUrl + '/api/*',
-          allowAnonymous: true,
-          tokenOptions: {
-            /** The attached token should target this audience. */
-            audience: 'web-client-api-id',
-            /** The attached token should have these scopes. */
-            scope: 'read:current_user'
-          }
-        }
-      ]
+      allowedList: [{uri: backendUrl + '/api/*', allowAnonymous: true}]
     }
   }
 };
