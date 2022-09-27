@@ -1,4 +1,3 @@
-
 import {isDigit} from '@common/util/misc-utils';
 import {Chord, ChordTone} from '@app/utils/chords-lib';
 
@@ -308,6 +307,19 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'F#add11': '2144xx',
   'Gadd11': '320013',
   'G#add11': '43112x',
+
+  'Aadd11+': 'x01220',
+  'A#add11+': 'x12331',
+  'Badd11+': 'x23442',
+  'Cadd11+': 'x32012',
+  'C#add11+': 'x45664',
+  'Dadd11+': 'x56775',
+  'D#add11+': 'x67886',
+  'Eadd11+': '012100',
+  'Fadd11+': '123211',
+  'F#add11+': '234322',
+  'Gadd11+': '345433',
+  'G#add11+': '456544',
 
   // Suspended 2nd
   'Asus2': 'x02200',

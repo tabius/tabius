@@ -35,6 +35,7 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7x9x11': 'A7+9+11',
   '9sus4': 'A9sus4',
   'add11': 'Aadd11', // Major Add 11th
+  'add11+': 'Aadd11+, Aadd11p', // Major Add 11th+
   'add9': 'Aadd9', // Major Add 9th
   'aug': 'A+, A+5, Am+5, Aaug, AAugmented', // Augmented
   'aug7': 'A+7, A7+5, Aaug7', // Augmented 7th

@@ -2,7 +2,7 @@ export const CHORD_TONES = <const>['A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', '
 
 export type ChordTone = typeof CHORD_TONES[number];
 
-export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add9'|'add11'|'2'|'5'|'6/9'
+export type ChordType = '+7B9'|'+7+9'|'+M7B9'|'+M7+9'|'add9'|'add11'|'add11+'|'2'|'5'|'6/9'
     |'7/6'|'7/9'|'7B5b9'|'7B9'|'7sus2'|'7sus24'|'7sus4'|'7susB13'|'7x11'|'7x9'|'7x9x11'|'9sus4'
     |'aug'|'aug7'|'aug9'|'augmaj7'|'augmaj9'|'B5'
     |'dim'|'dim7'|'dim9'|'dimB9'|'dim7B9'|'dom7'|'dom11'|'dom13'|'dom7dim5'|'dom9'|'half_diminished9'|'half_diminishedB9'
