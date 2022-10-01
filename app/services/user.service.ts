@@ -72,7 +72,9 @@ export class UserService {
             getUserSongSettingsKey(songId),
             () => { // fetch function.
               if (user) {
-                return this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.songs[songId]));
+                return this.fetchAndUpdateUserSettings(user).pipe(
+                    map(userSettings => userSettings.songs[songId] || newDefaultUserSongSettings(songId))
+                );
               } else {
                 return of(newDefaultUserSongSettings(songId));
               }
