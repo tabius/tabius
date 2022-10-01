@@ -12,4 +12,8 @@
         <gt-song [songId]="songId"></gt-song>
     </div>
 
+    <div class="user-controls">
+        <gt-add-song-to-collection *ngIf="isBrowser" [songId]="songId"></gt-add-song-to-collection>
+    </div>
+
 </div>

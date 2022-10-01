@@ -120,6 +120,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     title: 'Горячие клавиши',
     nextSong: 'Следующая песня',
     prevSong: 'Предыдущая песня',
+    playChordSound: 'Воспроизвести звук аккорда',
     saveSong: 'Сохранить изменения (в режиме редактирования)',
     showHelp: 'Показать этот диалог',
     gotoRandomSongInCollection: 'Случайная песня в коллекции',

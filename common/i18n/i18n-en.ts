@@ -120,6 +120,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     nextSong: 'Next song',
     prevSong: 'Previous song',
     saveSong: 'Save song (in edit mode)',
+    playChordSound: 'Play sound of the clicked chord',
     showHelp: 'Show this dialog',
     gotoRandomSongInCollection: 'Go to random song in collection',
     gotoRandomSongInCatalog: 'Go to random song in catalog',

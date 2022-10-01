@@ -121,6 +121,7 @@ export interface I18n {
     nextSong: string;
     showHelp: string;
     saveSong: string;
+    playChordSound: string;
     gotoRandomSongInCollection: string;
     gotoRandomSongInCatalog: string;
     twice: string;
