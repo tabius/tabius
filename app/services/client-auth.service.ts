@@ -35,6 +35,7 @@ export class ClientAuthService {
     this.getAuthService().loginWithRedirect({
       audience: environment.authConfig.audience,
       prompt: 'select_account',
+      screen_hint: 'login',
     });
   }
 
@@ -42,6 +43,7 @@ export class ClientAuthService {
     this.getAuthService().loginWithRedirect({
       audience: environment.authConfig.audience,
       prompt: 'select_account',
+      screen_hint: 'signup',
     });
   }
 
