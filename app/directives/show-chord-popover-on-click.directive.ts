@@ -3,6 +3,7 @@ import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {PopoverService} from '@app/popover/popover.service';
 import {Chord} from '@app/utils/chords-lib';
+import {convertChordToFingerPositions, playChordSound} from '@app/utils/chord-player';
 
 export type ChordClickInfo = { element: HTMLElement, chord: Chord }|undefined;
 export type ChordClickInfoProvider = (event: MouseEvent, chord?: Chord) => ChordClickInfo;
@@ -43,6 +44,14 @@ export class ShowChordPopoverOnClickDirective implements OnDestroy {
     if (!isSameChordClickedTwice) {
       this.lastClickedChordElement = element;
       this.popoverChordLayout = getChordLayout(chord);
+
+      // Do not show popover when click is with Ctrl key: play the sound instead.
+      if (event.ctrlKey && this.popoverChordLayout?.positions) {
+        const fingers = convertChordToFingerPositions(this.popoverChordLayout.positions);
+        playChordSound(fingers);
+        return;
+      }
+
       this.gtChordPopoverOnClick_onChordLayoutChanged.emit(this.popoverChordLayout);
       this.chordPopoverRef = this.popoverService.open(this.gtChordPopoverOnClick_popoverTemplate, element, {
         data: element.innerText,

@@ -4,7 +4,7 @@ import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {I18N} from '@app/app-i18n';
 import {getDefaultH4SiFlag} from '@common/user-model';
-import {FingerPositions, play} from '@app/utils/chord-player';
+import {convertChordToFingerPositions, playChordSound} from '@app/utils/chord-player';
 
 @Component({
   selector: 'gt-chord-popover',
@@ -25,12 +25,6 @@ export class ChordPopoverComponent {
   playChord(): void {
     assertTruthy(this.chordLayout);
     const fingers = convertChordToFingerPositions(this.chordLayout.positions);
-    play(fingers);
+    playChordSound(fingers);
   }
-}
-
-function convertChordToFingerPositions(layout: string): FingerPositions {
-  const fingerSeparatorIndex = layout?.indexOf('&');
-  const fretsString = layout.substring(0, fingerSeparatorIndex > 0 ? fingerSeparatorIndex : layout.length);
-  return fretsString.split('').map(c => c === '-' ? null : Number(c));
 }

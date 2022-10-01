@@ -8,7 +8,7 @@
 
 export type FingerPositions = Array<number|null>;
 
-export function play(fingerPositions: FingerPositions): void {
+export function playChordSound(fingerPositions: FingerPositions): void {
   const context = new AudioContext();
 
   // Signal dampening amount.
@@ -108,3 +108,9 @@ export function play(fingerPositions: FingerPositions): void {
   playChord(fingerPositions);
 }
 
+
+export function convertChordToFingerPositions(layout: string): FingerPositions {
+  const fingerSeparatorIndex = layout?.indexOf('&');
+  const fretsString = layout.substring(0, fingerSeparatorIndex > 0 ? fingerSeparatorIndex : layout.length);
+  return fretsString.split('').map(c => c === '-' ? null : Number(c));
+}
