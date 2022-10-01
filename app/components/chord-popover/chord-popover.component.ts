@@ -1,9 +1,10 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {getChordsDiscussionUrl} from '@common/util/misc-utils';
+import {assertTruthy, getChordsDiscussionUrl} from '@common/util/misc-utils';
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {I18N} from '@app/app-i18n';
 import {getDefaultH4SiFlag} from '@common/user-model';
+import {FingerPositions, play} from '@app/utils/chord-player';
 
 @Component({
   selector: 'gt-chord-popover',
@@ -13,7 +14,7 @@ import {getDefaultH4SiFlag} from '@common/user-model';
 })
 export class ChordPopoverComponent {
 
-  @Input() chordLayout?: ChordLayout;
+  @Input() chordLayout!: ChordLayout;
   @Input() h4Si = getDefaultH4SiFlag();
   @Input() popover!: PopoverRef;
 
@@ -21,4 +22,15 @@ export class ChordPopoverComponent {
 
   readonly i18n = I18N.chordPopover;
 
+  playChord(): void {
+    assertTruthy(this.chordLayout);
+    const fingers = convertChordToFingerPositions(this.chordLayout.positions);
+    play(fingers);
+  }
+}
+
+function convertChordToFingerPositions(layout: string): FingerPositions {
+  const fingerSeparatorIndex = layout?.indexOf('&');
+  const fretsString = layout.substring(0, fingerSeparatorIndex > 0 ? fingerSeparatorIndex : layout.length);
+  return fretsString.split('').map(c => c === '-' ? null : Number(c));
 }

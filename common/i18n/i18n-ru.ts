@@ -199,6 +199,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     forMusicLoversFact: 'В первую очередь этот сайт сделан для музыки и её любителей. Это не поменяется.',
   },
   chordPopover: {
+    playChordText: 'звук »',
     discussionLink: 'обсудить »',
     discussionLinkTitle: 'Перейти на страницу с обсуждением аппликатур аккордов',
     tabiusHasNoChordLayout: 'К сожалению Tabius не знает аппликатуру для этого аккорда.',

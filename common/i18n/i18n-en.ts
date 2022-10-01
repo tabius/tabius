@@ -200,6 +200,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     forMusicLoversFact: 'This site is free and open for everyone who loves music. It won\'t change',
   },
   chordPopover: {
+    playChordText: 'play »',
     discussionLink: 'improve »',
     discussionLinkTitle: 'Go to the chords discussion page',
     tabiusHasNoChordLayout: 'Unfortunately Tabius does not have a visual layout for this chord.',

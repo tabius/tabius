@@ -193,6 +193,7 @@ export interface I18n {
     forMusicLoversFact: string;
   };
   chordPopover: {
+    playChordText: string;
     discussionLink: string;
     discussionLinkTitle: string;
     tabiusHasNoChordLayout: string;
