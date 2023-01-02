@@ -34,7 +34,7 @@ export class ServerAuthService implements NestInterceptor {
   ) {
   }
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<unknown>> {
     const req = context.switchToHttp().getRequest();
     // TODO: validate input data.
     const accessToken = req.headers['authorization']?.split(' ')[1];

@@ -50,7 +50,7 @@ export class UserController {
     const settings = await this.getUserSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
     const sameAsDefault = isEqualByStringify(defaultSettings, songSettings);
-    const updatedSettings = {...settings} as any;
+    const updatedSettings = {...settings};
     if (sameAsDefault) {
       delete updatedSettings.songs[songSettings.songId];
     } else {

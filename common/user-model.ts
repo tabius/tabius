@@ -48,7 +48,7 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 /** User settings stored on the server. */
 export interface UserSettings {
   /** Per-song settings. */
-  songs: { readonly [songId: number]: UserSongSettings },
+  songs: { [songId: number]: UserSongSettings },
 
   /** If true => 'B' will be rendered as 'H' for the tone Si. */
   h4Si: boolean,

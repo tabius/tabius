@@ -80,7 +80,5 @@ export class TabiusRouteReuseStrategy extends RouteReuseStrategy {
   ],
 })
 export class RoutingModule {
-  constructor() {
-  }
 }
 

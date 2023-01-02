@@ -8,7 +8,7 @@ export interface PageMetadata {
   image?: string
 }
 
-export function updatePageMetadata(title: Title, meta: Meta, page: DeepReadonly<PageMetadata>) {
+export function updatePageMetadata(title: Title, meta: Meta, page: DeepReadonly<PageMetadata>): void {
   title.setTitle(page.title);
 
   meta.addTag({name: 'twitter:card', content: 'summary'});

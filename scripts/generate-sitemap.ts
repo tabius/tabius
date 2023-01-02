@@ -9,7 +9,7 @@ const exec = promisify(require('child_process').exec);
 
 const SITE_URL = `https://${SERVER_CONFIG.serverHost}`;
 
-async function generateSitemap() {
+async function generateSitemap(): Promise<void> {
   const connection = await mysql.createConnection(SERVER_CONFIG.dbConfig);
   let sitemap = '';
   try {
