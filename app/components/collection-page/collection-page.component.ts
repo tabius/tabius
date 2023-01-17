@@ -92,7 +92,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
         flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
     );
 
-    combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollections$, this.uds.getUser()])
+    combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollections$, this.uds.getUser$()])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),

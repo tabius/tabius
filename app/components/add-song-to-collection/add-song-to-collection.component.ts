@@ -56,7 +56,7 @@ export class AddSongToCollectionComponent implements OnInit, OnChanges, OnDestro
   ngOnChanges(): void {
     this.checkRequiredInputs();
     this.resetComponentState();
-    const user$ = this.userService.getUser();
+    const user$ = this.userService.getUser$();
     const collections$ = user$.pipe(switchMap(user => user ? this.catalogService.getUserCollections(user.id) : []));
     const isSongInCollection$: Observable<boolean[]> = collections$.pipe(
         switchMap(collections => combineLatest0(collections.map(c => this.catalogService.getSongIdsByCollection(c.id)))),

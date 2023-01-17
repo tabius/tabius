@@ -44,7 +44,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
 
 
   ngOnInit(): void {
-    const user$ = this.uds.getUser();
+    const user$ = this.uds.getUser$();
     const allUserCollectionIds$ = user$.pipe(flatMap(user => this.cds.getUserCollectionIds(user && user.id)));
     const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
         flatMap((collectionIds: number[]|undefined) =>

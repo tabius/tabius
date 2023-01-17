@@ -64,7 +64,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   }
 
   ngOnInit() {
-    this.uds.getUser()
+    this.uds.getUser$()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {
           this.user = user;

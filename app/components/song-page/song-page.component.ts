@@ -108,7 +108,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const song$ = songInCollection$.pipe(map(song => song || this.song));
     const songDetails$ = song$.pipe(mergeMap(song => this.cds.getSongDetailsById(song?.id)));
     const songSettings$ = song$.pipe(mergeMap(song => this.uds.getUserSongSettings(song && song.id)));
-    const user$ = this.uds.getUser();
+    const user$ = this.uds.getUser$();
     const h4Si$ = this.uds.getH4SiFlag();
     const favoriteKey$ = this.uds.getFavoriteKey();
 

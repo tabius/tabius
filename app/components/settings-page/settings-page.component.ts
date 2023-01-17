@@ -42,7 +42,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
 
   ngOnInit(): void {
     combineLatest([
-      this.uds.getUser(),
+      this.uds.getUser$(),
       this.uds.getUserDeviceSettings(),
       //TODO: optimize these 2 parallel fetches! Fetch user settings only once.
       this.uds.getH4SiFlag(RefreshMode.Refresh),

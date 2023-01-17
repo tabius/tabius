@@ -1,8 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {firstValueFrom, from, Observable, of} from 'rxjs';
-import {CatalogNavigationHistory, CatalogNavigationHistoryStep, DEFAULT_FAVORITE_KEY, DEFAULT_H4SI_FLAG, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, newEmptyCatalogNavigationHistory, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
-import {checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
+import {CatalogNavigationHistory, CatalogNavigationHistoryStep, DEFAULT_FAVORITE_KEY, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, newEmptyCatalogNavigationHistory, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
+import {checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, FetchFn, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
 import {map, mergeMap, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {isEqualByStringify, isValidId} from '@common/util/misc-utils';
@@ -67,7 +67,7 @@ export class UserService {
     if (!isValidId(songId)) {
       return of(newDefaultUserSongSettings(0));
     }
-    return this.getUser().pipe(
+    return this.getUser$().pipe(
         switchMap(user => this.store.get<UserSongSettings>(
             getUserSongSettingsKey(songId),
             () => { // fetch function.
@@ -103,7 +103,7 @@ export class UserService {
 
     // update settings on the server only if we have valid user session.
     const userSettingsFromServer = await firstValueFrom(
-        this.getUser().pipe(
+        this.getUser$().pipe(
             mergeMap(user => user
                              ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings)
                              : of(undefined)))
@@ -117,15 +117,15 @@ export class UserService {
    * Note: using custom refresh option to allow forced refresh.
    */
   getH4SiFlag(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<boolean> {
-    return this.getUser().pipe(
+    return this.getUser$().pipe(
         switchMap(user => {
-          if (!user) {
-            return of(DEFAULT_H4SI_FLAG);
-          }
+          const fetchFn: FetchFn<boolean>|undefined = user
+                                                      ? () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.h4Si))
+                                                      : undefined;
           return this.store.get<boolean>(
               H4SI_FLAG_KEY,
-              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.h4Si)),
-              refreshMode,
+              fetchFn,
+              user ? refreshMode : RefreshMode.DoNotRefresh,
               checkUpdateByReference
           ).pipe(map(flag => !!flag));
         })
@@ -134,20 +134,23 @@ export class UserService {
 
   async setH4SiFlag(h4SiFlag: boolean): Promise<void> {
     await this.store.set<boolean>(H4SI_FLAG_KEY, h4SiFlag, skipUpdateCheck);
-    const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}));
-    await this.updateUserSettings(settings);
+    const isSignedIn = !!(await this.getCurrentUser());
+    if (isSignedIn) {
+      const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}));
+      await this.updateUserSettings(settings);
+    }
   }
 
   getFavoriteKey(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<ChordTone> {
-    return this.getUser().pipe(
+    return this.getUser$().pipe(
         switchMap(user => {
-          if (!user) {
-            return of(DEFAULT_FAVORITE_KEY);
-          }
+          const fetchFn: FetchFn<ChordTone>|undefined = user
+                                                        ? () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.favKey))
+                                                        : undefined;
           return this.store.get<ChordTone>(
               FAVORITE_TONE_KEY,
-              () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.favKey)),
-              refreshMode,
+              fetchFn,
+              user ? refreshMode : RefreshMode.DoNotRefresh,
               checkUpdateByReference
           ).pipe(map(key => key || DEFAULT_FAVORITE_KEY));
         })
@@ -156,9 +159,12 @@ export class UserService {
 
   async setFavoriteKey(favKey: ChordTone): Promise<void> {
     await this.store.set<string>(FAVORITE_TONE_KEY, favKey, skipUpdateCheck);
-    const updateRequest: UpdateFavoriteSongKeyRequest = {key: favKey};
-    const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest));
-    await this.updateUserSettings(settings);
+    const isSignedIn = !!(await this.getCurrentUser());
+    if (isSignedIn) {
+      const updateRequest: UpdateFavoriteSongKeyRequest = {key: favKey};
+      const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest));
+      await this.updateUserSettings(settings);
+    }
   }
 
   /** Used to dedupe updates triggered by the same de-multiplexed fetch call.*/
@@ -194,8 +200,12 @@ export class UserService {
     await Promise.all(allOps);
   }
 
-  getUser(): Observable<User|undefined> {
+  getUser$(): Observable<User|undefined> {
     return this.store.get<User>(USER_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck);
+  }
+
+  async getCurrentUser(): Promise<User|undefined> {
+    return firstValueFrom(this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
   }
 
   async setUserOnSignIn(user: User): Promise<void> {
@@ -207,7 +217,7 @@ export class UserService {
   }
 
   async resetStoreStateOnSignOut(): Promise<void> {
-    const user = await firstValueFrom(this.store.get<User>(USER_KEY, undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
+    const user = await this.getCurrentUser();
     if (!user) { // already signed out
       return;
     }
