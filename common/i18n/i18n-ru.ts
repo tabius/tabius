@@ -71,7 +71,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   scenePage: {
     title: 'Сцена: новая песня каждый день',
-    loadingMessage: 'Заргузка…',
+    loadingMessage: 'Загрузка…',
   },
   chordImage: {
     chordsLayoutTitleSuffix: ', аппликатура аккорда',
