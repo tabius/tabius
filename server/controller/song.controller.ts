@@ -3,7 +3,7 @@ import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, P
 import {Song, SongDetails} from '@common/catalog-model';
 import {isNumericId, NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator} from '@server/util/validators';
 import {User} from '@common/user-model';
-import {conformsTo, isBoolean, validate} from 'typed-validation';
+import {conformsTo, isBoolean, validate} from '@server/util/validation';
 import {ServerAuthService} from '@server/service/server-auth.service';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
 import {canManageCollectionContent, isModerator, isValidId} from '@common/util/misc-utils';

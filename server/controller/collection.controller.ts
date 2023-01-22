@@ -5,7 +5,7 @@ import {CreateListedCollectionRequestValidator, CreateUserCollectionRequestValid
 import {CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
 import {User} from '@common/user-model';
 import {ServerAuthService} from '@server/service/server-auth.service';
-import {conformsTo, validate} from 'typed-validation';
+import {conformsTo, validate} from '@server/util/validation';
 import {canManageCollectionContent, isModerator, isValidUserId} from '@common/util/misc-utils';
 import {SongDbi} from '@server/db/song-dbi.service';
 

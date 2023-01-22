@@ -65,7 +65,6 @@
     "schema-dts": "1.1.0",
     "svg4everybody": "2.1.9",
     "tslib": "2.4.1",
-    "typed-validation": "0.8.2",
     "validator": "13.7.0",
     "zone.js": "0.12.0"
   },
