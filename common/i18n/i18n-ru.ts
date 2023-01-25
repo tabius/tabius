@@ -289,7 +289,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     fontSize: 'Размер шрифта',
     gotoRandomSongInCollectionMenu: 'Коллекция',
     gotoRandomSongInCatalogMenu: 'Каталог',
-
+    searchSongOnYoutubeLinkText: 'Найти на YouTube',
+    searchSongOnYoutubeLinkTitle: 'Искать песню на YouTube',
   },
   songPrevNextNavigator: {
     nextSong: 'След. песня »',

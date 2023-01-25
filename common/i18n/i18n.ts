@@ -271,6 +271,8 @@ export interface I18n {
     discussSongButtonTitle: string;
     discussSongButtonDesktop: string
     discussSongButtonMobile: string
+    searchSongOnYoutubeLinkTitle: string;
+    searchSongOnYoutubeLinkText: string
     fontSize: string;
     gotoRandomSongInCollectionMenu: string;
     gotoRandomSongInCatalogMenu: string;

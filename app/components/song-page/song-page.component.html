@@ -49,9 +49,14 @@
                 </a>
             </div>
             <div class="button-item">
-                <a class="btn" href="{{discussSongLink}}" title="{{i18n.discussSongButtonTitle}}">
+                <a class="btn" href="{{discussSongLink}}" title="{{i18n.discussSongButtonTitle}}" target="_blank">
                     <span class="desktop-only-inline">{{i18n.discussSongButtonDesktop}}</span>
                     <span class="mobile-only-inline">{{i18n.discussSongButtonMobile}}</span>
+                </a>
+            </div>
+            <div class="button-item" *ngIf="isSearchVideoOnYoutubeLinkVisible">
+                <a class="btn" href="{{youtubeSearchSongLink}}" title="{{i18n.searchSongOnYoutubeLinkTitle}}" target="_blank">
+                    <span class="desktop-only-inline">{{i18n.searchSongOnYoutubeLinkText}}</span>
                 </a>
             </div>
         </div>

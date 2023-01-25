@@ -71,7 +71,6 @@ export function newDefaultUserSongSettings(songId: number): UserSongSettings {
   };
 }
 
-export const DEFAULT_H4SI_FLAG = false;
 export const DEFAULT_FAVORITE_KEY: ChordTone = 'A';
 
 export function getDefaultH4SiFlag(): boolean {

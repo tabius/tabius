@@ -8,7 +8,7 @@ import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
+import {assertTruthy, canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -29,6 +29,7 @@ import {getTransposeActionKey, updateUserSongSetting} from '@app/components/song
 import {BreadcrumbList, WithContext} from 'schema-dts';
 import {getSongJsonLdBreadcrumbList} from '@common/util/json-ld';
 import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
+import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 
 @Component({
   templateUrl: './song-page.component.html',
@@ -279,7 +280,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         this.incFontSize();
         return;
       case 'Digit0':
-        this.updateSongFontSize(getDefaultUserSongFontSize());
+        this.updateSongFontSize(getDefaultUserSongFontSize()).then();
         return;
     }
 
@@ -289,13 +290,13 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
     switch (event.code) {
       case 'ArrowDown':
-        this.transpose(-1);
+        this.transpose(-1).then();
         return;
       case 'ArrowUp':
-        this.transpose(1);
+        this.transpose(1).then();
         return;
       case 'Digit0':
-        this.transpose(0);
+        this.transpose(0).then();
         return;
       case 'BracketLeft':
       case 'BracketRight':
@@ -335,13 +336,13 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   incFontSize(): void {
     if (this.deviceSettings) {
-      this.updateSongFontSize(Math.min(this.deviceSettings.songFontSize + 1, MAX_SONG_FONT_SIZE));
+      this.updateSongFontSize(Math.min(this.deviceSettings.songFontSize + 1, MAX_SONG_FONT_SIZE)).then();
     }
   }
 
   decFontSize(): void {
     if (this.deviceSettings) {
-      this.updateSongFontSize(Math.max(this.deviceSettings.songFontSize - 1, MIN_SONG_FONT_SIZE));
+      this.updateSongFontSize(Math.max(this.deviceSettings.songFontSize - 1, MIN_SONG_FONT_SIZE)).then();
     }
   }
 
@@ -362,6 +363,20 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const name = `${this.song.title} [${getNameFirstFormArtistName(this.activeCollection)}]`;
     const url = getSongPageLink(this.activeCollection.mount, this.song.mount, this.primaryCollection?.mount);
     this.uds.addCatalogNavigationHistoryStep({name, url}).then(nothingThen);
+  }
+
+  get isSearchVideoOnYoutubeLinkVisible(): boolean {
+    if (!this.isBrowser) {
+      return false;
+    }
+    const width = window && window.innerWidth;
+    return width >= MIN_DESKTOP_WIDTH && !!this.song && !!this.primaryCollection;
+  }
+
+  get youtubeSearchSongLink(): string {
+    assertTruthy(this.song && this.primaryCollection);
+    const encodedQuery = encodeURIComponent(`${this.song.title} ${this.primaryCollection.name}`);
+    return `https://www.youtube.com/results?search_query=${encodedQuery}`;
   }
 }
 

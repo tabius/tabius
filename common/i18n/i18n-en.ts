@@ -290,6 +290,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     fontSize: 'Font size',
     gotoRandomSongInCollectionMenu: 'Collection',
     gotoRandomSongInCatalogMenu: 'Catalog',
+    searchSongOnYoutubeLinkText: 'Open on YouTube',
+    searchSongOnYoutubeLinkTitle: 'Search song video on YouTube',
   },
   songPrevNextNavigator: {
     nextSong: 'Next. song »',
