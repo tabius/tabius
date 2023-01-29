@@ -61,17 +61,22 @@ a {
   color: $color-default-link;
   text-decoration: none;
 
-  &.dark-pill {
+  &.dark-pill, .dark-pill {
     font-size: 14px;
     color: #5A5A5A;
     padding: 1px 5px;
     border-radius: 4px;
     border: solid 1px #ababab;
+    line-height: 16px;
   }
 }
 
 a:hover {
   text-decoration: underline;
+}
+
+.popover-rounded-corners > gt-popover {
+  border-radius: 8px !important;
 }
 
 //noinspection CssInvalidHtmlTagReference

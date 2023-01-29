@@ -105,6 +105,7 @@ export interface CatalogNavigationHistory {
 
 export interface CatalogNavigationHistoryStep {
   name: string;
+  collection?: string;
   url: string;
 }
 

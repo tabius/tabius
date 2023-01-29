@@ -30,7 +30,7 @@ export class CatalogNavigationHistoryPopupComponent implements OnInit, OnDestroy
 
   constructor(private readonly uds: UserService,
               private readonly cd: ChangeDetectorRef,
-              private router: Router,
+              private readonly router: Router,
   ) {
   }
 

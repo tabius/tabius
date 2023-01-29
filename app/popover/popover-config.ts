@@ -2,7 +2,7 @@
  * Configuration for opening a popover with the Popover service.
  */
 export interface PopoverConfig<T = any> {
-  backdropClass: string;
+  backdropClass: string|string[];
   data?: T;
   disableClose: boolean;
   panelClass: string|string[];
@@ -11,5 +11,5 @@ export interface PopoverConfig<T = any> {
   preferredPosition?: {
     overlayX: string;
     overlayY: string;
-  }
+  };
 }

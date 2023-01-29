@@ -19,8 +19,8 @@ export class CatalogNavigationHistoryService {
 
     this.popoverRef = this.popover.open(this.navigationHistoryTemplate, showHistoryButtonRef || null, {
       backdropClass: 'c-popover-backdrop-modal',
-      panelClass: 'c-popover-panel',
-      // The overlay is placed on the bottom left from the button (which on on the top-right).
+      panelClass: ['c-popover-panel', 'popover-rounded-corners'],
+      // The overlay is placed on the bottom left from the button (which on the top-right).
       preferredPosition: showHistoryButtonRef ? {overlayX: 'end', overlayY: 'top'} : undefined
     });
 
