@@ -113,7 +113,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
     if (editResult.type === 'created') {
       // go to the newly created song.
       const songMount = editResult.song!.mount;
-      this.router.navigate([getSongPageLink(this.primaryUserCollectionMount, songMount)]);
+      this.router.navigate([getSongPageLink(this.primaryUserCollectionMount, songMount)]).then();
     }
   }
 }

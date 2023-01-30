@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest} from 'rxjs';
 import {flatMap, takeUntil} from 'rxjs/operators';
-import {bound, countOccurrences, getCurrentNavbarHeight, getFullLink, getSongPageLink, isValidId, scrollToView} from '@common/util/misc-utils';
+import {assertTruthy, bound, countOccurrences, getCurrentNavbarHeight, getFullLink, getSongPageLink, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
 import {INVALID_ID} from '@common/common-constants';
@@ -12,7 +12,7 @@ import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media-links-utils';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
-export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'
+export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'|'moved'
 
 export type SongEditResult = {
   type: SongEditResultType;
@@ -27,13 +27,13 @@ export type SongEditResult = {
   styleUrls: ['./song-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongEditorComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+export class SongEditorComponent extends ComponentWithLoadingIndicator implements OnInit, OnChanges, OnDestroy {
 
-  /** Id of the edited song.*/
+  /** ID of the edited song. Invalid ID (<=0) for new songs. */
   @Input() songId!: number;
 
-  /** Must be provided for create mode only (when songId is not defined).*/
-  @Input() collectionId!: number;
+  /** Current collection: will become a primary collection for a new song.*/
+  @Input() activeCollectionId!: number;
 
   /** If true, component will trigger scrolling edit area into the view. */
   @Input() scrollIntoView = true;
@@ -55,7 +55,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   mediaLinks = '';
   createMode = false;
 
-  private song?: Song;
+  song?: Song;
   private details?: SongDetails;
   deleteConfirmationFlag = false;
 
@@ -69,13 +69,15 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     super(injector);
   }
 
+  ngOnChanges(): void {
+    assertTruthy(this.activeCollectionId);
+  }
+
   ngOnInit(): void {
+    assertTruthy(this.activeCollectionId);
     this.createMode = !isValidId(this.songId);
     if (this.createMode) {
-      if (!isValidId(this.collectionId)) {
-        throw new Error('Collection id not provided!');
-      }
-      const collection$ = this.cds.getCollectionById(this.collectionId);
+      const collection$ = this.cds.getCollectionById(this.activeCollectionId);
       collection$
           .pipe(takeUntil(this.destroyed$))
           .subscribe(collection => {
@@ -149,7 +151,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   }
 
   private async createImpl(): Promise<void> {
-    const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.title, collectionId: this.collectionId};
+    const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.title, collectionId: this.activeCollectionId};
     const songDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError()};
     const createdSong = await this.cds.createSong(song, songDetails);
     this.close({type: 'created', song: createdSong});
@@ -273,6 +275,10 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     }
     this.toastService.info(this.i18n.toasts.songWasDeleted);
     this.close({type: 'deleted'});
+  }
+
+  onSongMovedToAnotherCollection(): void {
+    this.close({type: 'moved'});
   }
 
   onTitleChanged(): void {

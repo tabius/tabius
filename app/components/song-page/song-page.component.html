@@ -1,7 +1,6 @@
 <gt-head-canonical-link [href]="canonicalPageUrl" *ngIf="canonicalPageUrl"></gt-head-canonical-link>
 
 <div class="content">
-
     <!-- Loading indicator -->
     <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
         <div class="message">{{i18n.loadingSong}}</div>
@@ -38,6 +37,7 @@
                             (closeRequest)="closeEditor()"
                             (onMountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
                             [songId]="song.id"
+                            [activeCollectionId]="activeCollection?.id || song.collectionId"
             ></gt-song-editor>
         </div>
 

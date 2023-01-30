@@ -4,7 +4,7 @@ import {firstValueFrom, from, Observable, of} from 'rxjs';
 import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-model';
 import {flatMap, map, shareReplay} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
 import {combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
@@ -207,7 +207,7 @@ export class CatalogService {
     }
     const {updatedCollections} = await firstValueFrom(this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`));
     await Promise.all([
-      this.store.remove(getSongDetailsKey(songId)),
+      this.store.remove(getSongKey(songId)),
       this.store.remove(getSongDetailsKey(songId))
     ]);
     const collectionsUpdate$$ =
@@ -273,7 +273,7 @@ export class CatalogService {
     ]);
   }
 
-  getUserCollections(userId?: string): Observable<Collection[]> {
+  getUserCollections(userId: string|undefined): Observable<Collection[]> {
     const collectionIds$ = this.getUserCollectionIds(userId);
     return collectionIds$.pipe(
         flatMap((ids) => this.getCollectionsByIds(ids)),
@@ -281,7 +281,7 @@ export class CatalogService {
     );
   }
 
-  getUserCollectionIds(userId?: string): Observable<number[]> {
+  getUserCollectionIds(userId: string|undefined): Observable<number[]> {
     const userCollectionsListKey = getUserCollectionsKey(userId);
     if (!userCollectionsListKey || !userId) {
       return of([]);
@@ -339,6 +339,23 @@ export class CatalogService {
     // TODO: cache for some period? up to 1 day.
     return this.httpClient.get<number>(url).pipe(shareReplay(1));
   }
+
+  async moveSongToAnotherCollection(songId: number, sourceCollectionId: number, targetCollectionId: number): Promise<void> {
+    const request: MoveSongToAnotherCollectionRequest = {songId, sourceCollectionId, targetCollectionId};
+    try {
+      const {song, sourceCollectionSongIds, targetCollectionSongIds} = await firstValueFrom(
+          this.httpClient.put<MoveSongToAnotherCollectionResponse>('/api/song/move-to-another-collection', request)
+      );
+      // console.log('Set collection songs: ' + sourceCollectionId, sourceCollectionSongIds);
+      // console.log('Set collection songs: ' + targetCollectionId, targetCollectionSongIds);
+      await this.store.set<Song>(getSongKey(song.id), song, skipUpdateCheck);
+      await this.store.set<number[]>(getCollectionSongListKey(targetCollectionId), targetCollectionSongIds, checkUpdateByShallowArrayCompare);
+      await this.store.set<number[]>(getCollectionSongListKey(sourceCollectionId), sourceCollectionSongIds, checkUpdateByShallowArrayCompare);
+    } catch (httpError) {
+      console.error(httpError);
+      throw new Error(I18N.common.serverRequestError);
+    }
+  }
 }
 
 function getCollectionKey(collectionId: number|undefined): string|undefined {
@@ -368,4 +385,3 @@ function getSongDetailsKey(songId: number|undefined): string|undefined {
 function getUserCollectionsKey(userId: string|undefined): string|undefined {
   return isValidUserId(userId) ? USER_COLLECTIONS_KEY + userId : undefined;
 }
-

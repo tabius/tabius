@@ -38,7 +38,7 @@
                         <gt-song-editor *ngIf="editorIsOpen"
                                         (closeRequest)="closeEditor($event)"
                                         [songId]="-1"
-                                        [collectionId]="user.collectionId"
+                                        [activeCollectionId]="user.collectionId"
                                         [initialFocusMode]="'title'"
                         ></gt-song-editor>
                     </div>

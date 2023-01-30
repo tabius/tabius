@@ -3,7 +3,7 @@ import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {BehaviorSubject, combineLatest} from 'rxjs';
-import {map, mergeMap, take, takeUntil, throttleTime} from 'rxjs/operators';
+import {map, mergeMap, switchMap, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
@@ -66,6 +66,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   jsonLdBreadcrumb?: WithContext<BreadcrumbList>;
 
+  private prevSongIdInCollection? : number;
+  private nextSongIdInCollection? : number;
+
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               private readonly router: Router,
@@ -104,6 +107,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
     const collection$ = collectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
     const primaryCollection$ = primaryCollectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
+    const allSongsInCollection$ = collection$.pipe(switchMap(c => this.cds.getSongIdsByCollection(c?.id)));
     const songInCollection$ = collectionId$.pipe(mergeMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
     // Reuse cached song to keep showing the page if the song was moved out of the current collection.
     const song$ = songInCollection$.pipe(map(song => song || this.song));
@@ -113,21 +117,22 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const h4Si$ = this.uds.getH4SiFlag();
     const favoriteKey$ = this.uds.getFavoriteKey();
 
-    const songData$ = combineLatest([collection$, primaryCollection$, song$, songDetails$]);
+    const songData$ = combineLatest([collection$, primaryCollection$, song$, songDetails$, allSongsInCollection$]);
     const userData$ = combineLatest([user$, h4Si$, favoriteKey$, songSettings$]);
     combineLatest([songData$, userData$])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),
         )
-        .subscribe(([[collection, primaryCollection, song, songDetails], [user, h4Si, favoriteKey, songSettings]]) => {
+        .subscribe(([[collection, primaryCollection, song, songDetails, allSongsInCollection], [user, h4Si, favoriteKey, songSettings]]) => {
           this.loaded = true;
           this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
           const hadSongBefore = this.song !== undefined;
           const haveSongNow = song !== undefined && songDetails !== undefined;
           const isSongMountUpdated = !!this.songMountBeforeUpdate && song?.mount !== this.songMountBeforeUpdate;
-          if (hadSongBefore && !haveSongNow || isSongMountUpdated) {
-            // handle song removal or mount update
+          const isInvalidSongCollection = song && collection && !(allSongsInCollection || []).includes(song.id);
+          if (hadSongBefore && !haveSongNow || isSongMountUpdated || isInvalidSongCollection) {
+            // Handle song removal or mount update or song move.
             if (isSongMountUpdated) {
               this.handleMountUpdate();
             } else {

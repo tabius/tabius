@@ -61,6 +61,7 @@ import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-na
 import {ScenePageComponent} from './components/scene-page/scene-page.component';
 import {AuthInterceptor} from '@app/interceptors/auth.interceptor';
 import * as Sentry from '@sentry/angular';
+import { MoveSongToCollectionComponent } from './components/move-song-to-collection/move-song-to-collection.component';
 
 
 @NgModule({
@@ -111,6 +112,7 @@ import * as Sentry from '@sentry/angular';
     UserCollectionsListComponent,
     UserRegistrationPromptComponent,
     ScenePageComponent,
+    MoveSongToCollectionComponent,
   ],
   imports: [
     BrowserAnimationsModule,

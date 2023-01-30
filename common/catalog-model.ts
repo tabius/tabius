@@ -28,7 +28,7 @@ export const MIN_COLLECTION_NAME_LENGTH = 4;
 export const MAX_COLLECTION_NAME_LENGTH = 64;
 
 export interface Collection extends WithId, Versioned {
-  /** Name of the collection. For person it is '<Last Name> <First Name>'. */
+  /** Name of the collection. For a person it is '<Last Name> <First Name>'. */
   name: string;
   /** Mount part of the collection page. Unique for all collections. */
   mount: string;

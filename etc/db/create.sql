@@ -61,6 +61,7 @@ CREATE TABLE user (
   COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE secondary_song_collections (
+    id INT PRIMARY KEY AUTO_INCREMENT,
     song_id INT  NOT NULL REFERENCES song(id),
     collection_id INT NOT NULL REFERENCES collection(id)
 ) ENGINE InnoDB
@@ -69,3 +70,4 @@ CREATE TABLE secondary_song_collections (
 
 CREATE INDEX secondary_song_collections_collection_id_index on secondary_song_collections(collection_id);
 CREATE INDEX secondary_song_collections_song_id_index on secondary_song_collections(song_id);
+CREATE UNIQUE INDEX secondary_song_collections_song_pair_index on secondary_song_collections(song_id, collection_id);

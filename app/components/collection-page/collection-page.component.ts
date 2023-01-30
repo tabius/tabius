@@ -156,7 +156,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
       // go to the newly created song.
       const songMount = truthy(editResult.song).mount;
       const collectionMount = truthy(this.collectionViewModel).collection.mount;
-      this.router.navigate([getSongPageLink(collectionMount, songMount)]);
+      this.router.navigate([getSongPageLink(collectionMount, songMount)]).then();
     }
   }
 

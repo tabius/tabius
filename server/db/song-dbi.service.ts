@@ -117,7 +117,6 @@ export class SongDbi {
     await this.db.pool.promise()
         .query('DELETE FROM secondary_song_collections WHERE song_id = ? AND collection_id = ?',
             [songId, collectionId]);
-
   }
 
   async updateSongsPrimaryCollection(songIds: number[], collectionId: number): Promise<void> {

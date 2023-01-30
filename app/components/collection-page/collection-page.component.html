@@ -66,7 +66,7 @@
             <gt-song-editor *ngIf="songEditorIsOpen && canAddSongs"
                             (closeRequest)="closeSongEditor($event)"
                             [songId]="-1"
-                            [collectionId]="collectionViewModel.collection.id"
+                            [activeCollectionId]="collectionViewModel.collection.id"
                             [initialFocusMode]="'title'"
             ></gt-song-editor>
 

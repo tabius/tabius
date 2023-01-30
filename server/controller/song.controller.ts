@@ -5,8 +5,8 @@ import {isNumericId, NewSongDetailsValidator, NewSongValidator, paramToArrayOfNu
 import {User} from '@common/user-model';
 import {conformsTo, isBoolean, validate} from '@server/util/validation';
 import {ServerAuthService} from '@server/service/server-auth.service';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
-import {canManageCollectionContent, isModerator, isValidId} from '@common/util/misc-utils';
+import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
+import {assertTruthy, canManageCollectionContent, isModerator, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
 
@@ -199,6 +199,53 @@ export class SongController {
     await this.songDbi.removeSongFromSecondaryCollection(songId, collectionId);
     const songIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collectionId);
     return {songIds};
+  }
+
+  /** Removes song from the source collection and adds it to the target collection. */
+  @Put('move-to-another-collection')
+  async moveSongToAnotherCollection(@Session() session, @Body() request: MoveSongToAnotherCollectionRequest)
+      : Promise<MoveSongToAnotherCollectionResponse> {
+    console.log('moveSongToAnotherCollection', request);
+    const {songId, sourceCollectionId, targetCollectionId} = request;
+
+    // noinspection SuspiciousTypeOfGuard: TODO: use validators framework.
+    assertTruthy(typeof songId === 'number' && typeof sourceCollectionId === 'number' && typeof targetCollectionId === 'number');
+
+    const user: User = ServerAuthService.getUserOrFail(session);
+    const song = (await this.songDbi.getSongs([songId]))[0];
+    if (!song) {
+      throw new HttpException('Song not found: ' + songId, HttpStatus.BAD_REQUEST);
+    }
+    const sourceCollection = await this.collectionDbi.getCollectionById(sourceCollectionId);
+    if (!sourceCollection) {
+      throw new HttpException('Source collection not found: ' + sourceCollectionId, HttpStatus.BAD_REQUEST);
+    }
+    const targetCollection = await this.collectionDbi.getCollectionById(targetCollectionId);
+    if (!targetCollection) {
+      throw new HttpException('Target collection not found: ' + sourceCollectionId, HttpStatus.BAD_REQUEST);
+    }
+    if (!canManageCollectionContent(user, sourceCollection)) {
+      throw new HttpException('Insufficient rights for source collection', HttpStatus.FORBIDDEN);
+    }
+    if (!canManageCollectionContent(user, targetCollection)) {
+      throw new HttpException('Insufficient rights for target collection', HttpStatus.FORBIDDEN);
+    }
+    if (sourceCollectionId === song.collectionId) {
+      console.log(`moveSongToAnotherCollection: Update song primary collection: song-id: ${songId}, from: ${sourceCollectionId}, to: ${targetCollectionId}`);
+      song.collectionId = targetCollectionId;
+      await this.songDbi.removeSongFromSecondaryCollection(songId, sourceCollectionId);
+      await this.songDbi.updateSongsPrimaryCollection([song.id], song.collectionId);
+    } else if (targetCollectionId === song.collectionId) {
+      console.log(`moveSongToAnotherCollection: Remove song from secondary collection, song-id: ${songId}, secondary collection: ${sourceCollectionId}`);
+      await this.songDbi.removeSongFromSecondaryCollection(songId, sourceCollectionId);
+    } else {
+      console.log(`moveSongToAnotherCollection: Update song secondary collection: song-id: ${songId}, from: ${sourceCollectionId}, to: ${targetCollectionId}`);
+      await this.songDbi.removeSongFromSecondaryCollection(songId, sourceCollectionId);
+      await this.songDbi.addSongToSecondaryCollection(songId, targetCollectionId);
+    }
+    const sourceCollectionSongIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(sourceCollectionId);
+    const targetCollectionSongIds = await this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(targetCollectionId);
+    return {song, sourceCollectionSongIds, targetCollectionSongIds};
   }
 
   /** Returns random song from public collection. */

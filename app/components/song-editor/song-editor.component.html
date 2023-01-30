@@ -53,5 +53,12 @@
             </button>
         </div>
     </div>
+    <!-- Show MOVE only for primary collection change. -->
+    <gt-move-song-to-collection *ngIf="song && isBrowser && song.collectionId === activeCollectionId"
+                                [songId]="song.id"
+                                [currentCollectionId]="activeCollectionId"
+                                (moved)="onSongMovedToAnotherCollection()"
+                                class="move-song-row"
+    ></gt-move-song-to-collection>
 </div>
 

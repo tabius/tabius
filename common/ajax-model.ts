@@ -109,6 +109,18 @@ export interface RemoveSongFromSecondaryCollectionRequest {
   collectionId: number;
 }
 
+export interface MoveSongToAnotherCollectionRequest {
+  songId: number;
+  sourceCollectionId: number;
+  targetCollectionId: number;
+}
+
+export interface MoveSongToAnotherCollectionResponse {
+  song: Song;
+  sourceCollectionSongIds: number[];
+  targetCollectionSongIds: number[];
+}
+
 export interface RemoveSongFromSecondaryCollectionResponse {
   songIds: number[];
 }
