@@ -15,9 +15,8 @@
     font-family: $font-family-mono;
   }
 
-  .move-song-row {
-    display: block;
-    margin-top: 10px;
+  .move-song-block {
+    margin-left: 10px;
   }
 
   .song-title {
@@ -27,6 +26,7 @@
   .song-mount-block {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
   }
 
   textarea.song-content {

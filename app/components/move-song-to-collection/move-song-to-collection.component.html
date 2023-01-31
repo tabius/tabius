@@ -1,8 +1,10 @@
-<ng-container *ngIf="userCollections$ | async as collections">
+<ng-container *ngIf="collections$ | async as collections">
     <ng-container *ngIf="collections.length > 0">
-        <select [(ngModel)]="selectedCollection">
-            <option *ngFor="let collection of collections; trackBy: trackById" [ngValue]="collection">{{collection.name}}</option>
-        </select>
-        <button class="btn move-button" [disabled]="!selectedCollection" (click)="onMoveButtonClicked()">Переместить</button>
+        <div class="move-block">
+            <select [(ngModel)]="selectedCollection">
+                <option *ngFor="let collection of collections; trackBy: trackById" [ngValue]="collection">{{collection.name}}</option>
+            </select>
+            <button class="btn move-button" [disabled]="!selectedCollection" (click)="onMoveButtonClicked()">{{i18n.moveButtonText}}</button>
+        </div>
     </ng-container>
 </ng-container>

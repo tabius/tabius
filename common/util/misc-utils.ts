@@ -94,7 +94,7 @@ export function isSmallScreenDevice(userAgent?: string): boolean {
 }
 
 /** Accepts 1 argument and returns true if the argument !== undefined. */
-export function defined<T>(v: T|undefined): v is T {
+export function isDefined<T>(v: T|undefined): v is T {
   return v !== undefined;
 }
 

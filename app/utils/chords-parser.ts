@@ -1,5 +1,5 @@
 import {CHORD_TYPE_BY_RAW_NAME, ChordLocation, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
-import {defined, isAlpha, isDigit} from '@common/util/misc-utils';
+import {isDefined, isAlpha, isDigit} from '@common/util/misc-utils';
 import {Chord, CHORD_TONES, ChordTone, ChordType} from '@app/utils/chords-lib';
 
 function isWordChar(char: string): boolean {
@@ -109,7 +109,7 @@ export function isTabsLine(text: string, startIdx: number, endIdx: number): bool
 }
 
 /** All possible chord letters (including H). */
-const EXTENDED_CHORD_LETTERS: string[] = CHORD_TONES.map(t => t.length === 1 ? t : undefined).filter(defined);
+const EXTENDED_CHORD_LETTERS: string[] = CHORD_TONES.map(t => t.length === 1 ? t : undefined).filter(isDefined);
 EXTENDED_CHORD_LETTERS.push('H');
 
 /** Parses 1 chord starting from startIdx (inclusive) and ending before endIdx (exclusive). */

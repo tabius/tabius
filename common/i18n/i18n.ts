@@ -357,4 +357,7 @@ export interface I18n {
   navigationHistoryPopup: {
     title: string;
   };
+  moveSongToCollectionComponent: {
+    moveButtonText: string
+  };
 }

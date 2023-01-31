@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {UserService} from '@app/services/user.service';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {Collection} from '@common/catalog-model';
-import {map, switchMap} from 'rxjs/operators';
-import {assertTruthy, trackById} from '@common/util/misc-utils';
-import {ToastService} from '@app/toast/toast.service';
+import {filter, map, switchMap} from 'rxjs/operators';
+import {assertTruthy, isDefined, trackById} from '@common/util/misc-utils';
+import {I18N} from '@app/app-i18n';
 
 @Component({
   selector: 'gt-move-song-to-collection',
@@ -21,21 +21,31 @@ export class MoveSongToCollectionComponent implements OnInit, OnChanges {
   /** Emitted song is deleted. */
   @Output() moved = new EventEmitter<void>();
 
-  readonly userCollections$: Observable<Array<Collection>>;
+  readonly collections$: Observable<Array<Collection>>;
 
   selectedCollection?: Collection;
 
-  private readonly collectionIdToExclude$ = new BehaviorSubject<number|undefined>(undefined);
+  readonly i18n = I18N.moveSongToCollectionComponent;
+
+  private readonly currentCollectionId$ = new BehaviorSubject<number|undefined>(undefined);
   readonly trackById = trackById;
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
-              private readonly toast: ToastService,
   ) {
-    this.userCollections$ = combineLatest([this.uds.getUser$(), this.collectionIdToExclude$])
+    this.collections$ = combineLatest([this.uds.getUser$(), this.currentCollectionId$])
         .pipe(
-            switchMap(([user,]) => this.cds.getUserCollections(user?.id)),
-            map(collections => collections.filter(collection => collection.id !== this.currentCollectionId)),
+            map(([user,]) => user),
+            filter(isDefined),
+            switchMap(user => combineLatest([
+              this.cds.getUserCollections(user.id),
+              user.roles.includes('moderator') ? this.cds.getListedCollections() : of([])
+            ])),
+            map(([userCollections, listedCollections]) => {
+              userCollections.sort((c1, c2) => c1.name.localeCompare(c2.name));
+              listedCollections.sort((c1, c2) => c1.name.localeCompare(c2.name));
+              return [...userCollections, ...listedCollections].filter(collection => collection.id !== this.currentCollectionId);
+            }),
         );
 
   }
@@ -48,7 +58,7 @@ export class MoveSongToCollectionComponent implements OnInit, OnChanges {
   ngOnChanges(): void {
     assertTruthy(this.songId);
     assertTruthy(this.currentCollectionId);
-    this.collectionIdToExclude$.next(this.currentCollectionId);
+    this.currentCollectionId$.next(this.currentCollectionId);
   }
 
   async onMoveButtonClicked(): Promise<void> {

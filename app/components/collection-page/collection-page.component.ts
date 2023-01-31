@@ -7,7 +7,7 @@ import {combineLatest, Observable} from 'rxjs';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canManageCollectionContent, canRemoveCollection, defined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, sortSongsAlphabetically, truthy} from '@common/util/misc-utils';
+import {canManageCollectionContent, canRemoveCollection, isDefined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, sortSongsAlphabetically, truthy} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
@@ -80,13 +80,13 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     const collectionDetails$: Observable<CollectionDetails|undefined> = collectionId$.pipe(flatMap(id => this.cds.getCollectionDetails(id)));
     const bands$: Observable<Collection[]> = collectionDetails$.pipe(
         flatMap(details => this.cds.getCollectionsByIds(details ? details.bandIds : [])),
-        map(bands => bands.filter(defined))
+        map(bands => bands.filter(isDefined))
     );
 
     const songs$: Observable<Song[]> = collection$.pipe(
         flatMap(collection => this.cds.getSongIdsByCollection(collection && collection.id)),
         flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
-        map(songs => songs.filter(defined))
+        map(songs => songs.filter(isDefined))
     );
     const primarySongCollections$: Observable<(Collection|undefined)[]> = songs$.pipe(
         flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),

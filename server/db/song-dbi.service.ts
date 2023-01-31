@@ -31,14 +31,19 @@ export class SongDbi {
   constructor(private readonly db: DbService) {
   }
 
-  async getSongs(songIds: readonly number[]): Promise<Song[]> {
+  async getSong(songId: number): Promise<Song|undefined> {
+    const songs = await this.getSongs([songId]);
+    return songs[0];
+  }
+
+  async getSongs(songIds: number[]): Promise<Song[]> {
     const idList = songIds.join(',');
     return await this.db.pool.promise()
         .query<SongRow[]>(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
         .then(([rows]) => rows.map(row2Song));
   }
 
-  async getSongsDetails(songIds: readonly number[]): Promise<SongDetails[]> {
+  async getSongsDetails(songIds: number[]): Promise<SongDetails[]> {
     const idList = songIds.join(',');
     return await this.db.pool.promise()
         .query<SongRow[]>(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
@@ -106,10 +111,12 @@ export class SongDbi {
   }
 
   async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
-    //TODO: handle duplicates.
-    //TODO: do not add into secondary when song is in primary.
+    const song = await this.getSong(songId);
+    if (!song || song.collectionId === songId) { // Do not add into secondary when 'collectionId' is a primary collection id.
+      return;
+    }
     await this.db.pool.promise()
-        .query('INSERT INTO secondary_song_collections(song_id, collection_id) VALUES(?,?)',
+        .query('INSERT IGNORE INTO secondary_song_collections(song_id, collection_id) VALUES(?,?)',
             [songId, collectionId]);
   }
 

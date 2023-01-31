@@ -8,7 +8,7 @@ import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, Song} from '@common/catalog-model';
 import {sortSongsAndRelatedItems} from '@app/components/collection-page/collection-page.component';
-import {combineLatest0, defined, getSongPageLink} from '@common/util/misc-utils';
+import {combineLatest0, isDefined, getSongPageLink} from '@common/util/misc-utils';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {Router} from '@angular/router';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
@@ -58,7 +58,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
           }
           return combineLatest0([...uniqueSongIds].map(songId => this.cds.getSongById(songId)));
         }),
-        map(songs => songs.filter(defined)),
+        map(songs => songs.filter(isDefined)),
     );
 
     const songsPickedByUser$: Observable<Song[]> = combineLatest([allUserCollectionIds$, allSongsInAllUserCollections$])

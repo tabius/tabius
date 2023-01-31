@@ -31,6 +31,12 @@
                class="song-mount"
                type="text"
                placeholder="{{i18n.mountPlaceholder}}">
+        <gt-move-song-to-collection *ngIf="song && isBrowser"
+                                    [songId]="song.id"
+                                    [currentCollectionId]="activeCollectionId"
+                                    (moved)="onSongMovedToAnotherCollection()"
+                                    class="move-song-block"
+        ></gt-move-song-to-collection>
     </div>
     <div class="buttons-row">
         <div class="left-side-block">
@@ -53,12 +59,5 @@
             </button>
         </div>
     </div>
-    <!-- Show MOVE only for primary collection change. -->
-    <gt-move-song-to-collection *ngIf="song && isBrowser && song.collectionId === activeCollectionId"
-                                [songId]="song.id"
-                                [currentCollectionId]="activeCollectionId"
-                                (moved)="onSongMovedToAnotherCollection()"
-                                class="move-song-row"
-    ></gt-move-song-to-collection>
 </div>
 

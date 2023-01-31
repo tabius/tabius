@@ -371,5 +371,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   navigationHistoryPopup: {
     title: 'История просмотров'
-  }
+  },
+  moveSongToCollectionComponent: {
+    moveButtonText: 'Переместить',
+  },
 };

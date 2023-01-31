@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Ho
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {map, mergeMap, takeUntil} from 'rxjs/operators';
-import {combineLatest0, defined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {combineLatest0, isDefined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {Collection, Song} from '@common/catalog-model';
@@ -185,7 +185,7 @@ export function getAllSongsInCollectionsSorted(collection$: Observable<Collectio
   return collection$.pipe(
       mergeMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
       mergeMap(songIds => combineLatest0((songIds || []).map(id => cds.getSongById(id)))),
-      map(songs => sortSongsAlphabetically(songs.filter(defined))),
+      map(songs => sortSongsAlphabetically(songs.filter(isDefined))),
   );
 }
 

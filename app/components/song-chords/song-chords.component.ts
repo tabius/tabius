@@ -5,7 +5,7 @@ import {UserService} from '@app/services/user.service';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {combineLatest, ReplaySubject, Subject} from 'rxjs';
 import {parseChord, parseChords} from '@app/utils/chords-parser';
-import {defined} from '@common/util/misc-utils';
+import {isDefined} from '@common/util/misc-utils';
 import {CatalogService} from '@app/services/catalog.service';
 import {getDefaultH4SiFlag, newDefaultUserSongSettings, UserSongSettings} from '@common/user-model';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
@@ -99,9 +99,9 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
     }
     this.chordLayouts = orderedChordNames
         .map(name => parseChord(name))
-        .filter(defined)
+        .filter(isDefined)
         .map(({chord}) => getChordLayout(chord))
-        .filter(defined) as ChordLayout[];
+        .filter(isDefined) as ChordLayout[];
   }
 
   onTransposeClicked(steps: number): void {

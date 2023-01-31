@@ -212,7 +212,7 @@ export class SongController {
     assertTruthy(typeof songId === 'number' && typeof sourceCollectionId === 'number' && typeof targetCollectionId === 'number');
 
     const user: User = ServerAuthService.getUserOrFail(session);
-    const song = (await this.songDbi.getSongs([songId]))[0];
+    const song = await this.songDbi.getSong(songId);
     if (!song) {
       throw new HttpException('Song not found: ' + songId, HttpStatus.BAD_REQUEST);
     }
@@ -233,7 +233,6 @@ export class SongController {
     if (sourceCollectionId === song.collectionId) {
       console.log(`moveSongToAnotherCollection: Update song primary collection: song-id: ${songId}, from: ${sourceCollectionId}, to: ${targetCollectionId}`);
       song.collectionId = targetCollectionId;
-      await this.songDbi.removeSongFromSecondaryCollection(songId, sourceCollectionId);
       await this.songDbi.updateSongsPrimaryCollection([song.id], song.collectionId);
     } else if (targetCollectionId === song.collectionId) {
       console.log(`moveSongToAnotherCollection: Remove song from secondary collection, song-id: ${songId}, secondary collection: ${sourceCollectionId}`);

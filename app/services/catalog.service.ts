@@ -5,7 +5,7 @@ import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-
 import {flatMap, map, shareReplay} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
-import {combineLatest0, defined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
+import {combineLatest0, isDefined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion} from '@app/store';
@@ -47,7 +47,7 @@ export class CatalogService {
         //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
         .pipe(
             flatMap(ids => combineLatest0((ids || []).map(id => this.getCollectionById(id)))),
-            map(items => (items.filter(defined) as Collection[])),
+            map(items => (items.filter(isDefined) as Collection[])),
         );
   }
 
@@ -277,7 +277,7 @@ export class CatalogService {
     const collectionIds$ = this.getUserCollectionIds(userId);
     return collectionIds$.pipe(
         flatMap((ids) => this.getCollectionsByIds(ids)),
-        map(collections => (collections.filter(defined) as Collection[])),
+        map(collections => (collections.filter(isDefined) as Collection[])),
     );
   }
 

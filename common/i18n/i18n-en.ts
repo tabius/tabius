@@ -371,6 +371,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     reloadNotice: 'If loading takes too long try to reload whole page.',
   },
   navigationHistoryPopup: {
-    title: 'History'
-  }
+    title: 'History',
+  },
+  moveSongToCollectionComponent: {
+    moveButtonText: 'Move',
+  },
 };
