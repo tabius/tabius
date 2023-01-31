@@ -102,8 +102,13 @@ export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, m
 
   // Handle 'B' & 'H'
   let toneString: string = tone;
-  if (tone.charAt(0) === 'B' && options.useH) {
-    toneString = 'H' + tone.substring(1);
+  if (options.useH) {
+    if (tone.charAt(0) === 'B') {
+      toneString = 'H' + tone.substring(1);
+    }
+    if (bassTone?.charAt(0) === 'B') {
+      bassTone = ('H' + bassTone.substring(1)) as ChordTone;
+    }
   }
 
   const visualType = chord.type ? VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type) || '' : '';
