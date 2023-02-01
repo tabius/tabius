@@ -23,13 +23,6 @@
     width: 100%;
   }
 
-  .song-mount-block {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    gap: 10px;
-  }
-
   textarea.song-content {
     margin-top: 10px;
     width: 100%;
@@ -47,7 +40,11 @@
   }
 
   .song-mount-block {
-    margin-top: 5px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 10px;
 
     .song-mount {
       min-width: 250px;
