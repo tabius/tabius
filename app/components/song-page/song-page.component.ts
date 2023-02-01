@@ -66,9 +66,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   jsonLdBreadcrumb?: WithContext<BreadcrumbList>;
 
-  private prevSongIdInCollection? : number;
-  private nextSongIdInCollection? : number;
-
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               private readonly router: Router,

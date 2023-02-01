@@ -1,16 +1,27 @@
+@import "app/styles/dimensions";
+@import "app/styles/fonts";
+
 select {
   width: 250px;
-  border: 1px solid #a9a9a9;
-  height: 32px;
+  border: 1px solid #999999;
   background-color: white;
   padding: 2px 7px;
-  font-size: inherit;
+  font-size: 16px;
+  height: 1.8em;
+  font-family: $font-family-mono;
 }
 
 .move-button {
   margin-left: 10px;
+  margin-top: -2px;
 }
 
 .move-block {
   white-space: nowrap;
+}
+
+@media only screen and (min-width: $min-desktop-width) {
+  select {
+    font-size: 18px;
+  }
 }
