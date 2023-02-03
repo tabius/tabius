@@ -43,7 +43,7 @@
             <button *ngIf="!createMode" class="btn btn-info update-button" (click)="update()">{{i18n.update}}</button>
             <button class="btn cancel-button" (click)="cancel()">{{i18n.cancel}}</button>
         </div>
-        <div *ngIf="!createMode" class="delete-button-group">
+        <div *ngIf="!createMode" class="right-side-block">
             <label class="checkbox" title="{{i18n.deleteConfirmationTitle}}">
                 <input type="checkbox"
                        [checked]="deleteConfirmationFlag"

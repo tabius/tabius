@@ -75,10 +75,13 @@
     }
   }
 
-  .delete-button-group {
+  .right-side-block {
     white-space: nowrap;
     margin-left: 10px;
-    float: right;
+
+    input {
+      height: auto;
+    }
   }
 }
 
