@@ -6,13 +6,16 @@ const FAVORITES_COLLECTION_NAME = 'Favorites';
 
 export const TRANSLATIONS_MAP_EN: I18n = {
   common: {
+    pageTitle: 'Chords & Tabs',
+    pageDescription: 'Chords and tabs for your favorite songs',
+    keywords: ['chords', 'guitar tabs'],
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
     and: 'and',
     error: (message: string) => `Error: ${message}`,
     unexpectedError: 'Unexpected internal error!',
     serverRequestError: 'Error connecting to server!',
     failedToCreateCollection: 'Failed to create new collection!',
-    catalog: 'Catalog',
+    catalog: 'Catalog'
   },
   navbar: {
     accountInfoNotLoggedInToast: 'You are not logged in',
@@ -69,6 +72,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     },
   },
   scenePage: {
+    pageTitle: 'Song of the day: a new song every day',
+    pageDescription: 'Scene is a place where you can find a new song with guitar chords every day.',
+    pageKeywords: ['song of the day', 'best song', 'guitar chords'],
     title: 'Scene: a new song every day',
     loadingMessage: 'Loading…',
   },

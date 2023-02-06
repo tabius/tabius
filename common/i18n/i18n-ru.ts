@@ -6,6 +6,9 @@ const FAVORITES_COLLECTION_NAME = 'Избранное';
 
 export const TRANSLATIONS_MAP_RU: I18n = {
   common: {
+    pageTitle: 'Табы и аккорды',
+    pageDescription: 'Аккорды для ваших любимых песен',
+    keywords: ['аккорды', 'гитара', 'табы'],
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
     and: 'и',
     error: (message: string) => `Ошибка: ${message}`,
@@ -70,6 +73,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     }
   },
   scenePage: {
+    pageTitle: 'Песня дня: новая песня с аккордами каждый день',
+    pageDescription: 'Сцена - это место где каждый день вас ожидает новая песня с аккуратно подобранными аккордами.',
+    pageKeywords: ['песня дня', 'лучшая песня', 'аккорды для гитары'],
     title: 'Сцена: новая песня каждый день',
     loadingMessage: 'Загрузка…',
   },

@@ -11,6 +11,11 @@ export function getI18n(lang: string): DeepReadonly<I18n> {
 
 export interface I18n {
   common: {
+    /** Default page title. */
+    pageTitle: string;
+    /** Default page description for SEO. */
+    pageDescription: string;
+    keywords: string[],
     favoritesCollectionName: string;
     and: string;
     error: (message: string) => string;
@@ -72,6 +77,9 @@ export interface I18n {
     }
   };
   scenePage: {
+    pageTitle: string;
+    pageDescription: string;
+    pageKeywords: string[];
     title: string;
     loadingMessage: string;
   };
