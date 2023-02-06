@@ -253,7 +253,8 @@ export interface I18n {
   };
   songHeaderComponent: {
     printTitle: string;
-    showShortcutsTitle: string
+    showShortcutsTitle: string;
+    goToCollectionTitle: string;
   };
   songListComponent: {
     listIsEmpty: string;

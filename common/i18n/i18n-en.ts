@@ -261,6 +261,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   songHeaderComponent: {
     printTitle: 'Print song with chords',
     showShortcutsTitle: 'Show keyboard shortcuts',
+    goToCollectionTitle: 'Go to collection page',
   },
   songListComponent: {
     listIsEmpty: 'No songs found',

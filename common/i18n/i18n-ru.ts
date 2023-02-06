@@ -260,6 +260,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   songHeaderComponent: {
     printTitle: 'Распечатать текст и аккорды',
     showShortcutsTitle: 'Показать горячие клавиши',
+    goToCollectionTitle: 'Перейти в коллекцию',
   },
   songListComponent: {
     listIsEmpty: 'Нет песен',
