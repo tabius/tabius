@@ -9,7 +9,7 @@
 
         <h2>{{i18n.title}}</h2>
 
-        <gt-song [songId]="songId"></gt-song>
+        <gt-song [songId]="songId" [showCollectionLink]="true"></gt-song>
 
         <div class="user-controls">
             <gt-add-song-to-collection *ngIf="isBrowser" [songId]="songId"></gt-add-song-to-collection>

@@ -1,6 +1,6 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Collection, Song} from '@common/catalog-model';
-import {getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
+import {assertTruthy, getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
 import {HelpService} from '@app/services/help.service';
 import {I18N} from '@app/app-i18n';
 
@@ -12,11 +12,13 @@ export type SongHeaderTitleFormat = 'song'|'song-and-collection';
   styleUrls: ['./song-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongHeaderComponent implements OnChanges {
+export class SongHeaderComponent implements OnInit, OnChanges {
 
   @Input() song!: Song;
 
   @Input() collection!: Collection;
+
+  @Input() showCollectionLink = false;
 
   @Input() titleFormat: SongHeaderTitleFormat = 'song-and-collection';
 
@@ -31,7 +33,12 @@ export class SongHeaderComponent implements OnChanges {
   ) {
   }
 
+  ngOnInit(): void {
+    assertTruthy(this.song && this.collection);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
+    assertTruthy(this.song && this.collection);
     if (changes['collection'] || changes['song']) {
       this.title = this.song.title + (this.titleFormat === 'song-and-collection' ? ` - ${getNameFirstFormArtistName(this.collection)}` : '');
     }
@@ -44,5 +51,9 @@ export class SongHeaderComponent implements OnChanges {
 
   showKeyboardShortcuts(): void {
     this.helpService.showKeyboardShortcuts();
+  }
+
+  get collectionLink(): string {
+    return getCollectionPageLink(this.collection.mount);
   }
 }
