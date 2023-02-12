@@ -47,7 +47,14 @@
               "aot": true,
               "buildOptimizer": true,
               "ngswConfigPath": "ngsw-config.json",
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              },
               "outputHashing": "all",
               "serviceWorker": true,
               "sourceMap": true
@@ -63,7 +70,14 @@
               "aot": true,
               "buildOptimizer": true,
               "ngswConfigPath": "ngsw-config.json",
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              },
               "outputHashing": "all",
               "serviceWorker": true,
               "sourceMap": true

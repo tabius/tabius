@@ -13,7 +13,7 @@ import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {parseChord} from '@app/utils/chords-parser';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
 
-/** Heuristic used to enable multicolumn mode. */
+/** Heuristic used to enable multi-column mode. */
 const IDEAL_SONG_LINES_PER_COLUMN = 17; // (4 chords + 4 text lines) * 2 + 1 line between
 
 /** Note: must be lower-case! */
