@@ -268,7 +268,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
       return;
     }
     try {
-      await this.cds.deleteSong(this.songId);
+      await this.cds.deleteSong(this.songId, this.activeCollectionId);
     } catch (err) {
       this.toastService.warning(this.i18n.toasts.failedToDeleteSong);
       return;

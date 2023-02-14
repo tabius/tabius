@@ -381,6 +381,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     title: 'History',
   },
   moveSongToCollectionComponent: {
+    addButtonText: 'Add',
     moveButtonText: 'Move',
+    songIsAddedToCollection: 'Song was added to the collection: '
   },
 };

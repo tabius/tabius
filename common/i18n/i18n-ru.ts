@@ -380,6 +380,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     title: 'История просмотров'
   },
   moveSongToCollectionComponent: {
+    addButtonText: 'Добавить',
     moveButtonText: 'Переместить',
+    songIsAddedToCollection: 'Песня добавлена в коллекцию: '
   },
 };

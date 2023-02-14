@@ -6,6 +6,7 @@ import {Collection} from '@common/catalog-model';
 import {filter, map, switchMap} from 'rxjs/operators';
 import {assertTruthy, isDefined, trackById} from '@common/util/misc-utils';
 import {I18N} from '@app/app-i18n';
+import {ToastService} from '@app/toast/toast.service';
 
 @Component({
   selector: 'gt-move-song-to-collection',
@@ -14,6 +15,8 @@ import {I18N} from '@app/app-i18n';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MoveSongToCollectionComponent implements OnInit, OnChanges {
+
+  @Input() mode: 'add'|'move' = 'move';
 
   @Input() songId!: number;
   @Input() currentCollectionId!: number;
@@ -32,6 +35,7 @@ export class MoveSongToCollectionComponent implements OnInit, OnChanges {
 
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
+              private readonly toastService: ToastService,
   ) {
     this.collections$ = combineLatest([this.uds.getUser$(), this.currentCollectionId$])
         .pipe(
@@ -63,7 +67,12 @@ export class MoveSongToCollectionComponent implements OnInit, OnChanges {
 
   async onMoveButtonClicked(): Promise<void> {
     assertTruthy(this.selectedCollection);
-    await this.cds.moveSongToAnotherCollection(this.songId, this.currentCollectionId, this.selectedCollection.id);
-    this.moved.emit();
+    if (this.mode === 'move') {
+      await this.cds.moveSongToAnotherCollection(this.songId, this.currentCollectionId, this.selectedCollection.id);
+      this.moved.emit();
+    } else {
+      await this.cds.addSongToSecondaryCollection(this.songId, this.selectedCollection.id);
+      this.toastService.show(this.i18n.songIsAddedToCollection + this.selectedCollection.name, 'info');
+    }
   }
 }

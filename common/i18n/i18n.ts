@@ -367,6 +367,8 @@ export interface I18n {
     title: string;
   };
   moveSongToCollectionComponent: {
+    addButtonText: string
     moveButtonText: string
+    songIsAddedToCollection: string;
   };
 }

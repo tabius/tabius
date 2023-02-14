@@ -35,6 +35,12 @@
                                     [songId]="song.id"
                                     [currentCollectionId]="activeCollectionId"
                                     (moved)="onSongMovedToAnotherCollection()"
+                                    mode="add"
+        ></gt-move-song-to-collection>
+        <gt-move-song-to-collection *ngIf="song && isBrowser"
+                                    [songId]="song.id"
+                                    [currentCollectionId]="activeCollectionId"
+                                    (moved)="onSongMovedToAnotherCollection()"
         ></gt-move-song-to-collection>
     </div>
     <div class="buttons-row">

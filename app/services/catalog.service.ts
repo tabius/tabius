@@ -201,11 +201,8 @@ export class CatalogService {
     ]);
   }
 
-  async deleteSong(songId: number|undefined): Promise<void> {
-    if (!isValidId(songId)) {
-      return;
-    }
-    const {updatedCollections} = await firstValueFrom(this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}`));
+  async deleteSong(songId: number, collectionId: number): Promise<void> {
+    const {updatedCollections} = await firstValueFrom(this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}/${collectionId}`));
     await Promise.all([
       this.store.remove(getSongKey(songId)),
       this.store.remove(getSongDetailsKey(songId))

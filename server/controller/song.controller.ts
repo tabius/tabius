@@ -137,24 +137,38 @@ export class SongController {
   }
 
   /** Deletes the song and returns updated collection details. */
-  @Delete(':songId')
-  async delete(@Session() session, @Param('songId') idParam: string): Promise<DeleteSongResponse> {
-    console.log('SongController.delete', idParam);
+  @Delete(':songId/:collectionId')
+  async delete(@Session() session, @Param('songId') idParam: string, @Param('collectionId') collectionIdParam: string): Promise<DeleteSongResponse> {
+    console.log(`SongController.delete ${idParam}, collection: ${collectionIdParam}`);
     const user: User = ServerAuthService.getUserOrFail(session);
-    if (!isModerator(user)) {
+    const songId = +idParam;
+    const collectionId = +collectionIdParam;
+    const collection = await this.collectionDbi.getCollectionById(collectionId);
+    if (!collection) {
+      throw new HttpException(`Song collection is not found ${collectionIdParam}`, HttpStatus.NOT_FOUND);
+    }
+    const canManage = canManageCollectionContent(user, collection);
+    if (!canManage) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const songId = +idParam;
     const songsArray = await this.songDbi.getSongs([songId]);
     if (songsArray.length === 0) {
       throw new HttpException(`Song is not found ${idParam}`, HttpStatus.NOT_FOUND);
     }
-    const allSongCollectionIds = await this.songDbi.getPrimaryAndSecondarySongCollectionIds(songId);
-    await this.songDbi.delete(songId);
-    const songs$$: Promise<Song[]>[] = allSongCollectionIds.map(collectionId => this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId));
+    const song = songsArray[0];
+    let allAffectedCollectionIds: number[] = [];
+    if (song.collectionId === collectionId) {
+      // Deletes from all collections.
+      allAffectedCollectionIds = await this.songDbi.getPrimaryAndSecondarySongCollectionIds(songId);
+      await this.songDbi.delete(songId);
+    } else {
+      await this.songDbi.removeSongFromSecondaryCollection(songId, collectionId);
+      allAffectedCollectionIds = [collectionId];
+    }
+    const songs$$: Promise<Song[]>[] = allAffectedCollectionIds.map(collectionId => this.songDbi.getPrimaryAndSecondarySongsByCollectionId(collectionId));
     const songs: Song[][] = await Promise.all(songs$$); //same order with allSongCollectionIds
     return {
-      updatedCollections: songs.map((songs, index) => ({collectionId: allSongCollectionIds[index], songs}))
+      updatedCollections: songs.map((songs, index) => ({collectionId: allAffectedCollectionIds[index], songs}))
     };
   }
 
