@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Ho
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
 import {map, mergeMap, takeUntil} from 'rxjs/operators';
-import {combineLatest0, isDefined, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {combineLatest0, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isDefined, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
 import {Collection, Song} from '@common/catalog-model';
@@ -56,7 +56,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
               if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined, undefined, undefined]);
               }
-              const {prevSong, nextSong} = findPrevAndNextSongs(this.songId, allSongs);
+              const {prevSong, nextSong} = this.songId ? findPrevAndNextSongs(this.songId, allSongs) : {prevSong: allSongs[allSongs.length - 1], nextSong: allSongs[0]};
               return combineLatest([
                 of(collection),
                 of(prevSong),
@@ -180,7 +180,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   }
 }
 
-export function getAllSongsInCollectionsSorted(collection$: Observable<Collection|undefined>, cds: CatalogService) {
+export function getAllSongsInCollectionsSorted(collection$: Observable<Collection|undefined>, cds: CatalogService): Observable<Array<Song>> {
   // list of all collection songs sorted by id.
   return collection$.pipe(
       mergeMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
@@ -189,11 +189,12 @@ export function getAllSongsInCollectionsSorted(collection$: Observable<Collectio
   );
 }
 
-export function findPrevAndNextSongs(songId: number|undefined, allSongs: Song[], title?: string): { prevSong?: Song, nextSong?: Song } {
+export function findPrevAndNextSongs(songId: number, allSongs: Song[], title?: string): { prevSong?: Song, nextSong?: Song } {
   let songIdx = songId === undefined ? -1 : allSongs.findIndex(song => song.id === songId);
   if (songIdx === -1 && !!title) {
     for (songIdx = 0; songIdx < allSongs.length - 1; songIdx++) {
-      if (allSongs[songIdx + 1].title.localeCompare(title) >= 0) {
+      const nextSong = allSongs[songIdx + 1];
+      if (nextSong.title.localeCompare(title) >= 0) {
         break;
       }
     }

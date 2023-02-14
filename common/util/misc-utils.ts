@@ -197,7 +197,7 @@ export function isTouchDevice(): boolean {
 }
 
 export function sortSongsAlphabetically(songs: Song[]): Song[] {
-  return songs.sort((s1, s2) => s1.title.localeCompare(s2.title));
+  return songs.sort((s1, s2) => s1.title === s2.title ? (s1.id < s2.id ? -1 : 1) : s1.title.localeCompare(s2.title));
 }
 
 export function trackById(idx: number, entity: { id: number|string }): number|string {
