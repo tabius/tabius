@@ -3,6 +3,8 @@ import {Collection, Song} from '@common/catalog-model';
 import {assertTruthy, getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
 import {HelpService} from '@app/services/help.service';
 import {I18N} from '@app/app-i18n';
+import {CatalogService} from '@app/services/catalog.service';
+import {firstValueFrom} from 'rxjs';
 
 export type SongHeaderTitleFormat = 'song'|'song-and-collection';
 
@@ -30,6 +32,7 @@ export class SongHeaderComponent implements OnInit, OnChanges {
 
   constructor(private readonly cd: ChangeDetectorRef,
               private readonly helpService: HelpService,
+              private readonly cds: CatalogService,
   ) {
   }
 
@@ -44,8 +47,9 @@ export class SongHeaderComponent implements OnInit, OnChanges {
     }
   }
 
-  printSong(): void {
-    const printPageUrl = getSongPrintPageLink(this.collection.mount, this.song.mount);
+  async printSong(): Promise<void> {
+    const primaryCollection = await firstValueFrom(this.cds.getCollectionById(this.song.collectionId));
+    const printPageUrl = getSongPrintPageLink(this.collection.mount, this.song.mount, primaryCollection?.mount);
     window.open(printPageUrl, '_blank');
   }
 

@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
-import {Subject} from 'rxjs';
+import {combineLatest, mergeMap, Subject} from 'rxjs';
 import {CatalogService} from '@app/services/catalog.service';
 import {UserService} from '@app/services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {flatMap, takeUntil, throttleTime} from 'rxjs/operators';
-import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
+import {takeUntil, throttleTime} from 'rxjs/operators';
+import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
 @Component({
@@ -27,10 +27,13 @@ export class SongPrintPageComponent {
   ngOnInit() {
     const params = this.activatedRoute.snapshot.params;
     const collectionMount = params[PARAM_COLLECTION_MOUNT];
+    const primaryCollectionMount = params[PARAM_PRIMARY_COLLECTION_MOUNT] || collectionMount;
     const songMount = params[PARAM_SONG_MOUNT];
 
     const collectionId$ = this.cds.getCollectionIdByMount(collectionMount);
-    const song$ = collectionId$.pipe(flatMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
+    const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
+    const song$ = combineLatest([collectionId$, primaryCollectionId$])
+        .pipe(mergeMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
 
     song$
         .pipe(

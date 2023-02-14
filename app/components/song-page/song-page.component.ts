@@ -105,7 +105,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const collection$ = collectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
     const primaryCollection$ = primaryCollectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
     const allSongsInCollection$ = collection$.pipe(switchMap(c => this.cds.getSongIdsByCollection(c?.id)));
-    const songInCollection$ = primaryCollectionId$.pipe(mergeMap(collectionId => this.cds.getSongByMount(collectionId, songMount)));
+    const songInCollection$ = combineLatest([collectionId$, primaryCollectionId$])
+        .pipe(mergeMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
     // Reuse cached song to keep showing the page if the song was moved out of the current collection.
     const song$ = songInCollection$.pipe(map(song => song || this.song));
     const songDetails$ = song$.pipe(mergeMap(song => this.cds.getSongDetailsById(song?.id)));

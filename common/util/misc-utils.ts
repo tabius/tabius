@@ -72,8 +72,10 @@ export function getSongPageLink(collectionMount: string, songMount: string, prim
   return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}`;
 }
 
-export function getSongPrintPageLink(collectionMount: string, songMount: string): string {
-  return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${MOUNT_PRINT_SUFFIX}`;
+export function getSongPrintPageLink(collectionMount: string, songMount: string, primaryCollectionMount: string|undefined): string {
+  return collectionMount === primaryCollectionMount || primaryCollectionMount === undefined
+         ? `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${collectionMount}/${MOUNT_PRINT_SUFFIX}`
+         : `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${primaryCollectionMount}/${MOUNT_PRINT_SUFFIX}`;
 }
 
 export function getFullLink(localLink: string): string {

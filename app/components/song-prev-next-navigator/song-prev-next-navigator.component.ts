@@ -56,7 +56,9 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
               if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined, undefined, undefined]);
               }
-              const {prevSong, nextSong} = this.songId ? findPrevAndNextSongs(this.songId, allSongs) : {prevSong: allSongs[allSongs.length - 1], nextSong: allSongs[0]};
+              const {prevSong, nextSong} = this.songId
+                                           ? findPrevAndNextSongs(this.songId, allSongs)
+                                           : {prevSong: allSongs[allSongs.length - 1], nextSong: allSongs[0]};
               return combineLatest([
                 of(collection),
                 of(prevSong),
