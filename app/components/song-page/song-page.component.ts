@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, 
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
-import {BehaviorSubject, combineLatest} from 'rxjs';
+import {BehaviorSubject, combineLatest, firstValueFrom} from 'rxjs';
 import {map, mergeMap, switchMap, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
@@ -222,12 +222,13 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         .pipe(
             take(1),
             takeUntil(this.destroyed$)
-        ).subscribe(songs => {
-      const {collectionMount, song, primaryCollection} = this;
+        ).subscribe(async (songs) => {
+      const {collectionMount, song} = this;
       const {prevSong, nextSong} = song ? findPrevAndNextSongs(song.id, songs, song.title) : {prevSong: undefined, nextSong: undefined};
       const targetSong = nextSong || prevSong;
-      if (targetSong && collectionMount && primaryCollection) {
-        const link = getSongPageLink(collectionMount, targetSong.mount, primaryCollection.mount);
+      const targetSongPrimaryCollection = targetSong ? await firstValueFrom(this.cds.getCollectionById(targetSong.collectionId)) : undefined;
+      if (targetSong && collectionMount && targetSongPrimaryCollection) {
+        const link = getSongPageLink(collectionMount, targetSong.mount, targetSongPrimaryCollection.mount);
         this.router.navigate([link]).catch(err => console.error(err));
       } else if (this.isUserCollection) {
         this.router.navigate([MOUNT_STUDIO]).catch(err => console.error(err));
