@@ -88,7 +88,7 @@ export const CHORDS_LAYOUTS: { readonly [chord: string]: string } = withFlatsFro
   'Amaj6': 'x02222',
   'A#maj6': 'x13333',
   'Bmaj6': 'x24444',
-  'Cmaj6': 'x35555',
+  'Cmaj6': 'x32210',
   'C#maj6': 'x46666',
   'Dmaj6': 'xx0202',
   'D#maj6': 'xx1013',
