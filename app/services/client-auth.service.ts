@@ -67,6 +67,6 @@ export class ClientAuthService {
   }
 
   async signout(): Promise<void> {
-    return firstValueFrom(this.getAuthService().logout({}));
+    return firstValueFrom(this.getAuthService().logout({logoutParams: {returnTo: environment.url}}));
   }
 }
