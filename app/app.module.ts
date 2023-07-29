@@ -1,5 +1,5 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {ErrorHandler, NgModule} from '@angular/core';
+import {ErrorHandler, NgModule, Provider} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from '@app/components/app.component';
 import {SiteHomePageComponent} from '@app/components/site-home-page/site-home-page.component';
@@ -62,6 +62,19 @@ import {ScenePageComponent} from './components/scene-page/scene-page.component';
 import * as Sentry from '@sentry/angular';
 import {MoveSongToCollectionComponent} from './components/move-song-to-collection/move-song-to-collection.component';
 
+const interceptors: Array<Provider> = [
+  {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
+  {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
+  {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
+  {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
+];
+
+const userAgent = window?.navigator?.userAgent;
+if (userAgent !== undefined && userAgent.length > 0) {
+  interceptors.push({provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true});
+} else {
+  console.log('Running in SSR mode');
+}
 
 @NgModule({
   declarations: [
@@ -140,11 +153,7 @@ import {MoveSongToCollectionComponent} from './components/move-song-to-collectio
   ],
   providers: [
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true},
+    ...interceptors,
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_CATALOG_BROWSER_STORE_TOKEN, useClass: CatalogBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
