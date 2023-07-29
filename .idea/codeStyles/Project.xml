@@ -67,28 +67,6 @@
       <option name="TABLE_CONTENT" value="2" />
       <option name="TABLE_CLOSING" value="3" />
     </H2CodeStyleSettings>
-    <H2CodeStyleSettings version="6">
-      <option name="USE_GENERAL_STYLE" value="false" />
-      <option name="DISABLE_FORMATTING" value="true" />
-      <option name="IDENTIFIER_CASE" value="1" />
-      <option name="CUSTOM_TYPE_CASE" value="0" />
-      <option name="ALIAS_CASE" value="1" />
-      <option name="SET_EL_LINE" value="1" />
-      <option name="SET_EL_WRAP" value="0" />
-      <option name="SELECT_EL_LINE" value="0" />
-      <option name="SELECT_EL_WRAP" value="2" />
-      <option name="FROM_EL_LINE" value="0" />
-      <option name="FROM_EL_WRAP" value="2" />
-      <option name="FROM_WRAP_JOIN_1" value="false" />
-      <option name="FROM_WRAP_JOIN_2" value="false" />
-      <option name="FROM_INDENT_JOIN" value="false" />
-      <option name="WHERE_EL_LINE" value="0" />
-      <option name="WHERE_EL_WRAP" value="2" />
-      <option name="WHERE_EL_BOUND" value="0" />
-      <option name="TABLE_OPENING" value="1" />
-      <option name="TABLE_CONTENT" value="2" />
-      <option name="TABLE_CLOSING" value="3" />
-    </H2CodeStyleSettings>
     <HSQLCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="DISABLE_FORMATTING" value="true" />

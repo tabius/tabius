@@ -21,7 +21,7 @@ import {LoadingIndicatorComponent} from '@app/components/loading-indicator/loadi
 import {CollectionBreadcrumbComponent} from '@app/components/collection-breadcrumb/collection-breadcrumb.component';
 import {SafeHtmlPipe, SafeResourceUrlPipe} from '@app/utils/safe.pipe';
 import {SettingsPageComponent} from '@app/components/settings-page/settings-page.component';
-import {APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
+import {APP_BROWSER_STORE_TOKEN, AUTH0_WEB_CLIENT_AUDIENCE, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {SigninSignoutButtonComponent} from '@app/components/signin-signout-button/signin-signout-button.component';
 import {PwaUpdaterService} from '@app/services/pwa-updater.service';
@@ -32,7 +32,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SongComponent} from '@app/components/song/song.component';
 import {SongHeaderComponent} from '@app/components/song-header/song-header.component';
 import {SongVideoComponent} from '@app/components/song-video/song-video.component';
-import {AuthModule} from '@auth0/auth0-angular';
+import {AuthHttpInterceptor, AuthModule} from '@auth0/auth0-angular';
 import {SongEditorComponent} from '@app/components/song-editor/song-editor.component';
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
 import {ErrorsInterceptor} from '@app/interceptors/errors.interceptor';
@@ -59,9 +59,8 @@ import {ShowChordPopoverOnClickDirective} from '@app/directives/show-chord-popov
 import {JsonLdComponent} from '@app/components/json-ld/json-ld.component';
 import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-navigation-history-popup/catalog-navigation-history-popup.component';
 import {ScenePageComponent} from './components/scene-page/scene-page.component';
-import {AuthInterceptor} from '@app/interceptors/auth.interceptor';
 import * as Sentry from '@sentry/angular';
-import { MoveSongToCollectionComponent } from './components/move-song-to-collection/move-song-to-collection.component';
+import {MoveSongToCollectionComponent} from './components/move-song-to-collection/move-song-to-collection.component';
 
 
 @NgModule({
@@ -125,7 +124,19 @@ import { MoveSongToCollectionComponent } from './components/move-song-to-collect
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
     PopoverModule,
     ToastModule,
-    AuthModule.forRoot(environment.authConfig),
+    AuthModule.forRoot({
+      ...environment.authConfig,
+      httpInterceptor: {
+        allowedList: [{
+          uri: `${environment.backendUrl}/api/*`,
+          allowAnonymous: true,
+        }]
+      },
+      authorizationParams: {
+        audience: AUTH0_WEB_CLIENT_AUDIENCE,
+        redirect_uri: window.location.origin
+      }
+    },),
   ],
   providers: [
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},
@@ -133,7 +144,7 @@ import { MoveSongToCollectionComponent } from './components/move-song-to-collect
     {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true},
     {provide: TABIUS_USER_BROWSER_STORE_TOKEN, useClass: UserBrowserStore},
     {provide: TABIUS_CATALOG_BROWSER_STORE_TOKEN, useClass: CatalogBrowserStore},
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},

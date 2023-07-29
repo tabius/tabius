@@ -42,7 +42,7 @@ export class UserService {
             await this.resetStoreStateOnSignOut();
           }
         } catch (e) {
-          console.warn(e);
+          console.error('UserService error processing sign in event', e);
         }
       } else {
         await this.resetStoreStateOnSignOut();

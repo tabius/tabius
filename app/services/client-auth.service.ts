@@ -1,11 +1,12 @@
 import {Injectable, Injector} from '@angular/core';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {AuthService} from '@auth0/auth0-angular';
-import {Observable, of} from 'rxjs';
+import {firstValueFrom, Observable, of} from 'rxjs';
 import {User} from 'auth0';
 import {environment} from '@app/environments/environment';
 import {truthy} from '@common/util/misc-utils';
 import {Router} from '@angular/router';
+import {AuthorizationParams} from '@auth0/auth0-spa-js';
 
 /** State of the application when signin() method is called. */
 interface AppStateOnSignIn {
@@ -45,25 +46,27 @@ export class ClientAuthService {
   }
 
   signin(): void {
-    this.getAuthService().loginWithRedirect({
-      audience: environment.authConfig.audience,
+    const authorizationParams: AuthorizationParams = {
+      display: 'page',
       prompt: 'select_account',
       screen_hint: 'login',
       appState: <AppStateOnSignIn>{
         pathname: window.location.pathname
       }
-    });
+    };
+    this.getAuthService().loginWithRedirect({authorizationParams});
   }
 
   signup(): void {
-    this.getAuthService().loginWithRedirect({
-      audience: environment.authConfig.audience,
+    const authorizationParams: AuthorizationParams = {
+      display: 'page',
       prompt: 'select_account',
       screen_hint: 'signup',
-    });
+    };
+    this.getAuthService().loginWithRedirect({authorizationParams});
   }
 
-  signout(): void {
-    this.getAuthService().logout({returnTo: environment.url});
+  async signout(): Promise<void> {
+    return firstValueFrom(this.getAuthService().logout({}));
   }
 }
