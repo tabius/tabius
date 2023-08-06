@@ -3,11 +3,12 @@ import {combineLatest, Observable, Subject, Subscription, switchMap} from 'rxjs'
 import {UserService} from '@app/services/user.service';
 import {map, takeUntil} from 'rxjs/operators';
 import {ToastService} from '@app/toast/toast.service';
-import {assertTruthy, combineLatest0, getCollectionPageLink, isModerator, isValidId, trackById} from '@common/util/misc-utils';
+import {combineLatest0, getCollectionPageLink, isModerator, isValidId, trackById} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {I18N} from '@app/app-i18n';
+import {assertTruthy} from 'assertic';
 
 interface ComponentCollectionData extends Collection {
   isSongInCollection: boolean;

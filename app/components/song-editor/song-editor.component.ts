@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListen
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest} from 'rxjs';
 import {flatMap, takeUntil} from 'rxjs/operators';
-import {assertTruthy, bound, countOccurrences, getCurrentNavbarHeight, getFullLink, getSongPageLink, isValidId, scrollToView} from '@common/util/misc-utils';
+import {bound, countOccurrences, getCurrentNavbarHeight, getFullLink, getSongPageLink, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
 import {INVALID_ID} from '@common/common-constants';
@@ -10,6 +10,7 @@ import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-i
 import {I18N} from '@app/app-i18n';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media-links-utils';
+import {assertTruthy} from 'assertic';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'|'moved'

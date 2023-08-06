@@ -6,7 +6,7 @@ import {ToastComponent} from './toast.component';
 @NgModule({
   imports: [OverlayModule],
   declarations: [ToastComponent],
-  entryComponents: [ToastComponent]
+  exports: [ToastComponent]
 })
 export class ToastModule {
 }

@@ -9,6 +9,8 @@ if (environment.production) {
 }
 
 function applyDomino(): void {
+  console.log('Setting app Domino polyfills');
+
   global['Element'] = (domino as any).impl.Element;
   const dominoWindow = domino.createWindow('<body></body>');
 
@@ -25,7 +27,7 @@ function applyDomino(): void {
   );
   global['document'] = dominoWindow.document;
   global['navigator'] = dominoWindow.navigator;
-  global['CSS'] = {escape: (value) => value, supports: () => false};
+  global['CSS'] = {escape: (value) => value, supports: () => false} as any; // TODO:
   global['Prism'] = null;
 }
 

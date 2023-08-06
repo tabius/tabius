@@ -4,9 +4,9 @@ import {AuthService} from '@auth0/auth0-angular';
 import {firstValueFrom, Observable, of} from 'rxjs';
 import {User} from 'auth0';
 import {environment} from '@app/environments/environment';
-import {truthy} from '@common/util/misc-utils';
 import {Router} from '@angular/router';
 import {AuthorizationParams} from '@auth0/auth0-spa-js';
+import {truthy} from 'assertic';
 
 /** State of the application when signin() method is called. */
 interface AppStateOnSignIn {

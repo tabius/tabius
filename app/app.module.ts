@@ -59,7 +59,7 @@ import {ShowChordPopoverOnClickDirective} from '@app/directives/show-chord-popov
 import {JsonLdComponent} from '@app/components/json-ld/json-ld.component';
 import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-navigation-history-popup/catalog-navigation-history-popup.component';
 import {ScenePageComponent} from './components/scene-page/scene-page.component';
-import * as Sentry from '@sentry/angular';
+import * as Sentry from '@sentry/angular-ivy';
 import {MoveSongToCollectionComponent} from './components/move-song-to-collection/move-song-to-collection.component';
 
 const interceptors: Array<Provider> = [
@@ -96,11 +96,13 @@ if (userAgent !== undefined && userAgent.length > 0) {
     LoadingIndicatorComponent,
     MetaHeadContributorComponent,
     ModeratorPromptComponent,
+    MoveSongToCollectionComponent,
     NavbarComponent,
     Page404Component,
     ResourceNotFoundComponent,
     SafeHtmlPipe,
     SafeResourceUrlPipe,
+    ScenePageComponent,
     SettingsPageComponent,
     ShowChordPopoverOnClickDirective,
     SigninSignoutButtonComponent,
@@ -123,8 +125,6 @@ if (userAgent !== undefined && userAgent.length > 0) {
     UserCollectionEditorComponent,
     UserCollectionsListComponent,
     UserRegistrationPromptComponent,
-    ScenePageComponent,
-    MoveSongToCollectionComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -147,7 +147,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
       },
       authorizationParams: {
         audience: AUTH0_WEB_CLIENT_AUDIENCE,
-        redirect_uri: window.location.origin
+        redirect_uri: window.location.origin,
       }
     },),
   ],

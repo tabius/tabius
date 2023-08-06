@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {assertTruthy, getChordsDiscussionUrl} from '@common/util/misc-utils';
+import {getChordsDiscussionUrl} from '@common/util/misc-utils';
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {I18N} from '@app/app-i18n';
 import {getDefaultH4SiFlag} from '@common/user-model';
 import {convertChordToFingerPositions, playChordSound} from '@app/utils/chord-player';
+import { assertTruthy } from 'assertic';
 
 @Component({
   selector: 'gt-chord-popover',

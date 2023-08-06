@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Collection, Song} from '@common/catalog-model';
-import {assertTruthy, getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
+import {getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
 import {HelpService} from '@app/services/help.service';
 import {I18N} from '@app/app-i18n';
 import {CatalogService} from '@app/services/catalog.service';
 import {firstValueFrom} from 'rxjs';
+import {assertTruthy} from 'assertic';
 
 export type SongHeaderTitleFormat = 'song'|'song-and-collection';
 

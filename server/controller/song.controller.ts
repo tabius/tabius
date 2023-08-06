@@ -6,9 +6,10 @@ import {User} from '@common/user-model';
 import {conformsTo, isBoolean, validate} from '@server/util/validation';
 import {ServerAuthService} from '@server/service/server-auth.service';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
-import {assertTruthy, canManageCollectionContent, isModerator, isValidId} from '@common/util/misc-utils';
+import {canManageCollectionContent, isModerator, isValidId} from '@common/util/misc-utils';
 import {FullTextSearchDbi} from '@server/db/full-text-search-dbi.service';
 import {CollectionDbi} from '@server/db/collection-dbi.service';
+import {assertTruthy} from 'assertic';
 
 @Controller('/api/song')
 export class SongController {

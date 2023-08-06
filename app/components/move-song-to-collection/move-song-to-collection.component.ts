@@ -4,9 +4,10 @@ import {UserService} from '@app/services/user.service';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {Collection} from '@common/catalog-model';
 import {filter, map, switchMap} from 'rxjs/operators';
-import {assertTruthy, isDefined, trackById} from '@common/util/misc-utils';
+import {isDefined, trackById} from '@common/util/misc-utils';
 import {I18N} from '@app/app-i18n';
 import {ToastService} from '@app/toast/toast.service';
+import { assertTruthy } from 'assertic';
 
 @Component({
   selector: 'gt-move-song-to-collection',

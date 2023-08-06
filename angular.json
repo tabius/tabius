@@ -18,6 +18,7 @@
             "polyfills": "app/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [
+              "assertic",
               "hammerjs",
               "nosleep.js"
             ],
@@ -115,7 +116,7 @@
           "builder": "@angular-devkit/build-angular:server",
           "options": {
             "outputPath": "dist/server",
-            "main": "server.ts",
+            "main": "ssr-server-main.ts",
             "tsConfig": "tsconfig.ssr.json"
           },
           "configurations": {

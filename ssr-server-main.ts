@@ -1,12 +1,14 @@
+console.log('Initializing Angular SSR backend');
+
 import 'zone.js/dist/zone-node';
 import {ngExpressEngine} from '@nguniversal/express-engine';
 import * as express from 'express';
 
 import {join} from 'path';
 
-import {AppServerModule} from './app/main.ssr';
 import {APP_BASE_HREF} from '@angular/common';
 import {existsSync} from 'fs';
+import {AppServerModule} from '@app/main.ssr';
 
 export function app() {
   const server = express();

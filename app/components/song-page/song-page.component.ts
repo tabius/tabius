@@ -8,7 +8,7 @@ import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
-import {assertTruthy, canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
+import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
@@ -30,6 +30,7 @@ import {BreadcrumbList, WithContext} from 'schema-dts';
 import {getSongJsonLdBreadcrumbList} from '@common/util/json-ld';
 import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
+import {assertTruthy} from 'assertic';
 
 @Component({
   templateUrl: './song-page.component.html',

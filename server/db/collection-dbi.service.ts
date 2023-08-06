@@ -1,12 +1,13 @@
 import {Injectable} from '@nestjs/common';
 import {DbService} from './db.service';
 import {Collection, CollectionDetails, CollectionType} from '@common/catalog-model';
-import {isValidId, toArrayOfInts, truthy} from '@common/util/misc-utils';
+import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
 import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_SUFFIX} from '@common/common-constants';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {I18N} from '@server/server-i18n';
 import {OkPacket, RowDataPacket} from 'mysql2';
+import {truthy} from 'assertic';
 
 interface CollectionRow extends RowDataPacket {
   id: number;

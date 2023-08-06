@@ -4,7 +4,7 @@ import {DbService} from './db.service';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {INVALID_ID} from '@common/common-constants';
 import {OkPacket, RowDataPacket} from 'mysql2';
-import {assertTruthy} from '@common/util/misc-utils';
+import {assertTruthy} from 'assertic';
 
 interface SongRow extends RowDataPacket {
   id: number;

@@ -11,6 +11,6 @@
   },
   "files": [
     "app/main.ssr.ts",
-    "server.ts"
+    "ssr-server-main.ts"
   ]
 }

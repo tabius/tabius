@@ -269,21 +269,3 @@ export function getUserAgentFromRequest(request: any): string|undefined {
 
 export function nothingThen(): void {
 }
-
-export type AssertErrorProvider = () => Error|string;
-
-export function fail(error?: string|Error|AssertErrorProvider): never {
-  const messageOrObject = typeof error === 'function' ? error() : error;
-  throw (typeof messageOrObject === 'object' ? messageOrObject : new Error(messageOrObject ?? 'Assertion error'));
-}
-
-export function assertTruthy(value: unknown, error?: string|Error|AssertErrorProvider): asserts value {
-  if (!value) {
-    fail(error);
-  }
-}
-
-export function truthy<T>(value: T, error?: string|Error|AssertErrorProvider): NonNullable<T> {
-  assertTruthy(value, error);
-  return value as NonNullable<T>;
-}

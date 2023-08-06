@@ -15,9 +15,8 @@ import {PopoverComponent} from './popover.component';
     PortalModule
   ],
   exports: [
-    PopoverCloseDirective
+    PopoverCloseDirective,
   ],
-  entryComponents: [PopoverComponent]
 })
 export class PopoverModule {
 }
