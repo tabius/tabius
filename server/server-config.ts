@@ -29,11 +29,11 @@ const CONFIG_FROM_FILE: TabiusServerConfig = JSON.parse(serverConfigAsString) as
 const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
   serverPort: 4001,
   corsOriginWhitelist: [
-    // The server.
+    // Nest server.
     'http://localhost:4001',
-    // SSR app port.
-    'http://localhost:4200',
-    // Non-SSR app port.
+    // SSR app.
+    'http://localhost:4000',
+    // Non-SSR app.
     'http://localhost:4201'
   ],
   sessionCookieName: 'tabius.sid',

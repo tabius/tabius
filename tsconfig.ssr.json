@@ -3,14 +3,13 @@
   "compilerOptions": {
     "module": "commonjs",
     "types": [
-      "node"
+      "node",
     ]
   },
   "angularCompilerOptions": {
     "entryModule": "app/app.ssr.module#AppServerModule"
   },
   "files": [
-    "app/main.ssr.ts",
     "ssr-server-main.ts"
   ]
 }
