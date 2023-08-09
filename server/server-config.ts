@@ -27,14 +27,14 @@ const serverConfigAsString = readFileSync(getConfigFilePath('server-config.json'
 const CONFIG_FROM_FILE: TabiusServerConfig = JSON.parse(serverConfigAsString) as TabiusServerConfig;
 
 const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
-  serverPort: 4001,
+  serverPort: 12100,
   corsOriginWhitelist: [
     // Nest server.
-    'http://localhost:4001',
+    'http://localhost:12100',
     // SSR app.
-    'http://localhost:4000',
+    'http://localhost:12101',
     // Non-SSR app.
-    'http://localhost:4201'
+    'http://localhost:12102'
   ],
   sessionCookieName: 'tabius.sid',
 };

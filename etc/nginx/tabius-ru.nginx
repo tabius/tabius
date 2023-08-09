@@ -8,7 +8,7 @@ server {
 
     # Angular Universal
     location / {
-        proxy_pass http://127.0.0.1:4002;
+        proxy_pass http://127.0.0.1:12101;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
@@ -24,7 +24,7 @@ server {
 
     # NestJS
     location /api {
-        proxy_pass http://127.0.0.1:4001/api;
+        proxy_pass http://127.0.0.1:12100/api;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
