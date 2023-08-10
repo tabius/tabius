@@ -40,7 +40,7 @@ app.get('*', (req, res) => {
   res.render(indexHtml, {req, providers: [{provide: APP_BASE_HREF, useValue: req.baseUrl}]});
 });
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 12101;
 
 // Start up the Node server
 app.listen(port, () => {
