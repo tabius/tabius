@@ -35,19 +35,19 @@ server {
     }
 
     location ^~ /images {
-        alias /opt/tabius/images;
+        alias /opt/tabius-ru/images;
     }
 
     location /robots.txt {
-        alias /opt/tabius/www/robots.txt;
+        alias /opt/tabius-ru/www/robots.txt;
     }
 
     location /sitemap.xml {
-        alias /opt/tabius/www/sitemap.xml;
+        alias /opt/tabius-ru/www/sitemap.xml;
     }
 
     location ~ ^/sitemap-([0-9]+).txt.gz {
-        alias /opt/tabius/www/sitemap-$1.txt.gz;
+        alias /opt/tabius-ru/www/sitemap-$1.txt.gz;
     }
 
     location ~ ^/artist/(.*) {
@@ -56,7 +56,7 @@ server {
 
     # Build artifacts in root folder
     location ~* \.(png|ico|gif|jpg|jpeg|css|js|map)$ {
-        root /opt/tabius/browser;
+        root /opt/tabius-ru/browser;
         expires max;
     }
 
