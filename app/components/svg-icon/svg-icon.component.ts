@@ -11,7 +11,7 @@ import {environment} from '@app/environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SvgIconComponent {
-  @Input() icon!: string;
+  @Input({required: true}) icon!: string;
 
   readonly version = environment.buildInfo.buildDate;
 }

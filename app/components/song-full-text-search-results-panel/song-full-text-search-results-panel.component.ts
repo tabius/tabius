@@ -16,7 +16,7 @@ import {I18N} from '@app/app-i18n';
 })
 export class SongFullTextSearchResultsPanelComponent implements OnChanges {
 
-  @Input() searchText!: string;
+  @Input({required: true}) searchText!: string;
 
   readonly i18n = I18N.fullTextSearchResultsComponent;
   readonly maxTitleResults = MAX_FULL_TEXT_SEARCH_TITLE_RESULTS;

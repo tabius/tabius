@@ -36,7 +36,7 @@ export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
 export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   private readonly destroyed$ = new Subject();
 
-  @Input() song!: SongDetails;
+  @Input({required: true}) song!: SongDetails;
   @Input() multiColumnMode = true;
   @Input() usePrintFontSize = false;
 

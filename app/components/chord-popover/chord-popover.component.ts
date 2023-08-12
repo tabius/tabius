@@ -5,7 +5,6 @@ import {PopoverRef} from '@app/popover/popover-ref';
 import {I18N} from '@app/app-i18n';
 import {getDefaultH4SiFlag} from '@common/user-model';
 import {convertChordToFingerPositions, playChordSound} from '@app/utils/chord-player';
-import { assertTruthy } from 'assertic';
 
 @Component({
   selector: 'gt-chord-popover',
@@ -15,16 +14,15 @@ import { assertTruthy } from 'assertic';
 })
 export class ChordPopoverComponent {
 
-  @Input() chordLayout!: ChordLayout;
+  @Input({required: true}) chordLayout!: ChordLayout;
   @Input() h4Si = getDefaultH4SiFlag();
-  @Input() popover!: PopoverRef;
+  @Input({required: true}) popover!: PopoverRef;
 
   readonly chordDiscussionUrl = getChordsDiscussionUrl();
 
   readonly i18n = I18N.chordPopover;
 
   playChord(): void {
-    assertTruthy(this.chordLayout);
     const fingers = convertChordToFingerPositions(this.chordLayout.positions);
     playChordSound(fingers);
   }

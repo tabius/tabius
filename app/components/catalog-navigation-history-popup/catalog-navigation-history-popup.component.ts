@@ -16,7 +16,7 @@ import {I18N} from '@app/app-i18n';
 })
 export class CatalogNavigationHistoryPopupComponent implements OnInit, OnDestroy {
 
-  @Input() popover!: PopoverRef;
+  @Input({required: true}) popover!: PopoverRef;
 
   private readonly destroyed$ = new Subject();
 

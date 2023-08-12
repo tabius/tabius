@@ -1,8 +1,8 @@
 {
   "serverHost": "localhost",
-  "serverPort": 4001,
+  "serverPort": 12100,
   "resourcesDir": "/opt/tabius",
-  "corsOriginWhitelist": ["http://localhost:4001", "http://localhost:4200", "http://localhost:4201"],
+  "corsOriginWhitelist": ["http://localhost:12100", "http://localhost:12101", "http://localhost:12102"],
   "dbConfig": {
     "host": "localhost",
     "user": "tabius",

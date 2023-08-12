@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {UserService} from '@app/services/user.service';
 import {I18N} from '@app/app-i18n';
 import {ClientAuthService} from '@app/services/client-auth.service';
 
@@ -19,8 +18,7 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
 
   private readonly destroyed$ = new Subject();
 
-  constructor(private readonly uds: UserService,
-              private readonly cd: ChangeDetectorRef,
+  constructor(private readonly cd: ChangeDetectorRef,
               public authService: ClientAuthService,
   ) {
   }
@@ -43,7 +41,7 @@ export class SigninSignoutButtonComponent implements OnInit, OnDestroy {
   }
 
   signOut(): void {
-    this.authService.signout();
+    this.authService.signout().then();
   }
 
 }

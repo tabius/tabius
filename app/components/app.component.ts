@@ -23,7 +23,7 @@ export class AppComponent implements AfterViewInit {
               private readonly shortcutsService: ShortcutsService,
               private readonly helpService: HelpService,
               private readonly navigationHistoryService: CatalogNavigationHistoryService,
-              @Optional() @Inject(REQUEST) private request: any,
+              @Optional() @Inject(REQUEST) request: any,
   ) {
     bss.initWideScreenModeState(request);
     this.printMode$ = bss.getPrintMode();

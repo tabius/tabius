@@ -15,7 +15,7 @@ export class UserRegistrationPromptComponent implements AfterViewInit {
 
   @Input() showCloseButton = true;
 
-  /** Emitted when panel wants to be closed. */
+  /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
   constructor(private readonly el: ElementRef,

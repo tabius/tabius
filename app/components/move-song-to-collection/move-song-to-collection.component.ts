@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {UserService} from '@app/services/user.service';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
@@ -7,20 +7,20 @@ import {filter, map, switchMap} from 'rxjs/operators';
 import {isDefined, trackById} from '@common/util/misc-utils';
 import {I18N} from '@app/app-i18n';
 import {ToastService} from '@app/toast/toast.service';
-import { assertTruthy } from 'assertic';
+import {assertTruthy} from 'assertic';
 
 @Component({
   selector: 'gt-move-song-to-collection',
   templateUrl: './move-song-to-collection.component.html',
   styleUrls: ['./move-song-to-collection.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MoveSongToCollectionComponent implements OnInit, OnChanges {
+export class MoveSongToCollectionComponent implements OnChanges {
 
   @Input() mode: 'add'|'move' = 'move';
 
-  @Input() songId!: number;
-  @Input() currentCollectionId!: number;
+  @Input({required: true}) songId!: number;
+  @Input({required: true}) currentCollectionId!: number;
 
   /** Emitted song is deleted. */
   @Output() moved = new EventEmitter<void>();
@@ -55,14 +55,7 @@ export class MoveSongToCollectionComponent implements OnInit, OnChanges {
 
   }
 
-  ngOnInit(): void {
-    assertTruthy(this.songId);
-    assertTruthy(this.currentCollectionId);
-  }
-
   ngOnChanges(): void {
-    assertTruthy(this.songId);
-    assertTruthy(this.currentCollectionId);
     this.currentCollectionId$.next(this.currentCollectionId);
   }
 

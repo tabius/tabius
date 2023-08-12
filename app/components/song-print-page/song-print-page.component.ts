@@ -35,25 +35,23 @@ export class SongPrintPageComponent {
     const song$ = combineLatest([collectionId$, primaryCollectionId$])
         .pipe(mergeMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
 
-    song$
-        .pipe(
-            throttleTime(100, undefined, {leading: true, trailing: true}),
-            takeUntil(this.destroyed$),
-        )
-        .subscribe(song => {
-          if (song === undefined) {
-            this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
-            return;
-          }
-          this.songId = song.id;
-          this.cd.detectChanges();
-          if (this.bss.isBrowser) {
-            setTimeout(() => {
-              window.print();
-              window.close();
-            }, 2000);
-          }
-        });
+    song$.pipe(
+        throttleTime(100, undefined, {leading: true, trailing: true}),
+        takeUntil(this.destroyed$),
+    ).subscribe(song => {
+      if (song === undefined) {
+        this.router.navigate([MOUNT_COLLECTION_PREFIX + collectionMount]).catch(err => console.error(err));
+        return;
+      }
+      this.songId = song.id;
+      this.cd.detectChanges();
+      if (this.bss.isBrowser) {
+        setTimeout(() => {
+          window.print();
+          window.close();
+        }, 2000);
+      }
+    });
   }
 
   ngOnDestroy(): void {

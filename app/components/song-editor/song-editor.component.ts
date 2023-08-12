@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest} from 'rxjs';
 import {flatMap, takeUntil} from 'rxjs/operators';
@@ -10,7 +10,6 @@ import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-i
 import {I18N} from '@app/app-i18n';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media-links-utils';
-import {assertTruthy} from 'assertic';
 
 export type SongEditorInitialFocusMode = 'title'|'text'|'none';
 export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'|'moved'
@@ -28,20 +27,20 @@ export type SongEditResult = {
   styleUrls: ['./song-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongEditorComponent extends ComponentWithLoadingIndicator implements OnInit, OnChanges, OnDestroy {
+export class SongEditorComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
 
   /** ID of the edited song. Invalid ID (<=0) for new songs. */
-  @Input() songId!: number;
+  @Input({required: true}) songId!: number;
 
-  /** Current collection: will become a primary collection for a new song.*/
-  @Input() activeCollectionId!: number;
+  /** The active collection will become a primary collection for a new song.*/
+  @Input({required: true}) activeCollectionId!: number;
 
-  /** If true, component will trigger scrolling edit area into the view. */
+  /** If true, the component will trigger scrolling edit area into the view. */
   @Input() scrollIntoView = true;
 
   @Input() initialFocusMode: SongEditorInitialFocusMode = 'text';
 
-  /** Emitted when panel wants to be closed. */
+  /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter<SongEditResult>();
 
   /** Emitted when song mount is changed right before the song is updated in DB and the editor is closed. */
@@ -70,12 +69,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     super(injector);
   }
 
-  ngOnChanges(): void {
-    assertTruthy(this.activeCollectionId);
-  }
-
   ngOnInit(): void {
-    assertTruthy(this.activeCollectionId);
     this.createMode = !isValidId(this.songId);
     if (this.createMode) {
       const collection$ = this.cds.getCollectionById(this.activeCollectionId);

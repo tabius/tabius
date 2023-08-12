@@ -7,7 +7,7 @@ import {combineLatest, Observable} from 'rxjs';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {canManageCollectionContent, canRemoveCollection, isDefined, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, sortSongsAlphabetically} from '@common/util/misc-utils';
+import {canManageCollectionContent, canRemoveCollection, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isDefined, isInputEvent, nothingThen, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
@@ -18,7 +18,7 @@ import {HelpService} from '@app/services/help.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
-import { truthy } from 'assertic';
+import {truthy} from 'assertic';
 
 export class CollectionViewModel {
   readonly displayName: string;

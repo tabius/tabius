@@ -11,7 +11,7 @@ export const environment: TabiusEnv = {
   url: `https://${APP_DOMAIN}`,
   production: true,
   backendUrl: `https://${APP_DOMAIN}`,
-  ssrBackendUrl: 'http://localhost:24001',
+  ssrBackendUrl: 'http://localhost:13100',
   telegramUrl: 'https://t.me/tabiusru', // TODO:
   buildInfo,
   sentryConfig: {

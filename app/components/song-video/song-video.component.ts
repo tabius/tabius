@@ -17,7 +17,7 @@ export class SongVideoComponent implements OnChanges {
 
   youtubeId?: string;
 
-  /** Frame is always shown when we have a valid video. This helps to reduce flickering from the re-layout. */
+  /** The frame is always shown when we have a valid video. This helps to reduce flickering from the re-layout. */
   isFrameVisible = true;
 
   /** Video load is not allowed in SSR response. Reason: it will be re-drawn by the client version. */
@@ -28,7 +28,7 @@ export class SongVideoComponent implements OnChanges {
 
   constructor(
       private readonly bss: BrowserStateService,
-      @Optional() @Inject(REQUEST) private request: any,
+      @Optional() @Inject(REQUEST) request: any,
   ) {
     this.isBot = isBotUserAgent(this.bss.getUserAgentString(request));
     this.updateVisibleFlag();

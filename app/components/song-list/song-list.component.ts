@@ -30,13 +30,13 @@ export class SongListComponent implements OnChanges {
   @Input() collectionMount?: string;
 
   /** List of primary and secondary songs for the collection. */
-  @Input() songs!: Song[];
+  @Input({required: true}) songs!: Song[];
 
-  /** If to show a link to the primary song collection in case if its different from the current one. */
+  /** If to show a link to the primary song collection in case if it's different from the current one. */
   @Input() showPrimaryCollectionLinks = true;
 
   /**
-   * If present and not equal to collectionMount the list will add 'primaryCollectionMount' part to the song page url.
+   * If present and not equal to `collectionMount`, the list will add 'primaryCollectionMount' part to the song page url.
    * Used to optimize component rendering.
    */
   @Input() primarySongCollections!: (Collection|undefined)[];

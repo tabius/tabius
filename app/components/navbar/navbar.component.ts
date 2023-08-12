@@ -65,7 +65,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.uds.getUser$()
         .pipe(takeUntil(this.destroyed$))
         .subscribe(user => {

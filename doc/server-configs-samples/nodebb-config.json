@@ -1,8 +1,0 @@
-{
-  "writeApi": {
-    "enable": true,
-    "url": "http://127.0.0.1:4567",
-    "token": "private-token"
-  }
-}
-

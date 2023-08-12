@@ -19,7 +19,7 @@ export class CollectionEditorComponent implements OnInit {
 
   @Input() scrollIntoViewAndFocus = true;
 
-  /** Emitted when panel wants to be closed. */
+  /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
   @ViewChild('editorBlock', {static: false, read: ElementRef}) private editorBlockRef!: ElementRef;

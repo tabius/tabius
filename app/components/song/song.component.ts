@@ -16,7 +16,7 @@ import {I18N} from '@app/app-i18n';
 })
 export class SongComponent extends ComponentWithLoadingIndicator implements OnDestroy, OnChanges {
 
-  @Input() songId!: number;
+  @Input({required: true}) songId!: number;
   @Input() showCollectionLink = false;
   @Input() activeCollectionId?: number;
   @Input() mode: SongComponentMode = 'SongPageMode';

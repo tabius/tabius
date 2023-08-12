@@ -14,9 +14,9 @@ export type ChordClickInfoProvider = (event: MouseEvent, chord?: Chord) => Chord
 })
 export class ShowChordPopoverOnClickDirective implements OnDestroy {
 
-  @Input() gtChordPopoverOnClick_getChordInfo!: ChordClickInfoProvider;
+  @Input({required: true}) gtChordPopoverOnClick_getChordInfo!: ChordClickInfoProvider;
 
-  @Input() gtChordPopoverOnClick_popoverTemplate!: TemplateRef<{}>;
+  @Input({required: true}) gtChordPopoverOnClick_popoverTemplate!: TemplateRef<{}>;
 
   @Input() gtChordPopoverOnClick_chord?: Chord;
 

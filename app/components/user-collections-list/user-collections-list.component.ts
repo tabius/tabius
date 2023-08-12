@@ -1,13 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy} from '@angular/core';
 import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
 import {CreateUserCollectionRequest} from '@common/ajax-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {UserService} from '@app/services/user.service';
 import {flatMap, map, takeUntil} from 'rxjs/operators';
 import {combineLatest0, getCollectionPageLink} from '@common/util/misc-utils';
 import {I18N} from '@app/app-i18n';
-
 
 interface CollectionInfo {
   linkText: string;
@@ -28,7 +26,7 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
 
   private readonly destroyed$ = new Subject();
 
-  @Input() userId!: string;
+  @Input({required: true}) userId!: string;
 
   collectionInfos: CollectionInfo[] = [];
 
@@ -37,13 +35,12 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
   private userIdSubscription?: Subscription;
 
   constructor(private readonly cds: CatalogService,
-              private readonly uds: UserService,
               private readonly toastService: ToastService,
               private readonly cd: ChangeDetectorRef,
   ) {
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.userIdSubscription) {
       this.userIdSubscription.unsubscribe();
       this.collectionInfos = [];

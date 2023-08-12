@@ -14,7 +14,7 @@ import {getDefaultH4SiFlag} from '@common/user-model';
 })
 export class ChordImageComponent implements AfterViewInit, OnChanges {
 
-  @Input() layout!: ChordLayout;
+  @Input({required: true}) layout!: ChordLayout;
   @Input() size = 2.3;
   @Input() h4Si = getDefaultH4SiFlag();
 

@@ -11,9 +11,9 @@ import {I18N} from '@app/app-i18n';
 })
 export class UserCollectionEditorComponent {
 
-  @Input() collectionId!: number;
+  @Input({required: true}) collectionId!: number;
 
-  /** Emitted when panel wants to be closed. */
+  /** Emitted when the panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
   readonly i18n = I18N.userCollectionEditorComponent;

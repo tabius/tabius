@@ -10,8 +10,8 @@ import {I18N} from '@app/app-i18n';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class KeyboardShortcutsPopupComponent {
-  @Input() page!: HelpPageType;
-  @Input() popover!: PopoverRef;
+  @Input({required: true}) page!: HelpPageType;
+  @Input({required: true}) popover!: PopoverRef;
 
   readonly i18n = I18N.shortcuts;
 }

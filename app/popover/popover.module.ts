@@ -8,7 +8,11 @@ import {PopoverCloseDirective} from './popover-close.directive';
 import {PopoverComponent} from './popover.component';
 
 @NgModule({
-  declarations: [PopoverComponent, PopoverCloseDirective, PopoverArrowDirective],
+  declarations: [
+    PopoverArrowDirective,
+    PopoverCloseDirective,
+    PopoverComponent,
+  ],
   imports: [
     CommonModule,
     OverlayModule,

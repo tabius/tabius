@@ -16,7 +16,7 @@ export class ModeratorPromptComponent implements AfterViewInit {
   readonly studioLink = LINK_STUDIO;
   readonly i18n = I18N.moderatorPrompt;
 
-  /** Emitted when panel wants to be closed. */
+  /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
   constructor(private readonly el: ElementRef,

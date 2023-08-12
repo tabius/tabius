@@ -25,7 +25,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   /** Current song. undefined => no song is shown (used for collection page). */
   @Input() songId?: number;
-  @Input() activeCollectionId!: number;
+  @Input({required: true}) activeCollectionId!: number;
 
   prevLink = '';
   prevLinkIsCollection = false;

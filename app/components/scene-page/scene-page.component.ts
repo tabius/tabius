@@ -19,7 +19,6 @@ export class ScenePageComponent extends ComponentWithLoadingIndicator implements
 
   songId$: Observable<number>;
 
-
   constructor(injector: Injector,
               private readonly catalogService: CatalogService,
               private readonly helpService: HelpService,

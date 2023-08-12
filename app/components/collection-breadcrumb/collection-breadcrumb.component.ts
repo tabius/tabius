@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
 import {Collection} from '@common/catalog-model';
 import {LINK_CATALOG, LINK_STUDIO} from '@common/mounts';
 import {getCollectionPageLink, isValidUserId} from '@common/util/misc-utils';
@@ -28,7 +28,7 @@ export class CollectionBreadcrumbComponent implements OnChanges {
 
   collectionPageLink = '';
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.collection) {
       this.showStudioLink = isValidUserId(this.collection.userId);
       this.showCatalogLink = !this.showStudioLink;
@@ -39,5 +39,4 @@ export class CollectionBreadcrumbComponent implements OnChanges {
       this.collectionPageLink = '';
     }
   }
-
 }

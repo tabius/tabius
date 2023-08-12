@@ -106,8 +106,8 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
   }
 
   private bringFocusToTheSearchField(): void {
-    // do not focus: 1) During SSR, 2) On touch device to avoid virtual keyboard to be opened, 3) On non-default scrolling position to avoid re-scroll.
-    if (this.isBrowser && !isTouchDevice() && window.pageYOffset === 0) {
+    // do not focus: 1) During SSR, 2) On a touch device to avoid virtual keyboard to be opened, 3) On non-default scrolling position to avoid re-scroll.
+    if (this.isBrowser && !isTouchDevice() && window.screenY === 0) {
       setTimeout(() => {
         if (this.searchField && this.searchField.nativeElement) {
           this.searchField.nativeElement.focus();
@@ -135,11 +135,11 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
     updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 
-  trackByLetter(idx: number, block: LetterBlock): string {
+  trackByLetter(_: number, block: LetterBlock): string {
     return block.letter;
   }
 
-  trackByCollectionId(idx: number, collection: Collection): number {
+  trackByCollectionId(_: number, collection: Collection): number {
     return collection.id;
   }
 

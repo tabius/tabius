@@ -1,11 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Collection, Song} from '@common/catalog-model';
 import {getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
 import {HelpService} from '@app/services/help.service';
 import {I18N} from '@app/app-i18n';
 import {CatalogService} from '@app/services/catalog.service';
 import {firstValueFrom} from 'rxjs';
-import {assertTruthy} from 'assertic';
 
 export type SongHeaderTitleFormat = 'song'|'song-and-collection';
 
@@ -15,11 +14,11 @@ export type SongHeaderTitleFormat = 'song'|'song-and-collection';
   styleUrls: ['./song-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongHeaderComponent implements OnInit, OnChanges {
+export class SongHeaderComponent implements OnChanges {
 
-  @Input() song!: Song;
+  @Input({required: true}) song!: Song;
 
-  @Input() collection!: Collection;
+  @Input({required: true}) collection!: Collection;
 
   @Input() showCollectionLink = false;
 
@@ -31,18 +30,12 @@ export class SongHeaderComponent implements OnInit, OnChanges {
 
   title = '';
 
-  constructor(private readonly cd: ChangeDetectorRef,
-              private readonly helpService: HelpService,
+  constructor(private readonly helpService: HelpService,
               private readonly cds: CatalogService,
   ) {
   }
 
-  ngOnInit(): void {
-    assertTruthy(this.song && this.collection);
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    assertTruthy(this.song && this.collection);
     if (changes['collection'] || changes['song']) {
       this.title = this.song.title + (this.titleFormat === 'song-and-collection' ? ` - ${getNameFirstFormArtistName(this.collection)}` : '');
     }

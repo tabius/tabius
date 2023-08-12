@@ -8,7 +8,7 @@ import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, Song} from '@common/catalog-model';
 import {sortSongsAndRelatedItems} from '@app/components/collection-page/collection-page.component';
-import {combineLatest0, isDefined, getSongPageLink} from '@common/util/misc-utils';
+import {combineLatest0, getSongPageLink, isDefined} from '@common/util/misc-utils';
 import {SongEditResult} from '@app/components/song-editor/song-editor.component';
 import {Router} from '@angular/router';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';

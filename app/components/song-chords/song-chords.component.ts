@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {ChordRenderingOptions, getToneWithH4SiFix, renderChord, TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserService} from '@app/services/user.service';
@@ -21,7 +21,7 @@ import {SongDetails} from '@common/catalog-model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
-  @Input() songId!: number;
+  @Input({required: true}) songId!: number;
   @Input() showControls = false;
 
   readonly i18n = I18N.songChordsComponent;
@@ -73,7 +73,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
         });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.songId$.next(this.songId);
   }
 
