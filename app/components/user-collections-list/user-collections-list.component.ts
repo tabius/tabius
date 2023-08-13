@@ -3,7 +3,7 @@ import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
 import {CreateUserCollectionRequest} from '@common/ajax-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {flatMap, map, takeUntil} from 'rxjs/operators';
+import {map, switchMap, takeUntil} from 'rxjs/operators';
 import {combineLatest0, getCollectionPageLink} from '@common/util/misc-utils';
 import {I18N} from '@app/app-i18n';
 
@@ -48,7 +48,7 @@ export class UserCollectionsListComponent implements OnChanges, OnDestroy {
 
     const collections$ = this.cds.getUserCollections(this.userId);
     const songCounts$: Observable<number[]> = collections$.pipe(
-        flatMap(collections => combineLatest0(collections.map(c => this.cds.getSongIdsByCollection(c.id)))),
+        switchMap(collections => combineLatest0(collections.map(c => this.cds.getSongIdsByCollection(c.id)))),
         map((songIds: (number[]|undefined)[]) => songIds.map(ids => !!ids ? ids.length : 0))
     );
 

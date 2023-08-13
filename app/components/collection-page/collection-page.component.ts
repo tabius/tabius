@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, HostListener, Injector, OnDestroy, O
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, CollectionDetails, Song} from '@common/catalog-model';
 import {ActivatedRoute, Router} from '@angular/router';
-import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
+import {map, switchMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {combineLatest, Observable} from 'rxjs';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
@@ -77,20 +77,20 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
 
     const collectionMount = this.route.snapshot.params[PARAM_COLLECTION_MOUNT];
     const collectionId$: Observable<number|undefined> = this.cds.getCollectionIdByMount(collectionMount);
-    const collection$: Observable<Collection|undefined> = collectionId$.pipe(flatMap(id => this.cds.getCollectionById(id)));
-    const collectionDetails$: Observable<CollectionDetails|undefined> = collectionId$.pipe(flatMap(id => this.cds.getCollectionDetails(id)));
+    const collection$: Observable<Collection|undefined> = collectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
+    const collectionDetails$: Observable<CollectionDetails|undefined> = collectionId$.pipe(switchMap(id => this.cds.getCollectionDetails(id)));
     const bands$: Observable<Collection[]> = collectionDetails$.pipe(
-        flatMap(details => this.cds.getCollectionsByIds(details ? details.bandIds : [])),
+        switchMap(details => this.cds.getCollectionsByIds(details ? details.bandIds : [])),
         map(bands => bands.filter(isDefined))
     );
 
     const songs$: Observable<Song[]> = collection$.pipe(
-        flatMap(collection => this.cds.getSongIdsByCollection(collection && collection.id)),
-        flatMap(songIds => this.cds.getSongsByIds(songIds || [])),
+        switchMap(collection => this.cds.getSongIdsByCollection(collection && collection.id)),
+        switchMap(songIds => this.cds.getSongsByIds(songIds || [])),
         map(songs => songs.filter(isDefined))
     );
     const primarySongCollections$: Observable<(Collection|undefined)[]> = songs$.pipe(
-        flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
+        switchMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
     );
 
     combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollections$, this.uds.getUser$()])

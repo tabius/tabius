@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
-import {flatMap, take} from 'rxjs/operators';
+import {switchMap, take} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
 import {getSongPageLink, isInputEvent, nothingThen} from '@common/util/misc-utils';
 import {Router} from '@angular/router';
@@ -61,9 +61,9 @@ export class ShortcutsService {
   }
 
   gotoRandomSong(collectionId?: number): void {
-    const song$ = this.cds.getRandomSongId(collectionId).pipe(flatMap(songId => this.cds.getSongById(songId)));
+    const song$ = this.cds.getRandomSongId(collectionId).pipe(switchMap(songId => this.cds.getSongById(songId)));
     const collection$ = collectionId ? this.cds.getCollectionById(collectionId)
-                                     : song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
+                                     : song$.pipe(switchMap(song => this.cds.getCollectionById(song && song.collectionId)));
     combineLatest([song$, collection$]).pipe(take(1)).subscribe(([song, collection]) => {
       if (!song || !collection) {
         //todo: show error

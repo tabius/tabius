@@ -4,7 +4,7 @@ import {UserService} from '@app/services/user.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {User} from '@common/user-model';
 import {combineLatest, Observable, of} from 'rxjs';
-import {flatMap, map, takeUntil, throttleTime} from 'rxjs/operators';
+import {map, switchMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, Song} from '@common/catalog-model';
 import {sortSongsAndRelatedItems} from '@app/components/collection-page/collection-page.component';
@@ -45,11 +45,11 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
 
   ngOnInit(): void {
     const user$ = this.uds.getUser$();
-    const allUserCollectionIds$ = user$.pipe(flatMap(user => this.cds.getUserCollectionIds(user && user.id)));
+    const allUserCollectionIds$ = user$.pipe(switchMap(user => this.cds.getUserCollectionIds(user && user.id)));
     const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
-        flatMap((collectionIds: number[]|undefined) =>
+        switchMap((collectionIds: number[]|undefined) =>
             combineLatest0((collectionIds || []).map(id => this.cds.getSongIdsByCollection(id)))),
-        flatMap((songIdsArray: (number[]|undefined)[]) => {
+        switchMap((songIdsArray: (number[]|undefined)[]) => {
           const uniqueSongIds = new Set<number>();
           for (const collectionSongIds of (songIdsArray || [])) {
             for (const songId of (collectionSongIds || [])) {
@@ -67,11 +67,11 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
         );
 
     const primarySongCollections$: Observable<(Collection|undefined)[]> = songsPickedByUser$.pipe(
-        flatMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
+        switchMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
     );
 
     const primaryUserCollection$ = user$.pipe(
-        flatMap(user => user ? this.cds.getCollectionById(user.collectionId) : of(undefined))
+        switchMap(user => user ? this.cds.getCollectionById(user.collectionId) : of(undefined))
     );
 
     combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollections$])

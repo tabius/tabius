@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Injector, Input, OnChanges, OnDestro
 import {combineLatest, Subscription} from 'rxjs';
 import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {flatMap, takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
@@ -55,10 +55,10 @@ export class SongComponent extends ComponentWithLoadingIndicator implements OnDe
 
     const song$ = this.cds.getSongById(this.songId);
     const songDetails$ = this.cds.getSongDetailsById(this.songId);
-    const primaryCollection$ = song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
+    const primaryCollection$ = song$.pipe(switchMap(song => this.cds.getCollectionById(song && song.collectionId)));
     const collection$ = !!this.activeCollectionId ? this.cds.getCollectionById(this.activeCollectionId)
                                                   : primaryCollection$;
-    const songSettings$ = song$.pipe(flatMap(song => this.uds.getUserSongSettings(song && song.id)));
+    const songSettings$ = song$.pipe(switchMap(song => this.uds.getUserSongSettings(song && song.id)));
     this.songSubscription = combineLatest([song$, songDetails$, collection$, primaryCollection$, songSettings$])
         .pipe(takeUntil(this.destroyed$))
         .subscribe(([song, songDetails, collection, primaryCollection, songSettings]) => {

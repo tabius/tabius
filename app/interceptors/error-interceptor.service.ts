@@ -6,7 +6,7 @@ import {catchError} from 'rxjs/operators';
 const HTTP_STATUS_UNAUTHORIZED = 401;
 
 @Injectable()
-export class ErrorsInterceptor implements HttpInterceptor {
+export class ErrorInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req)
@@ -15,7 +15,7 @@ export class ErrorsInterceptor implements HttpInterceptor {
               if (error.status === HTTP_STATUS_UNAUTHORIZED) {
                 //TODO: return fromPromise(this.authService.logout()).pipe(
                 //     take(1),
-                //     flatMap(() => throwError(error))
+                //     switchMap(() => throwError(error))
                 // );
               }
               return throwError(error);

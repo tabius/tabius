@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest} from 'rxjs';
-import {flatMap, takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil} from 'rxjs/operators';
 import {bound, countOccurrences, getCurrentNavbarHeight, getFullLink, getSongPageLink, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
@@ -86,7 +86,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     } else {
       const song$ = this.cds.getSongById(this.songId);
       const songDetails$ = this.cds.getSongDetailsById(this.songId);
-      const collection$ = song$.pipe(flatMap(song => this.cds.getCollectionById(song && song.collectionId)));
+      const collection$ = song$.pipe(switchMap(song => this.cds.getCollectionById(song && song.collectionId)));
       combineLatest([song$, songDetails$, collection$])
           .pipe(takeUntil(this.destroyed$))
           .subscribe(([song, details, collection]) => {
