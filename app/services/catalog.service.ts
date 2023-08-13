@@ -1,8 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {firstValueFrom, from, mergeMap, Observable, of} from 'rxjs';
+import {firstValueFrom, from, Observable, of} from 'rxjs';
 import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-model';
-import {map, shareReplay} from 'rxjs/operators';
+import {map, shareReplay, switchMap} from 'rxjs/operators';
 import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
 import {combineLatest0, isDefined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
@@ -38,7 +38,7 @@ export class CatalogService {
             .pipe(
                 // Perform blocking update here for all collections first.
                 // Reason: this caching prevents a lot of parallel getCollection() HTTP requests usually started immediately after the listing is received.
-                mergeMap(collections => waitForAllPromisesAndReturnFirstArg(collections, collections.map(a => this.updateCollectionOnFetch(a)))),
+                switchMap(collections => waitForAllPromisesAndReturnFirstArg(collections, collections.map(a => this.updateCollectionOnFetch(a)))),
                 map(collections => collections.map(a => a.id)),
             ),
         RefreshMode.RefreshOnce,
@@ -46,7 +46,7 @@ export class CatalogService {
     )
         //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
         .pipe(
-            mergeMap(ids => combineLatest0((ids || []).map(id => this.getCollectionById(id)))),
+            switchMap(ids => combineLatest0((ids || []).map(id => this.getCollectionById(id)))),
             map(items => (items.filter(isDefined) as Collection[])),
         );
   }
@@ -89,7 +89,7 @@ export class CatalogService {
         getCollectionSongListKey(collectionId),
         () => this.httpClient.get<Song[]>(`/api/song/by-collection/${collectionId}`)
             .pipe(
-                mergeMap(songs => from(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))
+                switchMap(songs => from(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))
             ),
         RefreshMode.RefreshOnce,
         checkUpdateByShallowArrayCompare
@@ -118,7 +118,7 @@ export class CatalogService {
         getCollectionIdByMountKey(collectionMount),
         () => this.httpClient.get<Collection|undefined>(`/api/collection/by-mount/${collectionMount}`)
             .pipe( // wait for update before continue.
-                mergeMap(a => waitForAllPromisesAndReturnFirstArg(a, [this.updateCollectionOnFetch(a)])),
+                switchMap(a => waitForAllPromisesAndReturnFirstArg(a, [this.updateCollectionOnFetch(a)])),
                 map(a => a && a.id)
             ),
         RefreshMode.RefreshOnce,
@@ -154,7 +154,7 @@ export class CatalogService {
     }
     return this.getSongIdsByCollection(collectionId)
         .pipe(
-            mergeMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
+            switchMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
             map(songsIds => songsIds.find(s => s?.mount === songMount
                 && (!isValidId(primaryCollectionId) || s.collectionId === primaryCollectionId))),
         );
@@ -274,7 +274,7 @@ export class CatalogService {
   getUserCollections(userId: string|undefined): Observable<Collection[]> {
     const collectionIds$ = this.getUserCollectionIds(userId);
     return collectionIds$.pipe(
-        mergeMap(ids => this.getCollectionsByIds(ids)),
+        switchMap(ids => this.getCollectionsByIds(ids)),
         map(collections => (collections.filter(isDefined) as Collection[])),
     );
   }
@@ -288,7 +288,7 @@ export class CatalogService {
         userCollectionsListKey,
         () => this.httpClient.get<GetUserCollectionsResponse>(`/api/collection/user/${userId}`)
             .pipe(
-                mergeMap(response =>
+                switchMap(response =>
                     waitForAllPromisesAndReturnFirstArg(response,
                         response.collectionInfos.map(info => this.updateCollectionOnFetch(info.collection)))),
                 map((response) => response.collectionInfos.map(info => info.collection.id))

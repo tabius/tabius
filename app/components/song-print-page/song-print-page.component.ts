@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
-import {combineLatest, mergeMap, Subject} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
 import {CatalogService} from '@app/services/catalog.service';
 import {UserService} from '@app/services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {takeUntil, throttleTime} from 'rxjs/operators';
+import {switchMap, takeUntil, throttleTime} from 'rxjs/operators';
 import {MOUNT_COLLECTION_PREFIX, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
 import {BrowserStateService} from '@app/services/browser-state.service';
 
@@ -33,7 +33,7 @@ export class SongPrintPageComponent {
     const collectionId$ = this.cds.getCollectionIdByMount(collectionMount);
     const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
     const song$ = combineLatest([collectionId$, primaryCollectionId$])
-        .pipe(mergeMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
+        .pipe(switchMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
 
     song$.pipe(
         throttleTime(100, undefined, {leading: true, trailing: true}),

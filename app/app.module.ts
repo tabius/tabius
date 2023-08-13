@@ -35,7 +35,6 @@ import {SongVideoComponent} from '@app/components/song-video/song-video.componen
 import {AuthHttpInterceptor, AuthModule} from '@auth0/auth0-angular';
 import {SongEditorComponent} from '@app/components/song-editor/song-editor.component';
 import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
-import {ErrorInterceptor} from '@app/interceptors/error-interceptor.service';
 import {CachingAndMultiplexingInterceptor} from '@app/interceptors/caching-and-multiplexing-interceptor.service';
 import {ResourceNotFoundComponent} from '@app/components/resource-not-found/resource-not-found.component';
 import {SongFullTextSearchResultsPanelComponent} from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
@@ -63,7 +62,6 @@ import * as Sentry from '@sentry/angular-ivy';
 import {MoveSongToCollectionComponent} from './components/move-song-to-collection/move-song-to-collection.component';
 
 const interceptors: Array<Provider> = [
-  {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
   {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
   {provide: HTTP_INTERCEPTORS, useClass: BatchRequestOptimizerInterceptor, multi: true},
   {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},

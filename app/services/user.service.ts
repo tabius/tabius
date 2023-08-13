@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {firstValueFrom, from, Observable, of} from 'rxjs';
 import {CatalogNavigationHistory, CatalogNavigationHistoryStep, DEFAULT_FAVORITE_KEY, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, newEmptyCatalogNavigationHistory, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
 import {checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, FetchFn, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
-import {map, mergeMap, switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {isEqualByStringify, isValidId} from '@common/util/misc-utils';
 import {ChordTone} from '@app/utils/chords-lib';
@@ -90,23 +90,23 @@ export class UserService {
     }
     return this.httpClient.get<UserSettings>(`/api/user/settings`)
         .pipe(
-            mergeMap(userSettings => from(this.updateUserSettings(userSettings))
+            switchMap(userSettings => from(this.updateUserSettings(userSettings))
                 .pipe(map(() => userSettings)))
         );
   }
 
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
     const key = getUserSongSettingsKey(songSettings.songId);
-    // if settings are the same: do not store it at all. This is implicit contract with a server.
+    // If settings are the same: do not store it at all. This is an implicit contract with a server.
     const processedSettings = isEqualByStringify(songSettings, newDefaultUserSongSettings(songSettings.songId)) ? undefined : songSettings;
     await this.store.set<UserSongSettings>(key, processedSettings, checkUpdateByStringify);
 
-    // update settings on the server only if we have valid user session.
+    // update settings on the server only if we have a valid user session.
     const userSettingsFromServer = await firstValueFrom(
         this.getUser$().pipe(
-            mergeMap(user => user
-                             ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings)
-                             : of(undefined)))
+            switchMap(user => user
+                              ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings)
+                              : of(undefined)))
     );
     if (userSettingsFromServer) {
       await this.updateUserSettings(userSettingsFromServer);
@@ -114,7 +114,7 @@ export class UserService {
   }
 
   /**
-   * Note: using custom refresh option to allow forced refresh.
+   * Note: using a custom refresh option to allow forced refresh.
    */
   getH4SiFlag(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<boolean> {
     return this.getUser$().pipe(

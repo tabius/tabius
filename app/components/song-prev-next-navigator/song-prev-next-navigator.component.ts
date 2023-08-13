@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
-import {map, mergeMap, takeUntil} from 'rxjs/operators';
+import {map, switchMap, takeUntil} from 'rxjs/operators';
 import {combineLatest0, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isDefined, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
@@ -52,7 +52,7 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
     const allSongs$ = getAllSongsInCollectionsSorted(collection$, this.cds);
     combineLatest([collection$, allSongs$])
         .pipe(
-            mergeMap(([collection, allSongs]) => {
+            switchMap(([collection, allSongs]) => {
               if (!collection || !allSongs || allSongs.length === 0) {
                 return of([undefined, undefined, undefined, undefined, undefined]);
               }
@@ -185,8 +185,8 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 export function getAllSongsInCollectionsSorted(collection$: Observable<Collection|undefined>, cds: CatalogService): Observable<Array<Song>> {
   // list of all collection songs sorted by id.
   return collection$.pipe(
-      mergeMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
-      mergeMap(songIds => combineLatest0((songIds || []).map(id => cds.getSongById(id)))),
+      switchMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
+      switchMap(songIds => combineLatest0((songIds || []).map(id => cds.getSongById(id)))),
       map(songs => sortSongsAlphabetically(songs.filter(isDefined))),
   );
 }
