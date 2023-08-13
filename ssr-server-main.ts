@@ -1,5 +1,5 @@
 require('zone.js/dist/zone-node');
-const domino = require('domino-ext');
+const domino = require('domino-ext'); // // eslint-disable-line @typescript-eslint/no-var-requires
 applyDomino();
 
 import {environment} from '@app/environments/environment';
@@ -51,13 +51,13 @@ app.listen(port, () => {
 function applyDomino(): void {
   console.log('Setting app Domino polyfills');
 
-  global['Element'] = (domino as any).impl.Element;
+  global['Element'] = (domino as any).impl.Element; // eslint-disable-line @typescript-eslint/no-explicit-any.
   const dominoWindow = domino.createWindow('<body></body>');
 
   global['window'] = dominoWindow as Window&typeof globalThis;
   Object.defineProperty(dominoWindow.document.body.style, 'transform', {value: () => ({enumerable: true, configurable: true})});
   global['document'] = dominoWindow.document;
   global['navigator'] = dominoWindow.navigator;
-  global['CSS'] = {escape: (value) => value, supports: () => false} as any; // TODO:
+  global['CSS'] = {escape: (value) => value, supports: () => false} as any; // eslint-disable-line @typescript-eslint/no-explicit-any.
   global['Prism'] = null;
 }

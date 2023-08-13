@@ -4,7 +4,7 @@ const MAX_KEY_CHAR = '~';
 
 /** Indexed DB bases store adapter. */
 export class IndexedDbAsyncStore implements AsyncStore {
-  constructor(private readonly indexDbName,
+  constructor(private readonly indexDbName: string,
               private readonly objectStoreName: string,
               private readonly schemaVersion = 1,
               private readonly upgradeCallback?: (db: IDBDatabase, event: IDBVersionChangeEvent) => void) {
