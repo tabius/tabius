@@ -9,7 +9,7 @@
     "build:ssr-dev:run": "npm run build:ssr-dev && npm run serve:ssr",
     "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-org-index && npm run inline-css",
     "build:ssr-ru": "npm run update-version && ng build -c ru && ng run tabius:server:ru && npm run inline-css",
-    "run:dev-serve-ssr": "ng run tabius:serve-ssr",
+    "run:dev-serve-ssr": "ng run tabius:serve-ssr --port=12101",
     "e2e": "ng e2e",
     "fix-org-index": "mv dist/browser/index-org.html dist/browser/index.html",
     "inline-css": "ts-node scripts/inline-css.ts && npm run ngsw-json",
@@ -19,7 +19,7 @@
     "server": "nodemon",
     "server-session-debug": "DEBUG=express-session nodemon",
     "sitemap": "ts-node scripts/generate-sitemap.ts",
-    "start": "npm run update-version && ng serve -c dev",
+    "start": "npm run update-version && ng serve -c dev --port=12102",
     "test": "npm run update-version && ng test",
     "update-version": "node scripts/update-build-version.js",
     "update-deps": "rm package-lock.json && rm -rf node_modules && npm install"

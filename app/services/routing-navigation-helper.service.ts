@@ -1,12 +1,10 @@
 import {Injectable} from '@angular/core';
-import {NavigationEnd, NavigationStart, Router} from '@angular/router';
+import {NavigationStart, Router} from '@angular/router';
 import {filter} from 'rxjs/operators';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {HelpService} from '@app/services/help.service';
 import {Meta, Title} from '@angular/platform-browser';
-import {updatePageMetadata} from '@app/utils/seo-utils';
 import {I18N} from '@app/app-i18n';
-import {environment} from '@app/environments/environment';
 
 /** Tracks scroll positions on routing updates. */
 @Injectable({
@@ -25,24 +23,25 @@ export class RoutingNavigationHelper {
   ) {
     if (bss.isBrowser) {
       this.router.events
-          .pipe(filter(event => event instanceof NavigationStart || event instanceof NavigationEnd))
+          .pipe(filter(event => event instanceof NavigationStart))
           .subscribe(event => {
             if (event instanceof NavigationStart) {
               this.helpService.setActiveHelpPage(undefined);
-              this.pageOffsetYPerRoute.set(this.router.url, window.pageYOffset);
+              this.pageOffsetYPerRoute.set(this.router.url, window.scrollY);
 
+              // TODO: does not work in SSR mode after page re-renders in browser for Song & Collection pages. Document & test before re-enabling.
               // Reset title to default if needed.
-              const oldPageTitle = this.title.getTitle();
-              setTimeout(() => {
-                if (oldPageTitle === this.title.getTitle() && oldPageTitle !== this.i18n.pageTitle) {
-                  updatePageMetadata(this.title, this.meta, {
-                    title: this.i18n.pageTitle,
-                    description: this.i18n.pageDescription,
-                    keywords: this.i18n.keywords,
-                    image: `${environment.url}/assets/site-logo.png`,
-                  });
-                }
-              }, 500);
+              // const oldPageTitle = this.title.getTitle();
+              // setTimeout(() => {
+              //   if (oldPageTitle === this.title.getTitle() && oldPageTitle !== this.i18n.pageTitle) {
+              //     updatePageMetadata(this.title, this.meta, {
+              //       title: this.i18n.pageTitle,
+              //       description: this.i18n.pageDescription,
+              //       keywords: this.i18n.keywords,
+              //       image: `${environment.url}/assets/site-logo.png`,
+              //     });
+              //   }
+              // }, 500);
             }
           });
     }

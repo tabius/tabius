@@ -3,7 +3,7 @@ import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {BehaviorSubject, combineLatest, firstValueFrom} from 'rxjs';
-import {map, mergeMap, switchMap, take, takeUntil, throttleTime} from 'rxjs/operators';
+import {map, switchMap, take, takeUntil, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
@@ -103,15 +103,15 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     }
     const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
     const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
-    const collection$ = collectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
-    const primaryCollection$ = primaryCollectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
+    const collection$ = collectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
+    const primaryCollection$ = primaryCollectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
     const allSongsInCollection$ = collection$.pipe(switchMap(c => this.cds.getSongIdsByCollection(c?.id)));
     const songInCollection$ = combineLatest([collectionId$, primaryCollectionId$])
-        .pipe(mergeMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
+        .pipe(switchMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
     // Reuse cached song to keep showing the page if the song was moved out of the current collection.
     const song$ = songInCollection$.pipe(map(song => song || this.song));
-    const songDetails$ = song$.pipe(mergeMap(song => this.cds.getSongDetailsById(song?.id)));
-    const songSettings$ = song$.pipe(mergeMap(song => this.uds.getUserSongSettings(song && song.id)));
+    const songDetails$ = song$.pipe(switchMap(song => this.cds.getSongDetailsById(song?.id)));
+    const songSettings$ = song$.pipe(switchMap(song => this.uds.getUserSongSettings(song && song.id)));
     const user$ = this.uds.getUser$();
     const h4Si$ = this.uds.getH4SiFlag();
     const favoriteKey$ = this.uds.getFavoriteKey();
@@ -218,7 +218,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   private handleSongRemovalFromCatalog(): void {
     // Try to go to the next or prev song in the current collection. Fall-back to collection/studio page.
     const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
-    const collection$ = collectionId$.pipe(mergeMap(id => this.cds.getCollectionById(id)));
+    const collection$ = collectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
     getAllSongsInCollectionsSorted(collection$, this.cds)
         .pipe(
             take(1),
