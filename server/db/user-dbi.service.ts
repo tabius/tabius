@@ -33,26 +33,24 @@ export class UserDbi {
             [settingsJson, userId]);
   }
 
-  getSettings(userId: string): Promise<UserSettings|undefined> {
-    return this.db.pool.promise()
-        .query<RowDataPacket[]>('SELECT settings FROM user WHERE id = ?', [userId])
-        .then(([rows]) =>
-            rows.length === 0
-            ? undefined
-            : {...newDefaultUserSettings(), ...JSON.parse(rows[0]['settings'])}
-        );
+  async getSettings(userId: string): Promise<UserSettings|undefined> {
+    const [rows] = await this.db.pool.promise()
+        .query<RowDataPacket[]>('SELECT settings FROM user WHERE id = ?', [userId]);
+    return rows.length === 0
+           ? undefined
+           : {...newDefaultUserSettings(), ...JSON.parse(rows[0]['settings'])};
   }
 
-  getUserCollectionId(userId: string): Promise<number|undefined> {
-    return this.db.pool.promise()
-        .query<RowDataPacket[]>('SELECT collection_id FROM user WHERE id = ?', [userId])
-        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['collection_id']);
+  async getUserCollectionId(userId: string): Promise<number|undefined> {
+    const [rows] = await this.db.pool.promise()
+        .query<RowDataPacket[]>('SELECT collection_id FROM user WHERE id = ?', [userId]);
+    return rows.length === 0 ? undefined : rows[0]['collection_id'];
   }
 
-  getUserMount(userId: string): Promise<string|undefined> {
-    return this.db.pool.promise()
-        .query<RowDataPacket[]>('SELECT mount FROM user WHERE id = ?', [userId])
-        .then(([rows]) => rows.length === 0 ? undefined : rows[0]['mount']);
+  async getUserMount(userId: string): Promise<string|undefined> {
+    const [rows] = await this.db.pool.promise()
+        .query<RowDataPacket[]>('SELECT mount FROM user WHERE id = ?', [userId]);
+    return rows.length === 0 ? undefined : rows[0]['mount'];
   }
 
   async getUserRoles(userId: string): Promise<Array<UserRole>> {

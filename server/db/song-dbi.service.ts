@@ -3,8 +3,9 @@ import {Song, SongDetails} from '@common/catalog-model';
 import {DbService} from './db.service';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
 import {INVALID_ID} from '@common/common-constants';
-import {OkPacket, RowDataPacket} from 'mysql2';
+import {ResultSetHeader, RowDataPacket} from 'mysql2';
 import {assertTruthy} from 'assertic';
+import {Pool as PromisePool} from 'mysql2/promise';
 
 interface SongRow extends RowDataPacket {
   id: number;
@@ -70,10 +71,10 @@ export class SongDbi {
   }
 
   async create(song: Song, details: SongDetails): Promise<number> {
-    const con$$ = this.db.pool.promise();
+    const con$$: PromisePool = this.db.pool.promise();
     const mount = await generateUniqueSongMount(song, con$$);
     return con$$
-        .query<OkPacket>('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
+        .query<ResultSetHeader>('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
             [song.collectionId, mount, song.title, details.content, packMediaLinks(details.mediaLinks)])
         .then(([result]) => result.insertId);
   }
@@ -219,12 +220,12 @@ function unpackLinks(packedLinks: string): string[] {
   return packedLinks.length === 0 ? [] : packedLinks.split('\n');
 }
 
-async function getAllSingMountsInCollection(con$$: any, song: Song): Promise<string[]> {
-  return await con$$.query('SELECT mount FROM song WHERE collection_id = ?', [song.collectionId])
+async function getAllSingMountsInCollection(con$$: PromisePool, song: Song): Promise<string[]> {
+  return await con$$.query<Array<RowDataPacket>>('SELECT mount FROM song WHERE collection_id = ?', [song.collectionId])
       .then(([rows]) => rows.map(row => row.mount));
 }
 
-async function generateUniqueSongMount(song: Song, con$$: any): Promise<string> {
+async function generateUniqueSongMount(song: Song, con$$: PromisePool): Promise<string> {
   const allMounts = await getAllSingMountsInCollection(con$$, song);
   const allMountsSet = new Set<string>(allMounts);
   const baseMount = song.mount.length > 0 ? song.mount : getTranslitLowerCase(song.title);

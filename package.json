@@ -57,6 +57,7 @@
     "domino-ext": "2.1.4",
     "express": "4.18.2",
     "express-session": "1.17.3",
+    "frescas": "^0.9.0",
     "hammerjs": "2.0.8",
     "jwks-rsa": "3.0.1",
     "mysql2": "3.6.0",

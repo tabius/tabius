@@ -53,7 +53,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
 
   readonly isVirtualKeyboardShownOnInput = isTouchDevice();
 
-  constructor(private readonly cds: CatalogService,
+  constructor(private readonly catalogService: CatalogService,
               private readonly uds: UserService,
               private readonly title: Title,
               private readonly meta: Meta,
@@ -79,7 +79,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
         )
         .subscribe(newValue => this.updateCollectionFilter(newValue));
 
-    this.cds.getListedCollections()
+    this.catalogService.getListedCollections()
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntil(this.destroyed$),

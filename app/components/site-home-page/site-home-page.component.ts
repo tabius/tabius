@@ -4,7 +4,6 @@ import {I18N} from '@app/app-i18n';
 import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 
 @Component({
-  selector: 'gt-site-home-page',
   templateUrl: 'site-home-page.component.html',
   styleUrls: ['site-home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -23,7 +23,7 @@ export class FullTextSearchDbi {
     const exact = isQuoted(text.trim());
     const titleQuery = buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS, exact ? 'exact' : 'default');
     const contentQuery = buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, exact ? 'exact' : 'default');
-    // 'default' vs 'infix':
+    // 'Default' vs 'infix':
     //  'default' can search different word-forms, but can't search by prefix/infix/suffix
     //  'infix' does not know about word-forms, but can search by prefix/infix/suffix.
     // We use 'infix' results only if there are not enough 'default' results.
@@ -79,7 +79,7 @@ export class FullTextSearchDbi {
 interface SphinxSearchResult {
   /** Attribute names. Not used.*/
   readonly attrs?: string[];
-  /** Array of matches. Every match is array of values mentioned in attribute names. */
+  /** Array of matches. Every match is an array of values mentioned in attribute names. */
   readonly matches: SphinxMatch[];
   /** More metrics. Not used. */
   readonly meta?: any;

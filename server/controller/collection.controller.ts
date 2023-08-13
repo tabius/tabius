@@ -8,6 +8,7 @@ import {ServerAuthService} from '@server/service/server-auth.service';
 import {conformsTo, validate} from '@server/util/validation';
 import {canManageCollectionContent, isModerator, isValidUserId} from '@common/util/misc-utils';
 import {SongDbi} from '@server/db/song-dbi.service';
+import {AsyncFreshValue} from 'frescas';
 
 @Controller('/api/collection')
 export class CollectionController {
@@ -15,11 +16,16 @@ export class CollectionController {
               private readonly songDbi: SongDbi) {
   }
 
+  private allListedCollections = new AsyncFreshValue<Array<Collection>>({
+    refreshPeriodMillis: 30 * 1000,
+    load: async () => this.collectionDbi.getAllCollections('listed-only'),
+  });
+
   /** Returns list of all 'listed' collections. */
   @Get('/all-listed')
-  getAllListedCollections(): Promise<Collection[]> {
+  getAllListedCollections(): Promise<Array<Collection>> {
     console.log('CollectionController.getAllListedCollections');
-    return this.collectionDbi.getAllCollections('listed-only');
+    return this.allListedCollections.get();
   }
 
   /** Returns list of all user collections. */
@@ -57,7 +63,7 @@ export class CollectionController {
   }
 
   @Get('/by-ids/:ids')
-  getCollectionsByIds(@Param('ids') idsParam: string, @Session() session): Promise<Collection[]> {
+  getCollectionsByIds(@Param('ids') idsParam: string): Promise<Collection[]> {
     // TODO: check permissions?
     console.log('CollectionController.getCollectionsByIds', idsParam);
     const collectionIds = paramToArrayOfNumericIds(idsParam);
