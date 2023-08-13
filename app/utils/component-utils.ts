@@ -1,5 +1,6 @@
 import {ChangeDetectorRef} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
+import {I18N} from '@app/app-i18n';
 
 interface PageWithNotFoundFlag {
   notFound: boolean;
@@ -13,10 +14,10 @@ export function switchToNotFoundMode(page: PageWithNotFoundFlag): void {
   page.notFound = true;
   addStatus404ToResponse(page.response);
   if (page.title) {
-    page.title.setTitle('Ресурс не найден');
+    page.title.setTitle(I18N.common.resourceNotFound);
   }
   if (page.meta) {
-    page.meta.addTag({name: 'description', content: 'Ресурс не найден'});
+    page.meta.addTag({name: 'description', content: I18N.common.resourceNotFound});
   }
   page.cd.detectChanges();
 }

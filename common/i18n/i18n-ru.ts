@@ -16,6 +16,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     serverRequestError: 'Ошибка при обращении к серверу!',
     failedToCreateCollection: 'Не удалось создать коллекцию!',
     catalog: 'Каталог',
+    resourceNotFound: 'Ресурс не найден',
   },
   navbar: {
     accountInfoNotLoggedInToast: 'Вы не вошли в систему',

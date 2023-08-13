@@ -23,6 +23,7 @@ export interface I18n {
     serverRequestError: string;
     failedToCreateCollection: string;
     catalog: string;
+    resourceNotFound: string;
   };
   navbar: {
     accountInfoNotLoggedInToast: string;

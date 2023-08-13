@@ -15,7 +15,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     unexpectedError: 'Unexpected internal error!',
     serverRequestError: 'Error connecting to server!',
     failedToCreateCollection: 'Failed to create new collection!',
-    catalog: 'Catalog'
+    catalog: 'Catalog',
+    resourceNotFound: 'Resource not found',
   },
   navbar: {
     accountInfoNotLoggedInToast: 'You are not logged in',

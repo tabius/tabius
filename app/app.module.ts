@@ -60,6 +60,7 @@ import {CatalogNavigationHistoryPopupComponent} from '@app/components/catalog-na
 import {ScenePageComponent} from './components/scene-page/scene-page.component';
 import * as Sentry from '@sentry/angular-ivy';
 import {MoveSongToCollectionComponent} from './components/move-song-to-collection/move-song-to-collection.component';
+import {NgOptimizedImage} from '@angular/common';
 
 const interceptors: Array<Provider> = [
   {provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true},
@@ -148,6 +149,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
         redirect_uri: window.location.origin,
       }
     },),
+    NgOptimizedImage,
   ],
   providers: [
     {provide: ErrorHandler, useValue: Sentry.createErrorHandler({showDialog: false})},

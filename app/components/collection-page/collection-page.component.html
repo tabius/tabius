@@ -14,7 +14,7 @@
 
     <!-- Main content block -->
     <div *ngIf="loaded && collectionViewModel">
-        <gt-collection-breadcrumb [collection]="collectionViewModel ? collectionViewModel.collection : null"
+        <gt-collection-breadcrumb [collection]="collectionViewModel?.collection"
                                   [showCollectionLink]="false"></gt-collection-breadcrumb>
 
         <div class="collection-root">
@@ -75,15 +75,6 @@
                                        [collectionId]="collectionViewModel.collection.id"
                                        (closeRequest)="toggleCollectionEditor()"
             ></gt-user-collection-editor>
-        </div>
-
-        <div *ngIf="collectionViewModel.listed" class="pg-search-block">
-            <a href="https://priceguard.ru/search?g=digital&q={{collectionViewModel.displayName}}"
-               title="{{i18n.supportLinkTitle}}"
-               target="_blank"
-               rel="noopener">
-                {{i18n.supportLink}}
-            </a>
         </div>
 
         <gt-song-prev-next-navigator [activeCollectionId]="collectionViewModel.collection.id"></gt-song-prev-next-navigator>
