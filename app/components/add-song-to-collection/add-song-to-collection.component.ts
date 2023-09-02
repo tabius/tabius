@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {combineLatest, Observable, Subscription, switchMap} from 'rxjs';
+import {combineLatest, Observable, switchMap} from 'rxjs';
 import {UserService} from '@app/services/user.service';
 import {map, tap} from 'rxjs/operators';
 import {ToastService} from '@app/toast/toast.service';
@@ -35,8 +35,6 @@ export class AddSongToCollectionComponent extends AbstractAppComponent {
   readonly trackById = trackById;
   readonly isModerator = isModerator;
   readonly i18n = I18N.addSongToCollection;
-
-  private songSubscription?: Subscription;
 
   constructor(
       private readonly userService: UserService,

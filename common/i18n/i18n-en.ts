@@ -4,11 +4,13 @@ import {User} from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Favorites';
 
+const DEFAULT_PAGE_KEYWORDS = ['chords', 'guitar tabs'];
+
 export const TRANSLATIONS_MAP_EN: I18n = {
   common: {
     pageTitle: 'Chords & Tabs',
     pageDescription: 'Chords and tabs for your favorite songs',
-    keywords: ['chords', 'guitar tabs'],
+    keywords: DEFAULT_PAGE_KEYWORDS,
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
     and: 'and',
     error: (message: string) => `Error: ${message}`,
@@ -24,7 +26,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     catalog: 'CATALOG',
     scene: 'SCENE',
     historyButton: 'HISTORY',
-    historyButtonTitle: 'Show catalog browing history',
+    historyButtonTitle: 'Show catalog browsing history',
     logo2: 'chords & tabs',
     noSleep: 'NO SLEEP',
     noSleepTitle: 'Keep mobile phone screen always on',
@@ -165,6 +167,11 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     tryToReloadPagePrompt: 'Try to reload the page when Online',
   },
   settingsPage: {
+    metadata: {
+      title: 'Personal settings',
+      description: 'Personal settings for the Tabius',
+      keywords: DEFAULT_PAGE_KEYWORDS,
+    },
     pageHeader: 'Personal settings',
     loadingText: 'Loading settings …',
     songRenderingSettingsHeader: 'Song rendering',

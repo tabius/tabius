@@ -4,11 +4,13 @@ import {User} from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Избранное';
 
+const DEFAULT_PAGE_KEYWORDS = ['аккорды', 'гитара', 'табы'];
+
 export const TRANSLATIONS_MAP_RU: I18n = {
   common: {
     pageTitle: 'Табы и аккорды',
     pageDescription: 'Аккорды для ваших любимых песен',
-    keywords: ['аккорды', 'гитара', 'табы'],
+    keywords: DEFAULT_PAGE_KEYWORDS,
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
     and: 'и',
     error: (message: string) => `Ошибка: ${message}`,
@@ -166,6 +168,11 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     tryToReloadPagePrompt: 'Попробуйте перегрузить страницу в режиме Онлайн'
   },
   settingsPage: {
+    metadata: {
+      title: 'Настройки',
+      description: 'Персональные настройки сайта Tabius',
+      keywords: DEFAULT_PAGE_KEYWORDS,
+    },
     pageHeader: 'Персональные настройки',
     loadingText: 'Загружаем настройки …',
     songRenderingSettingsHeader: 'Отображение песен',

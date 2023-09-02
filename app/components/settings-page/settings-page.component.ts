@@ -38,6 +38,8 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   ) {
     super();
 
+    this.updatePageMetadata(this.i18n.metadata);
+
     combineLatest([
       this.uds.getUser$(),
       this.uds.getUserDeviceSettings(),

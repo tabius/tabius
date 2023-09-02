@@ -1,4 +1,4 @@
-import {BehaviorSubject, Subject, timer} from 'rxjs';
+import {BehaviorSubject, ReplaySubject, timer} from 'rxjs';
 import {take, takeUntil} from 'rxjs/operators';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AbstractAppComponent} from '@app/utils/abstract-app-component';
@@ -19,7 +19,7 @@ export class ComponentWithLoadingIndicator extends AbstractAppComponent {
     this.loaded$.next(true);
   }
 
-  private readonly loaded$ = new Subject<boolean>();
+  private readonly loaded$ = new ReplaySubject<boolean>(1);
   private _loaded = false;
 
   constructor(loadingTimeout = 800) {
