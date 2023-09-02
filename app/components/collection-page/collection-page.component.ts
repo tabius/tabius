@@ -5,8 +5,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {map, switchMap, throttleTime} from 'rxjs/operators';
 import {combineLatest, Observable} from 'rxjs';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
-import {Meta, Title} from '@angular/platform-browser';
-import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canManageCollectionContent, canRemoveCollection, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isDefined, isInputEvent, nothingThen, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {User} from '@common/user-model';
@@ -62,8 +60,6 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
   constructor(private readonly cds: CatalogService,
               private readonly uds: UserService,
               private readonly route: ActivatedRoute,
-              readonly title: Title,
-              readonly meta: Meta,
               private readonly router: Router,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
@@ -130,7 +126,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
     }
     const name = collectionViewModel.displayName;
     const {type} = collectionViewModel.collection;
-    updatePageMetadata(this.title, this.meta, {
+    this.updatePageMetadata({
       title: this.i18n.meta.title(name, type),
       description: this.i18n.meta.description(getFirstSongsNames(songs)),
       keywords: this.i18n.meta.keywords(name),

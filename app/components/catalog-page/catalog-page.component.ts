@@ -1,11 +1,9 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild} from '@angular/core';
 import {Collection} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {FormControl} from '@angular/forms';
 import {debounce, throttleTime} from 'rxjs/operators';
 import {timer} from 'rxjs';
-import {Meta, Title} from '@angular/platform-browser';
-import {updatePageMetadata} from '@app/utils/seo-utils';
 import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent, isTouchDevice, scrollToView} from '@common/util/misc-utils';
 import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
 import {UserService} from '@app/services/user.service';
@@ -56,8 +54,6 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
 
   constructor(private readonly catalogService: CatalogService,
               private readonly uds: UserService,
-              private readonly title: Title,
-              private readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
   ) {
     super();
@@ -85,7 +81,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
       this.cdr.markForCheck();
     });
 
-    updatePageMetadata(this.title, this.meta, this.i18n.meta);
+    this.updatePageMetadata(this.i18n.meta);
   }
 
   @HostListener('document:keydown', ['$event'])

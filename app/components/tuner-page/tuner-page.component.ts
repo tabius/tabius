@@ -1,10 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild} from '@angular/core';
-import {Meta, Title} from '@angular/platform-browser';
-import {updatePageMetadata} from '@app/utils/seo-utils';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild} from '@angular/core';
 import {UserService} from '@app/services/user.service';
 import {newDefaultUserDeviceSettings, TunerToneType} from '@common/user-model';
 import {I18N} from '@app/app-i18n';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
@@ -13,7 +12,7 @@ const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
   styleUrls: ['./tuner-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TunerPageComponent implements OnDestroy {
+export class TunerPageComponent extends AbstractAppComponent implements OnDestroy {
   private destroyed = false;
 
   readonly i18n = I18N.tunerPage;
@@ -32,18 +31,15 @@ export class TunerPageComponent implements OnDestroy {
   private forceStop = false;
   private focusedString = '';
 
-  constructor(private readonly cdr: ChangeDetectorRef,
-              private readonly title: Title,
-              private readonly meta: Meta,
-              private readonly uds: UserService,
-  ) {
+  constructor(private readonly uds: UserService) {
+    super();
     this.uds.getUserDeviceSettings().pipe(
         takeUntilDestroyed(),
     ).subscribe(deviceSettings => {
       this.deviceSettings = deviceSettings;
       this.cdr.markForCheck();
     });
-    updatePageMetadata(this.title, this.meta, this.i18n.meta);
+    this.updatePageMetadata(this.i18n.meta);
   }
 
   ngOnDestroy(): void {

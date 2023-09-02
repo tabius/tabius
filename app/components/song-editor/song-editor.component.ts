@@ -52,7 +52,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.songEditorComponent;
 
   content = '';
-  title = '';
+  songTitle = '';
   mount = '';
   songUrlPrefix = '';
   mediaLinks = '';
@@ -89,7 +89,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
         }
         this.song = song;
         this.details = details;
-        this.title = song.title;
+        this.songTitle = song.title;
         this.content = details ? details.content : '?';
         this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
         this.mount = song.mount;
@@ -130,7 +130,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
     if (!this.isCreateMode) {
       return;
     }
-    if (this.title.length === 0) {
+    if (this.songTitle.length === 0) {
       this.toastService.warning(this.i18n.toasts.songTitleIsRequired);
       return;
     }
@@ -144,7 +144,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   }
 
   private async createImpl(): Promise<void> {
-    const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.title, collectionId: this.activeCollectionId};
+    const song: Song = {id: INVALID_ID, version: 0, mount: this.mount, title: this.songTitle, collectionId: this.activeCollectionId};
     const songDetails: SongDetails = {id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError()};
     const createdSong = await this.cds.createSong(song, songDetails);
     this.close({type: 'created', song: createdSong});
@@ -185,7 +185,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
     if (this.mount !== this.song.mount) {
       this.onMountChangeBeforeUpdate.emit(this.mount);
     }
-    const updatedSong: Song = {...this.song, title: this.title, mount: this.mount};
+    const updatedSong: Song = {...this.song, title: this.songTitle, mount: this.mount};
     const updatedDetails: SongDetails = {...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError()};
     // wait until the update is finished with no errors before closing the editor.
     await this.cds.updateSong(updatedSong, updatedDetails);
@@ -195,12 +195,12 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
 
   private isChanged(): boolean {
     if (this.isCreateMode) {
-      return this.title !== '' || this.content !== '' || this.mediaLinks !== '';
+      return this.songTitle !== '' || this.content !== '' || this.mediaLinks !== '';
     }
     if (!this.song || !this.details) {
       return false;
     }
-    return this.song.title !== this.title
+    return this.song.title !== this.songTitle
         || this.details.content !== this.content
         || this.details.mediaLinks.join(' ') !== this.mediaLinks
         || this.song.mount !== this.mount;
@@ -275,6 +275,6 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   }
 
   onTitleChanged(): void {
-    this.mount = getTranslitLowerCase(this.title);
+    this.mount = getTranslitLowerCase(this.songTitle);
   }
 }

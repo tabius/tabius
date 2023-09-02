@@ -1,12 +1,10 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, inject, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {BehaviorSubject, combineLatest, firstValueFrom} from 'rxjs';
 import {map, switchMap, take, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
-import {Meta, Title} from '@angular/platform-browser';
-import {updatePageMetadata} from '@app/utils/seo-utils';
 import {UserService} from '@app/services/user.service';
 import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
 import {parseChordsLine} from '@app/utils/chords-parser';
@@ -72,8 +70,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
               private readonly uds: UserService,
               private readonly router: Router,
               private readonly route: ActivatedRoute,
-              readonly title: Title,
-              readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
               private readonly shortcutsService: ShortcutsService,
@@ -245,7 +241,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     this.canonicalPageUrl = getFullLink(getSongPageLink(this.primaryCollection.mount, this.song.mount));
     const titlePrefix = `${this.song.title}, ${getNameFirstFormArtistName(this.activeCollection)} | `;
     const titleSuffix = this.i18n.titleSuffix(titlePrefix);
-    updatePageMetadata(this.title, this.meta, {
+    this.updatePageMetadata({
       title: titlePrefix + titleSuffix,
       description: getSongTextWithNoChords(this.songDetails.content, 5, true),
       keywords: this.i18n.keywords(this.activeCollection.name, this.song.title),

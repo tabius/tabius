@@ -1,7 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {Meta, Title} from '@angular/platform-browser';
 import {UserService} from '@app/services/user.service';
-import {updatePageMetadata} from '@app/utils/seo-utils';
 import {User} from '@common/user-model';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap, throttleTime} from 'rxjs/operators';
@@ -35,8 +33,6 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
 
   constructor(private readonly uds: UserService,
               private readonly cds: CatalogService,
-              private readonly title: Title,
-              private readonly meta: Meta,
               private readonly router: Router,
   ) {
     super();
@@ -86,7 +82,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
           this.primaryUserCollectionMount = primaryUserCollection.mount;
           [this.songs, this.primarySongCollections] = sortSongsAndRelatedItems(songs, primarySongCollections);
         });
-    updatePageMetadata(this.title, this.meta, this.i18n.meta);
+    this.updatePageMetadata(this.i18n.meta);
   }
 
   openEditor(): void {

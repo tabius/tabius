@@ -5,7 +5,7 @@
 
 <div *ngIf="loaded" class="editor-block">
     <div>
-        <input #firstFormElement type="text" [(ngModel)]="title"
+        <input #firstFormElement type="text" [(ngModel)]="songTitle"
                (keydown)="handleKeyboardEvent($event)"
                (ngModelChange)="onTitleChanged()"
                class="song-title"
