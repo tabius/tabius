@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {environment} from '@app/environments/environment';
 import {Router} from '@angular/router';
 import {I18N} from '@app/app-i18n';
@@ -6,10 +6,9 @@ import {LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER} from '
 import {LocationStrategy} from '@angular/common';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {ContextMenuAction, ContextMenuActionService, isFunctionalTarget, isSubmenuTarget} from '@app/services/context-menu-action.service';
-import {Subject} from 'rxjs';
 import {PopoverService} from '@app/popover/popover.service';
 import {PopoverRef} from '@app/popover/popover-ref';
-import {takeUntil} from 'rxjs/operators';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'gt-footer',
@@ -17,7 +16,7 @@ import {takeUntil} from 'rxjs/operators';
   styleUrls: ['./footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FooterComponent implements OnInit, OnDestroy {
+export class FooterComponent implements OnDestroy {
 
   readonly month = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(4, 6);
   readonly day = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(6, 8);
@@ -51,8 +50,6 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   private actionMenuPopoverRef?: PopoverRef;
 
-  readonly destroyed$ = new Subject<boolean>();
-
   constructor(readonly router: Router,
               private readonly location: LocationStrategy,
               private readonly bss: BrowserStateService,
@@ -60,13 +57,12 @@ export class FooterComponent implements OnInit, OnDestroy {
               private readonly contextMenuActionService: ContextMenuActionService,
               private readonly popoverService: PopoverService,
   ) {
-  }
-
-  ngOnInit(): void {
-    this.contextMenuActionService.footerActions$.pipe(takeUntil(this.destroyed$)).subscribe(actions => {
+    this.contextMenuActionService.footerActions$.pipe(
+        takeUntilDestroyed(),
+    ).subscribe(actions => {
       this.actions = actions;
       this.menuStack = [];
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
     this.location.onPopState(() => {
       // Closes opened navbar on back button click on mobile device.
@@ -80,7 +76,6 @@ export class FooterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.closeMenuPopover();
-    this.destroyed$.next(true);
   }
 
   openMainMenuDrawer(): void {

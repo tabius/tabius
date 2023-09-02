@@ -42,7 +42,7 @@ export class SongHeaderComponent implements OnChanges {
   }
 
   async printSong(): Promise<void> {
-    const primaryCollection = await firstValueFrom(this.cds.getCollectionById(this.song.collectionId));
+    const primaryCollection = await firstValueFrom(this.cds.observeCollection(this.song.collectionId));
     const printPageUrl = getSongPrintPageLink(this.collection.mount, this.song.mount, primaryCollection?.mount);
     window.open(printPageUrl, '_blank');
   }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {Toast, ToastRef} from '@app/toast/toast-model';
 import {animate, AnimationTriggerMetadata, state, style, transition, trigger} from '@angular/animations';
 
@@ -21,19 +21,16 @@ const toastAnimations: { readonly fadeToast: AnimationTriggerMetadata } = {
   animations: [toastAnimations.fadeToast],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToastComponent implements OnInit, OnDestroy {
+export class ToastComponent implements OnDestroy {
   animationState: ToastAnimationState = 'default';
-  private intervalId!: number;
+  private readonly intervalId: number;
 
   constructor(readonly toast: Toast,
               private readonly ref: ToastRef,
-              private readonly cd: ChangeDetectorRef) {
-  }
-
-  ngOnInit(): void {
+              private readonly cdr: ChangeDetectorRef) {
     this.intervalId = window.setTimeout(() => {
       this.animationState = 'closing';
-      this.cd.detectChanges();
+      this.cdr.markForCheck();
     }, 4000);
   }
 

@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
 import {UserService} from '@app/services/user.service';
 import {updatePageMetadata} from '@app/utils/seo-utils';
 import {User} from '@common/user-model';
 import {combineLatest, Observable, of} from 'rxjs';
-import {map, switchMap, takeUntil, throttleTime} from 'rxjs/operators';
+import {map, switchMap, throttleTime} from 'rxjs/operators';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, Song} from '@common/catalog-model';
 import {sortSongsAndRelatedItems} from '@app/components/collection-page/collection-page.component';
@@ -13,13 +13,14 @@ import {SongEditResult} from '@app/components/song-editor/song-editor.component'
 import {Router} from '@angular/router';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   templateUrl: './studio-page.component.html',
   styleUrls: ['./studio-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StudioPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+export class StudioPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.studioPage;
 
   user?: User;
@@ -37,13 +38,8 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
               private readonly title: Title,
               private readonly meta: Meta,
               private readonly router: Router,
-              injector: Injector,
   ) {
-    super(injector);
-  }
-
-
-  ngOnInit(): void {
+    super();
     const user$ = this.uds.getUser$();
     const allUserCollectionIds$ = user$.pipe(switchMap(user => this.cds.getUserCollectionIds(user && user.id)));
     const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
@@ -56,7 +52,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
               uniqueSongIds.add(songId);
             }
           }
-          return combineLatest0([...uniqueSongIds].map(songId => this.cds.getSongById(songId)));
+          return combineLatest0([...uniqueSongIds].map(songId => this.cds.observeSong(songId)));
         }),
         map(songs => songs.filter(isDefined)),
     );
@@ -71,45 +67,35 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator implement
     );
 
     const primaryUserCollection$ = user$.pipe(
-        switchMap(user => user ? this.cds.getCollectionById(user.collectionId) : of(undefined))
+        switchMap(user => user ? this.cds.observeCollection(user.collectionId) : of(undefined))
     );
 
     combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollections$])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
-            takeUntil(this.destroyed$),
+            takeUntilDestroyed(),
         )
         .subscribe(([user, primaryUserCollection, songs, primarySongCollections]) => {
+          this.cdr.markForCheck();
           this.loaded = true;
           if (!user || !primaryUserCollection || !songs || !primarySongCollections) {
             //TODO: switchToNotFoundMode(this);
-            this.cd.detectChanges();
             return;
           }
           this.user = user;
           this.primaryUserCollectionMount = primaryUserCollection.mount;
           [this.songs, this.primarySongCollections] = sortSongsAndRelatedItems(songs, primarySongCollections);
-          this.cd.detectChanges();
         });
-    this.updateMeta();
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
-  }
-
-  updateMeta(): void {
     updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 
   openEditor(): void {
     this.editorIsOpen = true;
-    this.cd.detectChanges();
   }
 
   closeEditor(editResult: SongEditResult): void {
     this.editorIsOpen = false;
-    this.cd.detectChanges();
+    this.cdr.markForCheck();
     if (editResult.type === 'created') {
       // go to the newly created song.
       const songMount = editResult.song!.mount;

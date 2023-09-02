@@ -1,9 +1,9 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, inject, OnDestroy} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Collection, Song, SongDetails} from '@common/catalog-model';
 import {BehaviorSubject, combineLatest, firstValueFrom} from 'rxjs';
-import {map, switchMap, take, takeUntil, throttleTime} from 'rxjs/operators';
+import {map, switchMap, take, throttleTime} from 'rxjs/operators';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
@@ -31,13 +31,14 @@ import {getSongJsonLdBreadcrumbList} from '@common/util/json-ld';
 import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 import {assertTruthy} from 'assertic';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   templateUrl: './song-page.component.html',
   styleUrls: ['./song-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+export class SongPageComponent extends ComponentWithLoadingIndicator implements OnDestroy {
 
   readonly i18n = I18N.songPage;
 
@@ -67,7 +68,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   jsonLdBreadcrumb?: WithContext<BreadcrumbList>;
 
-  constructor(private readonly cds: CatalogService,
+  constructor(private readonly catalogService: CatalogService,
               private readonly uds: UserService,
               private readonly router: Router,
               private readonly route: ActivatedRoute,
@@ -78,12 +79,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
               private readonly shortcutsService: ShortcutsService,
               private readonly elementRef: ElementRef,
               private readonly contextMenuActionService: ContextMenuActionService,
-              injector: Injector,
   ) {
-    super(injector);
-  }
-
-  ngOnInit() {
+    super();
     this.helpService.setActiveHelpPage('song');
     const params = this.route.snapshot.params;
     this.collectionMount = params[PARAM_COLLECTION_MOUNT];
@@ -101,16 +98,16 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     if (primaryCollectionMount === undefined) {
       primaryCollectionMount = this.collectionMount;
     }
-    const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
-    const primaryCollectionId$ = this.cds.getCollectionIdByMount(primaryCollectionMount);
-    const collection$ = collectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
-    const primaryCollection$ = primaryCollectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
-    const allSongsInCollection$ = collection$.pipe(switchMap(c => this.cds.getSongIdsByCollection(c?.id)));
+    const collectionId$ = this.catalogService.getCollectionIdByMount(this.collectionMount);
+    const primaryCollectionId$ = this.catalogService.getCollectionIdByMount(primaryCollectionMount);
+    const collection$ = collectionId$.pipe(switchMap(id => this.catalogService.observeCollection(id)));
+    const primaryCollection$ = primaryCollectionId$.pipe(switchMap(id => this.catalogService.observeCollection(id)));
+    const allSongsInCollection$ = collection$.pipe(switchMap(c => this.catalogService.getSongIdsByCollection(c?.id)));
     const songInCollection$ = combineLatest([collectionId$, primaryCollectionId$])
-        .pipe(switchMap(([collectionId, primaryCollectionId]) => this.cds.getSongByMount(collectionId, primaryCollectionId, songMount)));
+        .pipe(switchMap(([collectionId, primaryCollectionId]) => this.catalogService.getSongByMount(collectionId, primaryCollectionId, songMount)));
     // Reuse cached song to keep showing the page if the song was moved out of the current collection.
     const song$ = songInCollection$.pipe(map(song => song || this.song));
-    const songDetails$ = song$.pipe(switchMap(song => this.cds.getSongDetailsById(song?.id)));
+    const songDetails$ = song$.pipe(switchMap(song => this.catalogService.getSongDetailsById(song?.id)));
     const songSettings$ = song$.pipe(switchMap(song => this.uds.getUserSongSettings(song && song.id)));
     const user$ = this.uds.getUser$();
     const h4Si$ = this.uds.getH4SiFlag();
@@ -118,59 +115,57 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
     const songData$ = combineLatest([collection$, primaryCollection$, song$, songDetails$, allSongsInCollection$]);
     const userData$ = combineLatest([user$, h4Si$, favoriteKey$, songSettings$]);
-    combineLatest([songData$, userData$])
-        .pipe(
-            throttleTime(100, undefined, {leading: true, trailing: true}),
-            takeUntil(this.destroyed$),
-        )
-        .subscribe(([[collection, primaryCollection, song, songDetails, allSongsInCollection], [user, h4Si, favoriteKey, songSettings]]) => {
-          this.loaded = true;
-          this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
-          const hadSongBefore = this.song !== undefined;
-          const haveSongNow = song !== undefined && songDetails !== undefined;
-          const isSongMountUpdated = !!this.songMountBeforeUpdate && song?.mount !== this.songMountBeforeUpdate;
-          const isInvalidSongCollection = song && collection && !(allSongsInCollection || []).includes(song.id);
-          if (hadSongBefore && !haveSongNow || isSongMountUpdated || isInvalidSongCollection) {
-            // Handle song removal or mount update or song move.
-            if (isSongMountUpdated) {
-              this.handleMountUpdate();
-            } else {
-              this.handleSongRemovalFromCatalog();
-            }
-            return;
-          }
-          if (collection === undefined || primaryCollection === undefined || song === undefined || songDetails === undefined) {
-            switchToNotFoundMode(this);
-            return;
-          }
-          this.song = song;
-          this.songDetails = songDetails;
-          this.activeCollection = collection;
-          this.primaryCollection = primaryCollection;
-          this.user = user;
-          this.songSettings = songSettings;
+    combineLatest([songData$, userData$]).pipe(
+        throttleTime(100, undefined, {leading: true, trailing: true}),
+        takeUntilDestroyed(),
+    ).subscribe(([[collection, primaryCollection, song, songDetails, allSongsInCollection], [user, h4Si, favoriteKey, songSettings]]) => {
+      this.loaded = true;
+      this.cdr.markForCheck();
+      this.isUserCollection = !!user && !!collection && user.collectionId === collection.id;
+      const hadSongBefore = this.song !== undefined;
+      const haveSongNow = song !== undefined && songDetails !== undefined;
+      const isSongMountUpdated = !!this.songMountBeforeUpdate && song?.mount !== this.songMountBeforeUpdate;
+      const isInvalidSongCollection = song && collection && !(allSongsInCollection || []).includes(song.id);
+      if (hadSongBefore && !haveSongNow || isSongMountUpdated || isInvalidSongCollection) {
+        // Handle song removal or mount update or song move.
+        if (isSongMountUpdated) {
+          this.handleMountUpdate();
+        } else {
+          this.handleSongRemovalFromCatalog();
+        }
+        return;
+      }
+      if (collection === undefined || primaryCollection === undefined || song === undefined || songDetails === undefined) {
+        switchToNotFoundMode(this);
+        return;
+      }
+      this.song = song;
+      this.songDetails = songDetails;
+      this.activeCollection = collection;
+      this.primaryCollection = primaryCollection;
+      this.user = user;
+      this.songSettings = songSettings;
 
-          this.originalSongKey = getSongKey(this.songDetails);
-          this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
-          this.transposeMenuActionText$.next(this.transposeActionKey ? `${getToneWithH4SiFix(h4Si, this.transposeActionKey)}m` : undefined);
+      this.originalSongKey = getSongKey(this.songDetails);
+      this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
+      this.transposeMenuActionText$.next(this.transposeActionKey ? `${getToneWithH4SiFix(h4Si, this.transposeActionKey)}m` : undefined);
 
-          this.jsonLdBreadcrumb = getSongJsonLdBreadcrumbList(this.activeCollection, this.song, this.primaryCollection);
+      this.jsonLdBreadcrumb = getSongJsonLdBreadcrumbList(this.activeCollection, this.song, this.primaryCollection);
 
-          this.updateMeta();
-          this.hasEditRight = canManageCollectionContent(user, primaryCollection);
-          this.registerStateInCatalogNavigationHistory();
-          this.cd.detectChanges();
-          this.navHelper.restoreScrollPosition();
-        });
+      this.updateMeta();
+      this.hasEditRight = canManageCollectionContent(user, primaryCollection);
+      this.registerStateInCatalogNavigationHistory();
+      this.navHelper.restoreScrollPosition();
+    });
 
-    this.uds.getUserDeviceSettings()
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(deviceSettings => {
-          this.deviceSettings = deviceSettings;
-        });
+    this.uds.getUserDeviceSettings().pipe(
+        takeUntilDestroyed()
+    ).subscribe(deviceSettings => {
+      this.deviceSettings = deviceSettings;
+    });
   }
 
-  private setupContextMenuActions() {
+  private setupContextMenuActions(): void {
     this.contextMenuActionService.footerActions$.next([
       {
         icon: 'note', target: [
@@ -205,6 +200,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     ]);
   }
 
+  /** Called when currently song mount is updated. */
   private handleMountUpdate(): void {
     if (!this.collectionMount || !this.songMountBeforeUpdate) {
       return;
@@ -214,20 +210,19 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     this.router.navigate([link]).catch(err => console.error(err));
   }
 
-  /** Handles song removal the catalog. */
+  /** Navigates to some other page when the visible song is removed from the catalog. */
   private handleSongRemovalFromCatalog(): void {
     // Try to go to the next or prev song in the current collection. Fall-back to collection/studio page.
-    const collectionId$ = this.cds.getCollectionIdByMount(this.collectionMount);
-    const collection$ = collectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
-    getAllSongsInCollectionsSorted(collection$, this.cds)
-        .pipe(
-            take(1),
-            takeUntil(this.destroyed$)
-        ).subscribe(async (songs) => {
+    this.catalogService.getCollectionIdByMount(this.collectionMount).pipe(
+        switchMap(collectionId => this.catalogService.observeCollection(collectionId)),
+        switchMap(collection => getAllSongsInCollectionsSorted(collection, this.catalogService)),
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+    ).subscribe(async (songs) => {
       const {collectionMount, song} = this;
       const {prevSong, nextSong} = song ? findPrevAndNextSongs(song.id, songs, song.title) : {prevSong: undefined, nextSong: undefined};
       const targetSong = nextSong || prevSong;
-      const targetSongPrimaryCollection = targetSong ? await firstValueFrom(this.cds.getCollectionById(targetSong.collectionId)) : undefined;
+      const targetSongPrimaryCollection = targetSong ? await firstValueFrom(this.catalogService.observeCollection(targetSong.collectionId)) : undefined;
       if (targetSong && collectionMount && targetSongPrimaryCollection) {
         const link = getSongPageLink(collectionMount, targetSong.mount, targetSongPrimaryCollection.mount);
         this.router.navigate([link]).catch(err => console.error(err));
@@ -240,11 +235,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next(true);
     this.contextMenuActionService.footerActions$.next([]);
   }
 
-  updateMeta() {
+  updateMeta(): void {
     if (!this.song || !this.activeCollection || !this.songDetails || !this.primaryCollection) {
       return;
     }
@@ -321,7 +315,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   openEditor(): void {
     this.editorIsOpen = true;
-    this.cd.detectChanges();
   }
 
   closeEditor(): void {

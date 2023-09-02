@@ -1,19 +1,14 @@
-import {BehaviorSubject, merge, Subject, timer} from 'rxjs';
-import {ChangeDetectorRef, Injector} from '@angular/core';
-import {BrowserStateService} from '@app/services/browser-state.service';
+import {BehaviorSubject, Subject, timer} from 'rxjs';
 import {take, takeUntil} from 'rxjs/operators';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 
 /**
  * Common base class for all components with a loading indicator.
  * Contains observable for loading state, automatically makes loading state visible after preconfigured timeout.
- * Also contains set of re-usable fields.
  */
-export class ComponentWithLoadingIndicator {
-  readonly destroyed$ = new Subject();
+export class ComponentWithLoadingIndicator extends AbstractAppComponent {
   readonly isLoadingIndicatorVisible$ = new BehaviorSubject<boolean>(false);
-  readonly isServer: boolean;
-  readonly isBrowser: boolean;
-  readonly cd: ChangeDetectorRef;
 
   get loaded(): boolean {
     return this._loaded;
@@ -27,14 +22,13 @@ export class ComponentWithLoadingIndicator {
   private readonly loaded$ = new Subject<boolean>();
   private _loaded = false;
 
-  constructor(injector: Injector, loadingTimeout = 800) {
-    this.cd = injector.get(ChangeDetectorRef);
-    this.isServer = injector.get(BrowserStateService).isServer;
-    this.isBrowser = !this.isServer;
+  constructor(loadingTimeout = 800) {
+    super();
     if (this.isBrowser) { // loading indicator is not used during SSR.
       timer(loadingTimeout).pipe(
           take(1),
-          takeUntil(merge(this.loaded$, this.destroyed$)),
+          takeUntil(this.loaded$),
+          takeUntilDestroyed(),
       ).subscribe(() => {
         if (!this.loaded) {
           this.isLoadingIndicatorVisible$.next(true);
@@ -42,4 +36,5 @@ export class ComponentWithLoadingIndicator {
       });
     }
   }
+
 }

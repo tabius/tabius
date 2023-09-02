@@ -1,12 +1,13 @@
-import {ChangeDetectionStrategy, Component, Injector, Input, OnChanges, OnDestroy} from '@angular/core';
-import {combineLatest, Subscription} from 'rxjs';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {combineLatest} from 'rxjs';
 import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {switchMap, tap} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {I18N} from '@app/app-i18n';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'gt-song',
@@ -14,7 +15,7 @@ import {I18N} from '@app/app-i18n';
   styleUrls: ['./song.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongComponent extends ComponentWithLoadingIndicator implements OnDestroy, OnChanges {
+export class SongComponent extends ComponentWithLoadingIndicator {
 
   @Input({required: true}) songId!: number;
   @Input() showCollectionLink = false;
@@ -28,7 +29,6 @@ export class SongComponent extends ComponentWithLoadingIndicator implements OnDe
   collection?: Collection;
   primaryCollection?: Collection;
   songSettings?: UserSongSettings;
-  private songSubscription?: Subscription;
 
   // Schema data.
   schemaItemArtistType?: string;
@@ -38,45 +38,44 @@ export class SongComponent extends ComponentWithLoadingIndicator implements OnDe
     return this.song !== undefined;
   };
 
-  constructor(private readonly cds: CatalogService,
-              private readonly uds: UserService,
-              injector: Injector,
+  constructor(private readonly catalogService: CatalogService,
+              private readonly userService: UserService,
   ) {
-    super(injector);
-  }
+    super();
 
-  ngOnChanges(): void {
-    delete this.song;
-    delete this.songDetails;
-    delete this.collection;
-    if (this.songSubscription) {
-      this.songSubscription.unsubscribe();
-    }
+    this.changes$.pipe(
+        tap(() => {
+          this.song = undefined;
+          this.songDetails = undefined;
+          this.collection = undefined;
+          this.cdr.markForCheck();
+        }),
+        switchMap(() => {
+          const song$ = this.catalogService.observeSong(this.songId);
+          const primaryCollection$ = song$.pipe(switchMap(song => this.catalogService.observeCollection(song?.collectionId)));
+          return combineLatest([
+            song$,
+            this.catalogService.getSongDetailsById(this.songId),
+            this.activeCollectionId ? this.catalogService.observeCollection(this.activeCollectionId)
+                                    : primaryCollection$,
+            primaryCollection$,
+            song$.pipe(switchMap(song => this.userService.getUserSongSettings(song?.id))),
 
-    const song$ = this.cds.getSongById(this.songId);
-    const songDetails$ = this.cds.getSongDetailsById(this.songId);
-    const primaryCollection$ = song$.pipe(switchMap(song => this.cds.getCollectionById(song && song.collectionId)));
-    const collection$ = !!this.activeCollectionId ? this.cds.getCollectionById(this.activeCollectionId)
-                                                  : primaryCollection$;
-    const songSettings$ = song$.pipe(switchMap(song => this.uds.getUserSongSettings(song && song.id)));
-    this.songSubscription = combineLatest([song$, songDetails$, collection$, primaryCollection$, songSettings$])
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(([song, songDetails, collection, primaryCollection, songSettings]) => {
-          if (!song || !songDetails || !collection || !songSettings) {
-            return; // TODO: not found? 404?
-          }
-          this.song = song;
-          this.songDetails = songDetails;
-          this.collection = collection;
-          this.primaryCollection = primaryCollection;
-          this.songSettings = songSettings;
-          this.updateSchemaFields();
-          this.cd.detectChanges();
-        });
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
+          ]);
+        }),
+        takeUntilDestroyed(),
+    ).subscribe(([song, songDetails, collection, primaryCollection, songSettings]) => {
+      if (!song || !songDetails || !collection || !songSettings) {
+        return; // TODO: not found? 404?
+      }
+      this.song = song;
+      this.songDetails = songDetails;
+      this.collection = collection;
+      this.primaryCollection = primaryCollection;
+      this.songSettings = songSettings;
+      this.updateSchemaFields();
+      this.cdr.markForCheck();
+    });
   }
 
   private updateSchemaFields(): void {

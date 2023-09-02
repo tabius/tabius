@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, HostListener, Injector, ViewChild} from '@angular/core';
 import {Collection} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
 import {FormControl} from '@angular/forms';
-import {debounce, takeUntil, throttleTime} from 'rxjs/operators';
+import {debounce, throttleTime} from 'rxjs/operators';
 import {timer} from 'rxjs';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
@@ -14,6 +14,7 @@ import {User} from '@common/user-model';
 import {I18N} from '@app/app-i18n';
 import {environment} from '@app/environments/environment';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 interface LetterBlock {
   letter: string,
@@ -37,7 +38,7 @@ let letterBlockFilters: string[] = [];
   styleUrls: ['./catalog-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CatalogPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+export class CatalogPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.catalogPage;
 
   @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
@@ -58,44 +59,33 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
               private readonly title: Title,
               private readonly meta: Meta,
               private readonly navHelper: RoutingNavigationHelper,
-              injector: Injector,
   ) {
-    super(injector);
-  }
+    super();
+    this.uds.getUser$().pipe(
+        takeUntilDestroyed(),
+    ).subscribe(user => {
+      this.user = user;
+      this.canCreateNewPublicCollection = canCreateNewPublicCollection(user);
+      this.cdr.markForCheck();
+    });
 
-  ngOnInit() {
-    this.uds.getUser$()
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(user => {
-          this.user = user;
-          this.canCreateNewPublicCollection = canCreateNewPublicCollection(user);
-          this.cd.detectChanges();
-        });
+    this.collectionFilterControl.valueChanges.pipe(
+        debounce(() => timer(300)),
+        takeUntilDestroyed(),
+    ).subscribe(newValue => this.updateCollectionFilter(newValue));
 
-    this.collectionFilterControl.valueChanges
-        .pipe(
-            debounce(() => timer(300)),
-            takeUntil(this.destroyed$)
-        )
-        .subscribe(newValue => this.updateCollectionFilter(newValue));
+    this.catalogService.getListedCollections().pipe(
+        throttleTime(100, undefined, {leading: true, trailing: true}),
+        takeUntilDestroyed(),
+    ).subscribe(collections => {
+      this.letterBlocks = toLetterBlocks(collections, environment.lang === 'ru');
+      this.loaded = true;
+      this.bringFocusToTheSearchField();
+      this.navHelper.restoreScrollPosition();
+      this.cdr.markForCheck();
+    });
 
-    this.catalogService.getListedCollections()
-        .pipe(
-            throttleTime(100, undefined, {leading: true, trailing: true}),
-            takeUntil(this.destroyed$),
-        )
-        .subscribe(collections => {
-          this.letterBlocks = toLetterBlocks(collections, environment.lang === 'ru');
-          this.loaded = true;
-          this.cd.detectChanges();
-          this.bringFocusToTheSearchField();
-          this.navHelper.restoreScrollPosition();
-        });
-    this.updateMeta();
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
+    updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -131,10 +121,6 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
     }
   }
 
-  updateMeta() {
-    updatePageMetadata(this.title, this.meta, this.i18n.meta);
-  }
-
   trackByLetter(_: number, block: LetterBlock): string {
     return block.letter;
   }
@@ -167,7 +153,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator implemen
     if (this.searchValue !== value) {
       this.searchValue = value;
       this.filteredCollections = this.getFilteredCollections();
-      this.cd.markForCheck();
+      this.cdr.markForCheck();
     }
   }
 

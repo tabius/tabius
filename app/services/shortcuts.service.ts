@@ -61,9 +61,9 @@ export class ShortcutsService {
   }
 
   gotoRandomSong(collectionId?: number): void {
-    const song$ = this.cds.getRandomSongId(collectionId).pipe(switchMap(songId => this.cds.getSongById(songId)));
-    const collection$ = collectionId ? this.cds.getCollectionById(collectionId)
-                                     : song$.pipe(switchMap(song => this.cds.getCollectionById(song && song.collectionId)));
+    const song$ = this.cds.getRandomSongId(collectionId).pipe(switchMap(songId => this.cds.observeSong(songId)));
+    const collection$ = collectionId ? this.cds.observeCollection(collectionId)
+                                     : song$.pipe(switchMap(song => this.cds.observeCollection(song && song.collectionId)));
     combineLatest([song$, collection$]).pipe(take(1)).subscribe(([song, collection]) => {
       if (!song || !collection) {
         //todo: show error

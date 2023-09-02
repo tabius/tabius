@@ -1,11 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
 import {updatePageMetadata} from '@app/utils/seo-utils';
-import {Subject} from 'rxjs';
 import {UserService} from '@app/services/user.service';
-import {takeUntil} from 'rxjs/operators';
 import {newDefaultUserDeviceSettings, TunerToneType} from '@common/user-model';
 import {I18N} from '@app/app-i18n';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
@@ -14,8 +13,7 @@ const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
   styleUrls: ['./tuner-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TunerPageComponent implements OnInit, OnDestroy {
-  private readonly destroyed$ = new Subject();
+export class TunerPageComponent implements OnDestroy {
   private destroyed = false;
 
   readonly i18n = I18N.tunerPage;
@@ -34,25 +32,21 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   private forceStop = false;
   private focusedString = '';
 
-  constructor(private readonly cd: ChangeDetectorRef,
+  constructor(private readonly cdr: ChangeDetectorRef,
               private readonly title: Title,
               private readonly meta: Meta,
               private readonly uds: UserService,
   ) {
-  }
-
-  ngOnInit(): void {
-    this.uds.getUserDeviceSettings()
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(deviceSettings => {
-          this.deviceSettings = deviceSettings;
-          this.cd.detectChanges();
-        });
+    this.uds.getUserDeviceSettings().pipe(
+        takeUntilDestroyed(),
+    ).subscribe(deviceSettings => {
+      this.deviceSettings = deviceSettings;
+      this.cdr.markForCheck();
+    });
     updatePageMetadata(this.title, this.meta, this.i18n.meta);
   }
 
   ngOnDestroy(): void {
-    this.destroyed$.next(true);
     this.destroyed = true;
     this.stop();
   }
@@ -139,13 +133,13 @@ export class TunerPageComponent implements OnInit, OnDestroy {
           return;
         }
         this.playingAudio = undefined;
-        this.cd.detectChanges();
         if (this.deviceSettings.tunerRepeatMode && !this.forceStop) {
           this._play();
         }
+        this.cdr.markForCheck();
       });
     });
-    this.cd.detectChanges();
+    this.cdr.markForCheck();
   }
 
   stop(): void {
@@ -164,7 +158,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   }
 
   setRepeatMode(repeat: boolean): void {
-    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerRepeatMode: repeat});
+    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerRepeatMode: repeat}).then();
   }
 
   onRepeatModeCheckboxChanged(event: Event) {
@@ -176,7 +170,7 @@ export class TunerPageComponent implements OnInit, OnDestroy {
   }
 
   setToneType(toneType: TunerToneType): void {
-    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerToneType: toneType});
+    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerToneType: toneType}).then();
   }
 
   private getStringElement(guitarString: string): ElementRef|undefined {

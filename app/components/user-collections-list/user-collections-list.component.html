@@ -1,5 +1,5 @@
-<ul *ngFor="let collectionInfo of collectionInfos" class="collections-list">
-    <li>
+<ul>
+    <li *ngFor="let collectionInfo of collectionInfos" class="collections-list" [attr.data-sid]="collectionInfo.id">
         <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{collectionInfo.linkText}}</a>
     </li>
 </ul>

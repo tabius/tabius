@@ -1,9 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
 import {ChordRenderingOptions, getToneWithH4SiFix, renderChord, TONES_COUNT} from '@app/utils/chords-renderer';
 import {UserService} from '@app/services/user.service';
-import {switchMap, takeUntil} from 'rxjs/operators';
-import {combineLatest, ReplaySubject, Subject} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
+import {combineLatest} from 'rxjs';
 import {parseChord, parseChords} from '@app/utils/chords-parser';
 import {isDefined} from '@common/util/misc-utils';
 import {CatalogService} from '@app/services/catalog.service';
@@ -13,6 +13,8 @@ import {I18N} from '@app/app-i18n';
 import {Chord, ChordTone} from '@app/utils/chords-lib';
 import {getSongKey, getTransposeDistance, transposeAsMinor} from '@app/utils/key-detector';
 import {SongDetails} from '@common/catalog-model';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 
 @Component({
   selector: 'gt-song-chords',
@@ -20,13 +22,11 @@ import {SongDetails} from '@common/catalog-model';
   styleUrls: ['./song-chords.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
+export class SongChordsComponent extends AbstractAppComponent {
   @Input({required: true}) songId!: number;
   @Input() showControls = false;
 
   readonly i18n = I18N.songChordsComponent;
-
-  private readonly destroyed$ = new Subject();
 
   chordLayouts: ChordLayout[] = [];
 
@@ -35,65 +35,55 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
   h4Si = getDefaultH4SiFlag();
   private content = '';
 
-  private readonly songId$ = new ReplaySubject<number>(1);
-
   popoverChordLayout?: ChordLayout;
 
   favoriteKey?: ChordTone;
   originalSongKey?: ChordTone;
   transposeActionKey?: ChordTone;
 
-  constructor(private readonly cd: ChangeDetectorRef,
-              private readonly uds: UserService,
+  constructor(private readonly uds: UserService,
               private readonly cds: CatalogService,
   ) {
-  }
+    super();
 
-  ngOnInit(): void {
-    const songDetails$ = this.songId$.pipe(switchMap(songId => this.cds.getSongDetailsById(songId)));
-    const songSettings$ = this.songId$.pipe(switchMap(songId => this.uds.getUserSongSettings(songId)));
-    const h4Si$ = this.uds.getH4SiFlag();
-    const favoriteKey$ = this.uds.getFavoriteKey();
-    const details$ = this.songId$.pipe(switchMap(songId => this.cds.getSongDetailsById(songId)));
+    this.changes$.pipe(
+        switchMap(() => {
+          const songDetails$ = this.cds.getSongDetailsById(this.songId);
+          const songSettings$ = this.uds.getUserSongSettings(this.songId);
+          const h4Si$ = this.uds.getH4SiFlag();
+          const favoriteKey$ = this.uds.getFavoriteKey();
+          const details$ = this.cds.getSongDetailsById(this.songId);
+          return combineLatest([songDetails$, songSettings$, h4Si$, favoriteKey$, details$]);
+        }),
+        takeUntilDestroyed(),
+    ).subscribe(([songDetails, songSettings, h4Si, favoriteKey, details]) => {
+      this.songSettings = songSettings;
+      this.h4Si = h4Si;
+      this.favoriteKey = favoriteKey;
+      this.content = details ? details.content : '';
+      this.songDetails = songDetails;
 
-    combineLatest([songDetails$, songSettings$, h4Si$, favoriteKey$, details$])
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(([songDetails, songSettings, h4Si, favoriteKey, details]) => {
-          this.songSettings = songSettings;
-          this.h4Si = h4Si;
-          this.favoriteKey = favoriteKey;
-          this.content = details ? details.content : '';
-          this.songDetails = songDetails;
+      this.originalSongKey = getSongKey(this.songDetails);
+      this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
 
-          this.originalSongKey = getSongKey(this.songDetails);
-          this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
-
-          this.updateChordsList();
-          this.cd.detectChanges();
-        });
-  }
-
-  ngOnChanges(): void {
-    this.songId$.next(this.songId);
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
+      this.updateChordList();
+      this.cdr.markForCheck();
+    });
   }
 
   getChordInfo(event: MouseEvent, chord: Chord|undefined): ChordClickInfo {
     return {element: event.target as HTMLElement, chord: chord!};
   }
 
-  private updateChordsList() {
+  private updateChordList(): void {
     const chordLocations = parseChords(this.content);
     const options: ChordRenderingOptions = {useH: this.h4Si, transpose: this.songSettings.transpose};
     const orderedChordNames: string[] = [];
-    const chordsSet = new Set<string>();
+    const chordSet = new Set<string>();
     for (const location of chordLocations) {
       const chordName = renderChord(location.chord, options);
-      if (!chordsSet.has(chordName)) {
-        chordsSet.add(chordName);
+      if (!chordSet.has(chordName)) {
+        chordSet.add(chordName);
         orderedChordNames.push(chordName);
       }
     }
@@ -106,7 +96,7 @@ export class SongChordsComponent implements OnChanges, OnInit, OnDestroy {
 
   onTransposeClicked(steps: number): void {
     const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
-    this.uds.setUserSongSettings({...this.songSettings!, transpose});
+    this.uds.setUserSongSettings({...this.songSettings!, transpose}).then();
   }
 
   transposeToFavoriteKeyClicked(): void {
@@ -129,7 +119,7 @@ export function updateUserSongSetting(originalSongKey: ChordTone|undefined,
   if (originalSongKey && transposeActionKey && songSettings) {
     const transposeDistance = getTransposeDistance(originalSongKey, transposeActionKey);
     const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
-    uds.setUserSongSettings({...songSettings!, transpose});
+    uds.setUserSongSettings({...songSettings!, transpose}).then();
   }
 }
 

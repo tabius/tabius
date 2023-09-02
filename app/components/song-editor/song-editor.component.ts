@@ -1,7 +1,7 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {combineLatest} from 'rxjs';
-import {switchMap, takeUntil} from 'rxjs/operators';
+import {filter, switchMap} from 'rxjs/operators';
 import {bound, countOccurrences, getCurrentNavbarHeight, getFullLink, getSongPageLink, isValidId, scrollToView} from '@common/util/misc-utils';
 import {Song, SongDetails} from '@common/catalog-model';
 import {ToastService} from '@app/toast/toast.service';
@@ -27,12 +27,15 @@ export type SongEditResult = {
   styleUrls: ['./song-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongEditorComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+export class SongEditorComponent extends ComponentWithLoadingIndicator {
 
-  /** ID of the edited song. Invalid ID (<=0) for new songs. */
+  /** ID of the edited song. Invalid ID (<=0) is used to activate Create mode. */
   @Input({required: true}) songId!: number;
 
-  /** The active collection will become a primary collection for a new song.*/
+  /**
+   * An active collection ID.
+   * In 'create mode' this collection will become a primary song collection.
+   */
   @Input({required: true}) activeCollectionId!: number;
 
   /** If true, the component will trigger scrolling edit area into the view. */
@@ -53,7 +56,6 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   mount = '';
   songUrlPrefix = '';
   mediaLinks = '';
-  createMode = false;
 
   song?: Song;
   private details?: SongDetails;
@@ -64,47 +66,47 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
 
   constructor(private readonly cds: CatalogService,
               private readonly toastService: ToastService,
-              injector: Injector,
   ) {
-    super(injector);
+    super();
+    this.changes$.pipe(
+        filter(changes => !!changes['songId'] || !!changes['activeCollectionId']),
+        switchMap(() => {
+          const song$ = this.cds.observeSong(this.songId);
+          const songDetails$ = this.cds.getSongDetailsById(this.songId);
+          const songCollection$ = song$.pipe(switchMap(song => this.cds.observeCollection(song?.collectionId)));
+          const activeCollection$ = this.cds.observeCollection(this.activeCollectionId);
+          return combineLatest([song$, songDetails$, songCollection$, activeCollection$]);
+        }),
+    ).subscribe(([song, details, songCollection, activeCollection]) => {
+      if (this.isCreateMode) {
+        if (!activeCollection) {
+          return;
+        }
+        this.songUrlPrefix = getFullLink(`${getSongPageLink(activeCollection.mount, '')}`);
+      } else { // Edit mode.
+        if (!song || !details || !songCollection) {
+          return; // todo: show error
+        }
+        this.song = song;
+        this.details = details;
+        this.title = song.title;
+        this.content = details ? details.content : '?';
+        this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
+        this.mount = song.mount;
+        this.songUrlPrefix = getFullLink(`${getSongPageLink(songCollection.mount, '')}`);
+      }
+      this.loaded = true;
+      this.updateUIOnLoadedState();
+      this.cdr.markForCheck();
+    });
   }
 
-  ngOnInit(): void {
-    this.createMode = !isValidId(this.songId);
-    if (this.createMode) {
-      const collection$ = this.cds.getCollectionById(this.activeCollectionId);
-      collection$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe(collection => {
-            if (!collection) {
-              return; // todo: show error
-            }
-            this.songUrlPrefix = getFullLink(`${getSongPageLink(collection.mount, '')}`);
-            this.loaded = true;
-            this.updateUIOnLoadedState();
-          });
-    } else {
-      const song$ = this.cds.getSongById(this.songId);
-      const songDetails$ = this.cds.getSongDetailsById(this.songId);
-      const collection$ = song$.pipe(switchMap(song => this.cds.getCollectionById(song && song.collectionId)));
-      combineLatest([song$, songDetails$, collection$])
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe(([song, details, collection]) => {
-            if (!song || !details || !collection) {
-              return; // todo: show error
-            }
-            this.song = song;
-            this.details = details;
-            this.title = song.title;
-            this.content = details ? details.content : '?';
-            this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
-            this.mount = song.mount;
-            this.songUrlPrefix = getFullLink(`${getSongPageLink(collection.mount, '')}`);
-            this.loaded = true;
-            this.updateUIOnLoadedState();
-            this.cd.detectChanges();
-          });
-    }
+  get isCreateMode(): boolean {
+    return !isValidId(this.songId);
+  }
+
+  get isUpdateMode(): boolean {
+    return !this.isCreateMode;
   }
 
   private updateUIOnLoadedState(): void {
@@ -124,12 +126,8 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
-  }
-
   create(): void {
-    if (!this.createMode) {
+    if (!this.isCreateMode) {
       return;
     }
     if (this.title.length === 0) {
@@ -175,9 +173,9 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
         });
   }
 
-  /** Returns true if there were changes to the song and saving was successful. */
+  /** Returns true if there were changes to the song and the update was successful. */
   private async updateImpl(): Promise<boolean> {
-    if (this.createMode || !this.song || !this.details) {
+    if (this.isCreateMode || !this.song || !this.details) {
       return false;
     }
     if (!this.isChanged()) {
@@ -196,7 +194,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   }
 
   private isChanged(): boolean {
-    if (this.createMode) {
+    if (this.isCreateMode) {
       return this.title !== '' || this.content !== '' || this.mediaLinks !== '';
     }
     if (!this.song || !this.details) {
@@ -209,16 +207,16 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
   }
 
   @HostListener('document:keypress', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
+  handleKeyboardEvent(event: KeyboardEvent): void {
     if (event.key === 'Enter' && event.ctrlKey) {
-      if (this.createMode) {
+      if (this.isCreateMode) {
         this.create();
       } else {
         this.update();
       }
     } else if (event.key === 'Escape') {
       // todo: ask about closing confirmation
-      if (!this.isChanged() || this.createMode) {
+      if (!this.isChanged() || this.isCreateMode) {
         this.close({type: 'canceled'});
       }
     }
@@ -245,7 +243,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     return bound(8, countOccurrences(this.content, '\n') + 1, (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
   }
 
-  cancel() {
+  cancel(): void {
     this.close({type: 'canceled', song: this.song});
   }
 
@@ -253,8 +251,8 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator implement
     this.closeRequest.emit(result);
   }
 
-  toggleDeleteConfirmationFlag($event): void {
-    this.deleteConfirmationFlag = $event.target.checked;
+  toggleDeleteConfirmationFlag($event: Event): void {
+    this.deleteConfirmationFlag = ($event.target as HTMLInputElement).checked;
   }
 
   async delete(): Promise<void> {

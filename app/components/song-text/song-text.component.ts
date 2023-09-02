@@ -1,9 +1,7 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, PLATFORM_ID, SimpleChanges, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener, Inject, Input, Optional, SimpleChanges, TemplateRef, ViewChild} from '@angular/core';
 import {SongDetails} from '@common/catalog-model';
-import {combineLatest, Subject} from 'rxjs';
-import {takeUntil, tap} from 'rxjs/operators';
+import {switchMap} from 'rxjs';
 import {UserService} from '@app/services/user.service';
-import {isPlatformBrowser} from '@angular/common';
 import {renderChords} from '@app/utils/chords-renderer';
 import {REQUEST} from '@nguniversal/express-engine/tokens';
 import {getUserAgentFromRequest, isSmallScreenDevice} from '@common/util/misc-utils';
@@ -12,6 +10,9 @@ import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSett
 import {ChordLayout} from '@app/utils/chords-layout-lib';
 import {parseChord} from '@app/utils/chords-parser';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import type {Request} from 'express';
+import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 
 /** Heuristic used to enable multi-column mode. */
 const IDEAL_SONG_LINES_PER_COLUMN = 17; // (4 chords + 4 text lines) * 2 + 1 line between
@@ -33,9 +34,7 @@ export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
   styleUrls: ['./song-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
-  private readonly destroyed$ = new Subject();
-
+export class SongTextComponent extends AbstractAppComponent {
   @Input({required: true}) song!: SongDetails;
   @Input() multiColumnMode = true;
   @Input() usePrintFontSize = false;
@@ -44,8 +43,6 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   private songHtml: string = '';
 
   userSongStyle: { [key: string]: string; } = {};
-
-  readonly isBrowser: boolean;
 
   private deviceSettings: UserDeviceSettings = newDefaultUserDeviceSettings();
   private songSettings = newDefaultUserSongSettings(0);
@@ -56,58 +53,50 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
   private songStats?: SongStats;
 
   /** Used for server-side rendering only. */
-  private readonly widthFromUserAgent;
+  private readonly widthFromUserAgent: number;
 
   popoverChordLayout?: ChordLayout;
 
   @ViewChild('chordPopover', {static: true}) chordPopoverTemplate!: TemplateRef<{}>;
 
-  constructor(private readonly cd: ChangeDetectorRef,
-              private readonly uds: UserService,
-              @Inject(PLATFORM_ID) platformId: string,
-              @Optional() @Inject(REQUEST) private request: any,
+  constructor(private readonly uds: UserService,
+              @Optional() @Inject(REQUEST) request: Request,
   ) {
-    this.isBrowser = isPlatformBrowser(platformId);
+    super();
     if (!this.isBrowser) {
       const userAgent = getUserAgentFromRequest(request);
       this.widthFromUserAgent = isSmallScreenDevice(userAgent) ? SSR_MOBILE_WIDTH : SSR_DESKTOP_WIDTH;
     } else {
       this.widthFromUserAgent = 0;
     }
-  }
 
-  ngOnInit(): void {
-    const style$ = this.uds.getUserDeviceSettings()
-        .pipe(
-            tap(deviceSettings => {
-              this.deviceSettings = deviceSettings;
-              this.updateSongStyle();
-            }));
+    this.uds.getUserDeviceSettings().pipe(
+        takeUntilDestroyed(),
+    ).subscribe(deviceSettings => {
+      this.deviceSettings = deviceSettings;
+      this.updateSongStyle();
+      this.cdr.markForCheck();
+    });
 
     //TODO: replace taps with subscriptions!
     //todo: handle song text update too
-    const settings$ = this.uds.getUserSongSettings(this.song.id)
-        .pipe(
-            tap(songSettings => {
-              this.songSettings = songSettings;
-              this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
-              this.resetSongView();
-            }));
+    this.changes$.pipe(
+        switchMap(() => this.uds.getUserSongSettings(this.song.id)),
+        takeUntilDestroyed(),
+    ).subscribe(songSettings => {
+      this.songSettings = songSettings;
+      this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
+      this.resetSongView();
+      this.cdr.markForCheck();
+    });
 
-    const h4Si$ = this.uds.getH4SiFlag()
-        .pipe(
-            tap(h4Si => {
-              this.h4Si = h4Si;
-              this.resetSongView();
-            }));
-
-    combineLatest([style$, settings$, h4Si$])
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(() => this.cd.detectChanges());
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
+    this.uds.getH4SiFlag().pipe(
+        takeUntilDestroyed(),
+    ).subscribe(h4Si => {
+      this.h4Si = h4Si;
+      this.resetSongView();
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -117,6 +106,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
     this.resetCachedSongStats();
     this.updateAvailableWidth();
     this.resetSongView();
+    super.ngOnChanges(changes);
   }
 
   getSongHtml(): string {
@@ -172,7 +162,7 @@ export class SongTextComponent implements OnInit, OnChanges, OnDestroy {
 
   private getSongStats(): SongStats {
     if (!this.songStats) {
-      this.songStats = {lineCount: 1, maxLineWidth: 0}; // line count starts with 1 because even empty string ('') is counted as 1 line.
+      this.songStats = {lineCount: 1, maxLineWidth: 0}; // line count starts with 1 because even empty string ('') is counted as one line.
       let maxCharsPerLine = 0;
       const {content} = this.song;
       for (let i = 0; i < content.length;) {
@@ -247,7 +237,7 @@ function preserveBlocksOnColumnBreak(songHtml: string): string {
       songHtmlWithBlocks += preserveBlockOnColumnBreak(block);
     }
     if (songHtmlWithBlocks.endsWith(NON_BREAKING_TAG_END)) {
-      songHtmlWithBlocks += '\n'; // already ends with line end.
+      songHtmlWithBlocks += '\n'; // already ends with a line end.
     } else {
       songHtmlWithBlocks += '\n\n';
     }

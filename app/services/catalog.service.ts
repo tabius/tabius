@@ -46,12 +46,12 @@ export class CatalogService {
     )
         //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
         .pipe(
-            switchMap(ids => combineLatest0((ids || []).map(id => this.getCollectionById(id)))),
+            switchMap(ids => combineLatest0((ids || []).map(id => this.observeCollection(id)))),
             map(items => (items.filter(isDefined) as Collection[])),
         );
   }
 
-  getCollectionById(collectionId: number|undefined): Observable<Collection|undefined> {
+  observeCollection(collectionId: number|undefined): Observable<Collection|undefined> {
     return this.store.get<Collection>(
         getCollectionKey(collectionId),
         () => this.httpClient.get<Collection[]>(`/api/collection/by-ids/${collectionId}`).pipe(mapToFirstInArray),
@@ -61,7 +61,7 @@ export class CatalogService {
   }
 
   getCollectionsByIds(collectionIds: readonly number[]): Observable<(Collection|undefined)[]> {
-    return combineLatest0(collectionIds.map(id => this.getCollectionById(id)));
+    return combineLatest0(collectionIds.map(id => this.observeCollection(id)));
   }
 
   private updateCollectionOnFetch(collection: Collection|undefined): Promise<unknown> {
@@ -126,7 +126,7 @@ export class CatalogService {
     );
   }
 
-  getSongById(songId: number|undefined): Observable<Song|undefined> {
+  observeSong(songId: number|undefined): Observable<Song|undefined> {
     return this.store.get<Song>(
         getSongKey(songId),
         () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
@@ -136,7 +136,7 @@ export class CatalogService {
   }
 
   getSongsByIds(songIds: readonly (number|undefined)[]): Observable<(Song|undefined)[]> {
-    return combineLatest0(songIds.map(id => this.getSongById(id)));
+    return combineLatest0(songIds.map(id => this.observeSong(id)));
   }
 
   getSongDetailsById(songId: number|undefined, refreshCachedVersion = true): Observable<SongDetails|undefined> {

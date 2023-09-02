@@ -1,7 +1,6 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild} from '@angular/core';
 import {User} from '@common/user-model';
-import {takeUntil} from 'rxjs/operators';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
 import {LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
 import {UserService} from '@app/services/user.service';
@@ -12,6 +11,7 @@ import {USER_COLLECTION_MOUNT_SEPARATOR} from '@common/common-constants';
 import {ContextMenuAction, ContextMenuActionService} from '@app/services/context-menu-action.service';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-history.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 enum NavSection {
   Home = 1,
@@ -28,9 +28,7 @@ enum NavSection {
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavbarComponent implements OnInit, OnDestroy {
-
-  private readonly destroyed$ = new Subject();
+export class NavbarComponent {
 
   user?: User;
 
@@ -50,39 +48,33 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   @ViewChild('showHistoryButton', {static: true, read: ElementRef}) private showHistoryButton?: ElementRef;
 
-  constructor(private readonly uds: UserService,
+  constructor(private readonly userService: UserService,
               private readonly router: Router,
               private readonly toast: ToastService,
               private readonly navHelper: RoutingNavigationHelper,
-              private readonly cd: ChangeDetectorRef,
+              private readonly cdr: ChangeDetectorRef,
               private readonly bss: BrowserStateService,
               private readonly navigationHistoryService: CatalogNavigationHistoryService,
               contextMenuActionService: ContextMenuActionService,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
-    contextMenuActionService.navbarAction$.pipe(takeUntil(this.destroyed$)).subscribe(action => {
+    contextMenuActionService.navbarAction$.pipe(
+        takeUntilDestroyed(),
+    ).subscribe(action => {
       this.contextMenuAction = action;
     });
-  }
+    this.userService.getUser$().pipe(
+        takeUntilDestroyed(),
+    ).subscribe(user => {
+      this.user = user;
+      this.cdr.markForCheck();
+    });
 
-  ngOnInit(): void {
-    this.uds.getUser$()
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(user => {
-          this.user = user;
-          this.cd.detectChanges();
-        });
-
-    this.router.events
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(() => {
-          this.cd.markForCheck();
-        });
-
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
+    this.router.events.pipe(
+        takeUntilDestroyed(),
+    ).subscribe(() => {
+      this.cdr.markForCheck();
+    });
   }
 
   // TODO: make an utility in the routing module.

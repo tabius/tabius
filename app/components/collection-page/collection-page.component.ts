@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, HostListener, Injector, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostListener} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
 import {Collection, CollectionDetails, Song} from '@common/catalog-model';
 import {ActivatedRoute, Router} from '@angular/router';
-import {map, switchMap, takeUntil, throttleTime} from 'rxjs/operators';
+import {map, switchMap, throttleTime} from 'rxjs/operators';
 import {combineLatest, Observable} from 'rxjs';
 import {switchToNotFoundMode} from '@app/utils/component-utils';
 import {Meta, Title} from '@angular/platform-browser';
@@ -19,6 +19,7 @@ import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-i
 import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
 import {truthy} from 'assertic';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -42,7 +43,7 @@ export class CollectionViewModel {
   styleUrls: ['./collection-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CollectionPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+export class CollectionPageComponent extends ComponentWithLoadingIndicator {
   readonly getCollectionPageLink = getCollectionPageLink;
   readonly i18n = I18N.collectionPage;
 
@@ -67,17 +68,14 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
               private readonly navHelper: RoutingNavigationHelper,
               private readonly helpService: HelpService,
               private readonly ss: ShortcutsService,
-              injector: Injector
   ) {
-    super(injector);
-  }
-
-  ngOnInit(): void {
+    console.log('Created');
+    super();
     this.helpService.setActiveHelpPage('collection');
 
     const collectionMount = this.route.snapshot.params[PARAM_COLLECTION_MOUNT];
     const collectionId$: Observable<number|undefined> = this.cds.getCollectionIdByMount(collectionMount);
-    const collection$: Observable<Collection|undefined> = collectionId$.pipe(switchMap(id => this.cds.getCollectionById(id)));
+    const collection$: Observable<Collection|undefined> = collectionId$.pipe(switchMap(id => this.cds.observeCollection(id)));
     const collectionDetails$: Observable<CollectionDetails|undefined> = collectionId$.pipe(switchMap(id => this.cds.getCollectionDetails(id)));
     const bands$: Observable<Collection[]> = collectionDetails$.pipe(
         switchMap(details => this.cds.getCollectionsByIds(details ? details.bandIds : [])),
@@ -96,13 +94,14 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollections$, this.uds.getUser$()])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
-            takeUntil(this.destroyed$),
+            takeUntilDestroyed(),
         )
         .subscribe(([collection, collectionDetails, bands, songs, primarySongCollections, user]) => {
+          this.cdr.markForCheck();
           this.loaded = true;
           if (!collection || !collectionDetails || !bands || !songs) {
             if (this.collectionViewModel) {
-              this.router.navigate([this.collectionViewModel.listed ? LINK_CATALOG : LINK_STUDIO]);
+              this.router.navigate([this.collectionViewModel.listed ? LINK_CATALOG : LINK_STUDIO]).then();
             } else {
               switchToNotFoundMode(this);
             }
@@ -114,7 +113,6 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
           this.canEditCollection = canRemoveCollection(this.user, collection);
           this.updateMeta(songs);
           this.registerStateInCatalogNavigationHistory();
-          this.cd.detectChanges();
           this.navHelper.restoreScrollPosition();
 
           // heuristic: prefetch song details.
@@ -123,10 +121,6 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
             songs.forEach(s => this.cds.getSongDetailsById(s.id, false));
           }
         });
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
   }
 
   updateMeta(songs: Song[]): void {
@@ -147,12 +141,11 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
   openSongEditor(): void {
     this.songEditorIsOpen = true;
     this.collectionEditorIsOpen = false;
-    this.cd.detectChanges();
   }
 
   closeSongEditor(editResult: SongEditResult = {type: 'canceled'}): void {
     this.songEditorIsOpen = false;
-    this.cd.detectChanges();
+    this.cdr.markForCheck();
     if (editResult.type === 'created') {
       // go to the newly created song.
       const songMount = truthy(editResult.song).mount;
@@ -166,7 +159,6 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator imple
     if (this.collectionEditorIsOpen && this.songEditorIsOpen) {
       this.songEditorIsOpen = false;
     }
-    this.cd.detectChanges();
   }
 
   @HostListener('window:keydown', ['$event'])

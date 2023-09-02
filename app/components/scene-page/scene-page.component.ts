@@ -19,13 +19,12 @@ export class ScenePageComponent extends ComponentWithLoadingIndicator implements
 
   songId$: Observable<number>;
 
-  constructor(injector: Injector,
-              private readonly catalogService: CatalogService,
+  constructor(private readonly catalogService: CatalogService,
               private readonly helpService: HelpService,
               readonly title: Title,
               readonly meta: Meta,
   ) {
-    super(injector);
+    super();
     this.songId$ = this.catalogService.getSceneSongId().pipe(tap(() => this.loaded = true));
   }
 

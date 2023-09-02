@@ -1,7 +1,6 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Input, OnDestroy} from '@angular/core';
 import {CatalogService} from '@app/services/catalog.service';
-import {combineLatest, Observable, of, Subject} from 'rxjs';
-import {map, switchMap, takeUntil} from 'rxjs/operators';
+import {combineLatest, Observable, of} from 'rxjs';
 import {combineLatest0, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isDefined, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically} from '@common/util/misc-utils';
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {Router} from '@angular/router';
@@ -10,6 +9,9 @@ import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
 
 import * as Hammer from 'hammerjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {map, switchMap} from 'rxjs/operators';
+import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 
 @Component({
   selector: 'gt-song-prev-next-navigator',
@@ -17,13 +19,14 @@ import * as Hammer from 'hammerjs';
   styleUrls: ['./song-prev-next-navigator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, OnDestroy {
-
-  private readonly destroyed$ = new Subject();
+export class SongPrevNextNavigatorComponent extends AbstractAppComponent implements AfterViewInit, OnDestroy {
 
   readonly i18n = I18N.songPrevNextNavigator;
 
-  /** Current song. undefined => no song is shown (used for collection page). */
+  /**
+   * Current song.
+   * If `undefined` no song is shown (used for collection page).
+   */
   @Input() songId?: number;
   @Input({required: true}) activeCollectionId!: number;
 
@@ -38,61 +41,58 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   private hammer?: HammerManager;
 
-  constructor(private readonly cds: CatalogService,
-              private readonly cd: ChangeDetectorRef,
+  constructor(private readonly catalogDataService: CatalogService,
               readonly bss: BrowserStateService,
               private readonly router: Router,
               private readonly shortcutsService: ShortcutsService,
   ) {
-  }
-
-  // TODO: handle changes & re-subscribe!
-  ngOnInit(): void {
-    const collection$ = this.cds.getCollectionById(this.activeCollectionId);
-    const allSongs$ = getAllSongsInCollectionsSorted(collection$, this.cds);
-    combineLatest([collection$, allSongs$])
-        .pipe(
-            switchMap(([collection, allSongs]) => {
-              if (!collection || !allSongs || allSongs.length === 0) {
-                return of([undefined, undefined, undefined, undefined, undefined]);
-              }
-              const {prevSong, nextSong} = this.songId
-                                           ? findPrevAndNextSongs(this.songId, allSongs)
-                                           : {prevSong: allSongs[allSongs.length - 1], nextSong: allSongs[0]};
-              return combineLatest([
-                of(collection),
-                of(prevSong),
-                prevSong ? this.cds.getCollectionById(prevSong.collectionId) : of(undefined),
-                of(nextSong),
-                nextSong ? this.cds.getCollectionById(nextSong.collectionId) : of(undefined),
-              ]);
-            }),
-            takeUntil(this.destroyed$),
-        )
-        .subscribe(([collection, prevSong, prevSongPrimaryCollection, nextSong, nextSongPrimaryCollection]) => {
-          this.activeCollectionMount = collection?.mount;
-          if (!collection) {
-            return;
+    super();
+    this.changes$.pipe(
+        switchMap(() => this.catalogDataService.observeCollection(this.activeCollectionId)),
+        switchMap(collection => combineLatest([
+          of(collection),
+          getAllSongsInCollectionsSorted(collection, this.catalogDataService),
+        ])),
+        switchMap(([collection, allSongs]) => {
+          if (!collection || !allSongs || allSongs.length === 0) {
+            return of([undefined, undefined, undefined, undefined, undefined]);
           }
-          // noinspection DuplicatedCode
-          if (prevSong && prevSongPrimaryCollection) {
-            this.prevLink = getSongPageLink(collection.mount, prevSong.mount, prevSongPrimaryCollection.mount);
-            this.prevLinkIsCollection = false;
-          } else {
-            this.prevLink = getCollectionPageLink(collection);
-            this.prevLinkIsCollection = true;
-          }
-          // noinspection DuplicatedCode
-          if (nextSong && nextSongPrimaryCollection) {
-            this.nextLink = getSongPageLink(collection.mount, nextSong.mount, nextSongPrimaryCollection.mount);
-            this.nextLinkIsCollection = false;
-          } else {
-            this.nextLink = getCollectionPageLink(collection);
-            this.nextLinkIsCollection = true;
-          }
-          this.isInitializing = false;
-          this.cd.detectChanges();
-        });
+          const {prevSong, nextSong} = this.songId
+                                       ? findPrevAndNextSongs(this.songId, allSongs)
+                                       : {prevSong: allSongs[allSongs.length - 1], nextSong: allSongs[0]};
+          return combineLatest([
+            of(collection),
+            of(prevSong),
+            prevSong ? this.catalogDataService.observeCollection(prevSong.collectionId) : of(undefined),
+            of(nextSong),
+            nextSong ? this.catalogDataService.observeCollection(nextSong.collectionId) : of(undefined),
+          ]);
+        }),
+        takeUntilDestroyed(),
+    ).subscribe(([collection, prevSong, prevSongPrimaryCollection, nextSong, nextSongPrimaryCollection]) => {
+      this.activeCollectionMount = collection?.mount;
+      if (!collection) {
+        return;
+      }
+      // noinspection DuplicatedCode
+      if (prevSong && prevSongPrimaryCollection) {
+        this.prevLink = getSongPageLink(collection.mount, prevSong.mount, prevSongPrimaryCollection.mount);
+        this.prevLinkIsCollection = false;
+      } else {
+        this.prevLink = getCollectionPageLink(collection);
+        this.prevLinkIsCollection = true;
+      }
+      // noinspection DuplicatedCode
+      if (nextSong && nextSongPrimaryCollection) {
+        this.nextLink = getSongPageLink(collection.mount, nextSong.mount, nextSongPrimaryCollection.mount);
+        this.nextLinkIsCollection = false;
+      } else {
+        this.nextLink = getCollectionPageLink(collection);
+        this.nextLinkIsCollection = true;
+      }
+      this.isInitializing = false;
+      this.cdr.markForCheck();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -101,7 +101,6 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
 
   ngOnDestroy(): void {
     this.uninstallHammer();
-    this.destroyed$.next(true);
   }
 
   private installHammer(): void {
@@ -182,11 +181,9 @@ export class SongPrevNextNavigatorComponent implements OnInit, AfterViewInit, On
   }
 }
 
-export function getAllSongsInCollectionsSorted(collection$: Observable<Collection|undefined>, cds: CatalogService): Observable<Array<Song>> {
-  // list of all collection songs sorted by id.
-  return collection$.pipe(
-      switchMap(collection => collection ? cds.getSongIdsByCollection(collection.id) : of([])),
-      switchMap(songIds => combineLatest0((songIds || []).map(id => cds.getSongById(id)))),
+export function getAllSongsInCollectionsSorted(collection: Collection|undefined, catalogDataService: CatalogService): Observable<Array<Song>> {
+  return catalogDataService.getSongIdsByCollection(collection?.id).pipe(
+      switchMap(songIds => combineLatest0((songIds || []).map(id => catalogDataService.observeSong(id)))),
       map(songs => sortSongsAlphabetically(songs.filter(isDefined))),
   );
 }

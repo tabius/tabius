@@ -4,7 +4,7 @@ import {I18N} from '@app/app-i18n';
 
 interface PageWithNotFoundFlag {
   notFound: boolean;
-  readonly cd: ChangeDetectorRef;
+  readonly cdr: ChangeDetectorRef;
   readonly response?: any;
   readonly title?: Title,
   readonly meta?: Meta,
@@ -19,7 +19,7 @@ export function switchToNotFoundMode(page: PageWithNotFoundFlag): void {
   if (page.meta) {
     page.meta.addTag({name: 'description', content: I18N.common.resourceNotFound});
   }
-  page.cd.detectChanges();
+  page.cdr.markForCheck();
 }
 
 export function addStatus404ToResponse(response: any): void {

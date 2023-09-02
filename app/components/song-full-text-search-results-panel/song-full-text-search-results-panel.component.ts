@@ -49,7 +49,7 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
               }
             }
             this.loading = false;
-            this.cd.detectChanges();
+            this.cd.markForCheck();
           });
     }
   }

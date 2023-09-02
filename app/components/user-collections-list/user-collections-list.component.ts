@@ -1,13 +1,16 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy} from '@angular/core';
-import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {combineLatest} from 'rxjs';
 import {ToastService} from '@app/toast/toast.service';
 import {CreateUserCollectionRequest} from '@common/ajax-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {map, switchMap, takeUntil} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {combineLatest0, getCollectionPageLink} from '@common/util/misc-utils';
 import {I18N} from '@app/app-i18n';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 
 interface CollectionInfo {
+  id: number;
   linkText: string;
   link: string;
   songCount: number;
@@ -20,58 +23,45 @@ interface CollectionInfo {
   styleUrls: ['./user-collections-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserCollectionsListComponent implements OnChanges, OnDestroy {
+export class UserCollectionsListComponent extends AbstractAppComponent {
 
   readonly i18n = I18N.userCollectionsListComponent;
 
-  private readonly destroyed$ = new Subject();
-
   @Input({required: true}) userId!: string;
 
-  collectionInfos: CollectionInfo[] = [];
+  collectionInfos: Array<CollectionInfo> = [];
 
   newCollectionName = '';
 
-  private userIdSubscription?: Subscription;
-
   constructor(private readonly cds: CatalogService,
               private readonly toastService: ToastService,
-              private readonly cd: ChangeDetectorRef,
   ) {
-  }
-
-  ngOnChanges(): void {
-    if (this.userIdSubscription) {
-      this.userIdSubscription.unsubscribe();
+    super();
+    this.changes$.pipe(
+        switchMap(() => {
+          const collections$ = this.cds.getUserCollections(this.userId);
+          const songCounts$ = collections$.pipe(
+              switchMap(collections => combineLatest0(collections.map(c => this.cds.getSongIdsByCollection(c.id)))),
+              map(songIds => songIds.map(ids => !!ids ? ids.length : 0))
+          );
+          return combineLatest([collections$, songCounts$]);
+        }),
+        takeUntilDestroyed(),
+    ).subscribe(([collections, songCounts]) => {
       this.collectionInfos = [];
-    }
-
-    const collections$ = this.cds.getUserCollections(this.userId);
-    const songCounts$: Observable<number[]> = collections$.pipe(
-        switchMap(collections => combineLatest0(collections.map(c => this.cds.getSongIdsByCollection(c.id)))),
-        map((songIds: (number[]|undefined)[]) => songIds.map(ids => !!ids ? ids.length : 0))
-    );
-
-    this.userIdSubscription = combineLatest([collections$, songCounts$])
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(([collections, songCounts]) => {
-          this.collectionInfos = [];
-          for (let i = 0; i < collections.length; i++) {
-            const collection = collections[i];
-            const songCount = songCounts[i];
-            this.collectionInfos.push({
-              linkText: collection.name + (songCount > 0 ? ` [${songCount}]` : ''),
-              link: getCollectionPageLink(collection),
-              songCount,
-              titleText: this.i18n.titleText(collection.name, songCount),
-            });
-          }
-          this.cd.detectChanges();
+      for (let i = 0; i < collections.length; i++) {
+        const collection = collections[i];
+        const songCount = songCounts[i];
+        this.collectionInfos.push({
+          id: collection.id,
+          linkText: collection.name + (songCount > 0 ? ` [${songCount}]` : ''),
+          link: getCollectionPageLink(collection),
+          songCount,
+          titleText: this.i18n.titleText(collection.name, songCount),
         });
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   createCollection(): void {

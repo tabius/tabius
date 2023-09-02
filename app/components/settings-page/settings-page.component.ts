@@ -1,7 +1,6 @@
-import {ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {UserService} from '@app/services/user.service';
 import {DEFAULT_FAVORITE_KEY, getDefaultUserSongFontSize, User, UserDeviceSettings} from '@common/user-model';
-import {takeUntil} from 'rxjs/operators';
 import {combineLatest} from 'rxjs';
 import {SongDetails} from '@common/catalog-model';
 import {RefreshMode} from '@app/store/observable-store';
@@ -9,6 +8,7 @@ import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-i
 import {I18N} from '@app/app-i18n';
 import {ChordTone, MINOR_KEY_TONES} from '@app/utils/chords-lib';
 import {ClientAuthService} from '@app/services/client-auth.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;
@@ -18,7 +18,7 @@ export const MIN_SONG_FONT_SIZE = 8;
   styleUrls: ['./settings-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsPageComponent extends ComponentWithLoadingIndicator implements OnInit, OnDestroy {
+export class SettingsPageComponent extends ComponentWithLoadingIndicator {
 
   readonly i18n = I18N.settingsPage;
 
@@ -35,35 +35,28 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
   constructor(
       private readonly uds: UserService,
       private readonly authService: ClientAuthService,
-      injector: Injector,
   ) {
-    super(injector);
-  }
+    super();
 
-  ngOnInit(): void {
     combineLatest([
       this.uds.getUser$(),
       this.uds.getUserDeviceSettings(),
       //TODO: optimize these 2 parallel fetches! Fetch user settings only once.
       this.uds.getH4SiFlag(RefreshMode.Refresh),
       this.uds.getFavoriteKey(RefreshMode.Refresh),
-    ])
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(([user, settings, h4si, favoriteSongKey]) => {
-          this.loaded = true;
-          this.user = user;
-          this.deviceSettings = settings;
-          this.h4Si = h4si;
-          this.visualFavoriteSongKey = h4si && favoriteSongKey.startsWith('B') ? 'H' + favoriteSongKey.substring(1) : favoriteSongKey;
-          this.visualAllMinorToneKeys = this.h4Si
-                                        ? (MINOR_KEY_TONES.map(t => t.startsWith('B') ? `H${t.substring(1)}` : t))
-                                        : MINOR_KEY_TONES;
-          this.cd.detectChanges();
-        });
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
+    ]).pipe(
+        takeUntilDestroyed(),
+    ).subscribe(([user, settings, h4si, favoriteSongKey]) => {
+      this.loaded = true;
+      this.user = user;
+      this.deviceSettings = settings;
+      this.h4Si = h4si;
+      this.visualFavoriteSongKey = h4si && favoriteSongKey.startsWith('B') ? 'H' + favoriteSongKey.substring(1) : favoriteSongKey;
+      this.visualAllMinorToneKeys = this.h4Si
+                                    ? (MINOR_KEY_TONES.map(t => t.startsWith('B') ? `H${t.substring(1)}` : t))
+                                    : MINOR_KEY_TONES;
+      this.cdr.markForCheck();
+    });
   }
 
   incFontSize(): void {
@@ -79,16 +72,16 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
   }
 
   private updateSongFontSize(songFontSize: number): void {
-    this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize});
+    this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize}).then();
   }
 
   useH4Si(h4SiFlag: boolean): void {
-    this.uds.setH4SiFlag(h4SiFlag);
+    this.uds.setH4SiFlag(h4SiFlag).then();
   }
 
   setFavoriteSongKey(visualFavoriteSongKey: string): void {
     const tone: ChordTone = visualFavoriteSongKey === 'H' ? 'B' : visualFavoriteSongKey as ChordTone;
-    this.uds.setFavoriteKey(tone);
+    this.uds.setFavoriteKey(tone).then();
   }
 
   openRegistrationDialog(): void {
@@ -98,7 +91,6 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator impleme
   openSignInDialog(): void {
     this.authService.signin();
   }
-
 }
 
 const SETTINGS_DEMO_SONG: SongDetails = {

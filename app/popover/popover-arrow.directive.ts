@@ -1,7 +1,7 @@
-import {ChangeDetectorRef, Directive, HostBinding, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs';
+import {ChangeDetectorRef, DestroyRef, Directive, HostBinding, inject, OnInit} from '@angular/core';
 
 import {PopoverRef} from './popover-ref';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Internal directive that shows the popover arrow.
@@ -29,10 +29,10 @@ export class PopoverArrowDirective implements OnInit {
   @HostBinding('style.display')
   display: string|null = null;
 
-  private subscription!: Subscription;
+  protected readonly destroyRef = inject(DestroyRef);
 
   constructor(private readonly popoverRef: PopoverRef,
-              private readonly cd: ChangeDetectorRef) {
+              private readonly cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -40,20 +40,16 @@ export class PopoverArrowDirective implements OnInit {
     if (this.arrowSize === 0) {
       this.display = 'none';
     }
-
-    this.subscription = this.popoverRef.positionChanges().subscribe(p => {
+    this.popoverRef.positionChanges().pipe(
+        takeUntilDestroyed(this.destroyRef),
+    ).subscribe(p => {
       let {offsetX, offsetY} = p.connectionPair;
       [offsetX, offsetY] = [offsetX || 0, offsetY || 0]; // use 0 as default value.
       this.offsetTop = offsetY >= 0 ? offsetY * -1 : null;
       this.offsetLeft = offsetX < 0 ? offsetX * -1 : null;
       this.offsetBottom = offsetY < 0 ? offsetY : null;
       this.offsetRight = offsetX >= 0 ? offsetX : null;
-      this.cd.detectChanges();
-
+      this.cdr.markForCheck();
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }

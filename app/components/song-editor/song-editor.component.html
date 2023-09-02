@@ -45,11 +45,11 @@
     </div>
     <div class="buttons-row">
         <div class="left-side-block">
-            <button *ngIf="createMode" class="btn btn-info create-button" (click)="create()">{{i18n.create}}</button>
-            <button *ngIf="!createMode" class="btn btn-info update-button" (click)="update()">{{i18n.update}}</button>
+            <button *ngIf="isCreateMode" class="btn btn-info create-button" (click)="create()">{{i18n.create}}</button>
+            <button *ngIf="isUpdateMode" class="btn btn-info update-button" (click)="update()">{{i18n.update}}</button>
             <button class="btn cancel-button" (click)="cancel()">{{i18n.cancel}}</button>
         </div>
-        <div *ngIf="!createMode" class="right-side-block">
+        <div *ngIf="!isCreateMode" class="right-side-block">
             <label class="checkbox" title="{{i18n.deleteConfirmationTitle}}">
                 <input type="checkbox"
                        [checked]="deleteConfirmationFlag"

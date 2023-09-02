@@ -15,9 +15,8 @@ import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 })
 export class BrowserStateService {
 
-  readonly isBrowser;
-  readonly isServer;
-
+  readonly isBrowser: boolean;
+  readonly isServer: boolean;
 
   private readonly i18n = I18N.browserStateService;
 

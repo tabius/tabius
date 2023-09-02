@@ -4,7 +4,7 @@
         {{emptyListMessage}}
     </div>
 
-    <div *ngFor="let songItem of songItems; trackBy: trackById">
+    <div *ngFor="let songItem of songItems; trackBy: trackById" [attr.data-sid]="songItem.id">
         <a [routerLink]="songItem.link" [title]="songItem.titleAttribute">
             {{songItem.title}}
         </a>

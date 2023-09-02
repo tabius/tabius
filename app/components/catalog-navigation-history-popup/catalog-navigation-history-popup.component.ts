@@ -1,12 +1,13 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {UserService} from '@app/services/user.service';
-import {filter, takeUntil} from 'rxjs/operators';
+import {filter} from 'rxjs/operators';
 import {CatalogNavigationHistoryStep} from '@common/user-model';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {NavigationEnd, Router} from '@angular/router';
-import {Subject} from 'rxjs';
 import {checkUpdateByShallowArrayCompare} from '@app/store';
 import {I18N} from '@app/app-i18n';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 
 @Component({
   selector: 'gt-catalog-navigation-history-popup',
@@ -14,11 +15,9 @@ import {I18N} from '@app/app-i18n';
   styleUrls: ['./catalog-navigation-history-popup.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CatalogNavigationHistoryPopupComponent implements OnInit, OnDestroy {
+export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent {
 
   @Input({required: true}) popover!: PopoverRef;
-
-  private readonly destroyed$ = new Subject();
 
   private allSteps: CatalogNavigationHistoryStep[] = [];
 
@@ -32,23 +31,22 @@ export class CatalogNavigationHistoryPopupComponent implements OnInit, OnDestroy
               private readonly cd: ChangeDetectorRef,
               private readonly router: Router,
   ) {
-  }
-
-  ngOnInit(): void {
+    super();
     this.currentUrl = this.router.url;
-    this.uds.getCatalogNavigationHistory().pipe(takeUntil(this.destroyed$)).subscribe(history => {
+    this.uds.getCatalogNavigationHistory().pipe(
+        takeUntilDestroyed(),
+    ).subscribe(history => {
       this.allSteps = history.steps;
       this.updateVisibleSteps(history.steps, this.currentUrl);
-      this.cd.detectChanges();
+      this.cd.markForCheck();
     });
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd), takeUntil(this.destroyed$)).subscribe(() => {
+    this.router.events.pipe(
+        filter(e => e instanceof NavigationEnd),
+        takeUntilDestroyed(),
+    ).subscribe(() => {
       this.updateVisibleSteps(this.allSteps, this.router.url);
-      this.cd.detectChanges();
+      this.cd.markForCheck();
     });
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
   }
 
   private updateVisibleSteps(newAllSteps: CatalogNavigationHistoryStep[], newUrl: string): void {
