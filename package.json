@@ -20,9 +20,10 @@
     "server-session-debug": "DEBUG=express-session nodemon",
     "sitemap": "ts-node scripts/generate-sitemap.ts",
     "start": "npm run update-version && ng serve -c dev --port=12102",
-    "test": "npm run update-version && ng test",
     "update-version": "node scripts/update-build-version.js",
-    "update-deps": "rm package-lock.json && rm -rf node_modules && npm install"
+    "update-deps": "rm package-lock.json && rm -rf node_modules && npm install",
+    "pw-tests": "playwright test",
+    "pw-tests-dev": "playwright test --ui"
   },
   "private": true,
   "dependencies": {
@@ -98,6 +99,7 @@
     "karma-jasmine": "5.1.0",
     "karma-jasmine-html-reporter": "2.1.0",
     "nodemon": "3.0.1",
+    "@playwright/test": "^1.37.1",
     "sass": "1.65.1",
     "ts-node": "10.9.1",
     "tsconfig-paths": "4.2.0",

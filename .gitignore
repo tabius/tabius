@@ -22,3 +22,6 @@ webpack.records.json
 *.ngfactory.ts
 *.ngsummary.json
 *.shim.ngstyle.ts
+
+playwright-report
+test-results
