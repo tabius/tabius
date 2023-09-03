@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {combineLatest} from 'rxjs';
 import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {share, switchMap, tap} from 'rxjs/operators';
+import {switchMap, tap} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
@@ -51,15 +51,20 @@ export class SongComponent extends ComponentWithLoadingIndicator {
           this.cdr.markForCheck();
         }),
         switchMap(() => {
-          const song$ = this.catalogService.observeSong(this.songId).pipe(share());
+          const song$ = this.catalogService.observeSong(this.songId);
           const primaryCollection$ = song$.pipe(switchMap(song => this.catalogService.observeCollection(song?.collectionId)));
+          const songDetails$ = this.catalogService.getSongDetailsById(this.songId);
+          const activeCollection$ = this.activeCollectionId
+                                    ? this.catalogService.observeCollection(this.activeCollectionId)
+                                    : primaryCollection$;
+          const userSongDetails$ = this.userService.getUserSongSettings(this.songId);
+
           return combineLatest([
             song$,
-            this.catalogService.getSongDetailsById(this.songId),
-            this.activeCollectionId ? this.catalogService.observeCollection(this.activeCollectionId)
-                                    : primaryCollection$,
+            songDetails$,
+            activeCollection$,
             primaryCollection$,
-            this.userService.getUserSongSettings(this.songId),
+            userSongDetails$,
           ]);
         }),
         takeUntilDestroyed(),
