@@ -136,7 +136,10 @@
           "options": {
             "outputPath": "dist/server",
             "main": "ssr-server-main.ts",
-            "tsConfig": "tsconfig.ssr.json"
+            "tsConfig": "tsconfig.ssr.json",
+            "stylePreprocessorOptions": {
+              "includePaths": ["app"]
+            }
           },
           "configurations": {
             "ru": {

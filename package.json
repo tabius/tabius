@@ -5,8 +5,7 @@
   "repository": {},
   "scripts": {
     "build": "npm run update-version && ng build",
-    "build:ssr-dev": "npm run update-version && ng build -c dev && ng run tabius:server",
-    "build:ssr-dev:run": "npm run build:ssr-dev && npm run serve:ssr",
+    "build:ssr-dev-ru": "npm run update-version && ng build -c dev-ru && ng run tabius:server",
     "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-org-index && npm run inline-css",
     "build:ssr-ru": "npm run update-version && ng build -c ru && ng run tabius:server:ru && npm run inline-css",
     "run:dev-serve-ssr": "ng run tabius:serve-ssr --port=12101",
@@ -21,6 +20,8 @@
     "sitemap": "ts-node scripts/generate-sitemap.ts",
     "start-ru": "npm run update-version && ng serve -c dev-ru --port=12102",
     "start-org": "npm run update-version && ng serve -c dev-org --port=13102",
+    "start-ssr-ru": "npm run build:ssr-dev-ru && npm run serve:ssr",
+    "start-ssr-org": "npm run build:ssr-dev-org && npm run serve:ssr",
     "update-version": "node scripts/update-build-version.js",
     "update-deps": "rm package-lock.json && rm -rf node_modules && npm install",
     "pw-tests": "playwright test",
