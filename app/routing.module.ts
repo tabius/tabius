@@ -1,6 +1,6 @@
 import {SiteHomePageComponent} from '@app/components/site-home-page/site-home-page.component';
 import {Page404Component} from '@app/components/page404/page404.component';
-import {ExtraOptions, Resolve, RouterModule, Routes} from '@angular/router';
+import {ActivatedRouteSnapshot, DetachedRouteHandle, ExtraOptions, Resolve, RouteReuseStrategy, RouterModule, Routes} from '@angular/router';
 import {Inject, Injectable, NgModule} from '@angular/core';
 import {TunerPageComponent} from '@app/components/tuner-page/tuner-page.component';
 import {CatalogPageComponent} from '@app/components/catalog-page/catalog-page.component';
@@ -47,11 +47,41 @@ const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
 };
 
+//TODO: Re-check this solution or fix CollectionPageComponent to handle route update from itself.
+
+/**
+ * Re-creates a page component on every router update. Check song prev/next navigation before removal.
+ */
+@Injectable()
+export class TabiusRouteReuseStrategy extends RouteReuseStrategy {
+  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
+    return future.routeConfig === curr.routeConfig && JSON.stringify(future.params) === JSON.stringify(curr.params);
+  }
+
+  shouldDetach(): boolean {
+    return false;
+  }
+
+  store(): void {
+  }
+
+  shouldAttach(): boolean {
+    return false;
+  }
+
+  retrieve(): DetachedRouteHandle|null {
+    return null;
+  }
+}
+
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, routerOptions),
   ],
   exports: [RouterModule],
+  providers: [
+    {provide: RouteReuseStrategy, useClass: TabiusRouteReuseStrategy},
+  ],
 })
 export class RoutingModule {
 }
