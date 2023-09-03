@@ -18,24 +18,14 @@
 <gt-app></gt-app>
 <noscript>Для работы приложения необходима поддержка JavaScript.</noscript>
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-40064729-26"></script>
 <script>
-  var forceEnableGa = window && window.location && window.location.href.includes('gaScript=on') || false;
-  var enabled = forceEnableGa || !/bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(navigator.userAgent);
-  if (enabled) {
-    var gaScript = document.createElement('script');
-    gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=UA-40064729-26';
-    gaScript.async = true;
-    document.body.appendChild(gaScript);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-    gtag('config', 'UA-40064729-26');
-  }
+  gtag('config', 'UA-40064729-26');
 </script>
 
 <!-- 'preload' polyfill -->
