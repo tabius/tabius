@@ -20,7 +20,8 @@
             "allowedCommonJsDependencies": [
               "assertic",
               "hammerjs",
-              "nosleep.js"
+              "nosleep.js",
+              "pure-md5"
             ],
             "assets": [
               {
@@ -38,6 +39,9 @@
             "styles": [
               "app/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["app"]
+            },
             "scripts": []
           },
           "configurations": {
@@ -86,13 +90,25 @@
               "serviceWorker": true,
               "sourceMap": true
             },
-            "dev": {
+            "dev-ru": {
               "aot": false,
               "buildOptimizer": false,
               "optimization": false
+            },
+            "dev-org": {
+              "aot": false,
+              "buildOptimizer": false,
+              "optimization": false,
+              "index": "app/index-org.html",
+              "fileReplacements": [
+                {
+                  "replace": "app/environments/environment.ts",
+                  "with": "app/environments/environment.dev-org.ts"
+                }
+              ]
             }
           },
-          "defaultConfiguration": "dev"
+          "defaultConfiguration": "dev-ru"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -107,8 +123,11 @@
             "org": {
               "browserTarget": "tabius:build:org"
             },
-            "dev": {
-              "browserTarget": "tabius:build:dev"
+            "dev-ru": {
+              "browserTarget": "tabius:build:dev-ru"
+            },
+            "dev-org": {
+              "browserTarget": "tabius:build:dev-org"
             }
           }
         },

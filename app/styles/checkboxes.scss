@@ -29,7 +29,7 @@ label.checkbox {
     width: $checkbox-size;
     border: $checkbox-border solid;
     left: 0;
-    top: ($checkbox-line-height - $checkbox-size) / 2 - $checkbox-border;
+    top: calc(($checkbox-line-height - $checkbox-size) / 2 - $checkbox-border);
   }
 
   /*Check-mark of the fake checkbox. */

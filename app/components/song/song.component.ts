@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {combineLatest} from 'rxjs';
 import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
 import {CatalogService} from '@app/services/catalog.service';
-import {switchMap, tap} from 'rxjs/operators';
+import {share, switchMap, tap} from 'rxjs/operators';
 import {UserSongSettings} from '@common/user-model';
 import {UserService} from '@app/services/user.service';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
@@ -51,7 +51,7 @@ export class SongComponent extends ComponentWithLoadingIndicator {
           this.cdr.markForCheck();
         }),
         switchMap(() => {
-          const song$ = this.catalogService.observeSong(this.songId);
+          const song$ = this.catalogService.observeSong(this.songId).pipe(share());
           const primaryCollection$ = song$.pipe(switchMap(song => this.catalogService.observeCollection(song?.collectionId)));
           return combineLatest([
             song$,
@@ -59,8 +59,7 @@ export class SongComponent extends ComponentWithLoadingIndicator {
             this.activeCollectionId ? this.catalogService.observeCollection(this.activeCollectionId)
                                     : primaryCollection$,
             primaryCollection$,
-            song$.pipe(switchMap(song => this.userService.getUserSongSettings(song?.id))),
-
+            this.userService.getUserSongSettings(this.songId),
           ]);
         }),
         takeUntilDestroyed(),

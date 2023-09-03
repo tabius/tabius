@@ -18,6 +18,8 @@ import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
 import {truthy} from 'assertic';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {md5} from 'pure-md5';
+import {environment} from '@app/environments/environment';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -44,7 +46,7 @@ export class CollectionViewModel {
 export class CollectionPageComponent extends ComponentWithLoadingIndicator {
   readonly getCollectionPageLink = getCollectionPageLink;
   readonly i18n = I18N.collectionPage;
-
+  readonly isAffiliateBlockVisible = environment.lang === 'en';
   collectionViewModel?: CollectionViewModel;
 
   user?: User;
@@ -65,7 +67,6 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
               private readonly helpService: HelpService,
               private readonly ss: ShortcutsService,
   ) {
-    console.log('Created');
     super();
     this.helpService.setActiveHelpPage('collection');
 
@@ -176,6 +177,12 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
     const name = this.collectionViewModel.collection.name;
     const url = getCollectionPageLink(this.collectionViewModel.collection.mount);
     this.uds.addCatalogNavigationHistoryStep({name, url}).then(nothingThen);
+  }
+
+  buildAffiliateLink(collectionName: string): string {
+    const searchString = `${collectionName} ${this.i18n.affiliateSearchSuffix}`;
+    const linkId = md5(searchString);
+    return `https://www.amazon.com/gp/search?ie=UTF8&tag=bigapple0b-20&linkCode=ur2&linkId=${linkId}&camp=1789&creative=9325&index=aps&keywords=${searchString}`;
   }
 }
 

@@ -5,7 +5,7 @@
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
-    <div *ngIf="(songId$ | async) as songId">
+    <div *ngIf="loaded">
 
         <h2>{{i18n.title}}</h2>
 

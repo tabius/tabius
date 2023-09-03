@@ -3,7 +3,6 @@ import {TRANSLATIONS_MAP_EN} from './i18n-en';
 import {DeepReadonly} from '@common/typescript-extras';
 import {CollectionType} from '@common/catalog-model';
 import {User} from '@common/user-model';
-import {Page404Component} from '@app/components/page404/page404.component';
 import {PageMetadata} from '@app/utils/seo-utils';
 
 export function getI18n(lang: string): DeepReadonly<I18n> {
@@ -117,9 +116,10 @@ export interface I18n {
     collectionNotFound: string;
     loadingSongList: string;
     addSong: string;
-    collectionsSettings: string;
-    supportLink: string;
-    supportLinkTitle: string;
+    collectionSettings: string;
+    affiliateLinkText: string;
+    affiliateLinkTitle: string;
+    affiliateSearchSuffix: string;
     meta: {
       title: (name: string, type: CollectionType) => string;
       description: (firstSongs: string) => string;

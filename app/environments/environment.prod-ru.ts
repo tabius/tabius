@@ -22,7 +22,7 @@ export const environment: TabiusEnv = {
     clientId: 'HsyF6TwzMaKVFhjlLdlBUJf3gs9oihFt',
     cacheLocation: 'localstorage',
     httpInterceptor: {
-      allowedList: [{uri: backendUrl + '/api/*', allowAnonymous: true}]
+      allowedList: [{uri: `${backendUrl}/api/*`, allowAnonymous: true}]
     }
   }
 };

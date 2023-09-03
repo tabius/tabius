@@ -51,7 +51,7 @@
         <div class="editors-block">
             <div *ngIf="!songEditorIsOpen && !collectionEditorIsOpen" class="buttons-line">
                 <button class="btn btn-info" (click)="openSongEditor()">{{i18n.addSong}}</button>
-                <button *ngIf="canEditCollection" class="btn" (click)="toggleCollectionEditor()">{{i18n.collectionsSettings}}</button>
+                <button *ngIf="canEditCollection" class="btn" (click)="toggleCollectionEditor()">{{i18n.collectionSettings}}</button>
             </div>
 
             <!-- Song editor -->
@@ -75,6 +75,15 @@
                                        [collectionId]="collectionViewModel.collection.id"
                                        (closeRequest)="toggleCollectionEditor()"
             ></gt-user-collection-editor>
+        </div>
+
+        <div *ngIf="collectionViewModel.listed && isAffiliateBlockVisible" class="affiliate-block">
+            <a [href]="buildAffiliateLink(collectionViewModel.displayName)"
+               title="{{i18n.affiliateLinkTitle}}"
+               target="_blank"
+               rel="noopener">
+                {{i18n.affiliateLinkText}}
+            </a>
         </div>
 
         <gt-song-prev-next-navigator [activeCollectionId]="collectionViewModel.collection.id"></gt-song-prev-next-navigator>

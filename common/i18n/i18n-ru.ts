@@ -113,9 +113,10 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     collectionNotFound: 'Коллекция не найдена',
     loadingSongList: 'Загружаем список песен…',
     addSong: 'Добавить песню',
-    collectionsSettings: 'Настроить',
-    supportLink: 'Поддержать артиста »',
-    supportLinkTitle: 'Поддержать исполнителя и купить его официальный диск.',
+    collectionSettings: 'Настроить',
+    affiliateLinkText: 'Поддержать артиста »',
+    affiliateLinkTitle: 'Поддержать исполнителя и купить его официальные товары.',
+    affiliateSearchSuffix: 'музыка',
     meta: {
       title: (name: string, type: CollectionType) => {
         const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');

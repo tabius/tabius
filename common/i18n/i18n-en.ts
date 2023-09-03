@@ -112,9 +112,10 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     collectionNotFound: 'Collection not found',
     loadingSongList: 'Loading list of songs …',
     addSong: 'Add song',
-    collectionsSettings: 'Settings',
-    supportLink: 'Support artist »',
-    supportLinkTitle: 'Support artist and buy official records.',
+    collectionSettings: 'Settings',
+    affiliateLinkText: 'Support artist »',
+    affiliateLinkTitle: 'Support artist and buy official merch.',
+    affiliateSearchSuffix: 'music',
     meta: {
       title: (name: string, type: CollectionType) => {
         const typeInfo = isCompilation(type) ? ', collection ' : (isBand(type) ? ', band' : '');

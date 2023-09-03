@@ -13,12 +13,8 @@ interface PageWithNotFoundFlag {
 export function switchToNotFoundMode(page: PageWithNotFoundFlag): void {
   page.notFound = true;
   addStatus404ToResponse(page.response);
-  if (page.title) {
-    page.title.setTitle(I18N.common.resourceNotFound);
-  }
-  if (page.meta) {
-    page.meta.addTag({name: 'description', content: I18N.common.resourceNotFound});
-  }
+  page.title?.setTitle(I18N.common.resourceNotFound);
+  page.meta?.addTag({name: 'description', content: I18N.common.resourceNotFound});
   page.cdr.markForCheck();
 }
 

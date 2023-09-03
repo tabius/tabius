@@ -2,10 +2,9 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {I18N} from '@app/app-i18n';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {CatalogService} from '@app/services/catalog.service';
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
 import {HelpService} from '@app/services/help.service';
 import {environment} from '@app/environments/environment';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   templateUrl: './scene-page.component.html',
@@ -14,14 +13,20 @@ import {environment} from '@app/environments/environment';
 })
 export class ScenePageComponent extends ComponentWithLoadingIndicator implements OnInit {
   readonly i18n = I18N.scenePage;
-
-  songId$: Observable<number>;
+  songId = -1;
 
   constructor(private readonly catalogService: CatalogService,
               private readonly helpService: HelpService,
   ) {
     super();
-    this.songId$ = this.catalogService.getSceneSongId().pipe(tap(() => this.loaded = true));
+    this.catalogService.getSceneSongId().pipe(
+        takeUntilDestroyed(),
+    ).subscribe(songId => {
+      console.debug('Loaded song of the day: ', songId);
+      this.songId = songId;
+      this.loaded = true;
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnInit(): void {

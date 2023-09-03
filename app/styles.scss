@@ -1,11 +1,12 @@
-@import "app/styles/dimensions";
-@import "app/styles/fonts";
-@import "app/styles/colors";
-@import "app/styles/buttons";
-@import "app/styles/checkboxes";
-@import "~@angular/cdk/overlay-prebuilt.css";
+@import "styles/dimensions";
+@import "styles/fonts";
+@import "styles/colors";
+@import "styles/buttons";
+@import "styles/checkboxes";
+@import "~node_modules/@angular/cdk/overlay-prebuilt.css";
 
 html {
+  //noinspection CssInvalidPropertyValue
   overflow: -moz-scrollbars-vertical;
   overflow-y: scroll;
 }

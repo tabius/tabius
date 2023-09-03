@@ -1,5 +1,5 @@
-@import "app/styles/dimensions";
-@import "app/styles/colors";
+@import "styles/dimensions";
+@import "styles/colors";
 
 :host {
   display: flex;
@@ -53,7 +53,7 @@
   }
 }
 
-.pg-search-block {
+.affiliate-block {
   margin-top: 20px;
 
   a {

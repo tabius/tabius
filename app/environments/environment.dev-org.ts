@@ -1,21 +1,24 @@
+// noinspection HttpUrlsUsage
+
 import {buildInfo} from '@app/environments/build';
 import {TabiusEnv} from '@app/environments';
 
-const APP_DOMAIN = 'tabius.org';
+const APP_DOMAIN = 'localhost';
 
-const backendUrl = `https://${APP_DOMAIN}`;
+const backendUrl = `http://${APP_DOMAIN}:13100`;
 
+/* Environment used for local development. */
 export const environment: TabiusEnv = {
   lang: 'en',
   domain: APP_DOMAIN,
-  url: `https://${APP_DOMAIN}`,
-  production: true,
-  backendUrl: `https://${APP_DOMAIN}`,
-  ssrBackendUrl: 'http://localhost:13100',
-  telegramUrl: 'https://t.me/tabiusru', // TODO:
+  url: `http://${APP_DOMAIN}:13101`,
+  production: false,
+  backendUrl,
+  ssrBackendUrl: `http://${APP_DOMAIN}:13100`,
+  telegramUrl: 'https://t.me/tabiusru',
   buildInfo,
   sentryConfig: {
-    dsn: 'https://6e23de37b4bb4374a82883f40d1e11e9@o1134925.ingest.sentry.io/6773547',
+    dsn: 'not used in dev',
   },
   authConfig: {
     domain: 'tabius-org.us.auth0.com',
