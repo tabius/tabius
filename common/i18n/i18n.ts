@@ -12,11 +12,7 @@ export function getI18n(lang: string): DeepReadonly<I18n> {
 
 export interface I18n {
   common: {
-    /** Default page title. */
-    pageTitle: string;
-    /** Default page description for SEO. */
-    pageDescription: string;
-    keywords: string[],
+    meta: PageMetadata;
     favoritesCollectionName: string;
     and: string;
     error: (message: string) => string;
@@ -79,11 +75,9 @@ export interface I18n {
     }
   };
   scenePage: {
-    pageTitle: string;
-    pageDescription: string;
-    pageKeywords: string[];
     title: string;
     loadingMessage: string;
+    meta: PageMetadata;
   };
   chordImage: {
     chordsLayoutTitleSuffix: string;
@@ -170,7 +164,7 @@ export interface I18n {
     tryToReloadPagePrompt;
   };
   settingsPage: {
-    metadata: PageMetadata,
+    meta: PageMetadata,
     pageHeader: string;
     loadingText: string;
     songRenderingSettingsHeader: string;

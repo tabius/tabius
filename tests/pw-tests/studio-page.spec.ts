@@ -1,6 +1,9 @@
 import {expect, test} from '@playwright/test';
+import {TEST_ENV} from './tests.env';
 
-test('has title', async ({page}) => {
-  await page.goto('http://localhost:12102/studio');
-  await expect(page).toHaveTitle("Студия: мои подборы");
+const {rootUrl, i18n} = TEST_ENV;
+
+test('has expected title', async ({page}) => {
+  await page.goto(`${rootUrl}/studio`);
+  await expect(page).toHaveTitle(i18n.studioPage.meta.title);
 });

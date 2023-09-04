@@ -19,9 +19,7 @@ export class SiteHomePageComponent extends AbstractAppComponent {
   constructor() {
     super();
     this.updatePageMetadata({
-      title: I18N.common.pageTitle,
-      description: I18N.common.pageDescription,
-      keywords: I18N.common.keywords,
+      ...I18N.common.meta,
       image: `${environment.url}/assets/site-logo.png`,
     });
   }
