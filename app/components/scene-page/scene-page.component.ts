@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {I18N} from '@app/app-i18n';
 import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
 import {CatalogService} from '@app/services/catalog.service';
@@ -11,7 +11,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
   styleUrls: ['./scene-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ScenePageComponent extends ComponentWithLoadingIndicator implements OnInit {
+export class ScenePageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.scenePage;
   songId = -1;
 
@@ -27,16 +27,7 @@ export class ScenePageComponent extends ComponentWithLoadingIndicator implements
       this.loaded = true;
       this.cdr.markForCheck();
     });
-  }
-
-  ngOnInit(): void {
-    this.updatePageMetadata({
-      title: this.i18n.pageTitle,
-      description: this.i18n.pageDescription,
-      keywords: this.i18n.pageKeywords,
-      image: `${environment.url}/assets/site-logo.png`,
-    });
+    this.updatePageMetadata({...this.i18n.meta, image: `${environment.url}/assets/site-logo.png`});
     this.helpService.setActiveHelpPage('song');
   }
-
 }

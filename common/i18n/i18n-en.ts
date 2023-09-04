@@ -8,9 +8,11 @@ const DEFAULT_PAGE_KEYWORDS = ['chords', 'guitar tabs'];
 
 export const TRANSLATIONS_MAP_EN: I18n = {
   common: {
-    pageTitle: 'Chords & Tabs',
-    pageDescription: 'Chords and tabs for your favorite songs',
-    keywords: DEFAULT_PAGE_KEYWORDS,
+    meta: {
+      title: 'Chords & Tabs',
+      description: 'Chords and tabs for your favorite songs',
+      keywords: DEFAULT_PAGE_KEYWORDS,
+    },
     favoritesCollectionName: FAVORITES_COLLECTION_NAME,
     and: 'and',
     error: (message: string) => `Error: ${message}`,
@@ -76,11 +78,13 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     },
   },
   scenePage: {
-    pageTitle: 'Song of the day: a new song every day',
-    pageDescription: 'Scene is a place where you can find a new song with guitar chords every day.',
-    pageKeywords: ['song of the day', 'best song', 'guitar chords'],
     title: 'Scene: a new song every day',
     loadingMessage: 'Loading…',
+    meta: {
+      title: 'Song of the day: a new song every day',
+      description: 'Scene is a place where you can find a new song with guitar chords every day.',
+      keywords: ['song of the day', 'best song', 'guitar chords'],
+    },
   },
   chordImage: {
     chordsLayoutTitleSuffix: ', chord layout',
@@ -168,7 +172,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     tryToReloadPagePrompt: 'Try to reload the page when Online',
   },
   settingsPage: {
-    metadata: {
+    meta: {
       title: 'Personal settings',
       description: 'Personal settings for the Tabius',
       keywords: DEFAULT_PAGE_KEYWORDS,
