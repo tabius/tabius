@@ -1,11 +1,11 @@
 <h1>{{i18n.title}}</h1>
 
-<div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
+<div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator" data-pw="loading-indicator">
     <div class="message">{{i18n.loadingMessage}}</div>
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
-<div *ngIf="loaded">
+<div *ngIf="loaded" data-pw="loaded-content">
 
     <div style="display: flex; justify-content: center;">
         <div style="display: inline-block">
@@ -50,8 +50,8 @@
         <div *ngIf="searchValue.length === 0">
             <div *ngFor="let letterBlock of getVisibleLetterBlocks(); trackBy: trackByLetter" class="letter-block">
                 <div class="letter">{{letterBlock.letter}}</div>
-                <div>
-                    <div *ngFor="let collection of letterBlock.collections; trackBy: trackByCollectionId">
+                <div class="letter-collections">
+                    <div *ngFor="let collection of letterBlock.collections; trackBy: trackByCollectionId" [attr.data-pw]="collection.id">
                         <a routerLink="{{collection.link}}" [title]="collection.titleAttribute">{{collection.name}}</a>
                     </div>
                 </div>
