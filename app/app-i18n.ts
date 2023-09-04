@@ -8,4 +8,4 @@ import {environment} from '@app/environments/environment';
  * We do not change it in runtime and have the same values in tests, so there is no need in injection,
  * observables, etc: using the most simple form of it here.
  */
-export const I18N = getI18n(environment.lang);
+export const I18N = getI18n(environment.app);

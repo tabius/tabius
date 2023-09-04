@@ -25,6 +25,7 @@ export interface I18n {
     failedToCreateCollection: string;
     catalog: string;
     resourceNotFound: string;
+    affiliateSearchSuffix: string;
   };
   navbar: {
     accountInfoNotLoggedInToast: string;
@@ -99,7 +100,7 @@ export interface I18n {
     githubLinkTitle: string;
     homePageLinkTitle: string;
     menu: string;
-    twitterLinkTitle: string;
+    supportLinkTitle: string;
   };
   collectionEditor: {
     header: string;
@@ -119,7 +120,6 @@ export interface I18n {
     collectionSettings: string;
     affiliateLinkText: string;
     affiliateLinkTitle: string;
-    affiliateSearchSuffix: string;
     meta: {
       title: (name: string, type: CollectionType) => string;
       description: (firstSongs: string) => string;
@@ -281,9 +281,9 @@ export interface I18n {
     editSongButtonTitle: string;
     editSongButtonDesktop: string;
     editSongButtonMobile: string;
-    discussSongButtonTitle: string;
-    discussSongButtonDesktop: string
-    discussSongButtonMobile: string
+    affiliateLinkButtonTitle: string;
+    affiliateLinkButtonDesktopLabel: string
+    affiliateLinkButtonMobileLabel: string
     searchSongOnYoutubeLinkTitle: string;
     searchSongOnYoutubeLinkText: string
     fontSize: string;

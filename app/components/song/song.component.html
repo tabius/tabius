@@ -3,22 +3,22 @@
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
-<div *ngIf="loaded && song && songDetails" itemscope itemtype="https://schema.org/MusicRecording">
+<div *ngIf="loaded && song && songDetails && collection" itemscope itemtype="http://schema.org/MusicRecording">
     <meta itemprop="name" [content]="song.title"/>
     <div itemprop="byArtist" itemscope [attr.itemtype]="schemaItemArtistType" *ngIf="!!schemaItemArtistType">
         <meta itemprop="name" [content]="schemaItemArtistName"/>
     </div>
 
-    <ng-container *ngIf="mode === 'PrintMode'">
+    <ng-container *ngIf="mode === 'print-mode'">
         <gt-song-header [song]="song" [collection]="collection" [showControls]="false"></gt-song-header>
         <gt-song-text [song]="songDetails" [multiColumnMode]="false" [usePrintFontSize]="true"></gt-song-text>
         <gt-song-chords [songId]="song.id"></gt-song-chords>
     </ng-container>
 
-    <ng-container *ngIf="mode !== 'PrintMode'">
+    <ng-container *ngIf="mode !== 'print-mode'">
         <gt-song-header [song]="song"
                         [collection]="collection"
-                        [titleFormat]="mode === 'SongPageMode' ? 'song' : 'song-and-collection'"
+                        [titleFormat]="mode === 'song-page-mode' ? 'song' : 'song-and-collection'"
                         [showCollectionLink]="showCollectionLink"
         ></gt-song-header>
         <gt-song-video [title]="song.title" [mediaLinks]="songDetails.mediaLinks" itemprop="video"></gt-song-video>

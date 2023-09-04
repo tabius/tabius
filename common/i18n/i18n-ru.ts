@@ -19,6 +19,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     failedToCreateCollection: 'Не удалось создать коллекцию!',
     catalog: 'Каталог',
     resourceNotFound: 'Ресурс не найден',
+    affiliateSearchSuffix: 'музыка',
   },
   navbar: {
     accountInfoNotLoggedInToast: 'Вы не вошли в систему',
@@ -96,7 +97,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     githubLinkTitle: 'Текущая версия приложения.\nПосмотреть последние изменения',
     homePageLinkTitle: 'Перейти на главную страницу сайта.',
     menu: 'меню',
-    twitterLinkTitle: 'Последние новости сервиса в Твиттер.',
+    supportLinkTitle: 'Поддержка сайта.',
   },
   collectionEditor: {
     header: 'Добавление коллекции',
@@ -116,7 +117,6 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     collectionSettings: 'Настроить',
     affiliateLinkText: 'Поддержать артиста »',
     affiliateLinkTitle: 'Поддержать исполнителя и купить его официальные товары.',
-    affiliateSearchSuffix: 'музыка',
     meta: {
       title: (name: string, type: CollectionType) => {
         const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');
@@ -299,9 +299,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     editSongButtonTitle: 'Исправить подбор песни (Shift + E)',
     editSongButtonDesktop: 'Исправить подбор',
     editSongButtonMobile: 'Исправить',
-    discussSongButtonTitle: 'Обсудить подбор песни',
-    discussSongButtonDesktop: 'Обсудить в чате',
-    discussSongButtonMobile: 'Обсудить',
+    affiliateLinkButtonTitle: 'Найти официальный мерч артиста в интернете',
+    affiliateLinkButtonDesktopLabel: 'Поддержать артиста',
+    affiliateLinkButtonMobileLabel: 'Поддержать',
     fontSize: 'Размер шрифта',
     gotoRandomSongInCollectionMenu: 'Коллекция',
     gotoRandomSongInCatalogMenu: 'Каталог',

@@ -74,7 +74,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
         throttleTime(100, undefined, {leading: true, trailing: true}),
         takeUntilDestroyed(),
     ).subscribe(collections => {
-      this.letterBlocks = toLetterBlocks(collections, environment.lang === 'ru');
+      this.letterBlocks = toLetterBlocks(collections, environment.app === 'ru');
       this.loaded = true;
       this.bringFocusToTheSearchField();
       this.navHelper.restoreScrollPosition();

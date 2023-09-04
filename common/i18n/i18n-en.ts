@@ -19,6 +19,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     failedToCreateCollection: 'Failed to create new collection!',
     catalog: 'Catalog',
     resourceNotFound: 'Resource not found',
+    affiliateSearchSuffix: 'music',
   },
   navbar: {
     accountInfoNotLoggedInToast: 'You are not logged in',
@@ -95,7 +96,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     githubLinkTitle: 'Current version.\nClick to see the latest changes.',
     homePageLinkTitle: 'Home',
     menu: 'menu',
-    twitterLinkTitle: 'Read the latest site news in Twitter.',
+    supportLinkTitle: 'Contact us',
   },
   collectionEditor: {
     header: 'Add collection',
@@ -113,9 +114,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     loadingSongList: 'Loading list of songs …',
     addSong: 'Add song',
     collectionSettings: 'Settings',
-    affiliateLinkText: 'Support artist »',
-    affiliateLinkTitle: 'Support artist and buy official merch.',
-    affiliateSearchSuffix: 'music',
+    affiliateLinkText: 'Support artist',
+    affiliateLinkTitle: 'Support the Artist and Tabius by Purchasing Official Merchandise',
     meta: {
       title: (name: string, type: CollectionType) => {
         const typeInfo = isCompilation(type) ? ', collection ' : (isBand(type) ? ', band' : '');
@@ -300,9 +300,9 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     editSongButtonTitle: 'Open song editor (Shift + E)',
     editSongButtonDesktop: 'Edit song',
     editSongButtonMobile: 'Edit',
-    discussSongButtonTitle: 'Discuss song chords in chat',
-    discussSongButtonDesktop: 'Discuss in chat',
-    discussSongButtonMobile: 'Discuss',
+    affiliateLinkButtonTitle: 'Search for official merchandise to support both the artist and Tabius',
+    affiliateLinkButtonDesktopLabel: 'Support artist',
+    affiliateLinkButtonMobileLabel: 'Support',
     fontSize: 'Font size',
     gotoRandomSongInCollectionMenu: 'Collection',
     gotoRandomSongInCatalogMenu: 'Catalog',

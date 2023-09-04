@@ -1,6 +1,6 @@
-@import "app/styles/colors";
-@import "app/styles/dimensions";
-@import "app/styles/utils";
+@import "styles/colors";
+@import "styles/dimensions";
+@import "styles/utils";
 
 :host {
   line-height: $footer-info-line-height; /* Vertically center the text there */
@@ -27,7 +27,7 @@
   color: $color-nav-settings;
 }
 
-.twitter {
+.support {
   position: absolute;
   top: 0;
   left: 0;
@@ -42,7 +42,7 @@
     gt-svg-icon {
       width: 22px;
       height: 22px;
-      fill: #AAAAAA;
+      fill: #999;
     }
   }
 }

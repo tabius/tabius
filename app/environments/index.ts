@@ -1,9 +1,10 @@
 import {AuthConfig} from '@auth0/auth0-angular';
 
+export type TabiusAppType = 'ru'|'org';
+
 export interface TabiusEnv {
 
-  /** Language: en, ru.. */
-  lang: string,
+  app: TabiusAppType,
 
   /** Build type: production or not. */
   production: boolean;

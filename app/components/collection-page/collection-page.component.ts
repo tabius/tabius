@@ -18,8 +18,7 @@ import {I18N} from '@app/app-i18n';
 import {ShortcutsService} from '@app/services/shortcuts.service';
 import {truthy} from 'assertic';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {md5} from 'pure-md5';
-import {environment} from '@app/environments/environment';
+import {buildAffiliateLink, HAS_AFFILIATE_SUPPORT} from '@app/utils/AffiliateUtils';
 
 export class CollectionViewModel {
   readonly displayName: string;
@@ -46,7 +45,7 @@ export class CollectionViewModel {
 export class CollectionPageComponent extends ComponentWithLoadingIndicator {
   readonly getCollectionPageLink = getCollectionPageLink;
   readonly i18n = I18N.collectionPage;
-  readonly isAffiliateBlockVisible = environment.lang === 'en';
+  readonly isAffiliateBlockVisible = HAS_AFFILIATE_SUPPORT;
   collectionViewModel?: CollectionViewModel;
 
   user?: User;
@@ -88,15 +87,15 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
         switchMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
     );
 
-    combineLatest([collection$, collectionDetails$, bands$, songs$, primarySongCollections$, this.uds.getUser$()])
+    combineLatest([collection$, bands$, songs$, primarySongCollections$, this.uds.getUser$()])
         .pipe(
             throttleTime(100, undefined, {leading: true, trailing: true}),
             takeUntilDestroyed(),
         )
-        .subscribe(([collection, collectionDetails, bands, songs, primarySongCollections, user]) => {
+        .subscribe(([collection, bands, songs, primarySongCollections, user]) => {
           this.cdr.markForCheck();
           this.loaded = true;
-          if (!collection || !collectionDetails || !bands || !songs) {
+          if (!collection || !bands || !songs) {
             if (this.collectionViewModel) {
               this.router.navigate([this.collectionViewModel.listed ? LINK_CATALOG : LINK_STUDIO]).then();
             } else {
@@ -104,7 +103,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
             }
             return;
           }
-          this.collectionViewModel = new CollectionViewModel(collection, bands, songs, primarySongCollections, collectionDetails.listed);
+          this.collectionViewModel = new CollectionViewModel(collection, bands, songs, primarySongCollections, !!collection.listed);
           this.user = user;
           this.canAddSongs = canManageCollectionContent(this.user, collection);
           this.canEditCollection = canRemoveCollection(this.user, collection);
@@ -179,11 +178,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
     this.uds.addCatalogNavigationHistoryStep({name, url}).then(nothingThen);
   }
 
-  buildAffiliateLink(collectionName: string): string {
-    const searchString = `${collectionName} ${this.i18n.affiliateSearchSuffix}`;
-    const linkId = md5(searchString);
-    return `https://www.amazon.com/gp/search?ie=UTF8&tag=bigapple0b-20&linkCode=ur2&linkId=${linkId}&camp=1789&creative=9325&index=aps&keywords=${searchString}`;
-  }
+  readonly buildAffiliateLink = buildAffiliateLink;
 }
 
 function getFirstSongsNames(songs: Song[]): string {

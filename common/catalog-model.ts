@@ -36,13 +36,13 @@ export interface Collection extends WithId, Versioned {
   type: CollectionType;
   /** Collection owner. Undefined for the public catalog collections. */
   userId?: string;
+  /** Set to `true` for all publicly listed (not user personal) collections. */
+  listed?: boolean;
 }
 
 export interface CollectionDetails extends WithId, Versioned {
   /** List of artist's band ids. Used only for CollectionType.Person collections. */
-  readonly bandIds: readonly number[];
-  /** If true, this collection in shown in the public catalog. */
-  readonly listed: boolean;
+  bandIds: number[];
 }
 
 export const MIN_SONG_TITLE_LENGTH = 1;

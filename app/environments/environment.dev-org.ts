@@ -9,7 +9,7 @@ const backendUrl = `http://${APP_DOMAIN}:13100`;
 
 /* Environment used for local development. */
 export const environment: TabiusEnv = {
-  lang: 'en',
+  app: 'org',
   domain: APP_DOMAIN,
   url: `http://${APP_DOMAIN}:13101`,
   production: false,

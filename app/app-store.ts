@@ -1,18 +1,14 @@
-import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {makeStateKey, TransferState} from '@angular/platform-browser';
+import {Inject, Injectable, makeStateKey, PLATFORM_ID, TransferState} from '@angular/core';
 import {APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME} from '@app/app-constants';
 import {isPlatformBrowser} from '@angular/common';
 import {AsyncStore, IndexedDbAsyncStore, InMemoryAsyncStore, LocalStorageAsyncStore, TransferStateAdapter} from '@app/store';
 import {ObservableStoreImpl} from '@app/store/observable-store-impl';
+import {environment} from '@app/environments/environment';
 
-const INDEX_DB_NAME = 'tabius';
-const INDEX_DB_SCHEMA_VERSION = 7;
+const INDEX_DB_NAME = `tabius_${environment.app}`;
+const INDEX_DB_SCHEMA_VERSION = 8;
 
-function isIE11(): boolean {
-  return !!window['MSInputMethodContext'] && !!document['documentMode'];
-}
-
-// schema upgrade callbacks clears the store today.
+/** Upgrades in-browser database schema: implemented as a simple 'clear' today. */
 function upgradeIndexDb(db: IDBDatabase, event: IDBVersionChangeEvent): void {
   if (event.oldVersion === 0) {
     db.createObjectStore(USER_STORE_NAME, {keyPath: 'key'});
@@ -30,7 +26,7 @@ function upgradeIndexDb(db: IDBDatabase, event: IDBVersionChangeEvent): void {
 
 function newUserOrCatalogAsyncStoreFactory(storeName: string, isBrowser: boolean): () => AsyncStore {
   return () => {
-    return isBrowser && !isIE11()
+    return isBrowser
            ? new IndexedDbAsyncStore(INDEX_DB_NAME, storeName, INDEX_DB_SCHEMA_VERSION, upgradeIndexDb)
            : new InMemoryAsyncStore();
   };
@@ -105,7 +101,7 @@ export class CatalogBrowserStore extends TabiusObservableStoreImpl {
   }
 }
 
-/** Technical application specific data that must persist in the current browser between sessions. */
+/** Technical application-specific data that must persist in the current browser between sessions. */
 @Injectable()
 export class AppBrowserStore extends TabiusObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {

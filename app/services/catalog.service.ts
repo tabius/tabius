@@ -7,7 +7,6 @@ import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
 import {combineLatest0, isDefined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
 import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
-import {BrowserStateService} from '@app/services/browser-state.service';
 import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion} from '@app/store';
 import {I18N} from '@app/app-i18n';
 
@@ -27,7 +26,6 @@ const USER_COLLECTIONS_KEY = 'u-collections-';
 export class CatalogService {
 
   constructor(private readonly httpClient: HttpClient,
-              private readonly bss: BrowserStateService,
               @Inject(TABIUS_CATALOG_BROWSER_STORE_TOKEN) private readonly store: ObservableStore) {
   }
 

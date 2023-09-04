@@ -80,10 +80,9 @@
         <div *ngIf="collectionViewModel.listed && isAffiliateBlockVisible" class="affiliate-block">
             <a [href]="buildAffiliateLink(collectionViewModel.displayName)"
                title="{{i18n.affiliateLinkTitle}}"
+               class="btn"
                target="_blank"
-               rel="noopener">
-                {{i18n.affiliateLinkText}}
-            </a>
+            >{{i18n.affiliateLinkText}}</a>
         </div>
 
         <gt-song-prev-next-navigator [activeCollectionId]="collectionViewModel.collection.id"></gt-song-prev-next-navigator>

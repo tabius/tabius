@@ -25,8 +25,8 @@ interface CollectionWithDetailsRow extends CollectionRow {
   listed: number;
 }
 
-const SELECT_COLLECTION_SQL = 'SELECT id, name, type, mount, version, user_id FROM collection';
-const SELECT_COLLECTION_DETAILS_SQL = 'SELECT id, version, band_ids, listed FROM collection';
+const SELECT_COLLECTION_SQL = 'SELECT id, name, type, mount, version, user_id, listed FROM collection';
+const SELECT_COLLECTION_DETAILS_SQL = 'SELECT id, version, band_ids FROM collection';
 
 @Injectable()
 export class CollectionDbi {
@@ -141,6 +141,7 @@ function rowToCollection(row: CollectionRow): Collection {
     mount: row.mount,
     version: row.version,
     userId: row.user_id || undefined,
+    listed: row.listed === 1,
   };
 }
 
@@ -149,6 +150,5 @@ function rowToCollectionDetails(row: CollectionRow): CollectionDetails {
     id: row.id,
     version: row.version,
     bandIds: toArrayOfInts(row.band_ids, ','),
-    listed: row.listed === 1,
   };
 }

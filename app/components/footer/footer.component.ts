@@ -25,10 +25,6 @@ export class FooterComponent implements OnDestroy {
 
   readonly domain = environment.domain;
 
-  readonly twitterLink = environment.domain === 'tabius.ru' || environment.domain === 'localhost'
-                         ? 'https://twitter.com/tratatabius'
-                         : undefined;
-
   readonly githubLink = 'https://github.com/tabius/tabius/commits/master';
   readonly sceneLink = LINK_SCENE;
   readonly catalogLink = LINK_CATALOG;

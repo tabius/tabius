@@ -26,10 +26,10 @@ import {ChordTone} from '@app/utils/chords-lib';
 import {getTransposeActionKey, updateUserSongSetting} from '@app/components/song-chords/song-chords.component';
 import {BreadcrumbList, WithContext} from 'schema-dts';
 import {getSongJsonLdBreadcrumbList} from '@common/util/json-ld';
-import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
 import {assertTruthy} from 'assertic';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {buildAffiliateLink, HAS_AFFILIATE_SUPPORT} from '@app/utils/AffiliateUtils';
 
 @Component({
   templateUrl: './song-page.component.html',
@@ -53,8 +53,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   editorIsOpen = false;
   private isUserCollection = false;
 
-  readonly discussSongLink = TELEGRAM_CHANNEL_URL;
-
   notFound = false;
 
   songMountBeforeUpdate?: string;
@@ -65,6 +63,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   transposeMenuActionText$ = new BehaviorSubject<string|undefined>(undefined);
 
   jsonLdBreadcrumb?: WithContext<BreadcrumbList>;
+
+  affiliateSongLink?: string;
 
   constructor(private readonly catalogService: CatalogService,
               private readonly uds: UserService,
@@ -147,6 +147,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       this.transposeMenuActionText$.next(this.transposeActionKey ? `${getToneWithH4SiFix(h4Si, this.transposeActionKey)}m` : undefined);
 
       this.jsonLdBreadcrumb = getSongJsonLdBreadcrumbList(this.activeCollection, this.song, this.primaryCollection);
+      this.affiliateSongLink = !HAS_AFFILIATE_SUPPORT || !primaryCollection.listed
+                               ? undefined
+                               : buildAffiliateLink(this.primaryCollection.name);
 
       this.updateMeta();
       this.hasEditRight = canManageCollectionContent(user, primaryCollection);

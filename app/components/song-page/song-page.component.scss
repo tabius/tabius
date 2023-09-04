@@ -1,6 +1,6 @@
-@import "app/styles/dimensions";
-@import "app/styles/fonts";
-@import "app/styles/colors";
+@import "styles/dimensions";
+@import "styles/fonts";
+@import "styles/colors";
 
 :host {
   display: flex;
@@ -42,6 +42,10 @@
 
         &:not(:last-of-type) {
           margin-right: 15px;
+        }
+
+        .affiliate-button {
+          color: $color-golden-link;
         }
       }
     }

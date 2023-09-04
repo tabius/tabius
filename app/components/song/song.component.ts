@@ -20,7 +20,7 @@ export class SongComponent extends ComponentWithLoadingIndicator {
   @Input({required: true}) songId!: number;
   @Input() showCollectionLink = false;
   @Input() activeCollectionId?: number;
-  @Input() mode: SongComponentMode = 'SongPageMode';
+  @Input() mode: SongComponentMode = 'song-page-mode';
 
   readonly i18n = I18N.songComponent;
 
@@ -33,10 +33,6 @@ export class SongComponent extends ComponentWithLoadingIndicator {
   // Schema data.
   schemaItemArtistType?: string;
   schemaItemArtistName?: string;
-
-  get loaded(): boolean {
-    return this.song !== undefined;
-  };
 
   constructor(private readonly catalogService: CatalogService,
               private readonly userService: UserService,
@@ -69,6 +65,8 @@ export class SongComponent extends ComponentWithLoadingIndicator {
         }),
         takeUntilDestroyed(),
     ).subscribe(([song, songDetails, collection, primaryCollection, songSettings]) => {
+      this.loaded = true;
+      this.cdr.markForCheck();
       if (!song || !songDetails || !collection || !songSettings) {
         return; // TODO: not found? 404?
       }
@@ -78,7 +76,6 @@ export class SongComponent extends ComponentWithLoadingIndicator {
       this.primaryCollection = primaryCollection;
       this.songSettings = songSettings;
       this.updateSchemaFields();
-      this.cdr.markForCheck();
     });
   }
 
@@ -103,5 +100,4 @@ export class SongComponent extends ComponentWithLoadingIndicator {
   }
 }
 
-export type SongComponentMode = 'SongPageMode'|'PrintMode';
-
+export type SongComponentMode = 'song-page-mode'|'print-mode';
