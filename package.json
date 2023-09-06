@@ -24,8 +24,14 @@
     "start-ssr-org": "npm run build:ssr-dev-org && npm run serve:ssr",
     "update-version": "node scripts/update-build-version.js",
     "update-deps": "rm package-lock.json && rm -rf node_modules && npm install",
-    "pw-tests": "playwright test",
-    "pw-tests-dev": "playwright test --ui"
+    "pw-tests-dev-ru": "TEST_ENV=dev-ru playwright test",
+    "pw-tests-dev-org": "TEST_ENV=dev-org playwright test",
+    "pw-tests-ru": "TEST_ENV=ru playwright test",
+    "pw-tests-org": "TEST_ENV=org playwright test",
+    "pw-tests-ui-dev-ru": "TEST_ENV=dev-ru playwright test --ui",
+    "pw-tests-ui-dev-org": "TEST_ENV=dev-org playwright test --ui",
+    "pw-tests-ui-ru": "TEST_ENV=ru playwright test --ui",
+    "pw-tests-ui-org": "TEST_ENV=org playwright test --ui"
   },
   "private": true,
   "dependencies": {
