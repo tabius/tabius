@@ -3,7 +3,7 @@ import {SongDetails} from '@common/catalog-model';
 import {switchMap} from 'rxjs';
 import {UserService} from '@app/services/user.service';
 import {renderChords} from '@app/utils/chords-renderer';
-import {REQUEST} from '@nguniversal/express-engine/tokens';
+import {REQUEST} from '@app/express.tokens';
 import {getUserAgentFromRequest, isSmallScreenDevice} from '@common/util/misc-utils';
 import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/common-constants';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings} from '@common/user-model';

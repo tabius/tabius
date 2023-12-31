@@ -7,21 +7,23 @@
     </div>
 
     <span (click)="router.navigate(['/'])" style="cursor:pointer;" title="{{i18n.homePageLinkTitle}}">
-        {{domain}}
+        {{ domain }}
     </span>
 
     <div class="version" title="">
         <a href="{{githubLink}}" target="_blank" rel="noopener" title="{{i18n.githubLinkTitle}}">
             <table>
+                <tbody>
                 <tr>
                     <td>
-                        <div>{{day}}</div>
-                        <div>{{month}}</div>
+                        <div>{{ day }}</div>
+                        <div>{{ month }}</div>
                     </td>
                     <td>
                         <gt-svg-icon icon="github"></gt-svg-icon>
                     </td>
                 </tr>
+                </tbody>
             </table>
         </a>
     </div>
@@ -34,7 +36,7 @@
         </a>
         <a *ngIf="menuStack.length === 0 && actions.length === 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white main-menu-button">
             <gt-svg-icon icon="menu"></gt-svg-icon>
-            <div class="menu-button-text">{{i18n.menu}}</div>
+            <div class="menu-button-text">{{ i18n.menu }}</div>
         </a>
         <a *ngFor="let action of actions" (click)="activateAction(action, $event)" class="btn btn-flat-white">
             <div class="menu-item-content">
@@ -43,7 +45,7 @@
                      class="menu-item-title"
                      [ngClass]="{'menu-item-title-with-icon' : !!action.icon}"
                      [ngStyle]="action.textStyle">
-                    <span>{{action.text}}{{action.text$|async}}</span>
+                    <span>{{ action.text }}{{ action.text$|async }}</span>
                 </div>
             </div>
         </a>
@@ -57,42 +59,42 @@
             <div class="item catalog">
                 <a routerLink="{{catalogLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="artist"></gt-svg-icon>
-                    <div class="title">{{i18nNav.catalog}}</div>
+                    <div class="title">{{ i18nNav.catalog }}</div>
                 </a>
             </div>
             <div class="item scene">
                 <a routerLink="{{sceneLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="scene"></gt-svg-icon>
-                    <div class="title">{{i18nNav.scene}}</div>
+                    <div class="title">{{ i18nNav.scene }}</div>
                 </a>
             </div>
             <div class="item studio">
                 <a routerLink="{{studioLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="studio"></gt-svg-icon>
-                    <div class="title">{{i18nNav.studio}}</div>
+                    <div class="title">{{ i18nNav.studio }}</div>
                 </a>
             </div>
             <div class="item tuner">
                 <a routerLink="{{tunerLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="tuner"></gt-svg-icon>
-                    <div class="title">{{i18nNav.tuner}}</div>
+                    <div class="title">{{ i18nNav.tuner }}</div>
                 </a>
             </div>
             <div class="item settings">
                 <a routerLink="{{settingsLink}}" (click)="closeMainMenuDrawer()">
                     <gt-svg-icon icon="settings"></gt-svg-icon>
-                    <div class="title">{{i18nNav.settings}}</div>
+                    <div class="title">{{ i18nNav.settings }}</div>
                 </a>
             </div>
             <div class="item no-sleep" title="{{i18nNav.noSleepTitle}}">
                 <a (click)="toggleNoSleep(); closeMainMenuDrawer()">
                     <gt-svg-icon icon="no-sleep"></gt-svg-icon>
-                    <div class="title">{{i18nNav.noSleep}}</div>
+                    <div class="title">{{ i18nNav.noSleep }}</div>
                 </a>
             </div>
         </div>
         <div class="close-button-line">
-            <a (click)="closeMainMenuDrawer()" class="close-button">{{i18n.closeMenu}}</a>
+            <a (click)="closeMainMenuDrawer()" class="close-button">{{ i18n.closeMenu }}</a>
         </div>
     </div>
 </div>

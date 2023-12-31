@@ -3,7 +3,7 @@ import {BrowserStateService} from '@app/services/browser-state.service';
 import {Observable} from 'rxjs';
 import {HelpService} from '@app/services/help.service';
 import {ShortcutsService} from '@app/services/shortcuts.service';
-import {REQUEST} from '@nguniversal/express-engine/tokens';
+import {REQUEST} from '@app/express.tokens';
 import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-history.service';
 
 @Component({

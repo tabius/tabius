@@ -364,10 +364,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   get isSearchVideoOnYoutubeLinkVisible(): boolean {
-    if (!this.isBrowser) {
+    const width = typeof window === 'object' && window.innerWidth;
+    if (!width) {
       return false;
     }
-    const width = window && window.innerWidth;
     return width >= MIN_DESKTOP_WIDTH && !!this.song && !!this.primaryCollection;
   }
 

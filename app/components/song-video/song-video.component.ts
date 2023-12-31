@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Inject, Input, OnChanges, Optional} 
 import {BrowserStateService} from '@app/services/browser-state.service';
 import {getFirstYoutubeVideoIdFromLinks} from '@common/util/media-links-utils';
 import {isBotUserAgent} from '@common/util/misc-utils';
-import {REQUEST} from '@nguniversal/express-engine/tokens';
+import {REQUEST} from '@app/express.tokens';
 
 @Component({
   selector: 'gt-song-video',

@@ -93,7 +93,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
 
   private bringFocusToTheSearchField(): void {
     // do not focus: 1) During SSR, 2) On a touch device to avoid virtual keyboard to be opened, 3) On non-default scrolling position to avoid re-scroll.
-    if (this.isBrowser && !isTouchDevice() && window.screenY === 0) {
+    if (typeof window === 'object' && !isTouchDevice() && window.screenY === 0) {
       setTimeout(() => {
         if (this.searchField && this.searchField.nativeElement) {
           this.searchField.nativeElement.focus();

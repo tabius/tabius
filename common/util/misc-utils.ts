@@ -167,7 +167,7 @@ export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promi
 }
 
 export function isTouchDevice(): boolean {
-  return document && 'ontouchstart' in document.documentElement;
+  return typeof document === 'object' && 'ontouchstart' in document.documentElement;
 }
 
 export function sortSongsAlphabetically(songs: Song[]): Song[] {

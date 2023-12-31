@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Inject, Optional} from '@angular/core';
-import {RESPONSE} from '@nguniversal/express-engine/tokens';
+import {RESPONSE} from '@app/express.tokens';
 import {addStatus404ToResponse} from '@app/utils/component-utils';
 import {I18N} from '@app/app-i18n';
 

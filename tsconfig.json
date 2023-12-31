@@ -1,26 +1,25 @@
 {
   "compilerOptions": {
-    "importHelpers": true,
-    "sourceMap": true,
-    "moduleResolution": "node",
+    "baseUrl": "./",
+    "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
     "strictNullChecks": true,
-    "downlevelIteration": true,
+    "strictPropertyInitialization": true,
     "target": "ES2022",
-    "baseUrl": "./",
     "paths": {
       "@app/*": ["./app/*"],
       "@common/*": ["./common/*"],
       "@server/*": ["./server/*"]
     },
-    "lib": ["es2018", "dom"]
-  },
-  "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+    "lib": [
+      "ES2022",
+      "DOM"
+    ]
   }
 }

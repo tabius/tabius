@@ -1,63 +1,63 @@
-require('zone.js/dist/zone-node');
-const domino = require('domino-ext'); // // eslint-disable-line @typescript-eslint/no-var-requires
-applyDomino();
-
-import {environment} from '@app/environments/environment';
-import {ngExpressEngine} from '@nguniversal/express-engine';
-import * as express from 'express';
-import {join} from 'path';
+import 'zone.js/node';
 
 import {APP_BASE_HREF} from '@angular/common';
-import {existsSync} from 'fs';
-import {enableProdMode} from '@angular/core';
-import {AppServerModule} from '@app/app.ssr.module';
+import {CommonEngine} from '@angular/ssr';
+import * as express from 'express';
+import {join} from 'node:path';
+import {REQUEST, RESPONSE} from '@app/express.tokens';
+import bootstrap from '@app/main.server';
 
-console.log('Initializing Angular SSR backend');
+// The Express app is exported so that it can be used by serverless Functions.
+export function app(): express.Express {
+  const server = express();
+  const distFolder = join(process.cwd(), 'dist/browser');
+  const indexHtml = join(distFolder, 'index.html');
 
-if (environment.production) {
-  enableProdMode();
+  const commonEngine = new CommonEngine();
+
+  server.set('view engine', 'html');
+  server.set('views', distFolder);
+
+  // Example Express Rest API endpoints
+  // server.get('/api/**', (req, res) => { });
+  // Serve static files from /browser
+  server.get('*.*', express.static(distFolder, {
+    maxAge: '1y'
+  }));
+
+  // All regular routes use the Angular engine
+  server.get('*', (req, res, next) => {
+    const {protocol, originalUrl, baseUrl, headers} = req;
+
+    commonEngine
+        .render({
+          bootstrap,
+          documentFilePath: indexHtml,
+          url: `${protocol}://${headers.host}${originalUrl}`,
+          publicPath: distFolder,
+          providers: [
+            {provide: APP_BASE_HREF, useValue: baseUrl},
+            {provide: RESPONSE, useValue: res},
+            {provide: REQUEST, useValue: req}
+          ],
+        })
+        .then((html) => res.send(html))
+        .catch((err) => next(err));
+  });
+
+  return server;
 }
 
-const app = express();
-const distFolder = join(process.cwd(), 'dist/browser');
-const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
+function run(): void {
+  const port = process.env['PORT'] || 12101;
 
-// Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
-app.engine('html',
-    ngExpressEngine({
-      bootstrap: AppServerModule,
-    })
-);
-
-app.set('view engine', 'html');
-app.set('views', distFolder);
-
-// Serve static files from /browser
-app.get('*.*', express.static(distFolder, {maxAge: '1y'}));
-
-// All regular routes use the Universal engine
-app.get('*', (req, res) => {
-  res.render(indexHtml, {req, providers: [{provide: APP_BASE_HREF, useValue: req.baseUrl}]});
-});
-
-const port = process.env.PORT || 12101;
-
-// Start up the Node server
-app.listen(port, () => {
-  console.log(`Express server is listening on http://localhost:${port}`);
-});
-
-
-function applyDomino(): void {
-  console.log('Setting app Domino polyfills');
-
-  global['Element'] = (domino as any).impl.Element; // eslint-disable-line @typescript-eslint/no-explicit-any.
-  const dominoWindow = domino.createWindow('<body></body>');
-
-  global['window'] = dominoWindow as Window&typeof globalThis;
-  Object.defineProperty(dominoWindow.document.body.style, 'transform', {value: () => ({enumerable: true, configurable: true})});
-  global['document'] = dominoWindow.document;
-  global['navigator'] = dominoWindow.navigator;
-  global['CSS'] = {escape: (value) => value, supports: () => false} as any; // eslint-disable-line @typescript-eslint/no-explicit-any.
-  global['Prism'] = null;
+  // Start up the Node server
+  const server = app();
+  server.listen(port, () => {
+    console.log(`Node Express server listening on http://localhost:${port}`);
+  });
 }
+
+run();
+
+export default bootstrap;

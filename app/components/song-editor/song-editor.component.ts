@@ -223,6 +223,9 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   }
 
   getContentRowsCount(): number {
+    if (typeof window !== 'object') {
+      return 100;
+    }
     // simple heuristic that works (can be improved later if needed).
     const headerHeight = getCurrentNavbarHeight();
     const titleInputHeight = 28;

@@ -91,7 +91,7 @@ const SONG_FONT_SIZE_DESKTOP = 18;
 const SONG_FONT_SIZE_HIRES_DESKTOP = 20;
 
 export function getDefaultUserSongFontSize(): number {
-  const width = window && window.innerWidth;
+  const width = typeof window === 'object' && window.innerWidth;
   return !width || (width >= MIN_DESKTOP_WIDTH && width < HIRES_DESKTOP_WIDTH)
          ? SONG_FONT_SIZE_DESKTOP
          : width < MIN_DESKTOP_WIDTH

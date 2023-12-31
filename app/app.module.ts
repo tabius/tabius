@@ -1,6 +1,6 @@
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {ErrorHandler, NgModule, Provider} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
+import {BrowserModule, provideClientHydration} from '@angular/platform-browser';
 import {AppComponent} from '@app/components/app.component';
 import {SiteHomePageComponent} from '@app/components/site-home-page/site-home-page.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
@@ -68,7 +68,7 @@ const interceptors: Array<Provider> = [
   {provide: HTTP_INTERCEPTORS, useClass: ApiUrlInterceptor, multi: true},
 ];
 
-const userAgent = window?.navigator?.userAgent;
+const userAgent = typeof window === 'object' ? window.navigator?.userAgent : undefined;
 if (userAgent !== undefined && userAgent.length > 0) {
   interceptors.push({provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true});
 } else {
@@ -127,7 +127,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
   ],
   imports: [
     BrowserAnimationsModule,
-    BrowserModule.withServerTransition({appId: 'tabius'}),
+    BrowserModule,
     FormsModule,
     //TODO: HammerModule,
     HttpClientModule,
@@ -146,7 +146,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
       },
       authorizationParams: {
         audience: AUTH0_WEB_CLIENT_AUDIENCE,
-        redirect_uri: window.location.origin,
+        redirect_uri: typeof window === 'object' ? window.location.origin : 'TODO',
       }
     },),
     NgOptimizedImage,
@@ -159,6 +159,8 @@ if (userAgent !== undefined && userAgent.length > 0) {
     {provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore},
     BrowserStateService,
     HelpService,
+    HttpClientModule,
+    provideClientHydration(),
     PwaUpdaterService
   ],
   bootstrap: [AppComponent]

@@ -1,9 +1,9 @@
 import {ApplicationRef, Inject, Injectable} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
-import {first, take} from 'rxjs/operators';
+import {first} from 'rxjs/operators';
 import {APP_BROWSER_STORE_TOKEN} from '@app/app-constants';
 import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
-import {concat, interval} from 'rxjs';
+import {concat, firstValueFrom, interval} from 'rxjs';
 
 const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';
 
@@ -29,25 +29,19 @@ export class PwaUpdaterService {
       updates.checkForUpdate().catch(err => console.error(err));
     });
 
-    updates.available.subscribe(event => {
+    updates.versionUpdates.subscribe(async event => {
       console.debug('Found new app update: ', event);
-      // ensure we have no reload loop for whatever reason it may happen
-      appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck)
-          .pipe(take(1))
-          .subscribe(lastForcedUpdateTime => {
-            const now = Date.now();
-            if (lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000) {
-              console.info('Enforcing app updated!');
-              appStore.set(LAST_FORCED_UPDATE_TIME_KEY, now, skipUpdateCheck).then(() => {
-                updates.activateUpdate().then(() => document.location.reload());
-              });
-            } else {
-              console.info(`Ignoring update, time since last forced update: ${now - lastForcedUpdateTime}ms`);
-            }
-          });
-    });
-    updates.activated.subscribe(event => {
-      console.log('New version is activated: ', event.current);
+      // Ensure we have no reload loop for whatever reason it may happen
+      const lastForcedUpdateTime = await firstValueFrom(appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck));
+      const now = Date.now();
+      if (!(lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000)) {
+        console.info(`Ignoring update, time since last forced update: ${now - lastForcedUpdateTime}ms`);
+        return;
+      }
+      console.info('Enforcing app update');
+      await appStore.set(LAST_FORCED_UPDATE_TIME_KEY, now, skipUpdateCheck);
+      await updates.activateUpdate();
+      document.location.reload();
     });
   }
 }

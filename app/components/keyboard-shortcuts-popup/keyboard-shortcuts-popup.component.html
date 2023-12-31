@@ -1,95 +1,99 @@
 <div class="dialog">
 
-    <h1>{{i18n.title}}</h1>
+    <h1>{{ i18n.title }}</h1>
 
     <table *ngIf="page === 'song'" class="shortcuts-list">
+        <tbody>
         <tr>
-            <td>{{i18n.prevSong}}</td>
+            <td>{{ i18n.prevSong }}</td>
             <td>SHIFT + ⇦</td>
         </tr>
         <tr>
-            <td>{{i18n.nextSong}}</td>
+            <td>{{ i18n.nextSong }}</td>
             <td>SHIFT + ⇨</td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.transposeUp}}</td>
+            <td>{{ i18n.songPage.transposeUp }}</td>
             <td>SHIFT + ⇧</td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.transposeDown}}</td>
+            <td>{{ i18n.songPage.transposeDown }}</td>
             <td>SHIFT + ⇩</td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.resetTranspose}}</td>
+            <td>{{ i18n.songPage.resetTranspose }}</td>
             <td>SHIFT + 0</td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.scrollToSongStart}}</td>
-            <td>{{i18n.right}} CTRL <span class="hint">({{i18n.twice}})</span></td>
+            <td>{{ i18n.songPage.scrollToSongStart }}</td>
+            <td>{{ i18n.right }} CTRL <span class="hint">({{ i18n.twice }})</span></td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.changeSongFontSize}}</td>
+            <td>{{ i18n.songPage.changeSongFontSize }}</td>
             <td>+ <span class="hint">|</span> - <span class="hint">|</span> 0</td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.scrollPageDown}}</td>
+            <td>{{ i18n.songPage.scrollPageDown }}</td>
             <td>SPACE</td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.scrollPageUp}}</td>
+            <td>{{ i18n.songPage.scrollPageUp }}</td>
             <td>SHIFT + SPACE</td>
         </tr>
         <tr>
-            <td>{{i18n.songPage.editSong}}</td>
+            <td>{{ i18n.songPage.editSong }}</td>
             <td>SHIFT + E</td>
         </tr>
         <tr>
-            <td>{{i18n.saveSong}}</td>
+            <td>{{ i18n.saveSong }}</td>
             <td>CTRL + Enter</td>
         </tr>
         <tr>
-            <td>{{i18n.gotoRandomSongInCatalog}}</td>
-            <td>{{i18n.left}} SHIFT <span class="hint">({{i18n.twice}})</span></td>
+            <td>{{ i18n.gotoRandomSongInCatalog }}</td>
+            <td>{{ i18n.left }} SHIFT <span class="hint">({{ i18n.twice }})</span></td>
         </tr>
         <tr>
-            <td>{{i18n.gotoRandomSongInCollection}}</td>
-            <td>{{i18n.right}} SHIFT <span class="hint">({{i18n.twice}})</span></td>
+            <td>{{ i18n.gotoRandomSongInCollection }}</td>
+            <td>{{ i18n.right }} SHIFT <span class="hint">({{ i18n.twice }})</span></td>
         </tr>
         <tr>
-            <td>{{i18n.playChordSound}}</td>
+            <td>{{ i18n.playChordSound }}</td>
             <td>CTRL + click</td>
         </tr>
         <tr>
-            <td>{{i18n.showHelp}}</td>
+            <td>{{ i18n.showHelp }}</td>
             <td>?</td>
         </tr>
+        </tbody>
     </table>
 
     <table *ngIf="page === 'collection'" class="shortcuts-list">
+        <tbody>
         <tr>
-            <td>{{i18n.prevSong}}</td>
+            <td>{{ i18n.prevSong }}</td>
             <td>SHIFT + ⇦</td>
         </tr>
         <tr>
-            <td>{{i18n.nextSong}}</td>
+            <td>{{ i18n.nextSong }}</td>
             <td>SHIFT + ⇨</td>
         </tr>
         <tr>
-            <td>{{i18n.collectionPage.addSong}}</td>
+            <td>{{ i18n.collectionPage.addSong }}</td>
             <td>SHIFT + A</td>
         </tr>
         <tr>
-            <td>{{i18n.saveSong}}</td>
+            <td>{{ i18n.saveSong }}</td>
             <td>CTRL + Enter</td>
         </tr>
         <tr>
-            <td>{{i18n.showHelp}}</td>
+            <td>{{ i18n.showHelp }}</td>
             <td>?</td>
         </tr>
+        </tbody>
     </table>
 
     <div class="buttons-row">
-        <button class="btn btn-flat-white" (click)="popover.close()">{{i18n.close}}</button>
+        <button class="btn btn-flat-white" (click)="popover.close()">{{ i18n.close }}</button>
     </div>
 
 </div>
