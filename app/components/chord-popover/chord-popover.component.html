@@ -1,26 +1,26 @@
 <div class="chord-popover">
-    <div *ngIf="chordLayout" class="chord-layout-found-block">
-        <gt-chord-image [layout]="chordLayout!"
-                        [h4Si]="h4Si"
-                        size="4"
-                        (click)="popover.close()"
-        ></gt-chord-image>
-        <div class="link-block">
-        </div>
-        <div class="link-block">
-            <a (click)="playChord()" target="_blank">{{i18n.playChordText}}</a>
-        </div>
+  <div *ngIf="chordLayout" class="chord-layout-found-block">
+    <gt-chord-image [layout]="chordLayout!"
+                    [h4Si]="h4Si"
+                    size="4"
+                    (click)="popover.close()"
+    ></gt-chord-image>
+    <div class="link-block">
     </div>
-    <div *ngIf="!chordLayout" class="chord-layout-not-found-block">
-        <p>
-            {{i18n.tabiusHasNoChordLayout}}
-        </p>
-        <p>
-            {{i18n.discussLink.prefix}}
-            <a href="{{chordDiscussionUrl}}" title="{{i18n.discussLink.title}}" target="_blank">
-                {{i18n.discussLink.link}}
-            </a>
-            {{i18n.discussLink.suffix}}
-        </p>
+    <div class="link-block">
+      <a (click)="playChord()" target="_blank">{{ i18n.playChordText }}</a>
     </div>
+  </div>
+  <div *ngIf="!chordLayout" class="chord-layout-not-found-block">
+    <p>
+      {{ i18n.tabiusHasNoChordLayout }}
+    </p>
+    <p>
+      {{ i18n.discussLink.prefix }}
+      <a href="{{chordDiscussionUrl}}" title="{{i18n.discussLink.title}}" target="_blank">
+        {{ i18n.discussLink.link }}
+      </a>
+      {{ i18n.discussLink.suffix }}
+    </p>
+  </div>
 </div>

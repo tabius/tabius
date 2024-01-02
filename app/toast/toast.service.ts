@@ -1,13 +1,13 @@
-import {Injectable, Injector} from '@angular/core';
-import {Overlay} from '@angular/cdk/overlay';
-import {ComponentPortal, PortalInjector} from '@angular/cdk/portal';
+import { Injectable, Injector } from '@angular/core';
+import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal, PortalInjector } from '@angular/cdk/portal';
 
-import {ToastComponent} from './toast.component';
-import {Toast, ToastRef, ToastType} from '@app/toast/toast-model';
-import {I18N} from '@app/app-i18n';
+import { ToastComponent } from './toast.component';
+import { Toast, ToastRef, ToastType } from '@app/toast/toast-model';
+import { I18N } from '@app/app-i18n';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToastService {
 
@@ -33,9 +33,9 @@ export class ToastService {
       }
       delete this.lastToast;
     }
-    const overlayRef = this.overlay.create({panelClass: 'toast-overlay'});
+    const overlayRef = this.overlay.create({ panelClass: 'toast-overlay' });
     const toastRef = new ToastRef(overlayRef);
-    const injector = getInjector({text, type}, toastRef, this.parentInjector);
+    const injector = getInjector({ text, type }, toastRef, this.parentInjector);
     overlayRef.attach(new ComponentPortal(ToastComponent, null, injector));
     this.lastToast = toastRef;
     return toastRef;

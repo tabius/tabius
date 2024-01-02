@@ -1,8 +1,8 @@
-import {ConnectedOverlayPositionChange, FlexibleConnectedPositionStrategy, OverlayRef, PositionStrategy} from '@angular/cdk/overlay';
-import {Observable, of, Subject} from 'rxjs';
-import {filter} from 'rxjs/operators';
+import { ConnectedOverlayPositionChange, FlexibleConnectedPositionStrategy, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
+import { Observable, of, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
-import {PopoverConfig} from './popover-config';
+import { PopoverConfig } from './popover-config';
 
 /**
  * Reference to a popover opened via the Popover service.
@@ -21,11 +21,11 @@ export class PopoverRef<T = any> {
       });
 
       this.overlayRef.keydownEvents()
-          .pipe(filter(event => event.key === 'Escape'))
-          .subscribe((event) => {
-            event.stopPropagation();
-            this.close();
-          });
+        .pipe(filter(event => event.key === 'Escape'))
+        .subscribe((event) => {
+          event.stopPropagation();
+          this.close();
+        });
     }
   }
 

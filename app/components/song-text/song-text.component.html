@@ -11,7 +11,7 @@
      (gtChordPopoverOnClick_onChordLayoutChanged)="this.popoverChordLayout = $event"
 >
     <div *ngIf="isBrowser" [innerHTML]="getSongHtml() | safeHtml"></div>
-    <div *ngIf="!isBrowser">{{song.content}}</div>
+    <div *ngIf="!isBrowser">{{ song.content }}</div>
 </div>
 
 <ng-template #chordPopover let-popover="popover">

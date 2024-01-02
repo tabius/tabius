@@ -2,8 +2,8 @@
 
     <div *ngIf="bss.isSmallScreenMode$|async" class="mobile-buttons-row">
         <!-- Note: in small screen mode randon song navigation buttons are located in the app footer. -->
-        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong}}</a>
-        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong}}</a>
+        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong }}</a>
+        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong }}</a>
     </div>
 
     <div *ngIf="bss.isWideScreenMode$|async" class="sticky-sidebar">

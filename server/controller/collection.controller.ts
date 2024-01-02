@@ -1,14 +1,14 @@
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session} from '@nestjs/common';
-import {Collection, CollectionDetails} from '@common/catalog-model';
-import {CollectionDbi, generateCollectionMountForUser} from '@server/db/collection-dbi.service';
-import {CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId} from '@server/util/validators';
-import {CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse} from '@common/ajax-model';
-import {User} from '@common/user-model';
-import {ServerAuthService} from '@server/service/server-auth.service';
-import {conformsTo, validate} from '@server/util/validation';
-import {canManageCollectionContent, isModerator, isValidUserId} from '@common/util/misc-utils';
-import {SongDbi} from '@server/db/song-dbi.service';
-import {AsyncFreshValue} from 'frescas';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
+import { Collection, CollectionDetails } from '@common/catalog-model';
+import { CollectionDbi, generateCollectionMountForUser } from '@server/db/collection-dbi.service';
+import { CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId } from '@server/util/validators';
+import { CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse } from '@common/ajax-model';
+import { User } from '@common/user-model';
+import { ServerAuthService } from '@server/service/server-auth.service';
+import { conformsTo, validate } from '@server/util/validation';
+import { canManageCollectionContent, isModerator, isValidUserId } from '@common/util/misc-utils';
+import { SongDbi } from '@server/db/song-dbi.service';
+import { AsyncFreshValue } from 'frescas';
 
 @Controller('/api/collection')
 export class CollectionController {
@@ -37,7 +37,7 @@ export class CollectionController {
     }
     const collections = await this.collectionDbi.getAllUserCollections(userId);
     const songIds: number[][] = await Promise.all(
-        collections.map(collection => this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collection.id))
+      collections.map(collection => this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collection.id)),
     );
     return {
       collectionInfos: collections.map((collection, index) => ({
@@ -104,7 +104,7 @@ export class CollectionController {
     }
     return {
       collectionId,
-      collections: await this.getAllListedCollections()
+      collections: await this.getAllListedCollections(),
     };
   }
 
@@ -185,7 +185,7 @@ export class CollectionController {
     await this.collectionDbi.deleteCollection(collectionId);
     return {
       userId: user.id,
-      collections: await this.collectionDbi.getAllUserCollections(user.id)
+      collections: await this.collectionDbi.getAllUserCollections(user.id),
     };
   }
 }

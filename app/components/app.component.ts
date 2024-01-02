@@ -1,21 +1,21 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Inject, Optional, TemplateRef, ViewChild} from '@angular/core';
-import {BrowserStateService} from '@app/services/browser-state.service';
-import {Observable} from 'rxjs';
-import {HelpService} from '@app/services/help.service';
-import {ShortcutsService} from '@app/services/shortcuts.service';
-import {REQUEST} from '@app/express.tokens';
-import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-history.service';
+import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Inject, Optional, TemplateRef, ViewChild } from '@angular/core';
+import { BrowserStateService } from '@app/services/browser-state.service';
+import { Observable } from 'rxjs';
+import { HelpService } from '@app/services/help.service';
+import { ShortcutsService } from '@app/services/shortcuts.service';
+import { REQUEST } from '@app/express.tokens';
+import { CatalogNavigationHistoryService } from '@app/services/catalog-navigation-history.service';
 
 @Component({
   selector: 'gt-app',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements AfterViewInit {
 
-  @ViewChild('keyboardShortcuts', {static: true}) keyboardShortcuts!: TemplateRef<{}>;
-  @ViewChild('navigationHistory', {static: true}) navigationHistory!: TemplateRef<{}>;
+  @ViewChild('keyboardShortcuts', { static: true }) keyboardShortcuts!: TemplateRef<{}>;
+  @ViewChild('navigationHistory', { static: true }) navigationHistory!: TemplateRef<{}>;
 
   readonly printMode$: Observable<boolean>;
 

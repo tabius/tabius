@@ -9,7 +9,7 @@ $distance_between_circles: 40px;
 $step_timing: 0.6s;
 
 $warning-block-width: 250px;
-$warning-block-margin-left:  math.div($size - $warning-block-width, 2);
+$warning-block-margin-left: math.div($size - $warning-block-width, 2);
 
 :host {
   display: inline-block;

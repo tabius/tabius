@@ -1,14 +1,14 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
-import {Collection} from '@common/catalog-model';
-import {LINK_CATALOG, LINK_STUDIO} from '@common/mounts';
-import {getCollectionPageLink, isValidUserId} from '@common/util/misc-utils';
-import {I18N} from '@app/app-i18n';
+import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import { Collection } from '@common/catalog-model';
+import { LINK_CATALOG, LINK_STUDIO } from '@common/mounts';
+import { getCollectionPageLink, isValidUserId } from '@common/util/misc-utils';
+import { I18N } from '@app/app-i18n';
 
 @Component({
   selector: 'gt-collection-breadcrumb',
   templateUrl: './collection-breadcrumb.component.html',
   styleUrls: ['./collection-breadcrumb.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionBreadcrumbComponent implements OnChanges {
 

@@ -1,6 +1,6 @@
 <ul>
     <li *ngFor="let collectionInfo of collectionInfos" class="collection-list-item" [attr.data-pw]="collectionInfo.id">
-        <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{collectionInfo.linkText}}</a>
+        <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{ collectionInfo.linkText }}</a>
     </li>
 </ul>
 
@@ -14,7 +14,7 @@
             class="btn create-button"
             title="{{i18n.createCollectionButtonTitle}}"
             [disabled]="!createCollectionForm.form.valid">
-        {{i18n.createCollectionButton}}
+        {{ i18n.createCollectionButton }}
     </button>
 
 </form>

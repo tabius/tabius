@@ -1,5 +1,5 @@
 /** Browser store names. */
-import {environment} from '@app/environments/environment';
+import { environment } from '@app/environments/environment';
 
 export const USER_STORE_NAME = 'user';
 export const CATALOG_STORE_NAME = 'catalog';

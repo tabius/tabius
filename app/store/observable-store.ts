@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs';
-import {KV} from './async-store';
+import { Observable } from 'rxjs';
+import { KV } from './async-store';
 
 /** Returns true if the new value is different from the old one and should be updated in the DB. */
 export type CheckUpdateFn<T> = (oldValue?: T, newValue?: T) => boolean;

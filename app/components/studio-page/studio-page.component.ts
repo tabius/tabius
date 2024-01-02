@@ -1,22 +1,22 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {UserService} from '@app/services/user.service';
-import {User} from '@common/user-model';
-import {combineLatest, Observable, of} from 'rxjs';
-import {map, switchMap, throttleTime} from 'rxjs/operators';
-import {CatalogService} from '@app/services/catalog.service';
-import {Collection, Song} from '@common/catalog-model';
-import {sortSongsAndRelatedItems} from '@app/components/collection-page/collection-page.component';
-import {combineLatest0, getSongPageLink, isDefined} from '@common/util/misc-utils';
-import {SongEditResult} from '@app/components/song-editor/song-editor.component';
-import {Router} from '@angular/router';
-import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
-import {I18N} from '@app/app-i18n';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UserService } from '@app/services/user.service';
+import { User } from '@common/user-model';
+import { combineLatest, Observable, of } from 'rxjs';
+import { map, switchMap, throttleTime } from 'rxjs/operators';
+import { CatalogService } from '@app/services/catalog.service';
+import { Collection, Song } from '@common/catalog-model';
+import { sortSongsAndRelatedItems } from '@app/components/collection-page/collection-page.component';
+import { combineLatest0, getSongPageLink, isDefined } from '@common/util/misc-utils';
+import { SongEditResult } from '@app/components/song-editor/song-editor.component';
+import { Router } from '@angular/router';
+import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
+import { I18N } from '@app/app-i18n';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   templateUrl: './studio-page.component.html',
   styleUrls: ['./studio-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StudioPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.studioPage;
@@ -39,49 +39,49 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
     const user$ = this.uds.getUser$();
     const allUserCollectionIds$ = user$.pipe(switchMap(user => this.cds.getUserCollectionIds(user && user.id)));
     const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
-        switchMap((collectionIds: number[]|undefined) =>
-            combineLatest0((collectionIds || []).map(id => this.cds.getSongIdsByCollection(id)))),
-        switchMap((songIdsArray: (number[]|undefined)[]) => {
-          const uniqueSongIds = new Set<number>();
-          for (const collectionSongIds of (songIdsArray || [])) {
-            for (const songId of (collectionSongIds || [])) {
-              uniqueSongIds.add(songId);
-            }
+      switchMap((collectionIds: number[]|undefined) =>
+        combineLatest0((collectionIds || []).map(id => this.cds.getSongIdsByCollection(id)))),
+      switchMap((songIdsArray: (number[]|undefined)[]) => {
+        const uniqueSongIds = new Set<number>();
+        for (const collectionSongIds of (songIdsArray || [])) {
+          for (const songId of (collectionSongIds || [])) {
+            uniqueSongIds.add(songId);
           }
-          return combineLatest0([...uniqueSongIds].map(songId => this.cds.observeSong(songId)));
-        }),
-        map(songs => songs.filter(isDefined)),
+        }
+        return combineLatest0([...uniqueSongIds].map(songId => this.cds.observeSong(songId)));
+      }),
+      map(songs => songs.filter(isDefined)),
     );
 
     const songsPickedByUser$: Observable<Song[]> = combineLatest([allUserCollectionIds$, allSongsInAllUserCollections$])
-        .pipe(
-            map(([collectionIds, songs]) => songs.filter(s => collectionIds.includes(s.collectionId)))
-        );
+      .pipe(
+        map(([collectionIds, songs]) => songs.filter(s => collectionIds.includes(s.collectionId))),
+      );
 
     const primarySongCollections$: Observable<(Collection|undefined)[]> = songsPickedByUser$.pipe(
-        switchMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
+      switchMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
     );
 
     const primaryUserCollection$ = user$.pipe(
-        switchMap(user => user ? this.cds.observeCollection(user.collectionId) : of(undefined))
+      switchMap(user => user ? this.cds.observeCollection(user.collectionId) : of(undefined)),
     );
 
     combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollections$])
-        .pipe(
-            throttleTime(100, undefined, {leading: true, trailing: true}),
-            takeUntilDestroyed(),
-        )
-        .subscribe(([user, primaryUserCollection, songs, primarySongCollections]) => {
-          this.cdr.markForCheck();
-          this.loaded = true;
-          if (!user || !primaryUserCollection || !songs || !primarySongCollections) {
-            //TODO: switchToNotFoundMode(this);
-            return;
-          }
-          this.user = user;
-          this.primaryUserCollectionMount = primaryUserCollection.mount;
-          [this.songs, this.primarySongCollections] = sortSongsAndRelatedItems(songs, primarySongCollections);
-        });
+      .pipe(
+        throttleTime(100, undefined, { leading: true, trailing: true }),
+        takeUntilDestroyed(),
+      )
+      .subscribe(([user, primaryUserCollection, songs, primarySongCollections]) => {
+        this.cdr.markForCheck();
+        this.loaded = true;
+        if (!user || !primaryUserCollection || !songs || !primarySongCollections) {
+          //TODO: switchToNotFoundMode(this);
+          return;
+        }
+        this.user = user;
+        this.primaryUserCollectionMount = primaryUserCollection.mount;
+        [this.songs, this.primarySongCollections] = sortSongsAndRelatedItems(songs, primarySongCollections);
+      });
     this.updatePageMetadata(this.i18n.meta);
   }
 

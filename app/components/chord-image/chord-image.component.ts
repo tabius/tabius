@@ -1,20 +1,20 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, ViewChild} from '@angular/core';
-import {ChordImagePainter} from '@app/utils/chord-image-painter';
-import {ChordLayout} from '@app/utils/chords-layout-lib';
-import {isPlatformBrowser} from '@angular/common';
-import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
-import {I18N} from '@app/app-i18n';
-import {getToneWithH4SiFix} from '@app/utils/chords-renderer';
-import {getDefaultH4SiFlag} from '@common/user-model';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, ViewChild } from '@angular/core';
+import { ChordImagePainter } from '@app/utils/chord-image-painter';
+import { ChordLayout } from '@app/utils/chords-layout-lib';
+import { isPlatformBrowser } from '@angular/common';
+import { VISUAL_TYPE_BY_CHORD_TYPE } from '@app/utils/chords-parser-lib';
+import { I18N } from '@app/app-i18n';
+import { getToneWithH4SiFix } from '@app/utils/chords-renderer';
+import { getDefaultH4SiFlag } from '@common/user-model';
 
 @Component({
   selector: 'gt-chord-image',
   templateUrl: './chord-image.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChordImageComponent implements AfterViewInit, OnChanges {
 
-  @Input({required: true}) layout!: ChordLayout;
+  @Input({ required: true }) layout!: ChordLayout;
   @Input() size = 2.3;
   @Input() h4Si = getDefaultH4SiFlag();
 
@@ -26,7 +26,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
   private readonly isBrowser: boolean;
   private painter!: ChordImagePainter;
 
-  @ViewChild('canvas', {static: true}) canvas!: ElementRef;
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) platformId: string) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -36,7 +36,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
     if (!this.isBrowser) {
       return;
     }
-    const {chord} = this.layout;
+    const { chord } = this.layout;
     const visualTone = getToneWithH4SiFix(this.h4Si, chord.tone);
     const visualBassToneSuffix = chord.bassTone ? '/' + getToneWithH4SiFix(this.h4Si, chord.bassTone) : '';
     const visualChordName = visualTone + VISUAL_TYPE_BY_CHORD_TYPE.get(chord.type) + visualBassToneSuffix;
@@ -54,7 +54,7 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
   }
 
   getChordTextForTitle(): string {
-    const {chord} = this.layout;
+    const { chord } = this.layout;
     return getToneWithH4SiFix(this.h4Si, chord.tone) + chord.type;
   }
 }

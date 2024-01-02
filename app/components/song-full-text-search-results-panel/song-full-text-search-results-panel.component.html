@@ -1,43 +1,43 @@
 <div *ngIf="loading">
-    {{i18n.searchingInSongText}}
+    {{ i18n.searchingInSongText }}
 </div>
 
 <div *ngIf="!loading">
 
     <div class="title-result-block">
         <h3>
-            {{i18n.titleResults}}
+            {{ i18n.titleResults }}
             <span class="top-results-message">
-                <ng-container *ngIf="titleResults.length === maxTitleResults">/ первые {{maxTitleResults}}</ng-container>
-                <ng-container *ngIf="titleResults.length !== maxTitleResults">/ всего {{titleResults.length}}</ng-container>
+                <ng-container *ngIf="titleResults.length === maxTitleResults">/ первые {{ maxTitleResults }}</ng-container>
+                <ng-container *ngIf="titleResults.length !== maxTitleResults">/ всего {{ titleResults.length }}</ng-container>
             </span>
         </h3>
         <div *ngIf="titleResults.length === 0" class="no-results-message">
-            {{i18n.noResults}}
+            {{ i18n.noResults }}
         </div>
         <div *ngFor="let searchResult of titleResults">
-            <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}}
-                <span class="collection-name">({{searchResult.collectionName}})</span>
+            <a routerLink="{{getSongLink(searchResult)}}">{{ searchResult.songTitle }}
+                <span class="collection-name">({{ searchResult.collectionName }})</span>
             </a>
         </div>
     </div>
 
     <div class="content-result-block">
         <h3>
-            {{i18n.textResults}}
+            {{ i18n.textResults }}
             <span class="top-results-message">
-                <ng-container *ngIf="contentResults.length === maxContentResults">/ {{i18n.first}} {{maxContentResults}}</ng-container>
-                <ng-container *ngIf="contentResults.length !== maxContentResults">/ {{i18n.total}} {{contentResults.length}}</ng-container>
+                <ng-container *ngIf="contentResults.length === maxContentResults">/ {{ i18n.first }} {{ maxContentResults }}</ng-container>
+                <ng-container *ngIf="contentResults.length !== maxContentResults">/ {{ i18n.total }} {{ contentResults.length }}</ng-container>
             </span>
         </h3>
 
         <div *ngIf="contentResults.length === 0" class="no-results-message">
-            {{i18n.noResults}}
+            {{ i18n.noResults }}
         </div>
         <div *ngFor="let searchResult of contentResults" class="content-result-item">
             <div>
-                <a routerLink="{{getSongLink(searchResult)}}">{{searchResult.songTitle}}
-                    <span class="collection-name">({{searchResult.collectionName}})</span>
+                <a routerLink="{{getSongLink(searchResult)}}">{{ searchResult.songTitle }}
+                    <span class="collection-name">({{ searchResult.collectionName }})</span>
                 </a>
             </div>
             <div class="content-result-text-block">

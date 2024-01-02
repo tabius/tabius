@@ -1,4 +1,4 @@
-<h1>{{title}}</h1>
+<h1>{{ title }}</h1>
 
 <ng-container *ngIf="showControls">
     <div class="icons-block">
@@ -12,5 +12,5 @@
 </ng-container>
 
 <div *ngIf="showCollectionLink" class="collection-link">
-    <a [routerLink]="collectionLink" class="dark-pill" title="{{i18n.goToCollectionTitle}}">{{collection.name + ' »'}}</a>
+    <a [routerLink]="collectionLink" class="dark-pill" title="{{i18n.goToCollectionTitle}}">{{ collection.name + ' »' }}</a>
 </div>

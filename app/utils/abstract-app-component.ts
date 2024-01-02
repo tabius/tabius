@@ -1,9 +1,9 @@
-import {ReplaySubject} from 'rxjs';
-import {ChangeDetectorRef, DestroyRef, inject, Injectable, Injector, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {BrowserStateService} from '@app/services/browser-state.service';
-import {Meta, Title} from '@angular/platform-browser';
-import {PageMetadata, updatePageMetadata} from '@app/utils/seo-utils';
-import {DeepReadonly} from '@common/typescript-extras';
+import { ReplaySubject } from 'rxjs';
+import { ChangeDetectorRef, DestroyRef, inject, Injectable, Injector, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { BrowserStateService } from '@app/services/browser-state.service';
+import { Meta, Title } from '@angular/platform-browser';
+import { PageMetadata, updatePageMetadata } from '@app/utils/seo-utils';
+import { DeepReadonly } from '@common/typescript-extras';
 
 /** Common base class for all components with a common reusable fields. */
 @Injectable()

@@ -1,6 +1,6 @@
 <div class="content">
     <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-        <div class="message">{{i18n.loading}}</div>
+        <div class="message">{{ i18n.loading }}</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
@@ -14,11 +14,11 @@
         <div *ngIf="user" class="collection-block">
             <div>
                 <div>
-                    <h1>{{i18n.collections}}</h1>
+                    <h1>{{ i18n.collections }}</h1>
                     <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
                 </div>
                 <div class="song-list-block">
-                    <h1>{{i18n.songs}}</h1>
+                    <h1>{{ i18n.songs }}</h1>
 
                     <gt-song-list *ngIf="!editorIsOpen"
                                   [songs]="songs"
@@ -33,7 +33,7 @@
                                 class="btn btn-info"
                                 title="{{i18n.addNewSongIntoPersonalCollection}}"
                         >
-                            {{i18n.addSong}}
+                            {{ i18n.addSong }}
                         </button>
                         <gt-song-editor *ngIf="editorIsOpen"
                                         (closeRequest)="closeEditor($event)"

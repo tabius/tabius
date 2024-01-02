@@ -1,16 +1,16 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild} from '@angular/core';
-import {UserService} from '@app/services/user.service';
-import {newDefaultUserDeviceSettings, TunerToneType} from '@common/user-model';
-import {I18N} from '@app/app-i18n';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AbstractAppComponent} from '@app/utils/abstract-app-component';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { UserService } from '@app/services/user.service';
+import { newDefaultUserDeviceSettings, TunerToneType } from '@common/user-model';
+import { I18N } from '@app/app-i18n';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
 @Component({
   templateUrl: './tuner-page.component.html',
   styleUrls: ['./tuner-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TunerPageComponent extends AbstractAppComponent implements OnDestroy {
   private destroyed = false;
@@ -18,12 +18,12 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
   readonly i18n = I18N.tunerPage;
   readonly i18nCommon = I18N.common;
 
-  @ViewChild('s1', {static: true}) private s1!: ElementRef;
-  @ViewChild('s2', {static: true}) private s2!: ElementRef;
-  @ViewChild('s3', {static: true}) private s3!: ElementRef;
-  @ViewChild('s4', {static: true}) private s4!: ElementRef;
-  @ViewChild('s5', {static: true}) private s5!: ElementRef;
-  @ViewChild('s6', {static: true}) private s6!: ElementRef;
+  @ViewChild('s1', { static: true }) private s1!: ElementRef;
+  @ViewChild('s2', { static: true }) private s2!: ElementRef;
+  @ViewChild('s3', { static: true }) private s3!: ElementRef;
+  @ViewChild('s4', { static: true }) private s4!: ElementRef;
+  @ViewChild('s5', { static: true }) private s5!: ElementRef;
+  @ViewChild('s6', { static: true }) private s6!: ElementRef;
 
   private currentString = 'e';
   private deviceSettings = newDefaultUserDeviceSettings();
@@ -34,7 +34,7 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
   constructor(private readonly uds: UserService) {
     super();
     this.uds.getUserDeviceSettings().pipe(
-        takeUntilDestroyed(),
+      takeUntilDestroyed(),
     ).subscribe(deviceSettings => {
       this.deviceSettings = deviceSettings;
       this.cdr.markForCheck();
@@ -154,7 +154,7 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
   }
 
   setRepeatMode(repeat: boolean): void {
-    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerRepeatMode: repeat}).then();
+    this.uds.setUserDeviceSettings({ ...this.deviceSettings, tunerRepeatMode: repeat }).then();
   }
 
   onRepeatModeCheckboxChanged(event: Event) {
@@ -166,7 +166,7 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
   }
 
   setToneType(toneType: TunerToneType): void {
-    this.uds.setUserDeviceSettings({...this.deviceSettings, tunerToneType: toneType}).then();
+    this.uds.setUserDeviceSettings({ ...this.deviceSettings, tunerToneType: toneType }).then();
   }
 
   private getStringElement(guitarString: string): ElementRef|undefined {

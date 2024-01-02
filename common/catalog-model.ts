@@ -1,4 +1,4 @@
-import {Versioned, WithId} from '@common/common-model';
+import { Versioned, WithId } from '@common/common-model';
 
 export enum CollectionType {
   /* Artist, person. Example: Michael Jackson. */

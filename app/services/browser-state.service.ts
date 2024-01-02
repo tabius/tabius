@@ -1,17 +1,17 @@
-import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {isPlatformBrowser} from '@angular/common';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {ToastService} from '@app/toast/toast.service';
-import {map, skip} from 'rxjs/operators';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ToastService } from '@app/toast/toast.service';
+import { map, skip } from 'rxjs/operators';
 import * as NoSleep from 'nosleep.js/dist/NoSleep';
-import {Router} from '@angular/router';
-import {MOUNT_PRINT_SUFFIX} from '@common/mounts';
-import {I18N} from '@app/app-i18n';
-import {getUserAgentFromRequest, isSmallScreenDevice} from '@common/util/misc-utils';
-import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
+import { Router } from '@angular/router';
+import { MOUNT_PRINT_SUFFIX } from '@common/mounts';
+import { I18N } from '@app/app-i18n';
+import { getUserAgentFromRequest, isSmallScreenDevice } from '@common/util/misc-utils';
+import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BrowserStateService {
 
@@ -45,10 +45,10 @@ export class BrowserStateService {
   private noSleep?: NoSleep;
 
   constructor(
-      // eslint-disable-next-line @typescript-eslint/ban-types
-      @Inject(PLATFORM_ID) readonly platformId: Object,
-      router: Router,
-      toaster: ToastService,
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    @Inject(PLATFORM_ID) readonly platformId: Object,
+    router: Router,
+    toaster: ToastService,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.isServer = !this.isBrowser;

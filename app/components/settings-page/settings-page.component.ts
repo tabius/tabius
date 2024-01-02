@@ -1,14 +1,14 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {UserService} from '@app/services/user.service';
-import {DEFAULT_FAVORITE_KEY, getDefaultUserSongFontSize, User, UserDeviceSettings} from '@common/user-model';
-import {combineLatest} from 'rxjs';
-import {SongDetails} from '@common/catalog-model';
-import {RefreshMode} from '@app/store/observable-store';
-import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
-import {I18N} from '@app/app-i18n';
-import {ChordTone, MINOR_KEY_TONES} from '@app/utils/chords-lib';
-import {ClientAuthService} from '@app/services/client-auth.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UserService } from '@app/services/user.service';
+import { DEFAULT_FAVORITE_KEY, getDefaultUserSongFontSize, User, UserDeviceSettings } from '@common/user-model';
+import { combineLatest } from 'rxjs';
+import { SongDetails } from '@common/catalog-model';
+import { RefreshMode } from '@app/store/observable-store';
+import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
+import { I18N } from '@app/app-i18n';
+import { ChordTone, MINOR_KEY_TONES } from '@app/utils/chords-lib';
+import { ClientAuthService } from '@app/services/client-auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;
@@ -16,7 +16,7 @@ export const MIN_SONG_FONT_SIZE = 8;
 @Component({
   templateUrl: './settings-page.component.html',
   styleUrls: ['./settings-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent extends ComponentWithLoadingIndicator {
 
@@ -33,8 +33,8 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   visualFavoriteSongKey: string = DEFAULT_FAVORITE_KEY;
 
   constructor(
-      private readonly uds: UserService,
-      private readonly authService: ClientAuthService,
+    private readonly uds: UserService,
+    private readonly authService: ClientAuthService,
   ) {
     super();
 
@@ -47,7 +47,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
       this.uds.getH4SiFlag(RefreshMode.Refresh),
       this.uds.getFavoriteKey(RefreshMode.Refresh),
     ]).pipe(
-        takeUntilDestroyed(),
+      takeUntilDestroyed(),
     ).subscribe(([user, settings, h4si, favoriteSongKey]) => {
       this.loaded = true;
       this.user = user;
@@ -74,7 +74,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   }
 
   private updateSongFontSize(songFontSize: number): void {
-    this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize}).then();
+    this.uds.setUserDeviceSettings({ ...this.deviceSettings, songFontSize }).then();
   }
 
   useH4Si(h4SiFlag: boolean): void {
@@ -99,5 +99,5 @@ const SETTINGS_DEMO_SONG: SongDetails = {
   id: 0,
   content: I18N.settingsPage.demoSongText,
   mediaLinks: [],
-  version: 0
+  version: 0,
 };

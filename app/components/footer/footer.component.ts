@@ -1,20 +1,20 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
-import {environment} from '@app/environments/environment';
-import {Router} from '@angular/router';
-import {I18N} from '@app/app-i18n';
-import {LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER} from '@common/mounts';
-import {LocationStrategy} from '@angular/common';
-import {BrowserStateService} from '@app/services/browser-state.service';
-import {ContextMenuAction, ContextMenuActionService, isFunctionalTarget, isSubmenuTarget} from '@app/services/context-menu-action.service';
-import {PopoverService} from '@app/popover/popover.service';
-import {PopoverRef} from '@app/popover/popover-ref';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { environment } from '@app/environments/environment';
+import { Router } from '@angular/router';
+import { I18N } from '@app/app-i18n';
+import { LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER } from '@common/mounts';
+import { LocationStrategy } from '@angular/common';
+import { BrowserStateService } from '@app/services/browser-state.service';
+import { ContextMenuAction, ContextMenuActionService, isFunctionalTarget, isSubmenuTarget } from '@app/services/context-menu-action.service';
+import { PopoverService } from '@app/popover/popover.service';
+import { PopoverRef } from '@app/popover/popover-ref';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'gt-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent implements OnDestroy {
 
@@ -54,7 +54,7 @@ export class FooterComponent implements OnDestroy {
               private readonly popoverService: PopoverService,
   ) {
     this.contextMenuActionService.footerActions$.pipe(
-        takeUntilDestroyed(),
+      takeUntilDestroyed(),
     ).subscribe(actions => {
       this.actions = actions;
       this.menuStack = [];

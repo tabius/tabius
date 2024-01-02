@@ -1,14 +1,14 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import {scrollToView} from '@common/util/misc-utils';
-import {BrowserStateService} from '@app/services/browser-state.service';
-import {I18N} from '@app/app-i18n';
-import {ClientAuthService} from '@app/services/client-auth.service';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { scrollToView } from '@common/util/misc-utils';
+import { BrowserStateService } from '@app/services/browser-state.service';
+import { I18N } from '@app/app-i18n';
+import { ClientAuthService } from '@app/services/client-auth.service';
 
 @Component({
   selector: 'gt-user-registration-prompt',
   templateUrl: './user-registration-prompt.component.html',
   styleUrls: ['./user-registration-prompt.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserRegistrationPromptComponent implements AfterViewInit {
   readonly i18n = I18N.userRegistrationPromptComponent;

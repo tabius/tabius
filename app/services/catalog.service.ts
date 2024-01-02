@@ -1,14 +1,14 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {firstValueFrom, from, Observable, of} from 'rxjs';
-import {Collection, CollectionDetails, Song, SongDetails} from '@common/catalog-model';
-import {map, shareReplay, switchMap} from 'rxjs/operators';
-import {TABIUS_CATALOG_BROWSER_STORE_TOKEN} from '@app/app-constants';
-import {AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest} from '@common/ajax-model';
-import {combineLatest0, isDefined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg} from '@common/util/misc-utils';
-import {ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store/observable-store';
-import {checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion} from '@app/store';
-import {I18N} from '@app/app-i18n';
+import { Inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom, from, Observable, of } from 'rxjs';
+import { Collection, CollectionDetails, Song, SongDetails } from '@common/catalog-model';
+import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { TABIUS_CATALOG_BROWSER_STORE_TOKEN } from '@app/app-constants';
+import { AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteSongResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest } from '@common/ajax-model';
+import { combineLatest0, isDefined, isValidId, isValidUserId, mapToFirstInArray, waitForAllPromisesAndReturnFirstArg } from '@common/util/misc-utils';
+import { ObservableStore, RefreshMode, skipUpdateCheck } from '@app/store/observable-store';
+import { checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion } from '@app/store';
+import { I18N } from '@app/app-i18n';
 
 const COLLECTION_LIST_KEY = 'catalog';
 const COLLECTION_KEY_PREFIX = 'c-';
@@ -21,7 +21,7 @@ const USER_COLLECTIONS_KEY = 'u-collections-';
 
 /** Client-side API to access/update catalog: collections and songs. */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CatalogService {
 
@@ -31,30 +31,30 @@ export class CatalogService {
 
   getListedCollections(): Observable<Collection[]> {
     return this.store.get<number[]>(
-        COLLECTION_LIST_KEY,
-        () => this.httpClient.get<Collection[]>('/api/collection/all-listed')
-            .pipe(
-                // Perform blocking update here for all collections first.
-                // Reason: this caching prevents a lot of parallel getCollection() HTTP requests usually started immediately after the listing is received.
-                switchMap(collections => waitForAllPromisesAndReturnFirstArg(collections, collections.map(a => this.updateCollectionOnFetch(a)))),
-                map(collections => collections.map(a => a.id)),
-            ),
-        RefreshMode.RefreshOnce,
-        checkUpdateByShallowArrayCompare,
-    )
-        //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
+      COLLECTION_LIST_KEY,
+      () => this.httpClient.get<Collection[]>('/api/collection/all-listed')
         .pipe(
-            switchMap(ids => combineLatest0((ids || []).map(id => this.observeCollection(id)))),
-            map(items => (items.filter(isDefined) as Collection[])),
-        );
+          // Perform blocking update here for all collections first.
+          // Reason: this caching prevents a lot of parallel getCollection() HTTP requests usually started immediately after the listing is received.
+          switchMap(collections => waitForAllPromisesAndReturnFirstArg(collections, collections.map(a => this.updateCollectionOnFetch(a)))),
+          map(collections => collections.map(a => a.id)),
+        ),
+      RefreshMode.RefreshOnce,
+      checkUpdateByShallowArrayCompare,
+    )
+      //TODO: consider using 'getCollectionByIds' - unify undefined filtering with other places.
+      .pipe(
+        switchMap(ids => combineLatest0((ids || []).map(id => this.observeCollection(id)))),
+        map(items => (items.filter(isDefined) as Collection[])),
+      );
   }
 
   observeCollection(collectionId: number|undefined): Observable<Collection|undefined> {
     return this.store.get<Collection>(
-        getCollectionKey(collectionId),
-        () => this.httpClient.get<Collection[]>(`/api/collection/by-ids/${collectionId}`).pipe(mapToFirstInArray),
-        RefreshMode.RefreshOnce,
-        checkUpdateByVersion,
+      getCollectionKey(collectionId),
+      () => this.httpClient.get<Collection[]>(`/api/collection/by-ids/${collectionId}`).pipe(mapToFirstInArray),
+      RefreshMode.RefreshOnce,
+      checkUpdateByVersion,
     );
   }
 
@@ -68,29 +68,29 @@ export class CatalogService {
     }
     return Promise.all([
       this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion),
-      this.store.set<number>(getCollectionIdByMountKey(collection.mount), collection.id, checkUpdateByReference)
+      this.store.set<number>(getCollectionIdByMountKey(collection.mount), collection.id, checkUpdateByReference),
     ]);
   }
 
   getCollectionDetails(collectionId: number|undefined): Observable<CollectionDetails|undefined> {
     return this.store.get<CollectionDetails>(
-        getCollectionDetailsKey(collectionId),
-        () => this.httpClient.get<CollectionDetails|undefined>(`/api/collection/details-by-id/${collectionId}`),
-        RefreshMode.RefreshOnce,
-        checkUpdateByVersion
+      getCollectionDetailsKey(collectionId),
+      () => this.httpClient.get<CollectionDetails|undefined>(`/api/collection/details-by-id/${collectionId}`),
+      RefreshMode.RefreshOnce,
+      checkUpdateByVersion,
     );
   }
 
   /** Returns list of all collection's song ids. The songs in the list are always sorted by id. */
   getSongIdsByCollection(collectionId: number|undefined): Observable<number[]|undefined> {
     return this.store.get<number[]>(
-        getCollectionSongListKey(collectionId),
-        () => this.httpClient.get<Song[]>(`/api/song/by-collection/${collectionId}`)
-            .pipe(
-                switchMap(songs => from(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))
-            ),
-        RefreshMode.RefreshOnce,
-        checkUpdateByShallowArrayCompare
+      getCollectionSongListKey(collectionId),
+      () => this.httpClient.get<Song[]>(`/api/song/by-collection/${collectionId}`)
+        .pipe(
+          switchMap(songs => from(this.updateCollectionSongsOnFetch(collectionId!, songs, false))),
+        ),
+      RefreshMode.RefreshOnce,
+      checkUpdateByShallowArrayCompare,
     );
   }
 
@@ -113,23 +113,23 @@ export class CatalogService {
 
   getCollectionIdByMount(collectionMount: string|undefined): Observable<number|undefined> {
     return this.store.get<number>(
-        getCollectionIdByMountKey(collectionMount),
-        () => this.httpClient.get<Collection|undefined>(`/api/collection/by-mount/${collectionMount}`)
-            .pipe( // wait for update before continue.
-                switchMap(a => waitForAllPromisesAndReturnFirstArg(a, [this.updateCollectionOnFetch(a)])),
-                map(a => a && a.id)
-            ),
-        RefreshMode.RefreshOnce,
-        checkUpdateByReference,
+      getCollectionIdByMountKey(collectionMount),
+      () => this.httpClient.get<Collection|undefined>(`/api/collection/by-mount/${collectionMount}`)
+        .pipe( // wait for update before continue.
+          switchMap(a => waitForAllPromisesAndReturnFirstArg(a, [this.updateCollectionOnFetch(a)])),
+          map(a => a && a.id),
+        ),
+      RefreshMode.RefreshOnce,
+      checkUpdateByReference,
     );
   }
 
   observeSong(songId: number|undefined): Observable<Song|undefined> {
     return this.store.get<Song>(
-        getSongKey(songId),
-        () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
-        RefreshMode.RefreshOnce,
-        checkUpdateByVersion,
+      getSongKey(songId),
+      () => this.httpClient.get<Song[]>(`/api/song/by-ids/${songId}`).pipe(mapToFirstInArray),
+      RefreshMode.RefreshOnce,
+      checkUpdateByVersion,
     );
   }
 
@@ -139,10 +139,10 @@ export class CatalogService {
 
   getSongDetailsById(songId: number|undefined, refreshCachedVersion = true): Observable<SongDetails|undefined> {
     return this.store.get<SongDetails>(
-        getSongDetailsKey(songId),
-        () => this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songId}`).pipe(mapToFirstInArray),
-        refreshCachedVersion ? RefreshMode.RefreshOnce : RefreshMode.DoNotRefresh,
-        checkUpdateByVersion
+      getSongDetailsKey(songId),
+      () => this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songId}`).pipe(mapToFirstInArray),
+      refreshCachedVersion ? RefreshMode.RefreshOnce : RefreshMode.DoNotRefresh,
+      checkUpdateByVersion,
     );
   }
 
@@ -151,15 +151,15 @@ export class CatalogService {
       return of(undefined);
     }
     return this.getSongIdsByCollection(collectionId)
-        .pipe(
-            switchMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
-            map(songsIds => songsIds.find(s => s?.mount === songMount
-                && (!isValidId(primaryCollectionId) || s.collectionId === primaryCollectionId))),
-        );
+      .pipe(
+        switchMap(songIds => songIds ? this.getSongsByIds(songIds) : of([])),
+        map(songsIds => songsIds.find(s => s?.mount === songMount
+          && (!isValidId(primaryCollectionId) || s.collectionId === primaryCollectionId))),
+      );
   }
 
   async createSong(song: Song, details: SongDetails): Promise<Song> {
-    const request: UpdateSongRequest = {song, details};
+    const request: UpdateSongRequest = { song, details };
     try {
       const response = await firstValueFrom(this.httpClient.post<UpdateSongResponse>('/api/song', request));
       await this.processSongUpdateResponse(response);
@@ -171,7 +171,7 @@ export class CatalogService {
   }
 
   async updateSong(song: Song, details: SongDetails): Promise<void> {
-    const request: UpdateSongRequest = {song, details};
+    const request: UpdateSongRequest = { song, details };
     try {
       const response = await firstValueFrom(this.httpClient.put<UpdateSongResponse>('/api/song', request));
       await this.processSongUpdateResponse(response);
@@ -182,7 +182,7 @@ export class CatalogService {
   }
 
   async toggleSongSceneFlag(songId: number, flag: boolean): Promise<void> {
-    const request: UpdateSongSceneFlagRequest = {songId, flag};
+    const request: UpdateSongSceneFlagRequest = { songId, flag };
     try {
       const response = await firstValueFrom(this.httpClient.put<UpdateSongResponse>('/api/song/scene', request));
       await this.processSongUpdateResponse(response);
@@ -201,20 +201,20 @@ export class CatalogService {
   }
 
   async deleteSong(songId: number, collectionId: number): Promise<void> {
-    const {updatedCollections} = await firstValueFrom(this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}/${collectionId}`));
+    const { updatedCollections } = await firstValueFrom(this.httpClient.delete<DeleteSongResponse>(`/api/song/${songId}/${collectionId}`));
     await Promise.all([
       this.store.remove(getSongKey(songId)),
-      this.store.remove(getSongDetailsKey(songId))
+      this.store.remove(getSongDetailsKey(songId)),
     ]);
     const collectionsUpdate$$ =
-        updatedCollections.map(({collectionId, songs}) => this.updateCollectionSongsOnFetch(collectionId, songs, true));
+      updatedCollections.map(({ collectionId, songs }) => this.updateCollectionSongsOnFetch(collectionId, songs, true));
     await Promise.all(collectionsUpdate$$);
   }
 
   async createListedCollection(createCollectionRequest: CreateListedCollectionRequest): Promise<Collection> {
     const response = await firstValueFrom(this.httpClient.post<CreateListedCollectionResponse>('/api/collection', createCollectionRequest));
     const collectionsUpdateArray$$ = response.collections
-        .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
+      .map(collection => this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
     const collectionIds = response.collections.map(collection => collection.id);
     const listingUpdate$$ = this.store.set(COLLECTION_LIST_KEY, collectionIds, checkUpdateByShallowArrayCompare);
     await Promise.all([
@@ -242,7 +242,7 @@ export class CatalogService {
     if (!isValidId(collectionId)) {
       return;
     }
-    const {userId, collections} = await firstValueFrom(this.httpClient.delete<DeleteUserCollectionResponse>(`/api/collection/user/${collectionId}`));
+    const { userId, collections } = await firstValueFrom(this.httpClient.delete<DeleteUserCollectionResponse>(`/api/collection/user/${collectionId}`));
     // todo: personal songs were moved to the 'favorite'. Update it?
     await this.updateUserCollections(userId, collections);
   }
@@ -260,7 +260,7 @@ export class CatalogService {
 
     const collectionIds = collections.map(c => c.id);
     const collectionsUpdateArray$$ = collections.map(collection =>
-        this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
+      this.store.set<Collection>(getCollectionKey(collection.id), collection, checkUpdateByVersion));
     await Promise.all([
       ...collectionsUpdateArray$$,
       ...collectionsRemoveArray$$,
@@ -272,8 +272,8 @@ export class CatalogService {
   getUserCollections(userId: string|undefined): Observable<Collection[]> {
     const collectionIds$ = this.getUserCollectionIds(userId);
     return collectionIds$.pipe(
-        switchMap(ids => this.getCollectionsByIds(ids)),
-        map(collections => (collections.filter(isDefined) as Collection[])),
+      switchMap(ids => this.getCollectionsByIds(ids)),
+      map(collections => (collections.filter(isDefined) as Collection[])),
     );
   }
 
@@ -283,24 +283,24 @@ export class CatalogService {
       return of([]);
     }
     return this.store.get<number[]>(
-        userCollectionsListKey,
-        () => this.httpClient.get<GetUserCollectionsResponse>(`/api/collection/user/${userId}`)
-            .pipe(
-                switchMap(response =>
-                    waitForAllPromisesAndReturnFirstArg(response,
-                        response.collectionInfos.map(info => this.updateCollectionOnFetch(info.collection)))),
-                map((response) => response.collectionInfos.map(info => info.collection.id))
-            ),
-        RefreshMode.RefreshOnce,
-        checkUpdateByShallowArrayCompare,
+      userCollectionsListKey,
+      () => this.httpClient.get<GetUserCollectionsResponse>(`/api/collection/user/${userId}`)
+        .pipe(
+          switchMap(response =>
+            waitForAllPromisesAndReturnFirstArg(response,
+              response.collectionInfos.map(info => this.updateCollectionOnFetch(info.collection)))),
+          map((response) => response.collectionInfos.map(info => info.collection.id)),
+        ),
+      RefreshMode.RefreshOnce,
+      checkUpdateByShallowArrayCompare,
     ).pipe(map(collectionIds => !!collectionIds ? collectionIds : []));
   }
 
   async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
-    const request: AddSongToSecondaryCollectionRequest = {songId, collectionId};
+    const request: AddSongToSecondaryCollectionRequest = { songId, collectionId };
     try {
-      const {songIds} = await firstValueFrom(this.httpClient.put<AddSongToSecondaryCollectionResponse>(
-          '/api/song/add-to-secondary-collection', request));
+      const { songIds } = await firstValueFrom(this.httpClient.put<AddSongToSecondaryCollectionResponse>(
+        '/api/song/add-to-secondary-collection', request));
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
@@ -309,10 +309,10 @@ export class CatalogService {
   }
 
   async removeSongFromSecondaryCollection(songId: number, collectionId: number): Promise<void> {
-    const request: RemoveSongFromSecondaryCollectionRequest = {songId, collectionId};
+    const request: RemoveSongFromSecondaryCollectionRequest = { songId, collectionId };
     try {
-      const {songIds} = await firstValueFrom(this.httpClient.put<RemoveSongFromSecondaryCollectionResponse>(
-          '/api/song/remove-from-secondary-collection', request));
+      const { songIds } = await firstValueFrom(this.httpClient.put<RemoveSongFromSecondaryCollectionResponse>(
+        '/api/song/remove-from-secondary-collection', request));
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
@@ -337,10 +337,10 @@ export class CatalogService {
   }
 
   async moveSongToAnotherCollection(songId: number, sourceCollectionId: number, targetCollectionId: number): Promise<void> {
-    const request: MoveSongToAnotherCollectionRequest = {songId, sourceCollectionId, targetCollectionId};
+    const request: MoveSongToAnotherCollectionRequest = { songId, sourceCollectionId, targetCollectionId };
     try {
-      const {song, sourceCollectionSongIds, targetCollectionSongIds} = await firstValueFrom(
-          this.httpClient.put<MoveSongToAnotherCollectionResponse>('/api/song/move-to-another-collection', request)
+      const { song, sourceCollectionSongIds, targetCollectionSongIds } = await firstValueFrom(
+        this.httpClient.put<MoveSongToAnotherCollectionResponse>('/api/song/move-to-another-collection', request),
       );
       // console.log('Set collection songs: ' + sourceCollectionId, sourceCollectionSongIds);
       // console.log('Set collection songs: ' + targetCollectionId, targetCollectionSongIds);

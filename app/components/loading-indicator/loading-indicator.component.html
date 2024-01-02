@@ -4,9 +4,8 @@
 <div class="dot"></div>
 
 <div class="long-wait-warning-block" *ngIf="isReloadWarningVisible">
-    {{i18n.reloadNotice}}
-    <div class="reload-link-block">
-        <a (click)="onReloadButtonClicked()">{{i18n.reloadLink}}</a>
-    </div>
-
+  {{ i18n.reloadNotice }}
+  <div class="reload-link-block">
+    <a (click)="onReloadButtonClicked()">{{ i18n.reloadLink }}</a>
+  </div>
 </div>

@@ -1,10 +1,10 @@
-import {Injectable} from '@nestjs/common';
-import {FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS} from '@common/ajax-model';
-import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
-import {toSafeSearchText} from '@common/util/misc-utils';
-import {SERVER_CONFIG} from '@server/server-config';
-import {firstValueFrom} from 'rxjs';
-import {HttpService} from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
+import { FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS } from '@common/ajax-model';
+import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
+import { toSafeSearchText } from '@common/util/misc-utils';
+import { SERVER_CONFIG } from '@server/server-config';
+import { firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
 
 const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 
@@ -62,7 +62,7 @@ export class FullTextSearchDbi {
 
   private async query(query: string): Promise<SphinxSearchResult> {
     if (query.length == 0) {
-      return {matches: []};
+      return { matches: [] };
     }
     const encodedQuery = encodeURIComponent(query);
     const params = `query=${encodedQuery}`;
@@ -71,7 +71,7 @@ export class FullTextSearchDbi {
       return axiosResponse.data;
     } catch (e) {
       console.error('Error querying sphinx', e);
-      return {matches: []};
+      return { matches: [] };
     }
   }
 }
@@ -124,8 +124,8 @@ function createFullTextResultFromMatch(match: [number, string, string, string, s
 /** Returns true if the text is quoted. Both single or double quote characters are checked. */
 function isQuoted(text: string): boolean {
   return text.length > 1
-      && ((text.startsWith('"') && text.endsWith('"'))
-          || (text.startsWith('\'')) && text.endsWith('\'')
-      );
+    && ((text.startsWith('"') && text.endsWith('"'))
+      || (text.startsWith('\'')) && text.endsWith('\'')
+    );
 }
 

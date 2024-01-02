@@ -1,17 +1,17 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {ToastService} from '@app/toast/toast.service';
-import {CatalogService} from '@app/services/catalog.service';
-import {I18N} from '@app/app-i18n';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ToastService } from '@app/toast/toast.service';
+import { CatalogService } from '@app/services/catalog.service';
+import { I18N } from '@app/app-i18n';
 
 @Component({
   selector: 'gt-user-collection-editor',
   templateUrl: './user-collection-editor.component.html',
   styleUrls: ['./user-collection-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserCollectionEditorComponent {
 
-  @Input({required: true}) collectionId!: number;
+  @Input({ required: true }) collectionId!: number;
 
   /** Emitted when the panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();

@@ -1,6 +1,6 @@
-import {md5} from 'pure-md5';
-import {I18N} from '@app/app-i18n';
-import {environment} from '@app/environments/environment';
+import { md5 } from 'pure-md5';
+import { I18N } from '@app/app-i18n';
+import { environment } from '@app/environments/environment';
 
 export const HAS_AFFILIATE_SUPPORT = environment.app === 'org';
 

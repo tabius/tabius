@@ -1,5 +1,5 @@
 <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-    <div class="message">{{i18n.loadingMessage}}</div>
+    <div class="message">{{ i18n.loadingMessage }}</div>
     <gt-loading-indicator></gt-loading-indicator>
 </div>
 
@@ -25,7 +25,7 @@
                placeholder="{{i18n.youtubeLinkPlaceholder}}">
     </div>
     <div class="song-mount-block">
-        <div class="url-demo">{{songUrlPrefix}}</div>
+        <div class="url-demo">{{ songUrlPrefix }}</div>
         <input [(ngModel)]="mount"
                (keydown)="handleKeyboardEvent($event)"
                class="song-mount"
@@ -45,9 +45,9 @@
     </div>
     <div class="buttons-row">
         <div class="left-side-block">
-            <button *ngIf="isCreateMode" class="btn btn-info create-button" (click)="create()">{{i18n.create}}</button>
-            <button *ngIf="isUpdateMode" class="btn btn-info update-button" (click)="update()">{{i18n.update}}</button>
-            <button class="btn cancel-button" (click)="cancel()">{{i18n.cancel}}</button>
+            <button *ngIf="isCreateMode" class="btn btn-info create-button" (click)="create()">{{ i18n.create }}</button>
+            <button *ngIf="isUpdateMode" class="btn btn-info update-button" (click)="update()">{{ i18n.update }}</button>
+            <button class="btn cancel-button" (click)="cancel()">{{ i18n.cancel }}</button>
         </div>
         <div *ngIf="!isCreateMode" class="right-side-block">
             <label class="checkbox" title="{{i18n.deleteConfirmationTitle}}">
@@ -60,7 +60,7 @@
                     [disabled]="!deleteConfirmationFlag"
                     (click)="delete()"
                     [title]="deleteConfirmationFlag ? i18n.deleteTitle : i18n.deleteRequiresConfirmationTitle"
-            >{{i18n.delete}}
+            >{{ i18n.delete }}
             </button>
         </div>
     </div>

@@ -324,8 +324,12 @@ export function isMap(next?: (arg: any) => ValidationResult<any>): (arg: any) =>
 
 
 export function eachValue<T>(assertion: (arg: any) => ValidationResult<T>): (arg: { [key: string]: any }) => ValidationResult<{ [key: string]: T }>;
-export function eachValue<T, U>(assertion: (arg: any) => ValidationResult<T>, next: (arg: { [key: string]: T }) => ValidationResult<U>): (arg: { [key: string]: any }) => ValidationResult<U>;
-export function eachValue<T>(assertion: (arg: any) => ValidationResult<T>, next?: (arg: { [key: string]: T }) => ValidationResult<any>): (arg: { [key: string]: any }) => ValidationResult<any> {
+export function eachValue<T, U>(assertion: (arg: any) => ValidationResult<T>, next: (arg: { [key: string]: T }) => ValidationResult<U>): (arg: {
+  [key: string]: any
+}) => ValidationResult<U>;
+export function eachValue<T>(assertion: (arg: any) => ValidationResult<T>, next?: (arg: { [key: string]: T }) => ValidationResult<any>): (arg: {
+  [key: string]: any
+}) => ValidationResult<any> {
   return (arg: { [key: string]: any }) => {
     const result = conformsTo(
         Object.keys(arg).reduce(

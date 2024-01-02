@@ -1,5 +1,5 @@
-import {Injectable, TemplateRef} from '@angular/core';
-import {Observable, ReplaySubject} from 'rxjs';
+import { Injectable, TemplateRef } from '@angular/core';
+import { Observable, ReplaySubject } from 'rxjs';
 
 export type ContextMenuTarget = (() => void)|TemplateRef<unknown>|ContextMenuAction[];
 
@@ -13,7 +13,7 @@ export interface ContextMenuAction {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ContextMenuActionService {
   navbarAction$ = new ReplaySubject<ContextMenuAction|undefined>(1);

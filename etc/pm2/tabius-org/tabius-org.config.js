@@ -11,8 +11,8 @@ module.exports = {
       max_memory_restart: '1000M',
       env: {
         'PORT': 13101,
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 

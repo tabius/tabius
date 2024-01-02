@@ -1,39 +1,39 @@
 <div class="editor-block" #editorBlock>
 
-    <h2>{{ i18n.header }}</h2>
+  <h2>{{ i18n.header }}</h2>
 
-    <table class="form-table">
-        <tbody>
-        <tr>
-            <td>{{ i18n.collectionName }}</td>
-            <td>
-                <input type="text" [(ngModel)]="name" (ngModelChange)="onNameChanged()" #collectionNameInput/>
-            </td>
-        </tr>
-        <tr>
-            <td>{{ i18n.collectionMount }}</td>
-            <td>
-                <input type="text" [(ngModel)]="mount">
-            </td>
-        </tr>
-        <tr>
-            <td>{{ i18n.collectionType }}</td>
-            <td>
-                <select [(ngModel)]="collectionType">
-                    <option [ngValue]="CollectionType.Person">{{ i18n.person }}</option>
-                    <option [ngValue]="CollectionType.Band">{{ i18n.band }}</option>
-                    <option [ngValue]="CollectionType.Compilation">{{ i18n.compilation }}</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td class="buttons-row">
-                <button class="btn btn-info create-button" (click)="create()">{{ i18n.create }}</button>
-                <button class="btn close-button" (click)="close()">{{ i18n.close }}</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+  <table class="form-table">
+    <tbody>
+    <tr>
+      <td>{{ i18n.collectionName }}</td>
+      <td>
+        <input type="text" [(ngModel)]="name" (ngModelChange)="onNameChanged()" #collectionNameInput />
+      </td>
+    </tr>
+    <tr>
+      <td>{{ i18n.collectionMount }}</td>
+      <td>
+        <input type="text" [(ngModel)]="mount">
+      </td>
+    </tr>
+    <tr>
+      <td>{{ i18n.collectionType }}</td>
+      <td>
+        <select [(ngModel)]="collectionType">
+          <option [ngValue]="CollectionType.Person">{{ i18n.person }}</option>
+          <option [ngValue]="CollectionType.Band">{{ i18n.band }}</option>
+          <option [ngValue]="CollectionType.Compilation">{{ i18n.compilation }}</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td class="buttons-row">
+        <button class="btn btn-info create-button" (click)="create()">{{ i18n.create }}</button>
+        <button class="btn close-button" (click)="close()">{{ i18n.close }}</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 
 </div>

@@ -1,4 +1,4 @@
-import {AuthConfig} from '@auth0/auth0-angular';
+import { AuthConfig } from '@auth0/auth0-angular';
 
 export type TabiusAppType = 'ru'|'org';
 

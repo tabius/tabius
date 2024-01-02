@@ -1,11 +1,11 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Put, Session} from '@nestjs/common';
-import {UserDbi} from '@server/db/user-dbi.service';
-import {newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings} from '@common/user-model';
-import {LoginResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
-import {conformsTo, validate} from '@server/util/validation';
-import {UpdateFavoriteSongKeyValidator, UserSongSettingsValidator} from '@server/util/validators';
-import {ServerAuthService} from '@server/service/server-auth.service';
-import {isEqualByStringify} from '@app/store';
+import { Body, Controller, Get, HttpException, HttpStatus, Put, Session } from '@nestjs/common';
+import { UserDbi } from '@server/db/user-dbi.service';
+import { newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings } from '@common/user-model';
+import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
+import { conformsTo, validate } from '@server/util/validation';
+import { UpdateFavoriteSongKeyValidator, UserSongSettingsValidator } from '@server/util/validators';
+import { ServerAuthService } from '@server/service/server-auth.service';
+import { isEqualByStringify } from '@app/store';
 
 @Controller('/api/user')
 export class UserController {
@@ -50,7 +50,7 @@ export class UserController {
     const settings = await this.getUserSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
     const sameAsDefault = isEqualByStringify(defaultSettings, songSettings);
-    const updatedSettings = {...settings};
+    const updatedSettings = { ...settings };
     if (sameAsDefault) {
       delete updatedSettings.songs[songSettings.songId];
     } else {
@@ -61,11 +61,11 @@ export class UserController {
   }
 
   @Put('/settings/h4Si')
-  async setH4Si(@Session() session, @Body() {h4SiFlag}: { h4SiFlag: boolean|undefined }): Promise<UserSettings> {
+  async setH4Si(@Session() session, @Body() { h4SiFlag }: { h4SiFlag: boolean|undefined }): Promise<UserSettings> {
     const user: User = ServerAuthService.getUserOrFail(session);
     console.log('UserController.setH4Si', user.email, h4SiFlag);
     const settings = await this.getUserSettings(user);
-    const updatedSettings = {...settings, h4Si: !!h4SiFlag};
+    const updatedSettings = { ...settings, h4Si: !!h4SiFlag };
     await this.userDbi.updateSettings(user.id, updatedSettings);
     return updatedSettings;
   }
@@ -76,7 +76,7 @@ export class UserController {
     const user: User = ServerAuthService.getUserOrFail(session);
     console.log('UserController.setFavKey', user.email, request);
     const settings = await this.getUserSettings(user);
-    const updatedSettings = {...settings, favKey: request.key};
+    const updatedSettings = { ...settings, favKey: request.key };
     await this.userDbi.updateSettings(user.id, updatedSettings);
     return updatedSettings;
   }
@@ -87,6 +87,6 @@ export class UserController {
       throw new HttpException(`Settings not found! User: ${user.email}, id: ${user.id}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     const defaultSettings = newDefaultUserSettings();
-    return settings == null ? defaultSettings : {...defaultSettings, ...settings};
+    return settings == null ? defaultSettings : { ...defaultSettings, ...settings };
   }
 }

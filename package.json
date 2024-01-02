@@ -31,7 +31,8 @@
     "pw-tests-ui-dev-ru": "TEST_ENV=dev-ru playwright test --ui",
     "pw-tests-ui-dev-org": "TEST_ENV=dev-org playwright test --ui",
     "pw-tests-ui-ru": "TEST_ENV=ru playwright test --ui",
-    "pw-tests-ui-org": "TEST_ENV=org playwright test --ui"
+    "pw-tests-ui-org": "TEST_ENV=org playwright test --ui",
+    "format": "prettier --write \"./**/*.{ts,js,scss}\""
   },
   "private": true,
   "dependencies": {
@@ -73,7 +74,6 @@
     "pure-md5": "0.1.14",
     "rxjs": "7.8.1",
     "schema-dts": "1.1.2",
-    "svg4everybody": "2.1.9",
     "tslib": "2.6.2",
     "validator": "13.11.0",
     "zone.js": "0.14.2"
@@ -83,6 +83,7 @@
     "@angular/cli": "^17.0.8",
     "@angular/compiler-cli": "^17.0.8",
     "@angular/language-service": "^17.0.8",
+    "@playwright/test": "^1.40.1",
     "@sentry/cli": "2.23.1",
     "@types/auth0": "3.3.4",
     "@types/cookie-parser": "1.4.3",
@@ -105,7 +106,7 @@
     "karma-jasmine": "5.1.0",
     "karma-jasmine-html-reporter": "2.1.0",
     "nodemon": "3.0.1",
-    "@playwright/test": "^1.40.1",
+    "prettier": "^2.8.8",
     "sass": "1.69.6",
     "ts-node": "10.9.2",
     "tsconfig-paths": "4.2.0",

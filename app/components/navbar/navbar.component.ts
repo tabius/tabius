@@ -1,17 +1,17 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild} from '@angular/core';
-import {User} from '@common/user-model';
-import {Observable} from 'rxjs';
-import {Router} from '@angular/router';
-import {LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {UserService} from '@app/services/user.service';
-import {ToastService} from '@app/toast/toast.service';
-import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {I18N} from '@app/app-i18n';
-import {USER_COLLECTION_MOUNT_SEPARATOR} from '@common/common-constants';
-import {ContextMenuAction, ContextMenuActionService} from '@app/services/context-menu-action.service';
-import {BrowserStateService} from '@app/services/browser-state.service';
-import {CatalogNavigationHistoryService} from '@app/services/catalog-navigation-history.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { User } from '@common/user-model';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX } from '@common/mounts';
+import { UserService } from '@app/services/user.service';
+import { ToastService } from '@app/toast/toast.service';
+import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
+import { I18N } from '@app/app-i18n';
+import { USER_COLLECTION_MOUNT_SEPARATOR } from '@common/common-constants';
+import { ContextMenuAction, ContextMenuActionService } from '@app/services/context-menu-action.service';
+import { BrowserStateService } from '@app/services/browser-state.service';
+import { CatalogNavigationHistoryService } from '@app/services/catalog-navigation-history.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 enum NavSection {
   Home = 1,
@@ -46,7 +46,7 @@ export class NavbarComponent {
 
   readonly noSleepMode$: Observable<boolean>;
 
-  @ViewChild('showHistoryButton', {static: true, read: ElementRef}) private showHistoryButton?: ElementRef;
+  @ViewChild('showHistoryButton', { static: true, read: ElementRef }) private showHistoryButton?: ElementRef;
 
   constructor(private readonly userService: UserService,
               private readonly router: Router,
@@ -59,19 +59,19 @@ export class NavbarComponent {
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
     contextMenuActionService.navbarAction$.pipe(
-        takeUntilDestroyed(),
+      takeUntilDestroyed(),
     ).subscribe(action => {
       this.contextMenuAction = action;
     });
     this.userService.getUser$().pipe(
-        takeUntilDestroyed(),
+      takeUntilDestroyed(),
     ).subscribe(user => {
       this.user = user;
       this.cdr.markForCheck();
     });
 
     this.router.events.pipe(
-        takeUntilDestroyed(),
+      takeUntilDestroyed(),
     ).subscribe(() => {
       this.cdr.markForCheck();
     });
@@ -96,7 +96,7 @@ export class NavbarComponent {
   }
 
   getUserIconText(): string {
-    const {user} = this;
+    const { user } = this;
     if (!user) {
       return '-';
     }
@@ -114,7 +114,7 @@ export class NavbarComponent {
   resetCollectionPageScroll(): void {
     this.navHelper.resetSavedScrollPosition(this.catalogLink);
     if (this.router.url === this.catalogLink) {
-      window.scroll({top: 0, left: 0, behavior: 'smooth'});
+      window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     }
   }
 

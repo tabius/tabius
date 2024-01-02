@@ -1,14 +1,14 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {firstValueFrom, from, Observable, of} from 'rxjs';
-import {CatalogNavigationHistory, CatalogNavigationHistoryStep, DEFAULT_FAVORITE_KEY, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, newEmptyCatalogNavigationHistory, User, UserDeviceSettings, UserSettings, UserSongSettings} from '@common/user-model';
-import {checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, FetchFn, isEqualByStringify, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
-import {map, switchMap} from 'rxjs/operators';
-import {TABIUS_USER_BROWSER_STORE_TOKEN} from '@app/app-constants';
-import {isValidId} from '@common/util/misc-utils';
-import {ChordTone} from '@app/utils/chords-lib';
-import {LoginResponse, UpdateFavoriteSongKeyRequest} from '@common/ajax-model';
-import {ClientAuthService} from '@app/services/client-auth.service';
+import { Inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom, from, Observable, of } from 'rxjs';
+import { CatalogNavigationHistory, CatalogNavigationHistoryStep, DEFAULT_FAVORITE_KEY, newDefaultUserDeviceSettings, newDefaultUserSettings, newDefaultUserSongSettings, newEmptyCatalogNavigationHistory, User, UserDeviceSettings, UserSettings, UserSongSettings } from '@common/user-model';
+import { checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, FetchFn, isEqualByStringify, ObservableStore, RefreshMode, skipUpdateCheck } from '@app/store';
+import { map, switchMap } from 'rxjs/operators';
+import { TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
+import { isValidId } from '@common/util/misc-utils';
+import { ChordTone } from '@app/utils/chords-lib';
+import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
+import { ClientAuthService } from '@app/services/client-auth.service';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';
@@ -23,7 +23,7 @@ export const UPDATE_SIGN_IN_STATE_URL = '/api/user/login';
 
 /** Client-side API to access/update personal user settings. */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
 
@@ -34,7 +34,7 @@ export class UserService {
     authService.user$.subscribe(async (user) => {
       if (user) {
         try {
-          const {user, settings} = await firstValueFrom(this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL));
+          const { user, settings } = await firstValueFrom(this.httpClient.get<LoginResponse>(UPDATE_SIGN_IN_STATE_URL));
           if (user) {
             await this.setUserOnSignIn(user);
             await this.updateUserSettings(settings);
@@ -52,10 +52,10 @@ export class UserService {
 
   getUserDeviceSettings(): Observable<UserDeviceSettings> {
     return this.store.get<UserDeviceSettings>(
-        DEVICE_SETTINGS_KEY,
-        DO_NOT_PREFETCH,
-        RefreshMode.DoNotRefresh,
-        skipUpdateCheck
+      DEVICE_SETTINGS_KEY,
+      DO_NOT_PREFETCH,
+      RefreshMode.DoNotRefresh,
+      skipUpdateCheck,
     ).pipe(map(s => s || newDefaultUserDeviceSettings()));
   }
 
@@ -68,20 +68,20 @@ export class UserService {
       return of(newDefaultUserSongSettings(0));
     }
     return this.getUser$().pipe(
-        switchMap(user => this.store.get<UserSongSettings>(
-            getUserSongSettingsKey(songId),
-            () => { // fetch function.
-              if (user) {
-                return this.fetchAndUpdateUserSettings(user).pipe(
-                    map(userSettings => userSettings.songs[songId] || newDefaultUserSongSettings(songId))
-                );
-              } else {
-                return of(newDefaultUserSongSettings(songId));
-              }
-            },
-            RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response or on every song settings update.
-            checkUpdateByStringify
-        ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)))));
+      switchMap(user => this.store.get<UserSongSettings>(
+        getUserSongSettingsKey(songId),
+        () => { // fetch function.
+          if (user) {
+            return this.fetchAndUpdateUserSettings(user).pipe(
+              map(userSettings => userSettings.songs[songId] || newDefaultUserSongSettings(songId)),
+            );
+          } else {
+            return of(newDefaultUserSongSettings(songId));
+          }
+        },
+        RefreshMode.DoNotRefresh, // refreshed on every login as a part of login response or on every song settings update.
+        checkUpdateByStringify,
+      ).pipe(map(songSettings => songSettings || newDefaultUserSongSettings(songId)))));
   }
 
   private fetchAndUpdateUserSettings(user: User|undefined): Observable<UserSettings> {
@@ -89,10 +89,10 @@ export class UserService {
       return of(newDefaultUserSettings());
     }
     return this.httpClient.get<UserSettings>(`/api/user/settings`)
-        .pipe(
-            switchMap(userSettings => from(this.updateUserSettings(userSettings))
-                .pipe(map(() => userSettings)))
-        );
+      .pipe(
+        switchMap(userSettings => from(this.updateUserSettings(userSettings))
+          .pipe(map(() => userSettings))),
+      );
   }
 
   async setUserSongSettings(songSettings: UserSongSettings): Promise<void> {
@@ -103,10 +103,10 @@ export class UserService {
 
     // update settings on the server only if we have a valid user session.
     const userSettingsFromServer = await firstValueFrom(
-        this.getUser$().pipe(
-            switchMap(user => user
-                              ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings)
-                              : of(undefined)))
+      this.getUser$().pipe(
+        switchMap(user => user
+                          ? this.httpClient.put<UserSettings>(`/api/user/settings/song`, songSettings)
+                          : of(undefined))),
     );
     if (userSettingsFromServer) {
       await this.updateUserSettings(userSettingsFromServer);
@@ -118,17 +118,17 @@ export class UserService {
    */
   getH4SiFlag(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<boolean> {
     return this.getUser$().pipe(
-        switchMap(user => {
-          const fetchFn: FetchFn<boolean>|undefined = user
-                                                      ? () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.h4Si))
-                                                      : undefined;
-          return this.store.get<boolean>(
-              H4SI_FLAG_KEY,
-              fetchFn,
-              user ? refreshMode : RefreshMode.DoNotRefresh,
-              checkUpdateByReference
-          ).pipe(map(flag => !!flag));
-        })
+      switchMap(user => {
+        const fetchFn: FetchFn<boolean>|undefined = user
+                                                    ? () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.h4Si))
+                                                    : undefined;
+        return this.store.get<boolean>(
+          H4SI_FLAG_KEY,
+          fetchFn,
+          user ? refreshMode : RefreshMode.DoNotRefresh,
+          checkUpdateByReference,
+        ).pipe(map(flag => !!flag));
+      }),
     );
   }
 
@@ -136,24 +136,24 @@ export class UserService {
     await this.store.set<boolean>(H4SI_FLAG_KEY, h4SiFlag, skipUpdateCheck);
     const isSignedIn = !!(await this.getCurrentUser());
     if (isSignedIn) {
-      const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, {h4SiFlag: h4SiFlag}));
+      const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, { h4SiFlag: h4SiFlag }));
       await this.updateUserSettings(settings);
     }
   }
 
   getFavoriteKey(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<ChordTone> {
     return this.getUser$().pipe(
-        switchMap(user => {
-          const fetchFn: FetchFn<ChordTone>|undefined = user
-                                                        ? () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.favKey))
-                                                        : undefined;
-          return this.store.get<ChordTone>(
-              FAVORITE_TONE_KEY,
-              fetchFn,
-              user ? refreshMode : RefreshMode.DoNotRefresh,
-              checkUpdateByReference
-          ).pipe(map(key => key || DEFAULT_FAVORITE_KEY));
-        })
+      switchMap(user => {
+        const fetchFn: FetchFn<ChordTone>|undefined = user
+                                                      ? () => this.fetchAndUpdateUserSettings(user).pipe(map(userSettings => userSettings.favKey))
+                                                      : undefined;
+        return this.store.get<ChordTone>(
+          FAVORITE_TONE_KEY,
+          fetchFn,
+          user ? refreshMode : RefreshMode.DoNotRefresh,
+          checkUpdateByReference,
+        ).pipe(map(key => key || DEFAULT_FAVORITE_KEY));
+      }),
     );
   }
 
@@ -161,7 +161,7 @@ export class UserService {
     await this.store.set<string>(FAVORITE_TONE_KEY, favKey, skipUpdateCheck);
     const isSignedIn = !!(await this.getCurrentUser());
     if (isSignedIn) {
-      const updateRequest: UpdateFavoriteSongKeyRequest = {key: favKey};
+      const updateRequest: UpdateFavoriteSongKeyRequest = { key: favKey };
       const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/favKey`, updateRequest));
       await this.updateUserSettings(settings);
     }
@@ -229,10 +229,10 @@ export class UserService {
 
   getCatalogNavigationHistory(): Observable<CatalogNavigationHistory> {
     return this.store.get<CatalogNavigationHistory>(
-        CATALOG_NAVIGATION_HISTORY_KEY,
-        DO_NOT_PREFETCH,
-        RefreshMode.DoNotRefresh,
-        skipUpdateCheck
+      CATALOG_NAVIGATION_HISTORY_KEY,
+      DO_NOT_PREFETCH,
+      RefreshMode.DoNotRefresh,
+      skipUpdateCheck,
     ).pipe(map(s => s || newEmptyCatalogNavigationHistory()));
   }
 
@@ -241,7 +241,7 @@ export class UserService {
   }
 
   async removeStepFromCatalogNavigationHistory(url: string): Promise<void> {
-    const history = {...await firstValueFrom(this.getCatalogNavigationHistory())};
+    const history = { ...await firstValueFrom(this.getCatalogNavigationHistory()) };
     history.steps = history.steps.filter(s => s.url !== url);
     await this.setCatalogNavigationHistory(history);
   }
@@ -251,7 +251,7 @@ export class UserService {
       return;
     }
     await this.removeStepFromCatalogNavigationHistory(step.url);
-    const history = {...await firstValueFrom(this.getCatalogNavigationHistory())};
+    const history = { ...await firstValueFrom(this.getCatalogNavigationHistory()) };
     if (history.steps.length >= MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY) {
       history.steps.splice(history.steps.length - MAX_STEPS_IN_CATALOG_NAVIGATION_HISTORY + 1);
     }

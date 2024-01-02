@@ -11,6 +11,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {map, switchMap} from 'rxjs/operators';
 import {AbstractAppComponent} from '@app/utils/abstract-app-component';
 import {isBrowser} from '@app/utils/misc-utils';
+
 const Hammer = isBrowser ? require('hammerjs') : {} as any;
 
 @Component({

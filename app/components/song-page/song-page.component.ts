@@ -1,40 +1,40 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy} from '@angular/core';
-import {CatalogService} from '@app/services/catalog.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Collection, Song, SongDetails} from '@common/catalog-model';
-import {BehaviorSubject, combineLatest, firstValueFrom} from 'rxjs';
-import {map, switchMap, take, throttleTime} from 'rxjs/operators';
-import {switchToNotFoundMode} from '@app/utils/component-utils';
-import {UserService} from '@app/services/user.service';
-import {canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos} from '@common/util/misc-utils';
-import {parseChordsLine} from '@app/utils/chords-parser';
-import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT} from '@common/mounts';
-import {getCollectionImageUrl} from '@app/utils/url-utils';
-import {getToneWithH4SiFix, TONES_COUNT} from '@app/utils/chords-renderer';
-import {getDefaultUserSongFontSize, User, UserDeviceSettings, UserSongSettings} from '@common/user-model';
-import {HelpService} from '@app/services/help.service';
-import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
-import {findPrevAndNextSongs, getAllSongsInCollectionsSorted} from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
-import {I18N} from '@app/app-i18n';
-import {ShortcutsService} from '@app/services/shortcuts.service';
-import {SONG_TEXT_COMPONENT_NAME} from '@app/components/song-text/song-text.component';
-import {ContextMenuActionService} from '@app/services/context-menu-action.service';
-import {MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE} from '@app/components/settings-page/settings-page.component';
-import {getSongKey} from '@app/utils/key-detector';
-import {ChordTone} from '@app/utils/chords-lib';
-import {getTransposeActionKey, updateUserSongSetting} from '@app/components/song-chords/song-chords.component';
-import {BreadcrumbList, WithContext} from 'schema-dts';
-import {getSongJsonLdBreadcrumbList} from '@common/util/json-ld';
-import {MIN_DESKTOP_WIDTH} from '@common/common-constants';
-import {assertTruthy} from 'assertic';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {buildAffiliateLink, HAS_AFFILIATE_SUPPORT} from '@app/utils/AffiliateUtils';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { CatalogService } from '@app/services/catalog.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Collection, Song, SongDetails } from '@common/catalog-model';
+import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
+import { map, switchMap, take, throttleTime } from 'rxjs/operators';
+import { switchToNotFoundMode } from '@app/utils/component-utils';
+import { UserService } from '@app/services/user.service';
+import { canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos } from '@common/util/misc-utils';
+import { parseChordsLine } from '@app/utils/chords-parser';
+import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
+import { MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT } from '@common/mounts';
+import { getCollectionImageUrl } from '@app/utils/url-utils';
+import { getToneWithH4SiFix, TONES_COUNT } from '@app/utils/chords-renderer';
+import { getDefaultUserSongFontSize, User, UserDeviceSettings, UserSongSettings } from '@common/user-model';
+import { HelpService } from '@app/services/help.service';
+import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
+import { findPrevAndNextSongs, getAllSongsInCollectionsSorted } from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
+import { I18N } from '@app/app-i18n';
+import { ShortcutsService } from '@app/services/shortcuts.service';
+import { SONG_TEXT_COMPONENT_NAME } from '@app/components/song-text/song-text.component';
+import { ContextMenuActionService } from '@app/services/context-menu-action.service';
+import { MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE } from '@app/components/settings-page/settings-page.component';
+import { getSongKey } from '@app/utils/key-detector';
+import { ChordTone } from '@app/utils/chords-lib';
+import { getTransposeActionKey, updateUserSongSetting } from '@app/components/song-chords/song-chords.component';
+import { BreadcrumbList, WithContext } from 'schema-dts';
+import { getSongJsonLdBreadcrumbList } from '@common/util/json-ld';
+import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
+import { assertTruthy } from 'assertic';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/AffiliateUtils';
 
 @Component({
   templateUrl: './song-page.component.html',
   styleUrls: ['./song-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongPageComponent extends ComponentWithLoadingIndicator implements OnDestroy {
 
@@ -100,7 +100,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const primaryCollection$ = primaryCollectionId$.pipe(switchMap(id => this.catalogService.observeCollection(id)));
     const allSongsInCollection$ = collection$.pipe(switchMap(c => this.catalogService.getSongIdsByCollection(c?.id)));
     const songInCollection$ = combineLatest([collectionId$, primaryCollectionId$])
-        .pipe(switchMap(([collectionId, primaryCollectionId]) => this.catalogService.getSongByMount(collectionId, primaryCollectionId, songMount)));
+      .pipe(switchMap(([collectionId, primaryCollectionId]) => this.catalogService.getSongByMount(collectionId, primaryCollectionId, songMount)));
     // Reuse cached song to keep showing the page if the song was moved out of the current collection.
     const song$ = songInCollection$.pipe(map(song => song || this.song));
     const songDetails$ = song$.pipe(switchMap(song => this.catalogService.getSongDetailsById(song?.id)));
@@ -112,8 +112,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const songData$ = combineLatest([collection$, primaryCollection$, song$, songDetails$, allSongsInCollection$]);
     const userData$ = combineLatest([user$, h4Si$, favoriteKey$, songSettings$]);
     combineLatest([songData$, userData$]).pipe(
-        throttleTime(100, undefined, {leading: true, trailing: true}),
-        takeUntilDestroyed(),
+      throttleTime(100, undefined, { leading: true, trailing: true }),
+      takeUntilDestroyed(),
     ).subscribe(([[collection, primaryCollection, song, songDetails, allSongsInCollection], [user, h4Si, favoriteKey, songSettings]]) => {
       this.loaded = true;
       this.cdr.markForCheck();
@@ -158,7 +158,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     });
 
     this.uds.getUserDeviceSettings().pipe(
-        takeUntilDestroyed()
+      takeUntilDestroyed(),
     ).subscribe(deviceSettings => {
       this.deviceSettings = deviceSettings;
     });
@@ -168,22 +168,22 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     this.contextMenuActionService.footerActions$.next([
       {
         icon: 'note', target: [
-          {icon: 'arrow-down', target: () => this.transpose(-1), style: {'width.px': 18}},
-          {icon: 'arrow-up', target: () => this.transpose(1), style: {'width.px': 18}},
-          {icon: 'reset', target: () => this.transpose(0), style: {'width.px': 18}},
-          {text$: this.transposeMenuActionText$, target: () => this.transposeToKey(), textStyle: {'font-size.px': 16}},
+          { icon: 'arrow-down', target: () => this.transpose(-1), style: { 'width.px': 18 } },
+          { icon: 'arrow-up', target: () => this.transpose(1), style: { 'width.px': 18 } },
+          { icon: 'reset', target: () => this.transpose(0), style: { 'width.px': 18 } },
+          { text$: this.transposeMenuActionText$, target: () => this.transposeToKey(), textStyle: { 'font-size.px': 16 } },
         ],
-        style: {'width.px': 18}
+        style: { 'width.px': 18 },
       },
-      {icon: 'minus', target: () => this.decFontSize(), style: {'width.px': 18}},
-      {icon: 'plus', target: () => this.incFontSize(), style: {'width.px': 18}},
+      { icon: 'minus', target: () => this.decFontSize(), style: { 'width.px': 18 } },
+      { icon: 'plus', target: () => this.incFontSize(), style: { 'width.px': 18 } },
       {
         icon: 'dice4',
         target: [
           {
             icon: 'dice4',
             text: this.i18n.gotoRandomSongInCatalogMenu,
-            target: () => this.shortcutsService.gotoRandomSong()
+            target: () => this.shortcutsService.gotoRandomSong(),
           }, {
             icon: 'dice4',
             text: this.i18n.gotoRandomSongInCollectionMenu,
@@ -191,10 +191,10 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
               if (this.activeCollection && this.activeCollection.id) {
                 this.shortcutsService.gotoRandomSong(this.activeCollection.id);
               }
-            }
+            },
           },
         ],
-        style: {'width.px': 22}
+        style: { 'width.px': 22 },
       },
     ]);
   }
@@ -213,13 +213,13 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   private handleSongRemovalFromCatalog(): void {
     // Try to go to the next or prev song in the current collection. Fall-back to collection/studio page.
     this.catalogService.getCollectionIdByMount(this.collectionMount).pipe(
-        switchMap(collectionId => this.catalogService.observeCollection(collectionId)),
-        switchMap(collection => getAllSongsInCollectionsSorted(collection, this.catalogService)),
-        take(1),
-        takeUntilDestroyed(this.destroyRef),
+      switchMap(collectionId => this.catalogService.observeCollection(collectionId)),
+      switchMap(collection => getAllSongsInCollectionsSorted(collection, this.catalogService)),
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(async (songs) => {
-      const {collectionMount, song} = this;
-      const {prevSong, nextSong} = song ? findPrevAndNextSongs(song.id, songs, song.title) : {prevSong: undefined, nextSong: undefined};
+      const { collectionMount, song } = this;
+      const { prevSong, nextSong } = song ? findPrevAndNextSongs(song.id, songs, song.title) : { prevSong: undefined, nextSong: undefined };
       const targetSong = nextSong || prevSong;
       const targetSongPrimaryCollection = targetSong ? await firstValueFrom(this.catalogService.observeCollection(targetSong.collectionId)) : undefined;
       if (targetSong && collectionMount && targetSongPrimaryCollection) {
@@ -323,7 +323,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   async transpose(steps: number): Promise<void> {
     if (this.songSettings) {
       const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
-      await this.uds.setUserSongSettings({...this.songSettings!, transpose});
+      await this.uds.setUserSongSettings({ ...this.songSettings!, transpose });
     }
   }
 
@@ -345,7 +345,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   private async updateSongFontSize(songFontSize: number): Promise<void> {
     if (this.deviceSettings) {
-      await this.uds.setUserDeviceSettings({...this.deviceSettings, songFontSize});
+      await this.uds.setUserDeviceSettings({ ...this.deviceSettings, songFontSize });
     }
   }
 
@@ -360,7 +360,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const name = this.song.title;
     const artist = getNameFirstFormArtistName(this.activeCollection);
     const url = getSongPageLink(this.activeCollection.mount, this.song.mount, this.primaryCollection?.mount);
-    this.uds.addCatalogNavigationHistoryStep({name, collection: artist, url}).then(nothingThen);
+    this.uds.addCatalogNavigationHistoryStep({ name, collection: artist, url }).then(nothingThen);
   }
 
   get isSearchVideoOnYoutubeLinkVisible(): boolean {

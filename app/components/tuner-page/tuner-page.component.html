@@ -1,58 +1,58 @@
 <div class="tuner-panel">
 
-    <h2>{{ i18n.title }}</h2>
+  <h2>{{ i18n.title }}</h2>
 
-    <div>
-        <div class="settings-row">
-            {{ i18n.tone }}
-            <select [ngModel]="getToneType()" (ngModelChange)="setToneType($event)">
-                <option value="c">{{ i18n.toneClassic }}</option>
-                <option value="e">{{ i18n.toneElectro }}</option>
-            </select>
+  <div>
+    <div class="settings-row">
+      {{ i18n.tone }}
+      <select [ngModel]="getToneType()" (ngModelChange)="setToneType($event)">
+        <option value="c">{{ i18n.toneClassic }}</option>
+        <option value="e">{{ i18n.toneElectro }}</option>
+      </select>
 
-            <label class="checkbox">
-                <input type="checkbox" [checked]="getRepeatMode()" (change)="onRepeatModeCheckboxChanged($event)"><span>{{ i18n.repeat }}</span>
-            </label>
+      <label class="checkbox">
+        <input type="checkbox" [checked]="getRepeatMode()" (change)="onRepeatModeCheckboxChanged($event)"><span>{{ i18n.repeat }}</span>
+      </label>
 
-        </div>
-        <div class="string-buttons-row">
-            <a #s1 class="string-button" (click)="play('e')" (focus)="trackFocus('e')" [class.active]="isPlaying('e')" tabindex="0"><span>1</span></a>
-            <a #s2 class="string-button" (click)="play('B')" (focus)="trackFocus('B')" [class.active]="isPlaying('B')" tabindex="0"><span>2</span></a>
-            <a #s3 class="string-button" (click)="play('G')" (focus)="trackFocus('G')" [class.active]="isPlaying('G')" tabindex="0"><span>3</span></a>
-            <a #s4 class="string-button" (click)="play('D')" (focus)="trackFocus('D')" [class.active]="isPlaying('D')" tabindex="0"><span>4</span></a>
-            <a #s5 class="string-button" (click)="play('A')" (focus)="trackFocus('A')" [class.active]="isPlaying('A')" tabindex="0"><span>5</span></a>
-            <a #s6 class="string-button" (click)="play('E')" (focus)="trackFocus('E')" [class.active]="isPlaying('E')" tabindex="0"><span>6</span></a>
-        </div>
-        <div class="stop-button-row">
-            <a class="string-button stop-button" (click)="stop()" (focus)="trackFocus('')" tabindex="0"><span>{{ i18n.pauseButton }}</span></a>
-        </div>
     </div>
-
-    <div class="key-help-row">
-        <h3>{{ i18n.hotKeys }}</h3>
-        <table>
-            <tbody>
-            <tr>
-                <td style="white-space: nowrap;"><b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b></td>
-                <td>{{ i18n.stringByKeyDetails }}</td>
-            </tr>
-            <tr>
-                <td><b>Space</b></td>
-                <td>{{ i18n.pauseOrPlay }}</td>
-            </tr>
-            <tr>
-                <td><b>⇦</b> {{ i18nCommon.and }} <b>⇨</b></td>
-                <td>{{ i18n.stringPrevNextKeyDetails }}</td>
-            </tr>
-            <tr>
-                <td><b>⇧</b> {{ i18nCommon.and }} <b>⇩</b></td>
-                <td>{{ i18n.toneSelectionDetails }}</td>
-            </tr>
-            <tr>
-                <td><b>0</b></td>
-                <td>{{ i18n.repeatModeDetails }}</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="string-buttons-row">
+      <a #s1 class="string-button" (click)="play('e')" (focus)="trackFocus('e')" [class.active]="isPlaying('e')" tabindex="0"><span>1</span></a>
+      <a #s2 class="string-button" (click)="play('B')" (focus)="trackFocus('B')" [class.active]="isPlaying('B')" tabindex="0"><span>2</span></a>
+      <a #s3 class="string-button" (click)="play('G')" (focus)="trackFocus('G')" [class.active]="isPlaying('G')" tabindex="0"><span>3</span></a>
+      <a #s4 class="string-button" (click)="play('D')" (focus)="trackFocus('D')" [class.active]="isPlaying('D')" tabindex="0"><span>4</span></a>
+      <a #s5 class="string-button" (click)="play('A')" (focus)="trackFocus('A')" [class.active]="isPlaying('A')" tabindex="0"><span>5</span></a>
+      <a #s6 class="string-button" (click)="play('E')" (focus)="trackFocus('E')" [class.active]="isPlaying('E')" tabindex="0"><span>6</span></a>
     </div>
+    <div class="stop-button-row">
+      <a class="string-button stop-button" (click)="stop()" (focus)="trackFocus('')" tabindex="0"><span>{{ i18n.pauseButton }}</span></a>
+    </div>
+  </div>
+
+  <div class="key-help-row">
+    <h3>{{ i18n.hotKeys }}</h3>
+    <table>
+      <tbody>
+      <tr>
+        <td style="white-space: nowrap;"><b>1</b>, <b>2</b>, <b>3</b>, <b>4</b>, <b>5</b>, <b>6</b></td>
+        <td>{{ i18n.stringByKeyDetails }}</td>
+      </tr>
+      <tr>
+        <td><b>Space</b></td>
+        <td>{{ i18n.pauseOrPlay }}</td>
+      </tr>
+      <tr>
+        <td><b>⇦</b> {{ i18nCommon.and }} <b>⇨</b></td>
+        <td>{{ i18n.stringPrevNextKeyDetails }}</td>
+      </tr>
+      <tr>
+        <td><b>⇧</b> {{ i18nCommon.and }} <b>⇩</b></td>
+        <td>{{ i18n.toneSelectionDetails }}</td>
+      </tr>
+      <tr>
+        <td><b>0</b></td>
+        <td>{{ i18n.repeatModeDetails }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

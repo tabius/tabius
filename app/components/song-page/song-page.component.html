@@ -3,7 +3,7 @@
 <div class="content">
     <!-- Loading indicator -->
     <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-        <div class="message">{{i18n.loadingSong}}</div>
+        <div class="message">{{ i18n.loadingSong }}</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
@@ -44,19 +44,19 @@
         <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen && isBrowser">
             <div class="button-item">
                 <a class="btn btn-info" (click)="openEditor()" title="{{i18n.editSongButtonTitle}}">
-                    <span class="desktop-only-inline">{{i18n.editSongButtonDesktop}}</span>
-                    <span class="mobile-only-inline">{{i18n.editSongButtonMobile}}</span>
+                    <span class="desktop-only-inline">{{ i18n.editSongButtonDesktop }}</span>
+                    <span class="mobile-only-inline">{{ i18n.editSongButtonMobile }}</span>
                 </a>
             </div>
             <div class="button-item" *ngIf="isSearchVideoOnYoutubeLinkVisible">
                 <a class="btn" href="{{youtubeSearchSongLink}}" title="{{i18n.searchSongOnYoutubeLinkTitle}}" target="_blank">
-                    <span class="desktop-only-inline">{{i18n.searchSongOnYoutubeLinkText}}</span>
+                    <span class="desktop-only-inline">{{ i18n.searchSongOnYoutubeLinkText }}</span>
                 </a>
             </div>
             <div class="button-item" *ngIf="affiliateSongLink">
                 <a class="btn affiliate-button" href="{{affiliateSongLink}}" title="{{i18n.affiliateLinkButtonTitle}}" target="_blank">
-                    <span class="desktop-only-inline">{{i18n.affiliateLinkButtonDesktopLabel}}</span>
-                    <span class="mobile-only-inline">{{i18n.affiliateLinkButtonMobileLabel}}</span>
+                    <span class="desktop-only-inline">{{ i18n.affiliateLinkButtonDesktopLabel }}</span>
+                    <span class="mobile-only-inline">{{ i18n.affiliateLinkButtonMobileLabel }}</span>
                 </a>
             </div>
         </div>

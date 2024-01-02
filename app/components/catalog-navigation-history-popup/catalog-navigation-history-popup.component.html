@@ -1,11 +1,11 @@
 <div class="container">
 
-    <div class="title">{{i18n.title}}</div>
+    <div class="title">{{ i18n.title }}</div>
 
     <div *ngFor="let step of visibleSteps" class="list-item">
         <a routerLink="{{step.url}}" (click)="popover.close()">
             {{ step.name }}
-            <span *ngIf="step.collection" class="dark-pill collection">{{step.collection}}</span>
+            <span *ngIf="step.collection" class="dark-pill collection">{{ step.collection }}</span>
         </a>
     </div>
 

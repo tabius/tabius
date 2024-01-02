@@ -1,15 +1,15 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output} from '@angular/core';
-import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
-import {I18N} from '@app/app-i18n';
-import {scrollToView} from '@common/util/misc-utils';
-import {BrowserStateService} from '@app/services/browser-state.service';
-import {LINK_STUDIO} from '@common/mounts';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
+import { TELEGRAM_CHANNEL_URL } from '@app/app-constants';
+import { I18N } from '@app/app-i18n';
+import { scrollToView } from '@common/util/misc-utils';
+import { BrowserStateService } from '@app/services/browser-state.service';
+import { LINK_STUDIO } from '@common/mounts';
 
 @Component({
   selector: 'gt-moderator-prompt',
   templateUrl: './moderator-prompt.component.html',
   styleUrls: ['./moderator-prompt.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModeratorPromptComponent implements AfterViewInit {
   readonly telegramLink = TELEGRAM_CHANNEL_URL;

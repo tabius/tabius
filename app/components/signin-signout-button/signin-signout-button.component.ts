@@ -1,13 +1,13 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
-import {I18N} from '@app/app-i18n';
-import {ClientAuthService} from '@app/services/client-auth.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { I18N } from '@app/app-i18n';
+import { ClientAuthService } from '@app/services/client-auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'gt-signin-signout-button',
   templateUrl: './signin-signout-button.component.html',
   styleUrls: ['./signin-signout-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninSignoutButtonComponent {
 
@@ -19,7 +19,7 @@ export class SigninSignoutButtonComponent {
               public authService: ClientAuthService,
   ) {
     this.authService.user$.pipe(
-        takeUntilDestroyed(),
+      takeUntilDestroyed(),
     ).subscribe(user => {
       this.username = user?.name || user?.email;
       this.cd.markForCheck();

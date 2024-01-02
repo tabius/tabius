@@ -1,13 +1,13 @@
 <div class="content">
 
     <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-        <div class="message">{{i18n.loadingMessage}}</div>
+        <div class="message">{{ i18n.loadingMessage }}</div>
         <gt-loading-indicator></gt-loading-indicator>
     </div>
 
     <div *ngIf="loaded">
 
-        <h2>{{i18n.title}}</h2>
+        <h2>{{ i18n.title }}</h2>
 
         <gt-song [songId]="songId" [showCollectionLink]="true"></gt-song>
 
