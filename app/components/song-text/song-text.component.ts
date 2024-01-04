@@ -13,6 +13,7 @@ import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.direct
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import type {Request} from 'express';
 import {AbstractAppComponent} from '@app/utils/abstract-app-component';
+import {assertTruthy} from 'assertic';
 
 /** Heuristic used to enable multi-column mode. */
 const IDEAL_SONG_LINES_PER_COLUMN = 17; // (4 chords + 4 text lines) * 2 + 1 line between
@@ -163,20 +164,20 @@ export class SongTextComponent extends AbstractAppComponent {
   private getSongStats(): SongStats {
     if (!this.songStats) {
       this.songStats = {lineCount: 1, maxLineWidth: 0}; // line count starts with 1 because even empty string ('') is counted as one line.
-      let maxCharsPerLine = 0;
+      const songFontSize = this.usePrintFontSize ? SONG_PRINT_FONT_SIZE : this.songFontSize || 16;
       const {content} = this.song;
+      // Simple heuristic for the song text width.
       for (let i = 0; i < content.length;) {
         const lineSepIdx = content.indexOf('\n', i);
         if (lineSepIdx === -1) {
           break;
         }
-        maxCharsPerLine = Math.max(maxCharsPerLine, lineSepIdx - 1 - i);
+        const lineWidth = getTextWidth(content.substring(i, lineSepIdx), songFontSize);
+        this.songStats.maxLineWidth = Math.max(this.songStats.maxLineWidth, lineWidth);
         i = lineSepIdx + 1;
         this.songStats.lineCount++;
       }
-      // trivial heuristic for song width.
-      const songFontSize = this.usePrintFontSize ? SONG_PRINT_FONT_SIZE : this.songFontSize;
-      this.songStats.maxLineWidth = (maxCharsPerLine + 1) * (songFontSize ? songFontSize : 16) * 2 / 3;
+      this.songStats.maxLineWidth += 20; // For margins.
     }
     return this.songStats;
   }
@@ -266,4 +267,23 @@ function preserveBlockOnColumnBreak(blockHtml: string): string {
     resultHtml += lines[i] + (i === lines.length - 1 ? '' : '\n');
   }
   return resultHtml;
+}
+
+let canvasForTextWidth: HTMLCanvasElement|undefined;
+
+function getTextWidth(text: string, fontSizePx: number): number {
+  if (typeof window === 'undefined') {
+    const charWidth = fontSizePx * 2 / 3;
+    this.songStats.maxLineWidth = text.length * charWidth;
+  }
+
+  if (!canvasForTextWidth) {
+    canvasForTextWidth = document.createElement('canvas');
+  }
+  assertTruthy(canvasForTextWidth);
+  const context = canvasForTextWidth.getContext('2d');
+  assertTruthy(context);
+  context.font = `${fontSizePx}px 'Ubuntu Mono', monospace`;
+  const metrics = context.measureText(text);
+  return metrics.width;
 }
