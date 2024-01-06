@@ -3,7 +3,7 @@ import {installLogFunctions} from './util/log';
 import {NestFactory} from '@nestjs/core';
 import {ServerMainModule} from './server-main.module';
 import {CorsOptions} from '@nestjs/common/interfaces/external/cors-options.interface';
-import * as session from 'express-session';
+import session from 'express-session';
 import {SERVER_CONFIG} from './server-config';
 import {NestApplicationOptions} from '@nestjs/common';
 
