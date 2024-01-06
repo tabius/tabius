@@ -30,6 +30,9 @@ export class PwaUpdaterService {
     });
 
     updates.versionUpdates.subscribe(async event => {
+      if (event.type === 'NO_NEW_VERSION_DETECTED') {
+        return;
+      }
       console.debug('Found new app update: ', event);
       // Ensure we have no reload loop for whatever reason it may happen
       const lastForcedUpdateTime = await firstValueFrom(appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck));
