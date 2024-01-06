@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { getChordsDiscussionUrl } from '@common/util/misc-utils';
 import { ChordLayout } from '@common/util/chords-layout-lib';
 import { PopoverRef } from '@app/popover/popover-ref';
 import { I18N } from '@app/app-i18n';
 import { getDefaultH4SiFlag } from '@common/user-model';
 import { convertChordToFingerPositions, playChordSound } from '@app/utils/chord-player';
+import { getChordsDiscussionUrl } from '@app/utils/url-utils';
 
 @Component({
   selector: 'gt-chord-popover',
