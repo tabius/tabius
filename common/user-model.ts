@@ -1,5 +1,5 @@
 import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/common-constants';
-import {ChordTone} from '@app/utils/chords-lib';
+import {ChordTone} from '@common/util/chords-lib';
 
 /** The only role we have today. Can add new collections and songs. */
 export type UserRole = 'moderator'

@@ -1,4 +1,4 @@
-import {Chord, ChordType} from '@app/utils/chords-lib';
+import {Chord, ChordType} from '@common/util/chords-lib';
 
 export interface ChordLocation {
   chord: Chord;

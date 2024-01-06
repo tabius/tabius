@@ -1,8 +1,8 @@
 import {Directive, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, TemplateRef} from '@angular/core';
-import {ChordLayout, getChordLayout} from '@app/utils/chords-layout-lib';
+import {ChordLayout, getChordLayout} from '@common/util/chords-layout-lib';
 import {PopoverRef} from '@app/popover/popover-ref';
 import {PopoverService} from '@app/popover/popover.service';
-import {Chord} from '@app/utils/chords-lib';
+import {Chord} from '@common/util/chords-lib';
 import {convertChordToFingerPositions, playChordSound} from '@app/utils/chord-player';
 
 export type ChordClickInfo = { element: HTMLElement, chord: Chord }|undefined;

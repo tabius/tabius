@@ -1,10 +1,10 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, ViewChild } from '@angular/core';
 import { ChordImagePainter } from '@app/utils/chord-image-painter';
-import { ChordLayout } from '@app/utils/chords-layout-lib';
+import { ChordLayout } from '@common/util/chords-layout-lib';
 import { isPlatformBrowser } from '@angular/common';
-import { VISUAL_TYPE_BY_CHORD_TYPE } from '@app/utils/chords-parser-lib';
+import { VISUAL_TYPE_BY_CHORD_TYPE } from '@common/util/chords-parser-lib';
 import { I18N } from '@app/app-i18n';
-import { getToneWithH4SiFix } from '@app/utils/chords-renderer';
+import { getToneWithH4SiFix } from '@common/util/chords-renderer';
 import { getDefaultH4SiFlag } from '@common/user-model';
 
 @Component({

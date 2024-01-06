@@ -1,5 +1,5 @@
 import {isDigit} from '@common/util/misc-utils';
-import {Chord, ChordTone} from '@app/utils/chords-lib';
+import {Chord, ChordTone} from '@common/util/chords-lib';
 
 export interface ChordLayout {
   chord: Chord,

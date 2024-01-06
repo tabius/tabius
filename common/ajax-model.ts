@@ -1,6 +1,6 @@
 import {User, UserSettings} from '@common/user-model';
 import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
-import {ChordTone} from '@app/utils/chords-lib';
+import {ChordTone} from '@common/util/chords-lib';
 
 export interface AjaxSessionInfo {
   userId: string|undefined;

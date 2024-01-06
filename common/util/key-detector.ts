@@ -1,6 +1,6 @@
-import {isSharp, transpose} from '@app/utils/chords-renderer';
-import {Chord, ChordTone} from '@app/utils/chords-lib';
-import {parseChords} from '@app/utils/chords-parser';
+import {isSharp, transpose} from '@common/util/chords-renderer';
+import {Chord, ChordTone} from '@common/util/chords-lib';
+import {parseChords} from '@common/util/chords-parser';
 
 /** All key variations used by tone detector. */
 export const KEY_VARIANTS = <const>[['A'], ['A#', 'Bb'], ['B'], ['C'], ['C#', 'Db'], ['D'], ['D#', 'Eb'], ['E'], ['F'], ['F#', 'Gb'], ['G'], ['G#', 'Ab']];

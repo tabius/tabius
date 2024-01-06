@@ -1,6 +1,6 @@
-import {CHORD_TYPE_BY_RAW_NAME, ChordLocation, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@app/utils/chords-parser-lib';
+import {CHORD_TYPE_BY_RAW_NAME, ChordLocation, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@common/util/chords-parser-lib';
 import {isDefined, isAlpha, isDigit} from '@common/util/misc-utils';
-import {Chord, CHORD_TONES, ChordTone, ChordType} from '@app/utils/chords-lib';
+import {Chord, CHORD_TONES, ChordTone, ChordType} from '@common/util/chords-lib';
 
 function isWordChar(char: string): boolean {
   return isAlpha(char) || char === '’';

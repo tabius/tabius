@@ -1,6 +1,5 @@
-import {applyBassTone, CHORDS_LAYOUTS, NEXT_TONE_LETTER_MAP} from '@app/utils/chords-layout-lib';
-import {VISUAL_TYPE_BY_CHORD_TYPE} from '@app/utils/chords-parser-lib';
-
+import {applyBassTone, CHORDS_LAYOUTS, NEXT_TONE_LETTER_MAP} from '@common/util/chords-layout-lib';
+import {VISUAL_TYPE_BY_CHORD_TYPE} from '@common/util/chords-parser-lib';
 
 describe('Chords layout lib', () => {
 
@@ -9,7 +8,7 @@ describe('Chords layout lib', () => {
     for (const chordName of chordNamesFromLayouts) {
       const layoutChordNameSuffix = chordName.substring(chordName.length > 1 && (chordName.charAt(1) === '#' || chordName.charAt(1) === 'b') ? 2 : 1);
       const found = VISUAL_TYPE_BY_CHORD_TYPE.has(layoutChordNameSuffix as any);
-      expect(found).toBeTruthy(`Chord layout entry does not match any chord type: ${chordName}`);
+      expect(found || `Chord layout entry does not match any chord type: ${chordName}`).toBe(true);
     }
   });
 
@@ -27,8 +26,8 @@ describe('Chords layout lib', () => {
     }
 
     for (const layout of allLayouts) {
-      expect(layout.length).toBe(6, `Bad chord layout length: ${layout}`);
-      expect(hasValidLayoutChars(layout)).toBeTruthy(`Bad chord layout chars: ${layout}`);
+      expect(layout.length || `Bad chord layout length: ${layout}`).toBe(6);
+      expect(hasValidLayoutChars(layout) || `Bad chord layout length: ${layout}`).toBe(true);
     }
   });
 
@@ -37,7 +36,7 @@ describe('Chords layout lib', () => {
     const allLayouts = Object.keys(CHORDS_LAYOUTS).filter(removeFlats).map(key => CHORDS_LAYOUTS[key]).map(removeFingers);
     const allLayoutsString = allLayouts.join('\n');
     for (const layout of allLayouts) {
-      expect(allLayoutsString.indexOf(layout)).toBe(allLayoutsString.lastIndexOf(layout), `Duplicate chord layout: ${layout}`);
+      expect(allLayoutsString.indexOf(layout) ?? `Bad chord layout length: ${layout}`).toBe(allLayoutsString.lastIndexOf(layout));
     }
   });
 
@@ -47,7 +46,7 @@ describe('Chords layout lib', () => {
         const sharpLayout = CHORDS_LAYOUTS[name];
         const flatName = NEXT_TONE_LETTER_MAP[name.charAt(0)] + 'b' + name.substring(2);
         const flatLayout = CHORDS_LAYOUTS[flatName];
-        expect(flatLayout).toBe(sharpLayout, `Layout for ${name} is not the same as for ${flatName}`);
+        expect(flatLayout || `Layout for ${name} is not the same as for ${flatName}`).toBe(sharpLayout);
       }
     }
   });

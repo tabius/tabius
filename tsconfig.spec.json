@@ -4,7 +4,6 @@
     "module": "ESNext",
     "outDir": "./out-tsc/spec",
     "types": [
-      "jasmine",
       "node"
     ]
   },
@@ -14,7 +13,6 @@
   ],
   "include": [
     "./app/**/*.spec.ts",
-    "./common/**/*.spec.ts",
     "./app/**/*.d.ts"
   ]
 }

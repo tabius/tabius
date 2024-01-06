@@ -4,8 +4,6 @@ import {map} from 'rxjs/operators';
 import {DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
 import {combineLatest, from, Observable, of} from 'rxjs';
 import {User} from '@common/user-model';
-import {environment} from '@app/environments/environment';
-import {TELEGRAM_CHANNEL_URL} from '@app/app-constants';
 import type {Request} from 'express';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
@@ -48,14 +46,6 @@ export function getSongPrintPageLink(collectionMount: string, songMount: string,
   return collectionMount === primaryCollectionMount || primaryCollectionMount === undefined
          ? `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${collectionMount}/${MOUNT_PRINT_SUFFIX}`
          : `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${primaryCollectionMount}/${MOUNT_PRINT_SUFFIX}`;
-}
-
-export function getFullLink(localLink: string): string {
-  return environment.url + localLink;
-}
-
-export function getChordsDiscussionUrl(): string {
-  return TELEGRAM_CHANNEL_URL;
 }
 
 /**

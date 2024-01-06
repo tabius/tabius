@@ -1,5 +1,5 @@
-import {getToneByToneNumber, renderChord, renderChords} from '@app/utils/chords-renderer';
-import {Chord, ChordTone, ChordType} from '@app/utils/chords-lib';
+import {getToneByToneNumber, renderChord, renderChords} from '@common/util/chords-renderer';
+import {Chord, ChordTone, ChordType} from '@common/util/chords-lib';
 
 const c = (tone: ChordTone, type: ChordType): Chord => ({tone, type});
 

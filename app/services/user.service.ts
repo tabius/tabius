@@ -6,7 +6,7 @@ import { checkUpdateByReference, checkUpdateByStringify, DO_NOT_PREFETCH, FetchF
 import { map, switchMap } from 'rxjs/operators';
 import { TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
 import { isValidId } from '@common/util/misc-utils';
-import { ChordTone } from '@app/utils/chords-lib';
+import { ChordTone } from '@common/util/chords-lib';
 import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
 import { ClientAuthService } from '@app/services/client-auth.service';
 

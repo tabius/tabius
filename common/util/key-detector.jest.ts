@@ -1,14 +1,14 @@
-import {parseChord} from '@app/utils/chords-parser';
-import {transpose} from '@app/utils/chords-renderer';
-import {checkToneIsFlat, detectKeyAsMinor, getTransposeDistance, KEY_VARIANTS} from '@app/utils/key-detector';
-import {Chord, CHORD_TONES} from '@app/utils/chords-lib';
+import {parseChord} from '@common/util/chords-parser';
+import {transpose} from '@common/util/chords-renderer';
+import {checkToneIsFlat, detectKeyAsMinor, getTransposeDistance, KEY_VARIANTS} from '@common/util/key-detector';
+import {Chord, CHORD_TONES} from '@common/util/chords-lib';
 
 
 function c(chordsLine: string, transposeSteps = 0, isFlat = false): Chord[] {
   const chords: Chord[] = [];
   for (const chordText of chordsLine.split(' ')) {
     const chordLocation = parseChord(chordText)!;
-    expect(chordLocation).withContext(`Failed to parse chord: ${chordText}`).toBeDefined();
+    expect(chordLocation || `Failed to parse chord: ${chordText}`).toBeDefined();
     const tone = transpose(chordLocation.chord.tone, transposeSteps, isFlat);
     chords.push({...chordLocation.chord, tone});
   }

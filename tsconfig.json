@@ -12,10 +12,11 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "target": "ES2022",
+    "esModuleInterop": true,
     "paths": {
       "@app/*": ["./app/*"],
       "@common/*": ["./common/*"],
-      "@server/*": ["./server/*"]
+      "@backend/*": ["./backend/*"]
     },
     "lib": [
       "ES2022",

@@ -7,11 +7,11 @@ import { map, switchMap, take, throttleTime } from 'rxjs/operators';
 import { switchToNotFoundMode } from '@app/utils/component-utils';
 import { UserService } from '@app/services/user.service';
 import { canManageCollectionContent, getFullLink, getNameFirstFormArtistName, getSongPageLink, isInputEvent, nothingThen, scrollToView, scrollToViewByEndPos } from '@common/util/misc-utils';
-import { parseChordsLine } from '@app/utils/chords-parser';
+import { parseChordsLine } from '@common/util/chords-parser';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
 import { MOUNT_COLLECTION_PREFIX, MOUNT_STUDIO, PARAM_COLLECTION_MOUNT, PARAM_PRIMARY_COLLECTION_MOUNT, PARAM_SONG_MOUNT } from '@common/mounts';
 import { getCollectionImageUrl } from '@app/utils/url-utils';
-import { getToneWithH4SiFix, TONES_COUNT } from '@app/utils/chords-renderer';
+import { getToneWithH4SiFix, TONES_COUNT } from '@common/util/chords-renderer';
 import { getDefaultUserSongFontSize, User, UserDeviceSettings, UserSongSettings } from '@common/user-model';
 import { HelpService } from '@app/services/help.service';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
@@ -21,15 +21,15 @@ import { ShortcutsService } from '@app/services/shortcuts.service';
 import { SONG_TEXT_COMPONENT_NAME } from '@app/components/song-text/song-text.component';
 import { ContextMenuActionService } from '@app/services/context-menu-action.service';
 import { MAX_SONG_FONT_SIZE, MIN_SONG_FONT_SIZE } from '@app/components/settings-page/settings-page.component';
-import { getSongKey } from '@app/utils/key-detector';
-import { ChordTone } from '@app/utils/chords-lib';
+import { getSongKey } from '@common/util/key-detector';
+import { ChordTone } from '@common/util/chords-lib';
 import { getTransposeActionKey, updateUserSongSetting } from '@app/components/song-chords/song-chords.component';
 import { BreadcrumbList, WithContext } from 'schema-dts';
 import { getSongJsonLdBreadcrumbList } from '@common/util/json-ld';
 import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
 import { assertTruthy } from 'assertic';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/AffiliateUtils';
+import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-utils';
 
 @Component({
   templateUrl: './song-page.component.html',

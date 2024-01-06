@@ -2,13 +2,13 @@ import {ChangeDetectionStrategy, Component, HostListener, Inject, Input, Optiona
 import {SongDetails} from '@common/catalog-model';
 import {switchMap} from 'rxjs';
 import {UserService} from '@app/services/user.service';
-import {renderChords} from '@app/utils/chords-renderer';
+import {renderChords} from '@common/util/chords-renderer';
 import {REQUEST} from '@app/express.tokens';
 import {getUserAgentFromRequest, isSmallScreenDevice} from '@common/util/misc-utils';
 import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/common-constants';
 import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings} from '@common/user-model';
-import {ChordLayout} from '@app/utils/chords-layout-lib';
-import {parseChord} from '@app/utils/chords-parser';
+import {ChordLayout} from '@common/util/chords-layout-lib';
+import {parseChord} from '@common/util/chords-parser';
 import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import type {Request} from 'express';

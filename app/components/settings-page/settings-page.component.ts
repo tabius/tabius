@@ -6,7 +6,7 @@ import { SongDetails } from '@common/catalog-model';
 import { RefreshMode } from '@app/store/observable-store';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
 import { I18N } from '@app/app-i18n';
-import { ChordTone, MINOR_KEY_TONES } from '@app/utils/chords-lib';
+import { ChordTone, MINOR_KEY_TONES } from '@common/util/chords-lib';
 import { ClientAuthService } from '@app/services/client-auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 

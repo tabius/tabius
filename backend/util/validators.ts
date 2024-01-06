@@ -5,7 +5,7 @@ import {CreateListedCollectionRequest, CreateUserCollectionRequest, UpdateFavori
 import {CollectionType, MAX_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_COLLECTION_MOUNT_LENGTH, MIN_COLLECTION_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails} from '@common/catalog-model';
 import {INVALID_ID} from '@common/common-constants';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {CHORD_TONES} from '@app/utils/chords-lib';
+import {CHORD_TONES} from '@common/util/chords-lib';
 
 export function paramToId(value: string): number {
   const id = +value;

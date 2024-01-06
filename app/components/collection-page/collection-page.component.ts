@@ -18,7 +18,7 @@ import { I18N } from '@app/app-i18n';
 import { ShortcutsService } from '@app/services/shortcuts.service';
 import { truthy } from 'assertic';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/AffiliateUtils';
+import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-utils';
 
 export class CollectionViewModel {
   readonly displayName: string;
