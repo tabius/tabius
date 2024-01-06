@@ -1,10 +1,10 @@
-import {Collection, CollectionType, Song} from '@common/catalog-model';
-import {MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {map} from 'rxjs/operators';
-import {DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT} from '@common/common-constants';
-import {combineLatest, from, Observable, of} from 'rxjs';
-import {User} from '@common/user-model';
-import type {Request} from 'express';
+import { Collection, CollectionType, Song } from '@common/catalog-model';
+import { MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX } from '@common/mounts';
+import { map } from 'rxjs/operators';
+import { DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT } from '@common/common-constants';
+import { combineLatest, from, Observable, of } from 'rxjs';
+import { User } from '@common/user-model';
+import type { Request } from 'express';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length === 0) {
@@ -99,7 +99,7 @@ export function scrollToView(element: HTMLElement|undefined, paddingTop = 0): vo
   if (!element) {
     return;
   }
-  window.scroll({left: window.scrollX, top: element.offsetTop - getCurrentNavbarHeight() - paddingTop, behavior: 'smooth'});
+  window.scroll({ left: window.scrollX, top: element.offsetTop - getCurrentNavbarHeight() - paddingTop, behavior: 'smooth' });
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -153,7 +153,7 @@ export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promi
     return first$;
   }
   return combineLatest([first$, ...promises.map(p => from(p))])
-      .pipe(map(arr => arr[0] as T));
+    .pipe(map(arr => arr[0] as T));
 }
 
 export function isTouchDevice(): boolean {
@@ -164,7 +164,7 @@ export function sortSongsAlphabetically(songs: Song[]): Song[] {
   return songs.sort((s1, s2) => s1.title === s2.title ? (s1.id < s2.id ? -1 : 1) : s1.title.localeCompare(s2.title));
 }
 
-export function trackById(_: number, entity: { id: number|string }): number|string {
+export function trackById<T extends { id: number|string }>(_: number, entity: T): number|string {
   return entity.id;
 }
 

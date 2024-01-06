@@ -8,7 +8,6 @@
     ]
   },
   "include": [
-    "app/polyfills.ts",
     "app/main.server.ts",
     "ssr-server-main.ts"
   ]
