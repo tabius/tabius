@@ -5,7 +5,7 @@ import {isValidId, toArrayOfInts} from '@common/util/misc-utils';
 import {User} from '@common/user-model';
 import {USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_SUFFIX} from '@common/common-constants';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {I18N} from '@server/server-i18n';
+import {I18N} from '../server-i18n';
 import {ResultSetHeader, RowDataPacket} from 'mysql2';
 import {truthy} from 'assertic';
 

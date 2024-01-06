@@ -1,9 +1,9 @@
 import {promisify} from 'util';
 import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {SERVER_CONFIG} from '@server/server-config';
+import {SERVER_CONFIG} from '../backend/server-config';
 import {INVALID_ID} from '@common/common-constants';
 import {MIN_COLLECTION_MOUNT_LENGTH, MIN_SONG_MOUNT_LENGTH} from '@common/catalog-model';
-import {packMediaLinks} from '@server/db/song-dbi.service';
+import {packMediaLinks} from '../backend/db/song-dbi.service';
 import {isValidId} from '@common/util/misc-utils';
 
 const fs = require('fs');

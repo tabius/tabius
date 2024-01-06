@@ -1,10 +1,10 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Put, Session } from '@nestjs/common';
-import { UserDbi } from '@server/db/user-dbi.service';
+import { UserDbi } from '../db/user-dbi.service';
 import { newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings } from '@common/user-model';
 import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
-import { conformsTo, validate } from '@server/util/validation';
-import { UpdateFavoriteSongKeyValidator, UserSongSettingsValidator } from '@server/util/validators';
-import { ServerAuthService } from '@server/service/server-auth.service';
+import { conformsTo, validate } from '../util/validation';
+import { UpdateFavoriteSongKeyValidator, UserSongSettingsValidator } from '../util/validators';
+import { ServerAuthService } from '../service/server-auth.service';
 import { isEqualByStringify } from '@app/store';
 
 @Controller('/api/user')

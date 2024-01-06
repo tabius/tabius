@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
 import { Collection, CollectionDetails } from '@common/catalog-model';
-import { CollectionDbi, generateCollectionMountForUser } from '@server/db/collection-dbi.service';
-import { CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId } from '@server/util/validators';
+import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
+import { CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId } from '../util/validators';
 import { CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse } from '@common/ajax-model';
 import { User } from '@common/user-model';
-import { ServerAuthService } from '@server/service/server-auth.service';
-import { conformsTo, validate } from '@server/util/validation';
+import { ServerAuthService } from '../service/server-auth.service';
+import { conformsTo, validate } from '../util/validation';
 import { canManageCollectionContent, isModerator, isValidUserId } from '@common/util/misc-utils';
-import { SongDbi } from '@server/db/song-dbi.service';
+import { SongDbi } from '../db/song-dbi.service';
 import { AsyncFreshValue } from 'frescas';
 
 @Controller('/api/collection')

@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'nest-org',
       script: '/home/ram/tools/node/bin/ts-node',
-      args: '-r tsconfig-paths/register ./server/main.ts ',
+      args: '-r tsconfig-paths/register ./backend/main.backend.ts ',
       cwd: '/home/ram/work/tabius-org',
       instances: 1,
       autorestart: true,

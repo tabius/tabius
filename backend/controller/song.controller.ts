@@ -1,14 +1,14 @@
-import { SongDbi } from '@server/db/song-dbi.service';
+import { SongDbi } from '../db/song-dbi.service';
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
 import { Song, SongDetails } from '@common/catalog-model';
-import { isNumericId, NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator } from '@server/util/validators';
+import { isNumericId, NewSongDetailsValidator, NewSongValidator, paramToArrayOfNumericIds, paramToId, SongDetailsValidator, SongValidator } from '../util/validators';
 import { User } from '@common/user-model';
-import { conformsTo, isBoolean, validate } from '@server/util/validation';
-import { ServerAuthService } from '@server/service/server-auth.service';
+import { conformsTo, isBoolean, validate } from '../util/validation';
+import { ServerAuthService } from '../service/server-auth.service';
 import { AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest } from '@common/ajax-model';
 import { canManageCollectionContent, isModerator, isValidId } from '@common/util/misc-utils';
-import { FullTextSearchDbi } from '@server/db/full-text-search-dbi.service';
-import { CollectionDbi } from '@server/db/collection-dbi.service';
+import { FullTextSearchDbi } from '../db/full-text-search-dbi.service';
+import { CollectionDbi } from '../db/collection-dbi.service';
 import { assertTruthy } from 'assertic';
 
 @Controller('/api/song')

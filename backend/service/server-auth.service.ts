@@ -1,13 +1,13 @@
 import { CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { User } from '@common/user-model';
-import { CollectionDbi } from '@server/db/collection-dbi.service';
+import { CollectionDbi } from '../db/collection-dbi.service';
 import { isValidId } from '@common/util/misc-utils';
-import { UserDbi } from '@server/db/user-dbi.service';
+import { UserDbi } from '../db/user-dbi.service';
 import { INVALID_ID } from '@common/common-constants';
 import * as Express from 'express-session';
 import { AuthenticationClient, AuthenticationClientOptions } from 'auth0';
-import { SERVER_CONFIG } from '@server/server-config';
+import { SERVER_CONFIG } from '../server-config';
 import { Mutex } from 'async-mutex';
 import { nanoid } from 'nanoid';
 

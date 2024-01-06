@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS } from '@common/ajax-model';
 import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
 import { toSafeSearchText } from '@common/util/misc-utils';
-import { SERVER_CONFIG } from '@server/server-config';
+import { SERVER_CONFIG } from '../server-config';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 
