@@ -274,7 +274,7 @@ let canvasForTextWidth: HTMLCanvasElement|undefined;
 function getTextWidth(text: string, fontSizePx: number): number {
   if (typeof window === 'undefined') {
     const charWidth = fontSizePx * 2 / 3;
-    this.songStats.maxLineWidth = text.length * charWidth;
+    return text.length * charWidth;
   }
 
   if (!canvasForTextWidth) {

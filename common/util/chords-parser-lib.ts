@@ -1,4 +1,4 @@
-import {Chord, ChordType} from '@common/util/chords-lib';
+import { Chord, ChordType } from '@common/util/chords-lib';
 
 export interface ChordLocation {
   chord: Chord;
@@ -125,7 +125,7 @@ for (const [key, value] of Object.entries(CHORDS_LIB)) {
   }
 }
 
-function addToRawTypesByFirstChar(rawType): void {
+function addToRawTypesByFirstChar(rawType: string): void {
   const firstChar = rawType.charAt(0);
   let byFirstChar = RAW_CHORD_TYPES_BY_FIRST_CHAR.get(firstChar);
   if (!byFirstChar) {

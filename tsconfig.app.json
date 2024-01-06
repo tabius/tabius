@@ -3,5 +3,9 @@
   "files": [
     "app/main.ts",
     "app/polyfills.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
 }

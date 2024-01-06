@@ -161,7 +161,7 @@ export interface I18n {
     close: string;
   };
   resourceNotFoundComponent: {
-    tryToReloadPagePrompt;
+    tryToReloadPagePrompt: string;
   };
   settingsPage: {
     meta: PageMetadata,

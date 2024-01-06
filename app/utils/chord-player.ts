@@ -82,18 +82,19 @@ export function playChordSound(fingerPositions: FingerPositions): void {
     // Connect strings to the sink.
     const dst = context.destination;
     for (let index = 0; index < stringCount; index++) {
-      if (Number.isFinite(fingers[index])) {
-        setTimeout(() => pluck(getFrequency(index, fingers[index])).connect(dst), stagger * index);
+      const finger = fingers[index];
+      if (finger !== null) {
+        setTimeout(() => pluck(getFrequency(index, finger)).connect(dst), stagger * index);
       }
     }
   }
 
-  function getFrequency(string, fret): number {
+  function getFrequency(stringIndex: number, fret: number): number {
     // Concert A frequency.
     const A = 110;
     // These are how far guitar strings are tuned apart from A.
     const offsets = [-5, 0, 5, 10, 14, 19];
-    return A * Math.pow(2, (fret + offsets[string]) / 12);
+    return A * Math.pow(2, (fret + offsets[stringIndex]) / 12);
   }
 
   // noinspection JSUnusedLocalSymbols

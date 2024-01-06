@@ -29,8 +29,8 @@ export class UserCollectionEditorComponent {
     this.closeRequest.emit();
   }
 
-  toggleDeleteConfirmationFlag($event): void {
-    this.deleteConfirmationFlag = $event.target.checked;
+  toggleDeleteConfirmationFlag($event: Event): void {
+    this.deleteConfirmationFlag = ($event.target as HTMLInputElement)?.checked;
   }
 
   async delete(): Promise<void> {

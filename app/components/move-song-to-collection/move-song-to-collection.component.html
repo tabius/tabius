@@ -5,7 +5,7 @@
                 <option *ngFor="let collection of collections; trackBy: trackById" [ngValue]="collection">{{ collection.name }}</option>
             </select>
             <button class="btn move-button" [disabled]="!selectedCollection" (click)="onMoveButtonClicked()">
-                {{ mode == 'add' ? i18n.addButtonText : i18n.moveButtonText }}
+                {{ mode === 'add' ? i18n.addButtonText : i18n.moveButtonText }}
             </button>
         </div>
     </ng-container>
