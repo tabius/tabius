@@ -1,5 +1,5 @@
-import {getI18n} from '@common/i18n/i18n';
-import {environment} from '@app/environments/environment';
+import { getI18n } from '@common/i18n/i18n';
+import { environment } from '@app/environments/environment';
 
 /**
  * I18n context for tabius.

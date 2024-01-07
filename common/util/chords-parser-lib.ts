@@ -34,64 +34,64 @@ export const CHORDS_LIB: { readonly [key in ChordType]: string } = {
   '7x9': 'A7+9',
   '7x9x11': 'A7+9+11',
   '9sus4': 'A9sus4',
-  'add11': 'Aadd11', // Major Add 11th
+  add11: 'Aadd11', // Major Add 11th
   'add11+': 'Aadd11+, Aadd11p', // Major Add 11th+
-  'add9': 'Aadd9', // Major Add 9th
-  'aug': 'A+, A+5, Am+5, Aaug, AAugmented', // Augmented
-  'aug7': 'A+7, A7+5, Aaug7', // Augmented 7th
-  'aug9': 'A+9, A9#5, Aaug9',
-  'augmaj7': 'A+M7, A+M, AM7+5, AM+5, AaugM7',
-  'augmaj9': 'A+M9, AaugM9',
-  'B5': 'Ab5, AMb5, AM-5',
-  'dim': 'Adim, Amb5, Amo5, Am5-, ADiminished', // Diminished: [root, m3, d5]
-  'dim7': 'Adim7', // Diminished 7th: [root, m3, d5, d7]
-  'dim7B9': 'Adim7b9',
-  'dim9': 'Adim9, Adim7/9, Adim7add2, Adim7add9, Am7b5add2', // Diminished 9th
-  'dimB9': 'Adimb9',
-  'dom11': 'A11, Adom11', // 11th, Dominant 11th
-  'dom13': 'A13, Adom13',
-  'dom7': 'A7, Adom, Adom7', // 7th, Dominant 7th
-  'dom7dim5': 'A7b5, Adom7dim5',
-  'dom9': 'A9, Adom9', // 9th, Dominant 9th
-  'half_diminished9': 'AØ9',
-  'half_diminishedB9': 'AØb9',
-  'm11B5b9': 'Am11b5b9, Am11o5b9',
-  'm11B9': 'Am11b9',
-  'm2': 'Am2, Amadd2, Amadd9',
-  'm7B9': 'Am7b9',
-  'M7B9': 'AM7b9, AMb9',
-  'M7x11': 'AM7+11',
-  'm7x11': 'Am7+11',
-  'm7x9': 'Am7+9',
-  'M7x9': 'AM7+9, AM+9',
-  'M9x11': 'A9+11, AM9+11',
-  'maj': 'A, AM', // Major
-  'maj11': 'AM11',
-  'maj13': 'AM13',
-  'maj6': 'A6, AM6, Aadd6', // Major 6th
-  'maj7': 'AM7', // Major 7th
-  'maj7sus2': 'AM7sus2, AMsus2',
-  'maj7sus24': 'AM7sus24, AMsus24',
-  'maj7sus4': 'AM7sus4, AMsus4',
-  'maj9': 'AM9', // Major 9th
-  'min': 'Am', // Minor
-  'min11': 'Am11', // Minor 11th
-  'min13': 'Am13',
-  'min6': 'Am6, A6m', // Minor 6th
-  'min7': 'Am7', // Minor 7th
-  'min7dim5': 'Am7b5, Am7dim5, AØ, AØ7, Am7-5, Am7/5-, Am75-, Am75b, Am7+5', // Minor 7th Flat 5th or half-diminished seventh chord [root, m3, d5, m7]
-  'min9': 'Am9',
-  'minmaj11': 'AmM11',
-  'minmaj13': 'AmM13',
-  'minmaj7': 'AmM7, Am7M, Am+7, AmM, Am/M7', // Minor Major 7th
-  'minmaj9': 'AmM9',
-  'mM7B5': 'AmM7b5',
-  'mM7B9': 'AmM7b9, Am#7b9',
-  'Mx11': 'AM+11',
-  'sus2': 'Asus2, Amsus2', // Suspended 2nd
-  'sus2sus4': 'Asus24, Asus42', // Suspended 2nd Suspended 4th
-  'sus2B5': 'Asus2b5, A2-5, Asus2-5',
-  'sus4': 'Asus4, Asus, A4, Aadd4, Amsus4', // Suspended 4th
+  add9: 'Aadd9', // Major Add 9th
+  aug: 'A+, A+5, Am+5, Aaug, AAugmented', // Augmented
+  aug7: 'A+7, A7+5, Aaug7', // Augmented 7th
+  aug9: 'A+9, A9#5, Aaug9',
+  augmaj7: 'A+M7, A+M, AM7+5, AM+5, AaugM7',
+  augmaj9: 'A+M9, AaugM9',
+  B5: 'Ab5, AMb5, AM-5',
+  dim: 'Adim, Amb5, Amo5, Am5-, ADiminished', // Diminished: [root, m3, d5]
+  dim7: 'Adim7', // Diminished 7th: [root, m3, d5, d7]
+  dim7B9: 'Adim7b9',
+  dim9: 'Adim9, Adim7/9, Adim7add2, Adim7add9, Am7b5add2', // Diminished 9th
+  dimB9: 'Adimb9',
+  dom11: 'A11, Adom11', // 11th, Dominant 11th
+  dom13: 'A13, Adom13',
+  dom7: 'A7, Adom, Adom7', // 7th, Dominant 7th
+  dom7dim5: 'A7b5, Adom7dim5',
+  dom9: 'A9, Adom9', // 9th, Dominant 9th
+  half_diminished9: 'AØ9',
+  half_diminishedB9: 'AØb9',
+  m11B5b9: 'Am11b5b9, Am11o5b9',
+  m11B9: 'Am11b9',
+  m2: 'Am2, Amadd2, Amadd9',
+  m7B9: 'Am7b9',
+  M7B9: 'AM7b9, AMb9',
+  M7x11: 'AM7+11',
+  m7x11: 'Am7+11',
+  m7x9: 'Am7+9',
+  M7x9: 'AM7+9, AM+9',
+  M9x11: 'A9+11, AM9+11',
+  maj: 'A, AM', // Major
+  maj11: 'AM11',
+  maj13: 'AM13',
+  maj6: 'A6, AM6, Aadd6', // Major 6th
+  maj7: 'AM7', // Major 7th
+  maj7sus2: 'AM7sus2, AMsus2',
+  maj7sus24: 'AM7sus24, AMsus24',
+  maj7sus4: 'AM7sus4, AMsus4',
+  maj9: 'AM9', // Major 9th
+  min: 'Am', // Minor
+  min11: 'Am11', // Minor 11th
+  min13: 'Am13',
+  min6: 'Am6, A6m', // Minor 6th
+  min7: 'Am7', // Minor 7th
+  min7dim5: 'Am7b5, Am7dim5, AØ, AØ7, Am7-5, Am7/5-, Am75-, Am75b, Am7+5', // Minor 7th Flat 5th or half-diminished seventh chord [root, m3, d5, m7]
+  min9: 'Am9',
+  minmaj11: 'AmM11',
+  minmaj13: 'AmM13',
+  minmaj7: 'AmM7, Am7M, Am+7, AmM, Am/M7', // Minor Major 7th
+  minmaj9: 'AmM9',
+  mM7B5: 'AmM7b5',
+  mM7B9: 'AmM7b9, Am#7b9',
+  Mx11: 'AM+11',
+  sus2: 'Asus2, Amsus2', // Suspended 2nd
+  sus2sus4: 'Asus24, Asus42', // Suspended 2nd Suspended 4th
+  sus2B5: 'Asus2b5, A2-5, Asus2-5',
+  sus4: 'Asus4, Asus, A4, Aadd4, Amsus4', // Suspended 4th
 };
 
 /** List of chord types by 1st char: s => [sus2,sus24,sus2B5...]. */
@@ -161,15 +161,18 @@ function getRawTypeVariations(originalVariant: string): string[] {
     derivedVariants.push(originalVariant.replace('M7', 'Ma7'));
   }
 
-  if (originalVariant.includes('b1')) { // b1 -> ignore case
+  if (originalVariant.includes('b1')) {
+    // b1 -> ignore case
     derivedVariants.push(originalVariant.replace('b1', 'B1'));
   }
 
-  if (originalVariant.includes('b5')) { // b5 -> ignore case
+  if (originalVariant.includes('b5')) {
+    // b5 -> ignore case
     derivedVariants.push(originalVariant.replace('b5', 'B5'));
   }
 
-  if (originalVariant.includes('b9')) { // b9 -> ignore case
+  if (originalVariant.includes('b9')) {
+    // b9 -> ignore case
     derivedVariants.push(originalVariant.replace('b9', 'B9'));
   }
 
@@ -177,12 +180,12 @@ function getRawTypeVariations(originalVariant: string): string[] {
     const len = originalVariant.length;
     const d = originalVariant.charAt(len - 1);
     const p = originalVariant.substring(0, len - 2);
-    derivedVariants.push(`${p + d}+`);  // Am+5 -> Am5+
+    derivedVariants.push(`${p + d}+`); // Am+5 -> Am5+
     derivedVariants.push(`${p}/${d}+`); // Am+5 -> Am/5+
-    derivedVariants.push(`${p + d}#`);  // Am+5 -> Am5#
+    derivedVariants.push(`${p + d}#`); // Am+5 -> Am5#
     derivedVariants.push(`${p}/${d}#`); // Am+5 -> Am/5#
     if (p.length > 1) {
-      derivedVariants.push(`${p}#${d}`);  // Am+5 -> Am#5
+      derivedVariants.push(`${p}#${d}`); // Am+5 -> Am#5
     }
   }
 
@@ -205,11 +208,9 @@ function getRawTypeVariations(originalVariant: string): string[] {
   return derivedVariants;
 }
 
-
 function registerChordTypeByRawType(chordType: ChordType, rawType: string): void {
   if (CHORD_TYPE_BY_RAW_NAME.has(rawType)) {
     throw new Error(`Duplicate chord mapping: A${rawType} => ${chordType}`);
   }
   CHORD_TYPE_BY_RAW_NAME.set(rawType, chordType);
 }
-

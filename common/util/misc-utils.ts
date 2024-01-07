@@ -1,7 +1,13 @@
 import { Collection, CollectionType, Song } from '@common/catalog-model';
 import { MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX } from '@common/mounts';
 import { map } from 'rxjs/operators';
-import { DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT } from '@common/common-constants';
+import {
+  DESKTOP_LOW_HEIGHT_NAV_HEIGHT,
+  DESKTOP_NAV_HEIGHT,
+  HIRES_DESKTOP_HEIGHT,
+  MIN_DESKTOP_WIDTH,
+  MOBILE_NAV_HEIGHT,
+} from '@common/common-constants';
 import { combineLatest, from, Observable, of } from 'rxjs';
 import { User } from '@common/user-model';
 import type { Request } from 'express';
@@ -13,15 +19,15 @@ export function toArrayOfInts(text: string, sep: string): number[] {
   return text.split(sep).map(v => +v);
 }
 
-export function isValidId(id: number|undefined): id is number {
+export function isValidId(id: number | undefined): id is number {
   return id !== undefined && id > 0;
 }
 
-export function isValidUserId(id: string|undefined): id is string {
+export function isValidUserId(id: string | undefined): id is string {
   return !!id && id.length > 0;
 }
 
-export function getNameFirstFormArtistName(collection: { type: CollectionType, name: string }): string {
+export function getNameFirstFormArtistName(collection: { type: CollectionType; name: string }): string {
   if (collection.type !== CollectionType.Person) {
     return collection.name;
   }
@@ -29,7 +35,7 @@ export function getNameFirstFormArtistName(collection: { type: CollectionType, n
   return sepIdx > 0 ? collection.name.substring(sepIdx + 1) + ' ' + collection.name.substring(0, sepIdx) : collection.name;
 }
 
-export function getCollectionPageLink(collectionOrMount: string|{ mount: string }): string {
+export function getCollectionPageLink(collectionOrMount: string | { mount: string }): string {
   const mount = typeof collectionOrMount === 'string' ? collectionOrMount : collectionOrMount.mount;
   return `/${MOUNT_COLLECTION_PREFIX}${mount}`;
 }
@@ -42,10 +48,14 @@ export function getSongPageLink(collectionMount: string, songMount: string, prim
   return `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}`;
 }
 
-export function getSongPrintPageLink(collectionMount: string, songMount: string, primaryCollectionMount: string|undefined): string {
+export function getSongPrintPageLink(
+  collectionMount: string,
+  songMount: string,
+  primaryCollectionMount: string | undefined,
+): string {
   return collectionMount === primaryCollectionMount || primaryCollectionMount === undefined
-         ? `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${collectionMount}/${MOUNT_PRINT_SUFFIX}`
-         : `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${primaryCollectionMount}/${MOUNT_PRINT_SUFFIX}`;
+    ? `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${collectionMount}/${MOUNT_PRINT_SUFFIX}`
+    : `/${MOUNT_SONG_PREFIX}${collectionMount}/${songMount}/${primaryCollectionMount}/${MOUNT_PRINT_SUFFIX}`;
 }
 
 /**
@@ -58,11 +68,11 @@ export function isSmallScreenDevice(userAgent?: string): boolean {
 }
 
 /** Accepts 1 argument and returns true if the argument !== undefined. */
-export function isDefined<T>(v: T|undefined): v is T {
+export function isDefined<T>(v: T | undefined): v is T {
   return v !== undefined;
 }
 
-export function firstInArray<T>(v: T[]|undefined): T|undefined {
+export function firstInArray<T>(v: T[] | undefined): T | undefined {
   return v && v.length > 0 ? v[0] : undefined;
 }
 
@@ -80,7 +90,7 @@ export function combineLatest0<T>(array: Observable<T>[]): Observable<T[]> {
 
 export function countOccurrences(text: string, token: string): number {
   let hits = 0;
-  for (let idx = 0; idx < text.length - token.length;) {
+  for (let idx = 0; idx < text.length - token.length; ) {
     const matchIdx = text.indexOf(token, idx);
     if (matchIdx === -1) {
       break;
@@ -95,7 +105,7 @@ export function bound(min: number, value: number, max: number): number {
   return value <= min ? min : value >= max ? max : value;
 }
 
-export function scrollToView(element: HTMLElement|undefined, paddingTop = 0): void {
+export function scrollToView(element: HTMLElement | undefined, paddingTop = 0): void {
   if (!element) {
     return;
   }
@@ -103,7 +113,7 @@ export function scrollToView(element: HTMLElement|undefined, paddingTop = 0): vo
 }
 
 // noinspection JSUnusedGlobalSymbols
-export function scrollToViewByEndPos(element: HTMLElement|undefined, paddingBottom = 0): void {
+export function scrollToViewByEndPos(element: HTMLElement | undefined, paddingBottom = 0): void {
   if (!element) {
     return;
   }
@@ -115,7 +125,7 @@ export function scrollToViewByEndPos(element: HTMLElement|undefined, paddingBott
   scrollToView(element, -(elementRect.height - elementHeightToShow));
 }
 
-export function canManageCollectionContent(user: User|undefined, collection: Collection): user is User {
+export function canManageCollectionContent(user: User | undefined, collection: Collection): user is User {
   if (isModerator(user)) {
     return true;
   }
@@ -125,7 +135,7 @@ export function canManageCollectionContent(user: User|undefined, collection: Col
   return collection.userId === user.id;
 }
 
-export function canRemoveCollection(user: User|undefined, collection: Collection): user is User {
+export function canRemoveCollection(user: User | undefined, collection: Collection): user is User {
   if (!canManageCollectionContent(user, collection)) {
     return false;
   }
@@ -135,15 +145,14 @@ export function canRemoveCollection(user: User|undefined, collection: Collection
   }
   // Collection removal from public catalog (userId === undefined) is not supported.
   return !!collection.userId;
-
 }
 
 /** Returns true if the user has 'moderator' role. */
-export function isModerator(user: User|undefined): boolean {
+export function isModerator(user: User | undefined): boolean {
   return !!user && user.roles && user.roles.includes('moderator');
 }
 
-export function canCreateNewPublicCollection(user: User|undefined): boolean {
+export function canCreateNewPublicCollection(user: User | undefined): boolean {
   return isModerator(user);
 }
 
@@ -152,8 +161,7 @@ export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promi
   if (promises.length === 0) {
     return first$;
   }
-  return combineLatest([first$, ...promises.map(p => from(p))])
-    .pipe(map(arr => arr[0] as T));
+  return combineLatest([first$, ...promises.map(p => from(p))]).pipe(map(arr => arr[0] as T));
 }
 
 export function isTouchDevice(): boolean {
@@ -161,10 +169,10 @@ export function isTouchDevice(): boolean {
 }
 
 export function sortSongsAlphabetically(songs: Song[]): Song[] {
-  return songs.sort((s1, s2) => s1.title === s2.title ? (s1.id < s2.id ? -1 : 1) : s1.title.localeCompare(s2.title));
+  return songs.sort((s1, s2) => (s1.title === s2.title ? (s1.id < s2.id ? -1 : 1) : s1.title.localeCompare(s2.title)));
 }
 
-export function trackById<T extends { id: number|string }>(_: number, entity: T): number|string {
+export function trackById<T extends { id: number | string }>(_: number, entity: T): number | string {
   return entity.id;
 }
 
@@ -174,7 +182,7 @@ export function isInputEvent(event: KeyboardEvent): boolean {
 }
 
 /** Returns true if the element is input element: <textarea> or <input>. */
-export function isElementToIgnoreKeyEvent(element: HTMLElement|undefined): boolean {
+export function isElementToIgnoreKeyEvent(element: HTMLElement | undefined): boolean {
   const tagName = element ? element.tagName.toLowerCase() : '';
   return tagName === 'textarea' || (tagName === 'input' && element?.getAttribute('type') !== 'checkbox');
 }
@@ -206,11 +214,13 @@ export function toSafeSearchText(text: string): string {
 
 export function getCurrentNavbarHeight(): number {
   return window.innerWidth >= MIN_DESKTOP_WIDTH
-         ? window.innerHeight < HIRES_DESKTOP_HEIGHT
-           ? DESKTOP_LOW_HEIGHT_NAV_HEIGHT : DESKTOP_NAV_HEIGHT : MOBILE_NAV_HEIGHT;
+    ? window.innerHeight < HIRES_DESKTOP_HEIGHT
+      ? DESKTOP_LOW_HEIGHT_NAV_HEIGHT
+      : DESKTOP_NAV_HEIGHT
+    : MOBILE_NAV_HEIGHT;
 }
 
-export function findParentOrSelfWithClass(el: Element|undefined|null, className: string): Element|undefined {
+export function findParentOrSelfWithClass(el: Element | undefined | null, className: string): Element | undefined {
   if (!el) {
     return undefined;
   }
@@ -221,13 +231,12 @@ export function findParentOrSelfWithClass(el: Element|undefined|null, className:
 }
 
 /** Returns true if userAgent string is bot. */
-export function isBotUserAgent(userAgent: string|undefined): boolean {
+export function isBotUserAgent(userAgent: string | undefined): boolean {
   return !!userAgent && /bot|googlebot|crawler|spider|robot|crawling|lighthouse/i.test(userAgent);
 }
 
-export function getUserAgentFromRequest(request: Request): string|undefined {
-  return request && request.headers ? request.headers ['user-agent'] : undefined;
+export function getUserAgentFromRequest(request: Request): string | undefined {
+  return request && request.headers ? request.headers['user-agent'] : undefined;
 }
 
-export function nothingThen(): void {
-}
+export function nothingThen(): void {}

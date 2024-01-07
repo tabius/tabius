@@ -5,7 +5,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, switchMap, throttleTime } from 'rxjs/operators';
 import { combineLatest, Observable } from 'rxjs';
 import { switchToNotFoundMode } from '@app/utils/component-utils';
-import { canManageCollectionContent, canRemoveCollection, getCollectionPageLink, getNameFirstFormArtistName, getSongPageLink, isDefined, isInputEvent, nothingThen, sortSongsAlphabetically } from '@common/util/misc-utils';
+import {
+  canManageCollectionContent,
+  canRemoveCollection,
+  getCollectionPageLink,
+  getNameFirstFormArtistName,
+  getSongPageLink,
+  isDefined,
+  isInputEvent,
+  nothingThen,
+  sortSongsAlphabetically,
+} from '@common/util/misc-utils';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
 import { User } from '@common/user-model';
 import { UserService } from '@app/services/user.service';
@@ -22,15 +32,17 @@ import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-
 
 export class CollectionViewModel {
   readonly displayName: string;
-  readonly imgSrc: string|undefined;
+  readonly imgSrc: string | undefined;
   readonly songs: Song[];
-  readonly primarySongCollections: (Collection|undefined)[];
+  readonly primarySongCollections: (Collection | undefined)[];
 
-  constructor(readonly collection: Collection,
-              readonly bands: Collection[],
-              songs: Song[],
-              primarySongCollections: (Collection|undefined)[],
-              readonly listed: boolean) {
+  constructor(
+    readonly collection: Collection,
+    readonly bands: Collection[],
+    songs: Song[],
+    primarySongCollections: (Collection | undefined)[],
+    readonly listed: boolean,
+  ) {
     this.displayName = getNameFirstFormArtistName(collection);
     this.imgSrc = listed ? getCollectionImageUrl(collection.mount) : undefined;
     [this.songs, this.primarySongCollections] = sortSongsAndRelatedItems(songs, primarySongCollections);
@@ -58,21 +70,24 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
 
   hasImageLoadingError = false;
 
-  constructor(private readonly cds: CatalogService,
-              private readonly uds: UserService,
-              private readonly route: ActivatedRoute,
-              private readonly router: Router,
-              private readonly navHelper: RoutingNavigationHelper,
-              private readonly helpService: HelpService,
-              private readonly ss: ShortcutsService,
+  constructor(
+    private readonly cds: CatalogService,
+    private readonly uds: UserService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly navHelper: RoutingNavigationHelper,
+    private readonly helpService: HelpService,
+    private readonly ss: ShortcutsService,
   ) {
     super();
     this.helpService.setActiveHelpPage('collection');
 
     const collectionMount = this.route.snapshot.params[PARAM_COLLECTION_MOUNT];
-    const collectionId$: Observable<number|undefined> = this.cds.getCollectionIdByMount(collectionMount);
-    const collection$: Observable<Collection|undefined> = collectionId$.pipe(switchMap(id => this.cds.observeCollection(id)));
-    const collectionDetails$: Observable<CollectionDetails|undefined> = collectionId$.pipe(switchMap(id => this.cds.getCollectionDetails(id)));
+    const collectionId$: Observable<number | undefined> = this.cds.getCollectionIdByMount(collectionMount);
+    const collection$: Observable<Collection | undefined> = collectionId$.pipe(switchMap(id => this.cds.observeCollection(id)));
+    const collectionDetails$: Observable<CollectionDetails | undefined> = collectionId$.pipe(
+      switchMap(id => this.cds.getCollectionDetails(id)),
+    );
     const bands$: Observable<Collection[]> = collectionDetails$.pipe(
       switchMap(details => this.cds.getCollectionsByIds(details ? details.bandIds : [])),
       map(bands => bands.filter(isDefined)),
@@ -83,15 +98,12 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
       switchMap(songIds => this.cds.getSongsByIds(songIds || [])),
       map(songs => songs.filter(isDefined)),
     );
-    const primarySongCollections$: Observable<(Collection|undefined)[]> = songs$.pipe(
+    const primarySongCollections$: Observable<(Collection | undefined)[]> = songs$.pipe(
       switchMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
     );
 
     combineLatest([collection$, bands$, songs$, primarySongCollections$, this.uds.getUser$()])
-      .pipe(
-        throttleTime(100, undefined, { leading: true, trailing: true }),
-        takeUntilDestroyed(),
-      )
+      .pipe(throttleTime(100, undefined, { leading: true, trailing: true }), takeUntilDestroyed())
       .subscribe(([collection, bands, songs, primarySongCollections, user]) => {
         this.cdr.markForCheck();
         this.loaded = true;
@@ -193,7 +205,7 @@ function getFirstSongsNames(songs: Song[]): string {
   return res.trim();
 }
 
-export function sortSongsAndRelatedItems<T>(songs: Song[], items: T[]): ([Song[], T[]]) {
+export function sortSongsAndRelatedItems<T>(songs: Song[], items: T[]): [Song[], T[]] {
   const itemBySong = new Map<number, T>();
   for (let index = 0; index < songs.length; index++) {
     itemBySong.set(songs[index].id, items[index]);
@@ -202,4 +214,3 @@ export function sortSongsAndRelatedItems<T>(songs: Song[], items: T[]): ([Song[]
   const sortedItems = songs.map(s => itemBySong.get(s.id)!);
   return [sortedSongs, sortedItems];
 }
-

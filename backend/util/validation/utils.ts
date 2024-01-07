@@ -1,11 +1,10 @@
-export function tryCatch<T, U>(func: () => T, catchFunc: (err: any) => U): T|U {
+export function tryCatch<T, U>(func: () => T, catchFunc: (err: any) => U): T | U {
   try {
     return func();
   } catch (err) {
     return catchFunc(err);
   }
 }
-
 
 export function keysOf<T>(arg: T): Array<keyof T> {
   if (typeof arg !== 'object') return [];
@@ -18,7 +17,6 @@ export function keysOf<T>(arg: T): Array<keyof T> {
 
   return keys;
 }
-
 
 export function primitiveType(arg: any): string {
   if (arg instanceof Array) return 'array';

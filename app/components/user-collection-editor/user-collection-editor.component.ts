@@ -10,7 +10,6 @@ import { I18N } from '@app/app-i18n';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserCollectionEditorComponent {
-
   @Input({ required: true }) collectionId!: number;
 
   /** Emitted when the panel wants to be closed. */
@@ -20,10 +19,7 @@ export class UserCollectionEditorComponent {
 
   deleteConfirmationFlag = false;
 
-  constructor(private readonly toastService: ToastService,
-              private readonly cds: CatalogService,
-  ) {
-  }
+  constructor(private readonly toastService: ToastService, private readonly cds: CatalogService) {}
 
   close(): void {
     this.closeRequest.emit();

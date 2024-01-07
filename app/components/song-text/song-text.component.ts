@@ -1,19 +1,29 @@
-import {ChangeDetectionStrategy, Component, HostListener, Inject, Input, Optional, SimpleChanges, TemplateRef, ViewChild} from '@angular/core';
-import {SongDetails} from '@common/catalog-model';
-import {switchMap} from 'rxjs';
-import {UserService} from '@app/services/user.service';
-import {renderChords} from '@common/util/chords-renderer';
-import {REQUEST} from '@app/express.tokens';
-import {getUserAgentFromRequest, isSmallScreenDevice} from '@common/util/misc-utils';
-import {SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH} from '@common/common-constants';
-import {newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings} from '@common/user-model';
-import {ChordLayout} from '@common/util/chords-layout-lib';
-import {parseChord} from '@common/util/chords-parser';
-import {ChordClickInfo} from '@app/directives/show-chord-popover-on-click.directive';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import type {Request} from 'express';
-import {AbstractAppComponent} from '@app/utils/abstract-app-component';
-import {assertTruthy} from 'assertic';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  Inject,
+  Input,
+  Optional,
+  SimpleChanges,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { SongDetails } from '@common/catalog-model';
+import { switchMap } from 'rxjs';
+import { UserService } from '@app/services/user.service';
+import { renderChords } from '@common/util/chords-renderer';
+import { REQUEST } from '@app/express.tokens';
+import { getUserAgentFromRequest, isSmallScreenDevice } from '@common/util/misc-utils';
+import { SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH } from '@common/common-constants';
+import { newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings } from '@common/user-model';
+import { ChordLayout } from '@common/util/chords-layout-lib';
+import { parseChord } from '@common/util/chords-parser';
+import { ChordClickInfo } from '@app/directives/show-chord-popover-on-click.directive';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import type { Request } from 'express';
+import { AbstractAppComponent } from '@app/utils/abstract-app-component';
+import { assertTruthy } from 'assertic';
 
 /** Heuristic used to enable multi-column mode. */
 const IDEAL_SONG_LINES_PER_COLUMN = 17; // (4 chords + 4 text lines) * 2 + 1 line between
@@ -33,17 +43,17 @@ export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
   selector: 'gt-song-text',
   templateUrl: './song-text.component.html',
   styleUrls: ['./song-text.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongTextComponent extends AbstractAppComponent {
-  @Input({required: true}) song!: SongDetails;
+  @Input({ required: true }) song!: SongDetails;
   @Input() multiColumnMode = true;
   @Input() usePrintFontSize = false;
 
   /** Pre-rendered raw HTML for song text with all chords wrapped with a <c></c> tag*/
   private songHtml: string = '';
 
-  userSongStyle: { [key: string]: string; } = {};
+  userSongStyle: { [key: string]: string } = {};
 
   private deviceSettings: UserDeviceSettings = newDefaultUserDeviceSettings();
   private songSettings = newDefaultUserSongSettings(0);
@@ -58,11 +68,9 @@ export class SongTextComponent extends AbstractAppComponent {
 
   popoverChordLayout?: ChordLayout;
 
-  @ViewChild('chordPopover', {static: true}) chordPopoverTemplate!: TemplateRef<{}>;
+  @ViewChild('chordPopover', { static: true }) chordPopoverTemplate!: TemplateRef<{}>;
 
-  constructor(private readonly uds: UserService,
-              @Optional() @Inject(REQUEST) request: Request,
-  ) {
+  constructor(private readonly uds: UserService, @Optional() @Inject(REQUEST) request: Request) {
     super();
     if (!this.isBrowser) {
       const userAgent = getUserAgentFromRequest(request);
@@ -71,33 +79,37 @@ export class SongTextComponent extends AbstractAppComponent {
       this.widthFromUserAgent = 0;
     }
 
-    this.uds.getUserDeviceSettings().pipe(
-        takeUntilDestroyed(),
-    ).subscribe(deviceSettings => {
-      this.deviceSettings = deviceSettings;
-      this.updateSongStyle();
-      this.cdr.markForCheck();
-    });
+    this.uds
+      .getUserDeviceSettings()
+      .pipe(takeUntilDestroyed())
+      .subscribe(deviceSettings => {
+        this.deviceSettings = deviceSettings;
+        this.updateSongStyle();
+        this.cdr.markForCheck();
+      });
 
     //TODO: replace taps with subscriptions!
     //todo: handle song text update too
-    this.changes$.pipe(
+    this.changes$
+      .pipe(
         switchMap(() => this.uds.getUserSongSettings(this.song.id)),
         takeUntilDestroyed(),
-    ).subscribe(songSettings => {
-      this.songSettings = songSettings;
-      this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
-      this.resetSongView();
-      this.cdr.markForCheck();
-    });
+      )
+      .subscribe(songSettings => {
+        this.songSettings = songSettings;
+        this.resetCachedSongStats(); // transposition may add extra characters that may lead to the line width update.
+        this.resetSongView();
+        this.cdr.markForCheck();
+      });
 
-    this.uds.getH4SiFlag().pipe(
-        takeUntilDestroyed(),
-    ).subscribe(h4Si => {
-      this.h4Si = h4Si;
-      this.resetSongView();
-      this.cdr.markForCheck();
-    });
+    this.uds
+      .getH4SiFlag()
+      .pipe(takeUntilDestroyed())
+      .subscribe(h4Si => {
+        this.h4Si = h4Si;
+        this.resetSongView();
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -112,10 +124,11 @@ export class SongTextComponent extends AbstractAppComponent {
 
   getSongHtml(): string {
     if (this.songHtml === '') {
-      const {transpose} = this.songSettings;
-      let songHtml = this.song && this.isBrowser
-                     ? renderChords(this.song.content, {tag: CHORDS_TAG, transpose, hideChords: false, useH: this.h4Si})
-                     : '';
+      const { transpose } = this.songSettings;
+      let songHtml =
+        this.song && this.isBrowser
+          ? renderChords(this.song.content, { tag: CHORDS_TAG, transpose, hideChords: false, useH: this.h4Si })
+          : '';
       if (this.multiColumnMode) {
         songHtml = preserveBlocksOnColumnBreak(songHtml);
       }
@@ -144,30 +157,27 @@ export class SongTextComponent extends AbstractAppComponent {
   }
 
   is2ColumnMode(): boolean {
-    const {lineCount, maxLineWidth} = this.getSongStats();
-    return lineCount > IDEAL_SONG_LINES_PER_COLUMN &&
-        !this.is3ColumnMode() && (this.availableWidth / (1 + maxLineWidth) >= 2);
+    const { lineCount, maxLineWidth } = this.getSongStats();
+    return lineCount > IDEAL_SONG_LINES_PER_COLUMN && !this.is3ColumnMode() && this.availableWidth / (1 + maxLineWidth) >= 2;
   }
 
   is3ColumnMode(): boolean {
-    const {lineCount, maxLineWidth} = this.getSongStats();
-    return lineCount > 2 * IDEAL_SONG_LINES_PER_COLUMN &&
-        !this.is4ColumnMode() && (this.availableWidth / (1 + maxLineWidth) >= 3);
+    const { lineCount, maxLineWidth } = this.getSongStats();
+    return lineCount > 2 * IDEAL_SONG_LINES_PER_COLUMN && !this.is4ColumnMode() && this.availableWidth / (1 + maxLineWidth) >= 3;
   }
 
   is4ColumnMode(): boolean {
-    const {lineCount, maxLineWidth} = this.getSongStats();
-    return lineCount > 3 * IDEAL_SONG_LINES_PER_COLUMN &&
-        (this.availableWidth / (1 + maxLineWidth) >= 4);
+    const { lineCount, maxLineWidth } = this.getSongStats();
+    return lineCount > 3 * IDEAL_SONG_LINES_PER_COLUMN && this.availableWidth / (1 + maxLineWidth) >= 4;
   }
 
   private getSongStats(): SongStats {
     if (!this.songStats) {
-      this.songStats = {lineCount: 1, maxLineWidth: 0}; // line count starts with 1 because even empty string ('') is counted as one line.
+      this.songStats = { lineCount: 1, maxLineWidth: 0 }; // line count starts with 1 because even empty string ('') is counted as one line.
       const songFontSize = this.usePrintFontSize ? SONG_PRINT_FONT_SIZE : this.songFontSize || 16;
-      const {content} = this.song;
+      const { content } = this.song;
       // Simple heuristic for the song text width.
-      for (let i = 0; i < content.length;) {
+      for (let i = 0; i < content.length; ) {
         const lineSepIdx = content.indexOf('\n', i);
         if (lineSepIdx === -1) {
           break;
@@ -193,7 +203,7 @@ export class SongTextComponent extends AbstractAppComponent {
   }
 
   getChordInfo(event: MouseEvent): ChordClickInfo {
-    const element = event.target as HTMLElement|undefined;
+    const element = event.target as HTMLElement | undefined;
     if (!element) {
       return undefined;
     }
@@ -201,7 +211,7 @@ export class SongTextComponent extends AbstractAppComponent {
       return undefined;
     }
     const chordLocation = parseChord(element.innerText);
-    return chordLocation ? {element, chord: chordLocation.chord} : undefined;
+    return chordLocation ? { element, chord: chordLocation.chord } : undefined;
   }
 }
 
@@ -269,11 +279,11 @@ function preserveBlockOnColumnBreak(blockHtml: string): string {
   return resultHtml;
 }
 
-let canvasForTextWidth: HTMLCanvasElement|undefined;
+let canvasForTextWidth: HTMLCanvasElement | undefined;
 
 function getTextWidth(text: string, fontSizePx: number): number {
   if (typeof window === 'undefined') {
-    const charWidth = fontSizePx * 2 / 3;
+    const charWidth = (fontSizePx * 2) / 3;
     return text.length * charWidth;
   }
 

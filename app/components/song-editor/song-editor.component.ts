@@ -12,14 +12,14 @@ import { getTranslitLowerCase } from '@common/util/seo-translit';
 import { getFirstYoutubeVideoIdFromLinks } from '@common/util/media-links-utils';
 import { getFullLink } from '@app/utils/url-utils';
 
-export type SongEditorInitialFocusMode = 'title'|'text'|'none';
-export type SongEditResultType = 'created'|'updated'|'deleted'|'canceled'|'moved'
+export type SongEditorInitialFocusMode = 'title' | 'text' | 'none';
+export type SongEditResultType = 'created' | 'updated' | 'deleted' | 'canceled' | 'moved';
 
 export type SongEditResult = {
   type: SongEditResultType;
   /** Set only for the 'created' type. */
   song?: Song;
-}
+};
 
 /** Embeddable song editor component. */
 @Component({
@@ -29,7 +29,6 @@ export type SongEditResult = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongEditorComponent extends ComponentWithLoadingIndicator {
-
   /** ID of the edited song. Invalid ID (<=0) is used to activate Create mode. */
   @Input({ required: true }) songId!: number;
 
@@ -65,41 +64,42 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   @ViewChild('textArea', { static: false, read: ElementRef }) private contentRef!: ElementRef;
   @ViewChild('firstFormElement', { static: false, read: ElementRef }) private titleElementRef!: ElementRef;
 
-  constructor(private readonly cds: CatalogService,
-              private readonly toastService: ToastService,
-  ) {
+  constructor(private readonly cds: CatalogService, private readonly toastService: ToastService) {
     super();
-    this.changes$.pipe(
-      filter(changes => !!changes['songId'] || !!changes['activeCollectionId']),
-      switchMap(() => {
-        const song$ = this.cds.observeSong(this.songId);
-        const songDetails$ = this.cds.getSongDetailsById(this.songId);
-        const songCollection$ = song$.pipe(switchMap(song => this.cds.observeCollection(song?.collectionId)));
-        const activeCollection$ = this.cds.observeCollection(this.activeCollectionId);
-        return combineLatest([song$, songDetails$, songCollection$, activeCollection$]);
-      }),
-    ).subscribe(([song, details, songCollection, activeCollection]) => {
-      if (this.isCreateMode) {
-        if (!activeCollection) {
-          return;
+    this.changes$
+      .pipe(
+        filter(changes => !!changes['songId'] || !!changes['activeCollectionId']),
+        switchMap(() => {
+          const song$ = this.cds.observeSong(this.songId);
+          const songDetails$ = this.cds.getSongDetailsById(this.songId);
+          const songCollection$ = song$.pipe(switchMap(song => this.cds.observeCollection(song?.collectionId)));
+          const activeCollection$ = this.cds.observeCollection(this.activeCollectionId);
+          return combineLatest([song$, songDetails$, songCollection$, activeCollection$]);
+        }),
+      )
+      .subscribe(([song, details, songCollection, activeCollection]) => {
+        if (this.isCreateMode) {
+          if (!activeCollection) {
+            return;
+          }
+          this.songUrlPrefix = getFullLink(`${getSongPageLink(activeCollection.mount, '')}`);
+        } else {
+          // Edit mode.
+          if (!song || !details || !songCollection) {
+            return; // todo: show error
+          }
+          this.song = song;
+          this.details = details;
+          this.songTitle = song.title;
+          this.content = details ? details.content : '?';
+          this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
+          this.mount = song.mount;
+          this.songUrlPrefix = getFullLink(`${getSongPageLink(songCollection.mount, '')}`);
         }
-        this.songUrlPrefix = getFullLink(`${getSongPageLink(activeCollection.mount, '')}`);
-      } else { // Edit mode.
-        if (!song || !details || !songCollection) {
-          return; // todo: show error
-        }
-        this.song = song;
-        this.details = details;
-        this.songTitle = song.title;
-        this.content = details ? details.content : '?';
-        this.mediaLinks = details ? details.mediaLinks.join(' ') : '';
-        this.mount = song.mount;
-        this.songUrlPrefix = getFullLink(`${getSongPageLink(songCollection.mount, '')}`);
-      }
-      this.loaded = true;
-      this.updateUIOnLoadedState();
-      this.cdr.markForCheck();
-    });
+        this.loaded = true;
+        this.updateUIOnLoadedState();
+        this.cdr.markForCheck();
+      });
   }
 
   get isCreateMode(): boolean {
@@ -145,8 +145,19 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   }
 
   private async createImpl(): Promise<void> {
-    const song: Song = { id: INVALID_ID, version: 0, mount: this.mount, title: this.songTitle, collectionId: this.activeCollectionId };
-    const songDetails: SongDetails = { id: INVALID_ID, version: 0, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError() };
+    const song: Song = {
+      id: INVALID_ID,
+      version: 0,
+      mount: this.mount,
+      title: this.songTitle,
+      collectionId: this.activeCollectionId,
+    };
+    const songDetails: SongDetails = {
+      id: INVALID_ID,
+      version: 0,
+      content: this.content,
+      mediaLinks: this.getMediaLinksAsArrayOrThrowError(),
+    };
     const createdSong = await this.cds.createSong(song, songDetails);
     this.close({ type: 'created', song: createdSong });
   }
@@ -187,7 +198,11 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
       this.onMountChangeBeforeUpdate.emit(this.mount);
     }
     const updatedSong: Song = { ...this.song, title: this.songTitle, mount: this.mount };
-    const updatedDetails: SongDetails = { ...this.details, content: this.content, mediaLinks: this.getMediaLinksAsArrayOrThrowError() };
+    const updatedDetails: SongDetails = {
+      ...this.details,
+      content: this.content,
+      mediaLinks: this.getMediaLinksAsArrayOrThrowError(),
+    };
     // wait until the update is finished with no errors before closing the editor.
     await this.cds.updateSong(updatedSong, updatedDetails);
     this.close({ type: 'updated' });
@@ -201,10 +216,12 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
     if (!this.song || !this.details) {
       return false;
     }
-    return this.song.title !== this.songTitle
-      || this.details.content !== this.content
-      || this.details.mediaLinks.join(' ') !== this.mediaLinks
-      || this.song.mount !== this.mount;
+    return (
+      this.song.title !== this.songTitle ||
+      this.details.content !== this.content ||
+      this.details.mediaLinks.join(' ') !== this.mediaLinks ||
+      this.song.mount !== this.mount
+    );
   }
 
   @HostListener('document:keypress', ['$event'])
@@ -241,9 +258,19 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
     const mediaLinks2MountMargin = 5;
     const mount2ButtonsMargin = 5;
     const buttons2BottomMargin = 10;
-    const availableHeight = window.innerHeight -
-      (headerHeight + header2TitleMargin + titleInputHeight + title2ContentMargin +
-        content2LinksMargin + mediaLinksRowHeight + mediaLinks2MountMargin + mountRowHeight + mount2ButtonsMargin + buttonsRowHeight + buttons2BottomMargin);
+    const availableHeight =
+      window.innerHeight -
+      (headerHeight +
+        header2TitleMargin +
+        titleInputHeight +
+        title2ContentMargin +
+        content2LinksMargin +
+        mediaLinksRowHeight +
+        mediaLinks2MountMargin +
+        mountRowHeight +
+        mount2ButtonsMargin +
+        buttonsRowHeight +
+        buttons2BottomMargin);
     return bound(8, countOccurrences(this.content, '\n') + 1, (availableHeight - 2 * textAreaPadding) / textAreaLineHeight);
   }
 

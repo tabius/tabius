@@ -1,23 +1,25 @@
-import {Injectable, TemplateRef} from '@angular/core';
-import {PopoverRef} from '@app/popover/popover-ref';
-import {PopoverService} from '@app/popover/popover.service';
+import { Injectable, TemplateRef } from '@angular/core';
+import { PopoverRef } from '@app/popover/popover-ref';
+import { PopoverService } from '@app/popover/popover.service';
 
-export type HelpPageType = 'song'|'collection';
+export type HelpPageType = 'song' | 'collection';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class HelpService {
-
   keyboardShortcutsTemplate?: TemplateRef<{}>;
 
   private activeHelpPage?: HelpPageType;
   private helpPopoverRef?: PopoverRef;
 
-  constructor(private readonly popover: PopoverService) {
-  }
+  constructor(private readonly popover: PopoverService) {}
 
   showKeyboardShortcuts(): void {
     if (!this.keyboardShortcutsTemplate || this.helpPopoverRef) {
-      console.debug('HelpService.showKeyboardShortcuts: required elements are missed', this.keyboardShortcutsTemplate, this.helpPopoverRef);
+      console.debug(
+        'HelpService.showKeyboardShortcuts: required elements are missed',
+        this.keyboardShortcutsTemplate,
+        this.helpPopoverRef,
+      );
       return;
     }
 
@@ -29,7 +31,7 @@ export class HelpService {
     console.debug('HelpService.showKeyboardShortcuts: opening help popover');
     this.helpPopoverRef = this.popover.open(this.keyboardShortcutsTemplate, null, {
       data: this.activeHelpPage,
-      panelClass: 'help-popover-panel'
+      panelClass: 'help-popover-panel',
     });
 
     this.helpPopoverRef.afterClosed().subscribe(() => {
@@ -38,7 +40,7 @@ export class HelpService {
     });
   }
 
-  setActiveHelpPage(activeHelpPage: HelpPageType|undefined): void {
+  setActiveHelpPage(activeHelpPage: HelpPageType | undefined): void {
     if (activeHelpPage === this.activeHelpPage) {
       return;
     }

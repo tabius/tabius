@@ -1,13 +1,32 @@
 import { SiteHomePageComponent } from '@app/components/site-home-page/site-home-page.component';
 import { Page404Component } from '@app/components/page404/page404.component';
-import { ActivatedRouteSnapshot, DetachedRouteHandle, ExtraOptions, Resolve, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  DetachedRouteHandle,
+  ExtraOptions,
+  Resolve,
+  RouteReuseStrategy,
+  RouterModule,
+  Routes,
+} from '@angular/router';
 import { Inject, Injectable, NgModule } from '@angular/core';
 import { TunerPageComponent } from '@app/components/tuner-page/tuner-page.component';
 import { CatalogPageComponent } from '@app/components/catalog-page/catalog-page.component';
 import { CollectionPageComponent } from '@app/components/collection-page/collection-page.component';
 import { SongPageComponent } from '@app/components/song-page/song-page.component';
 import { SettingsPageComponent } from '@app/components/settings-page/settings-page.component';
-import { MOUNT_CATALOG, MOUNT_COLLECTION, MOUNT_PAGE_NOT_FOUND, MOUNT_SCENE, MOUNT_SETTINGS, MOUNT_SONG, MOUNT_SONG_IN_SECONDARY_COLLECTION, MOUNT_SONG_PRINT, MOUNT_STUDIO, MOUNT_TUNER } from '@common/mounts';
+import {
+  MOUNT_CATALOG,
+  MOUNT_COLLECTION,
+  MOUNT_PAGE_NOT_FOUND,
+  MOUNT_SCENE,
+  MOUNT_SETTINGS,
+  MOUNT_SONG,
+  MOUNT_SONG_IN_SECONDARY_COLLECTION,
+  MOUNT_SONG_PRINT,
+  MOUNT_STUDIO,
+  MOUNT_TUNER,
+} from '@common/mounts';
 import { TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
 import { ObservableStore } from '@app/store/observable-store';
 import { StudioPageComponent } from '@app/components/studio-page/studio-page.component';
@@ -17,10 +36,10 @@ import { ScenePageComponent } from '@app/components/scene-page/scene-page.compon
 //TODO: move to a separate file. Use for the most routes?
 @Injectable({ providedIn: 'root' })
 export class BrowserStoreStateResolver implements Resolve<any> {
-
-  constructor(@Inject(TABIUS_CATALOG_BROWSER_STORE_TOKEN) private readonly catalogStore: ObservableStore,
-              @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly userStore: ObservableStore) {
-  }
+  constructor(
+    @Inject(TABIUS_CATALOG_BROWSER_STORE_TOKEN) private readonly catalogStore: ObservableStore,
+    @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly userStore: ObservableStore,
+  ) {}
 
   resolve(): Promise<any> {
     return Promise.all([this.catalogStore.initialized$$, this.userStore.initialized$$]);
@@ -62,27 +81,20 @@ export class TabiusRouteReuseStrategy extends RouteReuseStrategy {
     return false;
   }
 
-  store(): void {
-  }
+  store(): void {}
 
   shouldAttach(): boolean {
     return false;
   }
 
-  retrieve(): DetachedRouteHandle|null {
+  retrieve(): DetachedRouteHandle | null {
     return null;
   }
 }
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes, routerOptions),
-  ],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
-  providers: [
-    { provide: RouteReuseStrategy, useClass: TabiusRouteReuseStrategy },
-  ],
+  providers: [{ provide: RouteReuseStrategy, useClass: TabiusRouteReuseStrategy }],
 })
-export class RoutingModule {
-}
-
+export class RoutingModule {}

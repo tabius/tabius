@@ -14,16 +14,15 @@ export class LoadingIndicatorComponent {
   isReloadWarningVisible = false;
 
   constructor(private readonly cdr: ChangeDetectorRef) {
-    timer(15_000).pipe(
-      takeUntilDestroyed(),
-    ).subscribe(() => {
-      this.isReloadWarningVisible = true;
-      this.cdr.markForCheck();
-    });
+    timer(15_000)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.isReloadWarningVisible = true;
+        this.cdr.markForCheck();
+      });
   }
 
   onReloadButtonClicked(): void {
     location.reload();
   }
-
 }

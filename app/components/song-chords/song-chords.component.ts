@@ -41,37 +41,37 @@ export class SongChordsComponent extends AbstractAppComponent {
   originalSongKey?: ChordTone;
   transposeActionKey?: ChordTone;
 
-  constructor(private readonly uds: UserService,
-              private readonly cds: CatalogService,
-  ) {
+  constructor(private readonly uds: UserService, private readonly cds: CatalogService) {
     super();
 
-    this.changes$.pipe(
-      switchMap(() => {
-        const songDetails$ = this.cds.getSongDetailsById(this.songId);
-        const songSettings$ = this.uds.getUserSongSettings(this.songId);
-        const h4Si$ = this.uds.getH4SiFlag();
-        const favoriteKey$ = this.uds.getFavoriteKey();
-        const details$ = this.cds.getSongDetailsById(this.songId);
-        return combineLatest([songDetails$, songSettings$, h4Si$, favoriteKey$, details$]);
-      }),
-      takeUntilDestroyed(),
-    ).subscribe(([songDetails, songSettings, h4Si, favoriteKey, details]) => {
-      this.songSettings = songSettings;
-      this.h4Si = h4Si;
-      this.favoriteKey = favoriteKey;
-      this.content = details ? details.content : '';
-      this.songDetails = songDetails;
+    this.changes$
+      .pipe(
+        switchMap(() => {
+          const songDetails$ = this.cds.getSongDetailsById(this.songId);
+          const songSettings$ = this.uds.getUserSongSettings(this.songId);
+          const h4Si$ = this.uds.getH4SiFlag();
+          const favoriteKey$ = this.uds.getFavoriteKey();
+          const details$ = this.cds.getSongDetailsById(this.songId);
+          return combineLatest([songDetails$, songSettings$, h4Si$, favoriteKey$, details$]);
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe(([songDetails, songSettings, h4Si, favoriteKey, details]) => {
+        this.songSettings = songSettings;
+        this.h4Si = h4Si;
+        this.favoriteKey = favoriteKey;
+        this.content = details ? details.content : '';
+        this.songDetails = songDetails;
 
-      this.originalSongKey = getSongKey(this.songDetails);
-      this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
+        this.originalSongKey = getSongKey(this.songDetails);
+        this.transposeActionKey = getTransposeActionKey(this.originalSongKey, favoriteKey, songSettings.transpose);
 
-      this.updateChordList();
-      this.cdr.markForCheck();
-    });
+        this.updateChordList();
+        this.cdr.markForCheck();
+      });
   }
 
-  getChordInfo(event: MouseEvent, chord: Chord|undefined): ChordClickInfo {
+  getChordInfo(event: MouseEvent, chord: Chord | undefined): ChordClickInfo {
     return { element: event.target as HTMLElement, chord: chord! };
   }
 
@@ -112,10 +112,12 @@ export class SongChordsComponent extends AbstractAppComponent {
   }
 }
 
-export function updateUserSongSetting(originalSongKey: ChordTone|undefined,
-                                      transposeActionKey: ChordTone|undefined,
-                                      songSettings: UserSongSettings|undefined,
-                                      uds: UserService): void {
+export function updateUserSongSetting(
+  originalSongKey: ChordTone | undefined,
+  transposeActionKey: ChordTone | undefined,
+  songSettings: UserSongSettings | undefined,
+  uds: UserService,
+): void {
   if (originalSongKey && transposeActionKey && songSettings) {
     const transposeDistance = getTransposeDistance(originalSongKey, transposeActionKey);
     const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
@@ -123,7 +125,11 @@ export function updateUserSongSetting(originalSongKey: ChordTone|undefined,
   }
 }
 
-export function getTransposeActionKey(originalKey: ChordTone|undefined, favoriteKey: ChordTone, currentTranspose: number): ChordTone|undefined {
+export function getTransposeActionKey(
+  originalKey: ChordTone | undefined,
+  favoriteKey: ChordTone,
+  currentTranspose: number,
+): ChordTone | undefined {
   if (originalKey === undefined) {
     return undefined;
   }

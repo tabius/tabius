@@ -41,16 +41,15 @@ function put(lc: string, s: string): void {
   TR.set(lc.toUpperCase(), s.charAt(0).toUpperCase() + s.substring(1));
 }
 
-export function getTranslitLowerCase(str: string|undefined): string {
+export function getTranslitLowerCase(str: string | undefined): string {
   return getTranslitAnyCase(str).toLowerCase();
 }
 
 const MASK_CHAR = '-';
 
-export function getTranslitAnyCase(str: string|undefined): string {
+export function getTranslitAnyCase(str: string | undefined): string {
   if (str === undefined || str.length === 0) {
     return '';
-
   }
   let buf = '';
   for (let i = 0; i < str.length; i++) {
@@ -60,7 +59,8 @@ export function getTranslitAnyCase(str: string|undefined): string {
       const m = c.match(/[a-z0-9]/i);
       trC = m ? m[0] : MASK_CHAR;
     } else {
-      if ((trC === 'h' || trC === 'H') && buf.length > 0) { // special handing for h
+      if ((trC === 'h' || trC === 'H') && buf.length > 0) {
+        // special handing for h
         const lastC = buf.charAt(buf.length - 1);
         if (lastC === 'k' || lastC === 'z' || lastC === 'c' || lastC === 's' || lastC === 'e' || lastC === 'h') {
           trC = trC === 'h' ? 'kh' : 'Kh';

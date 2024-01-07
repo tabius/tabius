@@ -25,26 +25,24 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
 
   /** Personal pick-ups. */
   songs: Song[] = [];
-  primarySongCollections: (Collection|undefined)[] = [];
+  primarySongCollections: (Collection | undefined)[] = [];
 
   editorIsOpen = false;
 
   private primaryUserCollectionMount: string = '';
 
-  constructor(private readonly uds: UserService,
-              private readonly cds: CatalogService,
-              private readonly router: Router,
-  ) {
+  constructor(private readonly uds: UserService, private readonly cds: CatalogService, private readonly router: Router) {
     super();
     const user$ = this.uds.getUser$();
     const allUserCollectionIds$ = user$.pipe(switchMap(user => this.cds.getUserCollectionIds(user && user.id)));
     const allSongsInAllUserCollections$: Observable<Song[]> = allUserCollectionIds$.pipe(
-      switchMap((collectionIds: number[]|undefined) =>
-        combineLatest0((collectionIds || []).map(id => this.cds.getSongIdsByCollection(id)))),
-      switchMap((songIdsArray: (number[]|undefined)[]) => {
+      switchMap((collectionIds: number[] | undefined) =>
+        combineLatest0((collectionIds || []).map(id => this.cds.getSongIdsByCollection(id))),
+      ),
+      switchMap((songIdsArray: (number[] | undefined)[]) => {
         const uniqueSongIds = new Set<number>();
-        for (const collectionSongIds of (songIdsArray || [])) {
-          for (const songId of (collectionSongIds || [])) {
+        for (const collectionSongIds of songIdsArray || []) {
+          for (const songId of collectionSongIds || []) {
             uniqueSongIds.add(songId);
           }
         }
@@ -53,24 +51,20 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
       map(songs => songs.filter(isDefined)),
     );
 
-    const songsPickedByUser$: Observable<Song[]> = combineLatest([allUserCollectionIds$, allSongsInAllUserCollections$])
-      .pipe(
-        map(([collectionIds, songs]) => songs.filter(s => collectionIds.includes(s.collectionId))),
-      );
+    const songsPickedByUser$: Observable<Song[]> = combineLatest([allUserCollectionIds$, allSongsInAllUserCollections$]).pipe(
+      map(([collectionIds, songs]) => songs.filter(s => collectionIds.includes(s.collectionId))),
+    );
 
-    const primarySongCollections$: Observable<(Collection|undefined)[]> = songsPickedByUser$.pipe(
+    const primarySongCollections$: Observable<(Collection | undefined)[]> = songsPickedByUser$.pipe(
       switchMap(songs => this.cds.getCollectionsByIds(songs.map(s => s.collectionId))),
     );
 
     const primaryUserCollection$ = user$.pipe(
-      switchMap(user => user ? this.cds.observeCollection(user.collectionId) : of(undefined)),
+      switchMap(user => (user ? this.cds.observeCollection(user.collectionId) : of(undefined))),
     );
 
     combineLatest([user$, primaryUserCollection$, songsPickedByUser$, primarySongCollections$])
-      .pipe(
-        throttleTime(100, undefined, { leading: true, trailing: true }),
-        takeUntilDestroyed(),
-      )
+      .pipe(throttleTime(100, undefined, { leading: true, trailing: true }), takeUntilDestroyed())
       .subscribe(([user, primaryUserCollection, songs, primarySongCollections]) => {
         this.cdr.markForCheck();
         this.loaded = true;

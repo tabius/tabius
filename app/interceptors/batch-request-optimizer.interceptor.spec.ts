@@ -1,8 +1,8 @@
-import {getTestBed, TestBed} from '@angular/core/testing';
-import {HttpClientTestingModule,} from '@angular/common/http/testing';
-import {HTTP_INTERCEPTORS, HttpClient, HttpResponse} from '@angular/common/http';
-import {BatchRequestOptimizerInterceptor} from '@app/interceptors/batch-request-optimizer.interceptor';
-import {FakeResponseInterceptor} from '@app/interceptors/caching.interceptor.spec';
+import { getTestBed, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HTTP_INTERCEPTORS, HttpClient, HttpResponse } from '@angular/common/http';
+import { BatchRequestOptimizerInterceptor } from '@app/interceptors/batch-request-optimizer.interceptor';
+import { FakeResponseInterceptor } from '@app/interceptors/caching.interceptor.spec';
 
 const responseInterceptor = new FakeResponseInterceptor();
 responseInterceptor.responseDelayMillis = 0;
@@ -18,28 +18,34 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
-        {provide: HTTP_INTERCEPTORS, useValue: newBatchInterceptor(), multi: true,},
-        {provide: HTTP_INTERCEPTORS, useValue: responseInterceptor, multi: true,},
+        { provide: HTTP_INTERCEPTORS, useValue: newBatchInterceptor(), multi: true },
+        { provide: HTTP_INTERCEPTORS, useValue: responseInterceptor, multi: true },
       ],
     });
     responseInterceptor.reset();
   });
 
   it('merges multiple get requests into batches', async () => {
-    responseInterceptor.response = new HttpResponse({body: [{id: '0'}, {id: '1'}]});
+    responseInterceptor.response = new HttpResponse({ body: [{ id: '0' }, { id: '1' }] });
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
     await Promise.all([
-      http.get('/api/collection/by-ids/0').toPromise().then(r => results.push(r)),
-      http.get('/api/collection/by-ids/1').toPromise().then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/0')
+        .toPromise()
+        .then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/1')
+        .toPromise()
+        .then(r => results.push(r)),
     ]);
 
     expect(responseInterceptor.count).toBe(1);
     expect(responseInterceptor.requests[0]).toBe('/api/collection/by-ids/0,1');
     expect(results.length).toBe(2);
-    expect(results[0]).toEqual([{id: '0'}]);
-    expect(results[1]).toEqual([{id: '1'}]);
+    expect(results[0]).toEqual([{ id: '0' }]);
+    expect(results[1]).toEqual([{ id: '1' }]);
   });
 
   it('does not merge different kind of requests into a single batch', async () => {
@@ -54,43 +60,61 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     expect(responseInterceptor.count).toBe(4);
   });
 
-
   it('correctly matched ids to the results', async () => {
-    responseInterceptor.response = new HttpResponse({body: [{id: '1'}, {id: '2'}, {id: '0'}, {id: '5'}]});
+    responseInterceptor.response = new HttpResponse({ body: [{ id: '1' }, { id: '2' }, { id: '0' }, { id: '5' }] });
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
     await Promise.all([
-      http.get('/api/collection/by-ids/0').toPromise().then(r => results.push(r)),
-      http.get('/api/collection/by-ids/1,5').toPromise().then(r => results.push(r)),
-      http.get('/api/collection/by-ids/2,1').toPromise().then(r => results.push(r)),
-      http.get('/api/collection/by-ids/3').toPromise().then(r => results.push(r)),
-      http.get('/api/collection/by-ids/1,4,2').toPromise().then(r => results.push(r)),
-      http.get('/api/collection/by-ids/1,1,1').toPromise().then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/0')
+        .toPromise()
+        .then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/1,5')
+        .toPromise()
+        .then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/2,1')
+        .toPromise()
+        .then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/3')
+        .toPromise()
+        .then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/1,4,2')
+        .toPromise()
+        .then(r => results.push(r)),
+      http
+        .get('/api/collection/by-ids/1,1,1')
+        .toPromise()
+        .then(r => results.push(r)),
     ]);
 
     expect(responseInterceptor.count).toBe(1);
     expect(responseInterceptor.requests[0]).toBe('/api/collection/by-ids/0,1,2,3,4,5');
     expect(results.length).toBe(6);
-    expect(results[0]).toEqual([{id: '0'}]);
-    expect(results[1]).toEqual([{id: '1'}, {id: '5'}]);
-    expect(results[2]).toEqual([{id: '2'}, {id: '1'}]);
+    expect(results[0]).toEqual([{ id: '0' }]);
+    expect(results[1]).toEqual([{ id: '1' }, { id: '5' }]);
+    expect(results[2]).toEqual([{ id: '2' }, { id: '1' }]);
     expect(results[3]).toEqual([]);
-    expect(results[4]).toEqual([{id: '1'}, {id: '2'}]);
-    expect(results[5]).toEqual([{id: '1'}, {id: '1'}, {id: '1'}]);
+    expect(results[4]).toEqual([{ id: '1' }, { id: '2' }]);
+    expect(results[5]).toEqual([{ id: '1' }, { id: '1' }, { id: '1' }]);
   });
 
   it('correctly compares result ids', async () => {
-    responseInterceptor.response = new HttpResponse({body: [{id: 100}]});
+    responseInterceptor.response = new HttpResponse({ body: [{ id: 100 }] });
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
     const results: any[] = [];
-    await http.get('/api/collection/by-ids/100').toPromise().then(r => results.push(r));
+    await http
+      .get('/api/collection/by-ids/100')
+      .toPromise()
+      .then(r => results.push(r));
 
     expect(responseInterceptor.count).toBe(1);
     expect(results.length).toBe(1);
-    expect(results[0]).toEqual([{id: 100}]);
+    expect(results[0]).toEqual([{ id: 100 }]);
   });
-
 });
-

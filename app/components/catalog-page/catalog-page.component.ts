@@ -1,22 +1,29 @@
-import {ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild} from '@angular/core';
-import {Collection} from '@common/catalog-model';
-import {CatalogService} from '@app/services/catalog.service';
-import {FormControl} from '@angular/forms';
-import {debounce, throttleTime} from 'rxjs/operators';
-import {timer} from 'rxjs';
-import {canCreateNewPublicCollection, getCollectionPageLink, isAlpha, isInputEvent, isTouchDevice, scrollToView} from '@common/util/misc-utils';
-import {RoutingNavigationHelper} from '@app/services/routing-navigation-helper.service';
-import {UserService} from '@app/services/user.service';
-import {MIN_LEN_FOR_FULL_TEXT_SEARCH} from '@common/common-constants';
-import {User} from '@common/user-model';
-import {I18N} from '@app/app-i18n';
-import {environment} from '@app/environments/environment';
-import {ComponentWithLoadingIndicator} from '@app/utils/component-with-loading-indicator';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Collection } from '@common/catalog-model';
+import { CatalogService } from '@app/services/catalog.service';
+import { FormControl } from '@angular/forms';
+import { debounce, throttleTime } from 'rxjs/operators';
+import { timer } from 'rxjs';
+import {
+  canCreateNewPublicCollection,
+  getCollectionPageLink,
+  isAlpha,
+  isInputEvent,
+  isTouchDevice,
+  scrollToView,
+} from '@common/util/misc-utils';
+import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
+import { UserService } from '@app/services/user.service';
+import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
+import { User } from '@common/user-model';
+import { I18N } from '@app/app-i18n';
+import { environment } from '@app/environments/environment';
+import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface LetterBlock {
-  letter: string,
-  collections: CollectionListItem[]
+  letter: string;
+  collections: CollectionListItem[];
 }
 
 interface CollectionListItem extends Collection {
@@ -34,13 +41,13 @@ let letterBlockFilters: string[] = [];
 @Component({
   templateUrl: './catalog-page.component.html',
   styleUrls: ['./catalog-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.catalogPage;
 
-  @ViewChild('searchField', {static: false, read: ElementRef}) private searchField!: ElementRef;
-  @ViewChild('searchResultsBlock', {static: false, read: ElementRef}) private searchResultsBlock!: ElementRef;
+  @ViewChild('searchField', { static: false, read: ElementRef }) private searchField!: ElementRef;
+  @ViewChild('searchResultsBlock', { static: false, read: ElementRef }) private searchResultsBlock!: ElementRef;
   letterBlocks: LetterBlock[] = [];
   searchValue: string = '';
 
@@ -52,34 +59,38 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
 
   readonly isVirtualKeyboardShownOnInput = isTouchDevice();
 
-  constructor(private readonly catalogService: CatalogService,
-              private readonly uds: UserService,
-              private readonly navHelper: RoutingNavigationHelper,
+  constructor(
+    private readonly catalogService: CatalogService,
+    private readonly uds: UserService,
+    private readonly navHelper: RoutingNavigationHelper,
   ) {
     super();
-    this.uds.getUser$().pipe(
-        takeUntilDestroyed(),
-    ).subscribe(user => {
-      this.user = user;
-      this.canCreateNewPublicCollection = canCreateNewPublicCollection(user);
-      this.cdr.markForCheck();
-    });
+    this.uds
+      .getUser$()
+      .pipe(takeUntilDestroyed())
+      .subscribe(user => {
+        this.user = user;
+        this.canCreateNewPublicCollection = canCreateNewPublicCollection(user);
+        this.cdr.markForCheck();
+      });
 
-    this.collectionFilterControl.valueChanges.pipe(
+    this.collectionFilterControl.valueChanges
+      .pipe(
         debounce(() => timer(300)),
         takeUntilDestroyed(),
-    ).subscribe(newValue => this.updateCollectionFilter(newValue));
+      )
+      .subscribe(newValue => this.updateCollectionFilter(newValue));
 
-    this.catalogService.getListedCollections().pipe(
-        throttleTime(100, undefined, {leading: true, trailing: true}),
-        takeUntilDestroyed(),
-    ).subscribe(collections => {
-      this.letterBlocks = toLetterBlocks(collections, environment.app === 'ru');
-      this.loaded = true;
-      this.bringFocusToTheSearchField();
-      this.navHelper.restoreScrollPosition();
-      this.cdr.markForCheck();
-    });
+    this.catalogService
+      .getListedCollections()
+      .pipe(throttleTime(100, undefined, { leading: true, trailing: true }), takeUntilDestroyed())
+      .subscribe(collections => {
+        this.letterBlocks = toLetterBlocks(collections, environment.app === 'ru');
+        this.loaded = true;
+        this.bringFocusToTheSearchField();
+        this.navHelper.restoreScrollPosition();
+        this.cdr.markForCheck();
+      });
 
     this.updatePageMetadata(this.i18n.meta);
   }
@@ -125,7 +136,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
     return collection.id;
   }
 
-  activateLetter(letter: string|null): void {
+  activateLetter(letter: string | null): void {
     this.updateCollectionFilter('');
     if (letter == null || letter.length === 0) {
       letterBlockFilters = [];
@@ -158,17 +169,19 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
     const filterLcTokens = this.searchValue.toLocaleLowerCase().split(' ');
     for (const letterBlock of this.letterBlocks) {
       letterBlock.collections
-          .filter(collectionItem => isCollectionNameMatchesFilter(collectionItem, filterLcTokens))
-          .forEach(collectionItem => {
-            result.push(collectionItem);
-          });
+        .filter(collectionItem => isCollectionNameMatchesFilter(collectionItem, filterLcTokens))
+        .forEach(collectionItem => {
+          result.push(collectionItem);
+        });
     }
     return result;
   }
 
   useFullTextSearch(): boolean {
-    return this.searchValue.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH
-        && this.searchValue.replace(/ /g, '').length >= MIN_LEN_FOR_FULL_TEXT_SEARCH;
+    return (
+      this.searchValue.length >= MIN_LEN_FOR_FULL_TEXT_SEARCH &&
+      this.searchValue.replace(/ /g, '').length >= MIN_LEN_FOR_FULL_TEXT_SEARCH
+    );
   }
 
   toggleCollectionsEditor(): void {
@@ -181,7 +194,6 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
     }
     scrollToView(this.searchResultsBlock.nativeElement, 10);
   }
-
 }
 
 function createListItemFromCollection(collection: Collection): CollectionListItem {
@@ -204,7 +216,7 @@ function toLetterBlocks(collections: readonly Collection[], mergeLatinWordsIntoS
     } else {
       letter = letter.toUpperCase();
     }
-    const letterBlock = blocksByLetter.get(letter) || {letter, collections: []};
+    const letterBlock = blocksByLetter.get(letter) || { letter, collections: [] };
     letterBlock.collections.push(createListItemFromCollection(collection));
     blocksByLetter.set(letter, letterBlock);
   }

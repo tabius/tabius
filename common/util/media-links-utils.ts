@@ -1,4 +1,4 @@
-export function getFirstYoutubeVideoIdFromLinks(links: string[]|undefined): string|undefined {
+export function getFirstYoutubeVideoIdFromLinks(links: string[] | undefined): string | undefined {
   if (!links) {
     return undefined;
   }
@@ -16,7 +16,7 @@ const MAX_YOUTUBE_VIDEO_ID_LENGTH = 12;
 
 const YOUTUBE_ID_CHARS = '0-9a-zA-Z-_';
 
-export function getYoutubeVideoIdFromLink(origUrl: string|undefined): string|undefined {
+export function getYoutubeVideoIdFromLink(origUrl: string | undefined): string | undefined {
   if (origUrl === undefined) {
     return undefined;
   }
@@ -31,7 +31,10 @@ export function getYoutubeVideoIdFromLink(origUrl: string|undefined): string|und
   }
   lcUrl = lcUrl.substring(yIdx);
 
-  let match = new RegExp(`(youtu\\.be/|youtube\\.com)/(embed/|v/|watch\\?v=|watch\\?.+&v=)(([${YOUTUBE_ID_CHARS}]){${MIN_YOUTUBE_VIDEO_ID_LENGTH},}).*`, 'g').exec(lcUrl);
+  let match = new RegExp(
+    `(youtu\\.be/|youtube\\.com)/(embed/|v/|watch\\?v=|watch\\?.+&v=)(([${YOUTUBE_ID_CHARS}]){${MIN_YOUTUBE_VIDEO_ID_LENGTH},}).*`,
+    'g',
+  ).exec(lcUrl);
   let groupNumber = 3;
   if (match === null) {
     match = new RegExp(`(youtu\\.be/)(([${YOUTUBE_ID_CHARS}]){${MIN_YOUTUBE_VIDEO_ID_LENGTH},}).*`, 'g').exec(lcUrl);
@@ -47,7 +50,6 @@ export function getYoutubeVideoIdFromLink(origUrl: string|undefined): string|und
   const idx = lcUrl.indexOf(lcResult);
   return url.substring(yIdx + idx, yIdx + idx + lcResult.length);
 }
-
 
 export function isValidYoutubeId(id: string): boolean {
   const regex = new RegExp(`^[${YOUTUBE_ID_CHARS}]{${MIN_YOUTUBE_VIDEO_ID_LENGTH},${MAX_YOUTUBE_VIDEO_ID_LENGTH}}`, 'g');

@@ -33,12 +33,13 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
 
   constructor(private readonly uds: UserService) {
     super();
-    this.uds.getUserDeviceSettings().pipe(
-      takeUntilDestroyed(),
-    ).subscribe(deviceSettings => {
-      this.deviceSettings = deviceSettings;
-      this.cdr.markForCheck();
-    });
+    this.uds
+      .getUserDeviceSettings()
+      .pipe(takeUntilDestroyed())
+      .subscribe(deviceSettings => {
+        this.deviceSettings = deviceSettings;
+        this.cdr.markForCheck();
+      });
     this.updatePageMetadata(this.i18n.meta);
   }
 
@@ -169,7 +170,7 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
     this.uds.setUserDeviceSettings({ ...this.deviceSettings, tunerToneType: toneType }).then();
   }
 
-  private getStringElement(guitarString: string): ElementRef|undefined {
+  private getStringElement(guitarString: string): ElementRef | undefined {
     const stringNum = getGuitarStringIndex(guitarString) + 1;
     switch (stringNum) {
       case 1:

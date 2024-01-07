@@ -9,9 +9,7 @@ import { isEqualByStringify } from '@app/store';
 
 @Controller('/api/user')
 export class UserController {
-
-  constructor(private readonly userDbi: UserDbi) {
-  }
+  constructor(private readonly userDbi: UserDbi) {}
 
   /** Login callback. Called on successful user login. */
   @Get('/login')
@@ -61,7 +59,7 @@ export class UserController {
   }
 
   @Put('/settings/h4Si')
-  async setH4Si(@Session() session, @Body() { h4SiFlag }: { h4SiFlag: boolean|undefined }): Promise<UserSettings> {
+  async setH4Si(@Session() session, @Body() { h4SiFlag }: { h4SiFlag: boolean | undefined }): Promise<UserSettings> {
     const user: User = ServerAuthService.getUserOrFail(session);
     console.log('UserController.setH4Si', user.email, h4SiFlag);
     const settings = await this.getUserSettings(user);

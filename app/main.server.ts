@@ -6,4 +6,3 @@ import { config } from '@app/app.config.server';
 const bootstrap = (): Promise<ApplicationRef> => bootstrapApplication(AppComponent, config);
 
 export default bootstrap;
-

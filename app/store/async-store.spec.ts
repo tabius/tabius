@@ -1,8 +1,7 @@
-import {AsyncStore} from './async-store';
-import {InMemoryAsyncStore} from './in-memory-async-store';
-import {LocalStorageAsyncStore} from './local-storage-async-store';
-import {IndexedDbAsyncStore} from './indexed-db-async-store';
-
+import { AsyncStore } from './async-store';
+import { InMemoryAsyncStore } from './in-memory-async-store';
+import { LocalStorageAsyncStore } from './local-storage-async-store';
+import { IndexedDbAsyncStore } from './indexed-db-async-store';
 
 interface TestListItem {
   foo: string;
@@ -20,11 +19,10 @@ function genUniqueIndexDbName(): string {
 }
 
 describe('Async Store Adapter', () => {
-
   describe('should support "get" and "set"', () => {
     async function test(store: AsyncStore): Promise<void> {
       const key = 'k1';
-      const value1 = {a: 1};
+      const value1 = { a: 1 };
       await store.set(key, value1);
       let result = await store.get(key);
       expect(result).toBeDefined();
@@ -47,7 +45,7 @@ describe('Async Store Adapter', () => {
     async function test(store: AsyncStore): Promise<void> {
       const keys = ['k1', 'k2', 'k22', 'k3'];
       for (const key of keys) {
-        await store.set<TestListItem>(key, {foo: key + '-foo'});
+        await store.set<TestListItem>(key, { foo: key + '-foo' });
       }
       const result = await store.list<TestListItem>('k2');
       expect(result).toBeDefined();
@@ -73,8 +71,8 @@ describe('Async Store Adapter', () => {
       const keyPrefix = 'remove';
       const key1 = `${keyPrefix}1`;
       const key2 = `${keyPrefix}2`;
-      await store.set(key1, {x: 'value'});
-      await store.set(key2, {x: 'value2'});
+      await store.set(key1, { x: 'value' });
+      await store.set(key2, { x: 'value2' });
 
       const list1 = await store.list<any>(keyPrefix);
       expect(list1).toBeDefined();
@@ -102,23 +100,18 @@ describe('Async Store Adapter', () => {
 
   describe('should support "getAll"', () => {
     async function test(store: AsyncStore): Promise<void> {
-      await Promise.all([
-        store.set('k1', 'v1'),
-        store.set('k2', 'v2'),
-        store.set('k3', 'v3'),
-      ]);
+      await Promise.all([store.set('k1', 'v1'), store.set('k2', 'v2'), store.set('k3', 'v3')]);
 
-      const result1: (string|null|undefined)[] = await store.getAll(['k1', 'k3']);
+      const result1: (string | null | undefined)[] = await store.getAll(['k1', 'k3']);
       expect(result1).toBeDefined();
       expect(result1.length).toBe(2);
       expect(result1.sort()).toEqual(['v1', 'v3']);
 
-      const result2: (string|null|undefined)[] = await store.getAll(['k2', 'k4']);
+      const result2: (string | null | undefined)[] = await store.getAll(['k2', 'k4']);
       expect(result2).toBeDefined();
       expect(result2.length).toBe(2);
       expect(result2.sort()).toEqual(['v2', undefined]);
     }
-
 
     it('InMemory', async () => await test(new InMemoryAsyncStore()));
 
@@ -129,12 +122,15 @@ describe('Async Store Adapter', () => {
 
   describe('should support "setAll"', () => {
     async function test(store: AsyncStore): Promise<void> {
-      await store.setAll({'k1': 'k1-value', 'k2': 'k2-value'});
+      await store.setAll({ k1: 'k1-value', k2: 'k2-value' });
       const result = await store.list('k');
       expect(result).toBeDefined();
       expect(result.length).toBe(2);
       result.sort((e1, e2) => e1.key.localeCompare(e2.key));
-      expect(result).toEqual([{key: 'k1', value: 'k1-value'}, {key: 'k2', value: 'k2-value'}]);
+      expect(result).toEqual([
+        { key: 'k1', value: 'k1-value' },
+        { key: 'k2', value: 'k2-value' },
+      ]);
     }
 
     it('InMemory', async () => await test(new InMemoryAsyncStore()));
@@ -149,7 +145,7 @@ describe('Async Store Adapter', () => {
       const keyPrefix = 'clear';
       const key1 = `${keyPrefix}1`;
       const key2 = `${keyPrefix}2`;
-      await Promise.all([store.set(key1, {x: 'value'}), store.set(key2, {x: 'value2'})]);
+      await Promise.all([store.set(key1, { x: 'value' }), store.set(key2, { x: 'value2' })]);
 
       const list1 = await store.list<any>(keyPrefix);
       expect(list1).toBeDefined();
@@ -173,5 +169,4 @@ describe('Async Store Adapter', () => {
 
     it('IndexedDb', async () => await test(new IndexedDbAsyncStore(genUniqueIndexDbName(), genUniqueStoreName())));
   });
-
 });

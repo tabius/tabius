@@ -1,6 +1,6 @@
-import {promisify} from 'util';
-import {MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX} from '@common/mounts';
-import {SERVER_CONFIG} from '../backend/server-config';
+import { promisify } from 'util';
+import { MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX } from '@common/mounts';
+import { SERVER_CONFIG } from '../backend/server-config';
 
 const mysql = require('mysql2/promise');
 const fs = require('fs');
@@ -37,5 +37,5 @@ async function generateSitemap(): Promise<void> {
 }
 
 generateSitemap()
-    .then(() => console.info('Done'))
-    .catch(error => console.error(error));
+  .then(() => console.info('Done'))
+  .catch(error => console.error(error));

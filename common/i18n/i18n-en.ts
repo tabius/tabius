@@ -1,6 +1,6 @@
-import {I18n} from '@common/i18n/i18n';
-import {CollectionType, isBand, isCompilation, isPerson} from '@common/catalog-model';
-import {User} from '@common/user-model';
+import { I18n } from '@common/i18n/i18n';
+import { CollectionType, isBand, isCompilation, isPerson } from '@common/catalog-model';
+import { User } from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Favorites';
 
@@ -43,7 +43,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   },
   addSongToCollection: {
     title: 'Add to collection:',
-    addToCollectionCheckboxTitle: (collectionName) => `Add song to «${collectionName}»`,
+    addToCollectionCheckboxTitle: collectionName => `Add song to «${collectionName}»`,
     gotoCollection: 'open »',
     gotoCollectionTitle: 'Open collection page',
     addToFavoritesCheckboxTitle: 'Add song to Favorites',
@@ -69,7 +69,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     addNewArtistTitle: 'Add new artist or collection to the catalog',
     searchResultsPrefix: 'Search results for',
     listItemTitleSuffix: function (type: CollectionType): string {
-      return `go to the list of songs ${(isPerson(type) ? 'for the artist' : isBand(type) ? 'for the band' : 'in the collection')}`;
+      return `go to the list of songs ${isPerson(type) ? 'for the artist' : isBand(type) ? 'for the band' : 'in the collection'}`;
     },
     meta: {
       title: 'Catalog: all artists and collections',
@@ -122,7 +122,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     affiliateLinkTitle: 'Support the Artist and Tabius by Purchasing Official Merchandise',
     meta: {
       title: (name: string, type: CollectionType) => {
-        const typeInfo = isCompilation(type) ? ', collection ' : (isBand(type) ? ', band' : '');
+        const typeInfo = isCompilation(type) ? ', collection ' : isBand(type) ? ', band' : '';
         return `${name}${typeInfo} — songs, chords and tabs for guitar`;
       },
       description: (firstSongs: string) => `Songs with tabs and chords: ${firstSongs}`,
@@ -157,7 +157,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     close: 'Close',
   },
   moderatorPrompt: {
-    youAreNotModerator: 'You are not moderator and can\'t change public catalog :(',
+    youAreNotModerator: "You are not moderator and can't change public catalog :(",
     but: 'But!',
     butLine1: 'It is not hard to become a moderator:',
     butLine2: 'suggest chords to a couple of songs in our',
@@ -191,14 +191,14 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       toGetAccess: ' to get access to all settings.',
     },
     demoSongText:
-        'F\n' +
-        'Yesterday\n' +
-        'Em7        A7              Dm Dm/C\n' +
-        'Love was such an easy game to play\n' +
-        'Hb             C              F\n' +
-        'Now I need a place to hide away\n' +
-        '   Dm       G   Hb     F\n' +
-        'Oh I believe in yesterday',
+      'F\n' +
+      'Yesterday\n' +
+      'Em7        A7              Dm Dm/C\n' +
+      'Love was such an easy game to play\n' +
+      'Hb             C              F\n' +
+      'Now I need a place to hide away\n' +
+      '   Dm       G   Hb     F\n' +
+      'Oh I believe in yesterday',
   },
   signinSignoutButton: {
     signIn: 'Sign in',
@@ -217,7 +217,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
       isOpenOnGithub: 'is open on Github',
       useAndImprove: 'Help us to improve Tabius or use it for your own needs',
     },
-    forMusicLoversFact: 'This site is free and open for everyone who loves music. It won\'t change',
+    forMusicLoversFact: "This site is free and open for everyone who loves music. It won't change",
   },
   chordPopover: {
     playChordText: 'play »',
@@ -288,7 +288,8 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     songPrimaryCollectionLinkTitle: 'Primary song collection',
   },
   songPage: {
-    titleSuffix: (titlePrefix: string) => titlePrefix.length > 50 ? 'chords' : titlePrefix.length > 35 ? 'text and chords' : 'song text and chords',
+    titleSuffix: (titlePrefix: string) =>
+      titlePrefix.length > 50 ? 'chords' : titlePrefix.length > 35 ? 'text and chords' : 'song text and chords',
     keywords: (collectionName: string, songTitle: string) => [
       `chords ${songTitle}`,
       collectionName,
@@ -324,7 +325,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     gotoRandomSongInCollectionTitle: 'Open random song from the same collection (right SHIFT twice)',
     gotoRandomSongInCatalogTitle: 'Open random song from the whole catalog (left SHIFT twice)',
     gotoRandomSongInCollectionButton: 'Collection',
-    gotoRandomSongInCatalogButton: 'Catalog'
+    gotoRandomSongInCatalogButton: 'Catalog',
   },
   studioPage: {
     addSong: 'Add song',
@@ -335,7 +336,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     songsListIsEmpty: 'Songs list is empty',
     meta: {
       title: 'Studio: personal songs & collections',
-      description: 'Studio page contains personal user\'s songs and collection.',
+      description: "Studio page contains personal user's songs and collection.",
       keywords: ['chords', 'tabs', 'guitar', 'playlist'],
     },
   },
@@ -367,13 +368,14 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     deleteCollectionButtonNotConfirmedTitle: 'Please confirm collection removal by using checkbox on the left.',
     deleteCollectionButtonTitle: 'Delete collection',
     failedToRemoveCollection: 'Error while removing collection!',
-    removeButton: 'Delete'
+    removeButton: 'Delete',
   },
   userCollectionsListComponent: {
     createCollectionButton: 'Create',
     createCollectionButtonTitle: 'Create new collection',
     newCollectionInputPlaceholder: 'New collection name',
-    titleText: (collectionName: string, songCount: number) => `Collection «${collectionName}», ${songCount == 0 ? 'empty' : `songs: ${songCount}`}`,
+    titleText: (collectionName: string, songCount: number) =>
+      `Collection «${collectionName}», ${songCount == 0 ? 'empty' : `songs: ${songCount}`}`,
   },
   userRegistrationPromptComponent: {
     close: 'close',
@@ -396,6 +398,6 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   moveSongToCollectionComponent: {
     addButtonText: 'Add',
     moveButtonText: 'Move',
-    songIsAddedToCollection: 'Song was added to the collection: '
+    songIsAddedToCollection: 'Song was added to the collection: ',
   },
 };

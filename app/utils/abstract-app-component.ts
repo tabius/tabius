@@ -43,6 +43,5 @@ export class AbstractAppComponent implements OnChanges, OnInit {
    * Validates inputs. Called after ngOnInit and every ngOnChanges methods.
    * By default, does not check anything and should be overridden in subclass.
    */
-  validateInputs(): void {
-  }
+  validateInputs(): void {}
 }

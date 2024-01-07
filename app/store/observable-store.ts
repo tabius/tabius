@@ -5,7 +5,7 @@ import { KV } from './async-store';
 export type CheckUpdateFn<T> = (oldValue?: T, newValue?: T) => boolean;
 
 /** A function called when a store wants to fetch first time or re-fetch an existing value. */
-export type FetchFn<T> = () => Observable<T|undefined>;
+export type FetchFn<T> = () => Observable<T | undefined>;
 
 /** List of refresh modes for get() operations. */
 export enum RefreshMode {
@@ -25,7 +25,7 @@ export enum RefreshMode {
   /**
    * The key is fetched regardless of the local store content.
    */
-  Refresh = 3
+  Refresh = 3,
 }
 
 export interface ObservableStore {
@@ -36,11 +36,12 @@ export interface ObservableStore {
    * @param refreshMode - defines how to refresh the value. fetchFn is used to get the refreshed value.
    * @param checkUpdateFn - compares existing & refreshed values and decides if the update should be ignored.
    */
-  get<T>(key: string|undefined,
-         fetchFn: FetchFn<T>|undefined,
-         refreshMode: RefreshMode,
-         checkUpdateFn: CheckUpdateFn<T>,
-  ): Observable<T|undefined>;
+  get<T>(
+    key: string | undefined,
+    fetchFn: FetchFn<T> | undefined,
+    refreshMode: RefreshMode,
+    checkUpdateFn: CheckUpdateFn<T>,
+  ): Observable<T | undefined>;
 
   /**
    * Updates value in the DB.
@@ -48,13 +49,13 @@ export interface ObservableStore {
    * @param value - the value to set. 'undefined' value will trigger entry removal from the DB.
    * @param checkUpdateFn - used to check if the old value equal to the new value. If values are equal -> set will result to no-op.
    */
-  set<T>(key: string|undefined, value: T|undefined, checkUpdateFn: CheckUpdateFn<T>): Promise<void>;
+  set<T>(key: string | undefined, value: T | undefined, checkUpdateFn: CheckUpdateFn<T>): Promise<void>;
 
   /**
    * Removes value with the given key from the DB.
    * If key is undefined does nothing.
    */
-  remove(key: string|undefined): Promise<void>;
+  remove(key: string | undefined): Promise<void>;
 
   /** Lists all values by key prefix. */
   snapshot<T>(keyPrefix: string): Promise<KV<T>[]>;
@@ -69,4 +70,3 @@ export interface ObservableStore {
 export function skipUpdateCheck(): boolean {
   throw new Error('This is a marker function that must never be called!');
 }
-

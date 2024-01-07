@@ -13,7 +13,6 @@ import { getChordsDiscussionUrl } from '@app/utils/url-utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChordPopoverComponent {
-
   @Input({ required: true }) chordLayout!: ChordLayout;
   @Input() h4Si = getDefaultH4SiFlag();
   @Input({ required: true }) popover!: PopoverRef;

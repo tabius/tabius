@@ -4,10 +4,7 @@ module.exports = {
     'no-restricted-imports': [
       'error',
       {
-        patterns: [
-          '@app/*',
-          '@backend/*',
-        ],
+        patterns: ['@app/*', '@backend/*'],
       },
     ],
   },

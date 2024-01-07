@@ -2,7 +2,15 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, View
 import { User } from '@common/user-model';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER, MOUNT_COLLECTION_PREFIX, MOUNT_SONG_PREFIX } from '@common/mounts';
+import {
+  LINK_CATALOG,
+  LINK_SCENE,
+  LINK_SETTINGS,
+  LINK_STUDIO,
+  LINK_TUNER,
+  MOUNT_COLLECTION_PREFIX,
+  MOUNT_SONG_PREFIX,
+} from '@common/mounts';
 import { UserService } from '@app/services/user.service';
 import { ToastService } from '@app/toast/toast.service';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
@@ -19,7 +27,7 @@ enum NavSection {
   Scene = 3,
   Studio = 4,
   Tuner = 5,
-  Settings = 6
+  Settings = 6,
 }
 
 @Component({
@@ -29,7 +37,6 @@ enum NavSection {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
-
   user?: User;
 
   readonly sceneLink = LINK_SCENE;
@@ -48,31 +55,29 @@ export class NavbarComponent {
 
   @ViewChild('showHistoryButton', { static: true, read: ElementRef }) private showHistoryButton?: ElementRef;
 
-  constructor(private readonly userService: UserService,
-              private readonly router: Router,
-              private readonly toast: ToastService,
-              private readonly navHelper: RoutingNavigationHelper,
-              private readonly cdr: ChangeDetectorRef,
-              private readonly bss: BrowserStateService,
-              private readonly navigationHistoryService: CatalogNavigationHistoryService,
-              contextMenuActionService: ContextMenuActionService,
+  constructor(
+    private readonly userService: UserService,
+    private readonly router: Router,
+    private readonly toast: ToastService,
+    private readonly navHelper: RoutingNavigationHelper,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly bss: BrowserStateService,
+    private readonly navigationHistoryService: CatalogNavigationHistoryService,
+    contextMenuActionService: ContextMenuActionService,
   ) {
     this.noSleepMode$ = bss.getNoSleepMode$();
-    contextMenuActionService.navbarAction$.pipe(
-      takeUntilDestroyed(),
-    ).subscribe(action => {
+    contextMenuActionService.navbarAction$.pipe(takeUntilDestroyed()).subscribe(action => {
       this.contextMenuAction = action;
     });
-    this.userService.getUser$().pipe(
-      takeUntilDestroyed(),
-    ).subscribe(user => {
-      this.user = user;
-      this.cdr.markForCheck();
-    });
+    this.userService
+      .getUser$()
+      .pipe(takeUntilDestroyed())
+      .subscribe(user => {
+        this.user = user;
+        this.cdr.markForCheck();
+      });
 
-    this.router.events.pipe(
-      takeUntilDestroyed(),
-    ).subscribe(() => {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe(() => {
       this.cdr.markForCheck();
     });
   }
@@ -82,7 +87,11 @@ export class NavbarComponent {
     const url = this.router.url.toLocaleLowerCase();
     if (url.startsWith(LINK_TUNER)) {
       return NavSection.Tuner;
-    } else if (url.startsWith(LINK_CATALOG) || url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`) || url.startsWith(`/${MOUNT_SONG_PREFIX}`)) {
+    } else if (
+      url.startsWith(LINK_CATALOG) ||
+      url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`) ||
+      url.startsWith(`/${MOUNT_SONG_PREFIX}`)
+    ) {
       if (url.includes(USER_COLLECTION_MOUNT_SEPARATOR)) {
         return NavSection.Studio;
       }

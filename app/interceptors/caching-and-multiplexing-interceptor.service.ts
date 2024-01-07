@@ -1,8 +1,8 @@
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
-import {BrowserStateService} from '@app/services/browser-state.service';
-import {tap} from 'rxjs/operators';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { BrowserStateService } from '@app/services/browser-state.service';
+import { tap } from 'rxjs/operators';
 
 /**
  * 1. In server mode (server-side rendering) caches request results and re-uses them for all requests during page rendering.
@@ -13,13 +13,11 @@ import {tap} from 'rxjs/operators';
  */
 @Injectable()
 export class CachingAndMultiplexingInterceptor implements HttpInterceptor {
-
   private readonly inFlightResponseByRequestGetUrl = new Map<string, Observable<HttpEvent<any>>>();
 
   private readonly serverSideResponseCache = new Map<string, any>();
 
-  constructor(private readonly bss: BrowserStateService) {
-  }
+  constructor(private readonly bss: BrowserStateService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const requestGetUrl = req.method === 'GET' ? req.urlWithParams : undefined;
@@ -39,10 +37,11 @@ export class CachingAndMultiplexingInterceptor implements HttpInterceptor {
       const response$ = next.handle(req);
       this.inFlightResponseByRequestGetUrl.set(requestGetUrl, response$);
       return response$.pipe(
-          tap(() => { // Once request is completed remove it from inFlight map.
-            // console.debug(`Removing from inFlight: ${cacheKey}`, event);
-            this.inFlightResponseByRequestGetUrl.delete(requestGetUrl);
-          }),
+        tap(() => {
+          // Once request is completed remove it from inFlight map.
+          // console.debug(`Removing from inFlight: ${cacheKey}`, event);
+          this.inFlightResponseByRequestGetUrl.delete(requestGetUrl);
+        }),
       );
     }
 
@@ -58,12 +57,12 @@ export class CachingAndMultiplexingInterceptor implements HttpInterceptor {
     }
 
     return next.handle(req).pipe(
-        tap(event => {
-          // There may be other events besides the response.
-          if (event instanceof HttpResponse) {
-            this.serverSideResponseCache.set(requestGetUrl, event);
-          }
-        })
+      tap(event => {
+        // There may be other events besides the response.
+        if (event instanceof HttpResponse) {
+          this.serverSideResponseCache.set(requestGetUrl, event);
+        }
+      }),
     );
   }
 }

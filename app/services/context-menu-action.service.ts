@@ -1,12 +1,12 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 
-export type ContextMenuTarget = (() => void)|TemplateRef<unknown>|ContextMenuAction[];
+export type ContextMenuTarget = (() => void) | TemplateRef<unknown> | ContextMenuAction[];
 
 export interface ContextMenuAction {
   icon?: string;
   text?: string;
-  text$?: Observable<string|undefined>;
+  text$?: Observable<string | undefined>;
   target: ContextMenuTarget;
   style?: any;
   textStyle?: any;
@@ -16,7 +16,7 @@ export interface ContextMenuAction {
   providedIn: 'root',
 })
 export class ContextMenuActionService {
-  navbarAction$ = new ReplaySubject<ContextMenuAction|undefined>(1);
+  navbarAction$ = new ReplaySubject<ContextMenuAction | undefined>(1);
   footerActions$ = new ReplaySubject<ContextMenuAction[]>(1);
 }
 

@@ -10,17 +10,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninSignoutButtonComponent {
-
   username?: string;
 
   readonly i18n = I18N.signinSignoutButton;
 
-  constructor(private readonly cd: ChangeDetectorRef,
-              public authService: ClientAuthService,
-  ) {
-    this.authService.user$.pipe(
-      takeUntilDestroyed(),
-    ).subscribe(user => {
+  constructor(private readonly cd: ChangeDetectorRef, public authService: ClientAuthService) {
+    this.authService.user$.pipe(takeUntilDestroyed()).subscribe(user => {
       this.username = user?.name || user?.email;
       this.cd.markForCheck();
     });
@@ -33,5 +28,4 @@ export class SigninSignoutButtonComponent {
   signOut(): void {
     this.authService.signout().then();
   }
-
 }

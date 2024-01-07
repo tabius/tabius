@@ -1,11 +1,11 @@
-import {Injectable} from '@nestjs/common';
-import {Song, SongDetails} from '@common/catalog-model';
-import {DbService} from './db.service';
-import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {INVALID_ID} from '@common/common-constants';
-import {ResultSetHeader, RowDataPacket} from 'mysql2';
-import {assertTruthy} from 'assertic';
-import {Pool as PromisePool} from 'mysql2/promise';
+import { Injectable } from '@nestjs/common';
+import { Song, SongDetails } from '@common/catalog-model';
+import { DbService } from './db.service';
+import { getTranslitLowerCase } from '@common/util/seo-translit';
+import { INVALID_ID } from '@common/common-constants';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { assertTruthy } from 'assertic';
+import { Pool as PromisePool } from 'mysql2/promise';
 
 interface SongRow extends RowDataPacket {
   id: number;
@@ -28,55 +28,68 @@ const SELECT_SONG_DETAILS_SQL = `SELECT ${SONG_DETAILS_FIELDS} FROM song s`;
 
 @Injectable()
 export class SongDbi {
+  constructor(private readonly db: DbService) {}
 
-  constructor(private readonly db: DbService) {
-  }
-
-  async getSong(songId: number): Promise<Song|undefined> {
+  async getSong(songId: number): Promise<Song | undefined> {
     const songs = await this.getSongs([songId]);
     return songs[0];
   }
 
   async getSongs(songIds: number[]): Promise<Song[]> {
     const idList = songIds.join(',');
-    return await this.db.pool.promise()
-        .query<SongRow[]>(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
-        .then(([rows]) => rows.map(row2Song));
+    return await this.db.pool
+      .promise()
+      .query<SongRow[]>(`${SELECT_SONG_SQL} WHERE s.id IN ( ${idList} )`)
+      .then(([rows]) => rows.map(row2Song));
   }
 
   async getSongsDetails(songIds: number[]): Promise<SongDetails[]> {
     const idList = songIds.join(',');
-    return await this.db.pool.promise()
-        .query<SongRow[]>(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
-        .then(([rows]) => rows.map(row2SongDetails));
+    return await this.db.pool
+      .promise()
+      .query<SongRow[]>(`${SELECT_SONG_DETAILS_SQL} WHERE s.id IN ( ${idList} )`)
+      .then(([rows]) => rows.map(row2SongDetails));
   }
 
   async getPrimaryAndSecondarySongIdsByCollectionId(collectionId: number): Promise<number[]> {
     const [primarySongsIds, secondarySongIds] = await Promise.all([
-      this.db.pool.promise().query<IdRow[]>('SELECT id FROM song WHERE collection_id = ?', [collectionId])
-          .then(([rows]) => rows.map(r => r.id)),
-      this.db.pool.promise().query<IdRow[]>('SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ?', [collectionId])
-          .then(([rows]) => rows.map(r => r.id)),
+      this.db.pool
+        .promise()
+        .query<IdRow[]>('SELECT id FROM song WHERE collection_id = ?', [collectionId])
+        .then(([rows]) => rows.map(r => r.id)),
+      this.db.pool
+        .promise()
+        .query<IdRow[]>('SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ?', [collectionId])
+        .then(([rows]) => rows.map(r => r.id)),
     ]);
     return [...primarySongsIds, ...secondarySongIds];
   }
 
   /** Returns all songs in the collection. */
   async getPrimaryAndSecondarySongsByCollectionId(collectionId: number): Promise<Song[]> {
-    return this.db.pool.promise()
-        .query<SongRow[]>(`${SELECT_SONG_SQL} WHERE s.collection_id = ? UNION ` +
-            `${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?)` +
-            ' ORDER BY id', [collectionId, collectionId])
-        .then(([rows]) => rows.map(row2Song));
+    return this.db.pool
+      .promise()
+      .query<SongRow[]>(
+        `${SELECT_SONG_SQL} WHERE s.collection_id = ? UNION ` +
+          `${SELECT_SONG_SQL} WHERE s.id IN (SELECT song_id FROM secondary_song_collections WHERE collection_id = ?)` +
+          ' ORDER BY id',
+        [collectionId, collectionId],
+      )
+      .then(([rows]) => rows.map(row2Song));
   }
 
   async create(song: Song, details: SongDetails): Promise<number> {
     const con$$: PromisePool = this.db.pool.promise();
     const mount = await generateUniqueSongMount(song, con$$);
     return con$$
-        .query<ResultSetHeader>('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
-            [song.collectionId, mount, song.title, details.content, packMediaLinks(details.mediaLinks)])
-        .then(([result]) => result.insertId);
+      .query<ResultSetHeader>('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)', [
+        song.collectionId,
+        mount,
+        song.title,
+        details.content,
+        packMediaLinks(details.mediaLinks),
+      ])
+      .then(([result]) => result.insertId);
   }
 
   async update(song: Song, details: SongDetails): Promise<void> {
@@ -84,14 +97,19 @@ export class SongDbi {
     if (songIdWithTheSameMount !== undefined && songIdWithTheSameMount !== details.id) {
       throw new Error(`Mount is already in use: ${song.mount}`);
     }
-    await this.db.pool.promise()
-        .query('UPDATE song SET title = ?, mount = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?',
-            [song.title, song.mount, details.content, packMediaLinks(details.mediaLinks), details.id]);
+    await this.db.pool
+      .promise()
+      .query('UPDATE song SET title = ?, mount = ?, content = ?, media_links = ?, version = version + 1 WHERE id = ?', [
+        song.title,
+        song.mount,
+        details.content,
+        packMediaLinks(details.mediaLinks),
+        details.id,
+      ]);
   }
 
   async updateSceneFlag(songId: number, flag: boolean): Promise<void> {
-    await this.db.pool.promise()
-        .query('UPDATE song SET scene = ?, version = version + 1 WHERE id = ?', [flag, songId]);
+    await this.db.pool.promise().query('UPDATE song SET scene = ?, version = version + 1 WHERE id = ?', [flag, songId]);
   }
 
   async delete(songId: number): Promise<void> {
@@ -101,30 +119,33 @@ export class SongDbi {
     ]);
   }
 
-  async getSongIdByMountFromTheSameCollection(songId: number, mount: string): Promise<number|undefined> {
-    const collectionId: number|undefined = await this.query('SELECT collection_id FROM song WHERE id = ?', [songId])
-        .then(([rows]) => rows.length > 0 ? rows[0].collection_id : undefined);
+  async getSongIdByMountFromTheSameCollection(songId: number, mount: string): Promise<number | undefined> {
+    const collectionId: number | undefined = await this.query('SELECT collection_id FROM song WHERE id = ?', [songId]).then(
+      ([rows]) => (rows.length > 0 ? rows[0].collection_id : undefined),
+    );
     if (!collectionId) {
       return INVALID_ID;
     }
-    return await this.query('SELECT id FROM song WHERE collection_id = ? AND mount = ?', [collectionId, mount])
-        .then(([rows]) => rows.length > 0 ? rows[0].id : undefined);
+    return await this.query('SELECT id FROM song WHERE collection_id = ? AND mount = ?', [collectionId, mount]).then(([rows]) =>
+      rows.length > 0 ? rows[0].id : undefined,
+    );
   }
 
   async addSongToSecondaryCollection(songId: number, collectionId: number): Promise<void> {
     const song = await this.getSong(songId);
-    if (!song || song.collectionId === songId) { // Do not add into secondary when 'collectionId' is a primary collection id.
+    if (!song || song.collectionId === songId) {
+      // Do not add into secondary when 'collectionId' is a primary collection id.
       return;
     }
-    await this.db.pool.promise()
-        .query('INSERT IGNORE INTO secondary_song_collections(song_id, collection_id) VALUES(?,?)',
-            [songId, collectionId]);
+    await this.db.pool
+      .promise()
+      .query('INSERT IGNORE INTO secondary_song_collections(song_id, collection_id) VALUES(?,?)', [songId, collectionId]);
   }
 
   async removeSongFromSecondaryCollection(songId: number, collectionId: number): Promise<void> {
-    await this.db.pool.promise()
-        .query('DELETE FROM secondary_song_collections WHERE song_id = ? AND collection_id = ?',
-            [songId, collectionId]);
+    await this.db.pool
+      .promise()
+      .query('DELETE FROM secondary_song_collections WHERE song_id = ? AND collection_id = ?', [songId, collectionId]);
   }
 
   async updateSongsPrimaryCollection(songIds: number[], collectionId: number): Promise<void> {
@@ -133,9 +154,7 @@ export class SongDbi {
   }
 
   async removeAllSongsFromSecondaryCollection(secondaryCollectionId: number): Promise<void> {
-    await this.db.pool.promise()
-        .query(`DELETE FROM secondary_song_collections WHERE collection_id = ?`,
-            [secondaryCollectionId]);
+    await this.db.pool.promise().query(`DELETE FROM secondary_song_collections WHERE collection_id = ?`, [secondaryCollectionId]);
   }
 
   private query(sql: string, params?: any[]): any {
@@ -143,33 +162,44 @@ export class SongDbi {
   }
 
   async getPrimaryAndSecondarySongCollectionIds(songId: number): Promise<number[]> {
-    const primary$$: Promise<number[]> = this.query(`SELECT collection_id AS id FROM song WHERE id = ?`, [songId])
-        .then(([rows]: [IdRow[]]) => rows.map(r => r.id));
-    const secondary$$: Promise<number[]> = this.query(`SELECT collection_id AS id FROM secondary_song_collections WHERE song_id = ?`, [songId])
-        .then(([rows]: [IdRow[]]) => rows.map(r => r.id));
+    const primary$$: Promise<number[]> = this.query(`SELECT collection_id AS id FROM song WHERE id = ?`, [songId]).then(
+      ([rows]: [IdRow[]]) => rows.map(r => r.id),
+    );
+    const secondary$$: Promise<number[]> = this.query(
+      `SELECT collection_id AS id FROM secondary_song_collections WHERE song_id = ?`,
+      [songId],
+    ).then(([rows]: [IdRow[]]) => rows.map(r => r.id));
     const [primary, secondary] = await Promise.all([primary$$, secondary$$]);
     return [...primary, ...secondary];
   }
 
-  async getRandomSongFromPublicCatalog(): Promise<number|undefined> {
-    return await this.db.pool.promise()
-        .query<SongRow[]>(`SELECT s.id FROM song s, collection c WHERE s.collection_id = c.id AND c.listed = 1 ORDER BY RAND() LIMIT 1`)
-        .then(([rows]) => rows[0]?.id);
+  async getRandomSongFromPublicCatalog(): Promise<number | undefined> {
+    return await this.db.pool
+      .promise()
+      .query<SongRow[]>(
+        `SELECT s.id FROM song s, collection c WHERE s.collection_id = c.id AND c.listed = 1 ORDER BY RAND() LIMIT 1`,
+      )
+      .then(([rows]) => rows[0]?.id);
   }
 
-  async getRandomSongFromCollection(collectionId: number): Promise<number|undefined> {
-    const sql = 'SELECT id FROM song WHERE collection_id = ? ' +
-        'UNION SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ? ' +
-        'ORDER BY RAND() LIMIT 1';
-    return await this.db.pool.promise()
-        .query<SongRow[]>(sql, [collectionId, collectionId])
-        .then(([rows]) => rows[0]?.id);
+  async getRandomSongFromCollection(collectionId: number): Promise<number | undefined> {
+    const sql =
+      'SELECT id FROM song WHERE collection_id = ? ' +
+      'UNION SELECT song_id AS id FROM secondary_song_collections WHERE collection_id = ? ' +
+      'ORDER BY RAND() LIMIT 1';
+    return await this.db.pool
+      .promise()
+      .query<SongRow[]>(sql, [collectionId, collectionId])
+      .then(([rows]) => rows[0]?.id);
   }
 
   async getSceneSongId(): Promise<number> {
     const sql = 'SELECT id FROM song WHERE scene=1 ORDER BY id';
     // TODO: optimize. Cache for a time period?
-    const allSongIdsForScene = await this.db.pool.promise().query<SongRow[]>(sql).then(([rows]) => rows.map(r => r.id));
+    const allSongIdsForScene = await this.db.pool
+      .promise()
+      .query<SongRow[]>(sql)
+      .then(([rows]) => rows.map(r => r.id));
     assertTruthy(Array.isArray(allSongIdsForScene) && allSongIdsForScene.length > 0);
     const todayStartTime = new Date(new Date().toISOString().substring(0, 10)).getTime();
     const randomValue = getRandomValue(todayStartTime);
@@ -221,8 +251,9 @@ function unpackLinks(packedLinks: string): string[] {
 }
 
 async function getAllSingMountsInCollection(con$$: PromisePool, song: Song): Promise<string[]> {
-  return await con$$.query<Array<RowDataPacket>>('SELECT mount FROM song WHERE collection_id = ?', [song.collectionId])
-      .then(([rows]) => rows.map(row => row.mount));
+  return await con$$
+    .query<Array<RowDataPacket>>('SELECT mount FROM song WHERE collection_id = ?', [song.collectionId])
+    .then(([rows]) => rows.map(row => row.mount));
 }
 
 async function generateUniqueSongMount(song: Song, con$$: PromisePool): Promise<string> {

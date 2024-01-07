@@ -1,6 +1,6 @@
-import {I18n} from '@common/i18n/i18n';
-import {CollectionType, isBand, isCompilation, isPerson} from '@common/catalog-model';
-import {User} from '@common/user-model';
+import { I18n } from '@common/i18n/i18n';
+import { CollectionType, isBand, isCompilation, isPerson } from '@common/catalog-model';
+import { User } from '@common/user-model';
 
 const FAVORITES_COLLECTION_NAME = 'Избранное';
 
@@ -43,7 +43,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   addSongToCollection: {
     title: 'Добавить в коллекцию:',
-    addToCollectionCheckboxTitle: (collectionName) => `Добавить песню в коллекцию «${collectionName}»`,
+    addToCollectionCheckboxTitle: collectionName => `Добавить песню в коллекцию «${collectionName}»`,
     gotoCollection: 'перейти »',
     gotoCollectionTitle: 'Перейти на страницу коллекции',
     addToFavoritesCheckboxTitle: 'Добавить песню в коллекцию',
@@ -76,7 +76,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       title: 'Каталог: все исполнители и коллекции песен',
       description: 'Полный список всех исполнителей и коллекций на Tabius. Поиск песен и аккордов по тексту и исполнителю.',
       keywords: ['табы', 'аккорды', 'гитара', 'список артистов', 'поиск песни по тексту'],
-    }
+    },
   },
   scenePage: {
     title: 'Сцена: новая песня каждый день',
@@ -123,7 +123,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     affiliateLinkTitle: 'Поддержать исполнителя и купить его официальные товары.',
     meta: {
       title: (name: string, type: CollectionType) => {
-        const typeInfo = isCompilation(type) ? ', сборник ' : (isBand(type) ? ', группа' : '');
+        const typeInfo = isCompilation(type) ? ', сборник ' : isBand(type) ? ', группа' : '';
         return `${name}${typeInfo} — тексты песен и аккорды для гитары`;
       },
       description: (firstSongs: string) => `Список песен с аккордами: ${firstSongs}`,
@@ -155,7 +155,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       scrollPageUp: 'Скролл на одну страницу назад',
       scrollPageDown: 'Скролл на одну страницу вперёд',
     },
-    close: 'Закрыть'
+    close: 'Закрыть',
   },
   moderatorPrompt: {
     youAreNotModerator: 'Вы не модератор и не можете изменять публичный каталог :(',
@@ -170,7 +170,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     close: 'закрыть',
   },
   resourceNotFoundComponent: {
-    tryToReloadPagePrompt: 'Попробуйте перегрузить страницу в режиме Онлайн'
+    tryToReloadPagePrompt: 'Попробуйте перегрузить страницу в режиме Онлайн',
   },
   settingsPage: {
     meta: {
@@ -192,12 +192,12 @@ export const TRANSLATIONS_MAP_RU: I18n = {
       toGetAccess: ', чтобы получить доступ к расширенным настройкам.',
     },
     demoSongText:
-        'Bm                           D\n' +
-        'Песен, еще не написанных, сколько?\n' +
-        '           A   Em\n' +
-        'Скажи, кукушка,\n' +
-        '   Bm\n' +
-        'Пропой.\n'
+      'Bm                           D\n' +
+      'Песен, еще не написанных, сколько?\n' +
+      '           A   Em\n' +
+      'Скажи, кукушка,\n' +
+      '   Bm\n' +
+      'Пропой.\n',
   },
   signinSignoutButton: {
     signIn: 'Вход',
@@ -287,7 +287,8 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     songPrimaryCollectionLinkTitle: 'Исполнитель',
   },
   songPage: {
-    titleSuffix: (titlePrefix: string) => titlePrefix.length > 50 ? 'аккорды' : titlePrefix.length > 35 ? 'текст и аккорды' : 'текст песни и аккорды',
+    titleSuffix: (titlePrefix: string) =>
+      titlePrefix.length > 50 ? 'аккорды' : titlePrefix.length > 35 ? 'текст и аккорды' : 'текст песни и аккорды',
     keywords: (collectionName: string, songTitle: string) => [
       `подбор ${songTitle}`,
       collectionName,
@@ -323,7 +324,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     gotoRandomSongInCollectionTitle: 'Перейти к случайной песне из текущей коллекции (правый SHIFT 2 раза)',
     gotoRandomSongInCatalogTitle: 'Перейти к случайной песне из всего каталога (левый SHIFT 2 раза)',
     gotoRandomSongInCollectionButton: 'Коллекция',
-    gotoRandomSongInCatalogButton: 'Каталог'
+    gotoRandomSongInCatalogButton: 'Каталог',
   },
   studioPage: {
     addSong: 'Добавить',
@@ -366,13 +367,14 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     deleteCollectionButtonNotConfirmedTitle: 'Необходимо подтвердить удаление коллекции: поставьте отметку слева.',
     deleteCollectionButtonTitle: 'Удалить коллекцию',
     failedToRemoveCollection: 'Ошибка при удалении коллекции!',
-    removeButton: 'Удалить'
+    removeButton: 'Удалить',
   },
   userCollectionsListComponent: {
     createCollectionButton: 'Создать',
     createCollectionButtonTitle: 'Создать новую коллекцию',
     newCollectionInputPlaceholder: 'Имя новой коллекции',
-    titleText: (collectionName: string, songCount: number) => `Коллекция «${collectionName}», ${songCount == 0 ? 'нет песен' : `песен: ${songCount}`}`,
+    titleText: (collectionName: string, songCount: number) =>
+      `Коллекция «${collectionName}», ${songCount == 0 ? 'нет песен' : `песен: ${songCount}`}`,
   },
   userRegistrationPromptComponent: {
     close: 'закрыть',
@@ -390,11 +392,11 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     reloadNotice: 'При зависшей загрузке попробуйте перезагрузить страницу.',
   },
   navigationHistoryPopup: {
-    title: 'История просмотров'
+    title: 'История просмотров',
   },
   moveSongToCollectionComponent: {
     addButtonText: 'Добавить',
     moveButtonText: 'Переместить',
-    songIsAddedToCollection: 'Песня добавлена в коллекцию: '
+    songIsAddedToCollection: 'Песня добавлена в коллекцию: ',
   },
 };

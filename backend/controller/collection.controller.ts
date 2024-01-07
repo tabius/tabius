@@ -1,8 +1,23 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
 import { Collection, CollectionDetails } from '@common/catalog-model';
 import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
-import { CreateListedCollectionRequestValidator, CreateUserCollectionRequestValidator, isCollectionMount, paramToArrayOfNumericIds, paramToId } from '../util/validators';
-import { CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse } from '@common/ajax-model';
+import {
+  CreateListedCollectionRequestValidator,
+  CreateUserCollectionRequestValidator,
+  isCollectionMount,
+  paramToArrayOfNumericIds,
+  paramToId,
+} from '../util/validators';
+import {
+  CreateListedCollectionRequest,
+  CreateListedCollectionResponse,
+  CreateUserCollectionRequest,
+  CreateUserCollectionResponse,
+  DeleteUserCollectionResponse,
+  GetUserCollectionsResponse,
+  UpdateCollectionRequest,
+  UpdateCollectionResponse,
+} from '@common/ajax-model';
 import { User } from '@common/user-model';
 import { ServerAuthService } from '../service/server-auth.service';
 import { conformsTo, validate } from '../util/validation';
@@ -12,9 +27,7 @@ import { AsyncFreshValue } from 'frescas';
 
 @Controller('/api/collection')
 export class CollectionController {
-  constructor(private readonly collectionDbi: CollectionDbi,
-              private readonly songDbi: SongDbi) {
-  }
+  constructor(private readonly collectionDbi: CollectionDbi, private readonly songDbi: SongDbi) {}
 
   private allListedCollections = new AsyncFreshValue<Array<Collection>>({
     refreshPeriodMillis: 30 * 1000,
@@ -82,7 +95,10 @@ export class CollectionController {
   }
 
   @Post()
-  async createListedCollection(@Session() session, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
+  async createListedCollection(
+    @Session() session,
+    @Body() request: CreateListedCollectionRequest,
+  ): Promise<CreateListedCollectionResponse> {
     console.log('CollectionController.createListedCollection', request);
     const user: User = ServerAuthService.getUserOrFail(session);
     if (!isModerator(user)) {
@@ -109,7 +125,10 @@ export class CollectionController {
   }
 
   @Post('/user')
-  async createUserCollection(@Session() session, @Body() request: CreateUserCollectionRequest): Promise<CreateUserCollectionResponse> {
+  async createUserCollection(
+    @Session() session,
+    @Body() request: CreateUserCollectionRequest,
+  ): Promise<CreateUserCollectionResponse> {
     console.log('CollectionController.createUserCollection', request);
     const user = ServerAuthService.getUserOrFail(session);
     const vr = validate(request, conformsTo(CreateUserCollectionRequestValidator));
@@ -189,4 +208,3 @@ export class CollectionController {
     };
   }
 }
-

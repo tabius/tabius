@@ -1,10 +1,9 @@
 import { AuthConfig } from '@auth0/auth0-angular';
 
-export type TabiusAppType = 'ru'|'org';
+export type TabiusAppType = 'ru' | 'org';
 
 export interface TabiusEnv {
-
-  app: TabiusAppType,
+  app: TabiusAppType;
 
   /** Build type: production or not. */
   production: boolean;
@@ -24,10 +23,10 @@ export interface TabiusEnv {
   /** Link to the official telegram channel. */
   telegramUrl: string;
 
-  buildInfo: { buildDate: number; },
+  buildInfo: { buildDate: number };
 
   /** Auth0 configuration. */
-  authConfig: AuthConfig,
+  authConfig: AuthConfig;
 
-  sentryConfig: { dsn: string }
+  sentryConfig: { dsn: string };
 }

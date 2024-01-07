@@ -1,4 +1,4 @@
-@import "app/styles/dimensions";
+@import 'app/styles/dimensions';
 
 .collections-list {
   margin-top: 12px;
@@ -10,7 +10,7 @@
     line-height: $mobile-lists-line-height;
 
     &.scene-item {
-      color: #7E5100;
+      color: #7e5100;
     }
 
     label {

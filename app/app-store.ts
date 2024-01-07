@@ -1,9 +1,9 @@
-import {Inject, Injectable, makeStateKey, PLATFORM_ID, TransferState} from '@angular/core';
-import {APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME} from '@app/app-constants';
-import {isPlatformBrowser} from '@angular/common';
-import {AsyncStore, IndexedDbAsyncStore, InMemoryAsyncStore, LocalStorageAsyncStore, TransferStateAdapter} from '@app/store';
-import {ObservableStoreImpl} from '@app/store/observable-store-impl';
-import {environment} from '@app/environments/environment';
+import { Inject, Injectable, makeStateKey, PLATFORM_ID, TransferState } from '@angular/core';
+import { APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME } from '@app/app-constants';
+import { isPlatformBrowser } from '@angular/common';
+import { AsyncStore, IndexedDbAsyncStore, InMemoryAsyncStore, LocalStorageAsyncStore, TransferStateAdapter } from '@app/store';
+import { ObservableStoreImpl } from '@app/store/observable-store-impl';
+import { environment } from '@app/environments/environment';
 
 const INDEX_DB_NAME = `tabius_${environment.app}`;
 const INDEX_DB_SCHEMA_VERSION = 8;
@@ -11,8 +11,8 @@ const INDEX_DB_SCHEMA_VERSION = 8;
 /** Upgrades in-browser database schema: implemented as a simple 'clear' today. */
 function upgradeIndexDb(db: IDBDatabase, event: IDBVersionChangeEvent): void {
   if (event.oldVersion === 0) {
-    db.createObjectStore(USER_STORE_NAME, {keyPath: 'key'});
-    db.createObjectStore(CATALOG_STORE_NAME, {keyPath: 'key'});
+    db.createObjectStore(USER_STORE_NAME, { keyPath: 'key' });
+    db.createObjectStore(CATALOG_STORE_NAME, { keyPath: 'key' });
     return;
   }
   for (const storeName of [USER_STORE_NAME, CATALOG_STORE_NAME]) {
@@ -27,19 +27,19 @@ function upgradeIndexDb(db: IDBDatabase, event: IDBVersionChangeEvent): void {
 function newUserOrCatalogAsyncStoreFactory(storeName: string, isBrowser: boolean): () => AsyncStore {
   return () => {
     return isBrowser
-           ? new IndexedDbAsyncStore(INDEX_DB_NAME, storeName, INDEX_DB_SCHEMA_VERSION, upgradeIndexDb)
-           : new InMemoryAsyncStore();
+      ? new IndexedDbAsyncStore(INDEX_DB_NAME, storeName, INDEX_DB_SCHEMA_VERSION, upgradeIndexDb)
+      : new InMemoryAsyncStore();
   };
 }
 
 class AngularTransferStateAdapter implements TransferStateAdapter {
-  constructor(private readonly serverState: TransferState,
-              private readonly storeName: string,
-              private readonly isBrowser: boolean) {
+  constructor(
+    private readonly serverState: TransferState,
+    private readonly storeName: string,
+    private readonly isBrowser: boolean,
+  ) {}
 
-  }
-
-  async initialize(asyncStore: AsyncStore): Promise<{ [p: string]: unknown }|undefined> {
+  async initialize(asyncStore: AsyncStore): Promise<{ [p: string]: unknown } | undefined> {
     if (!this.isBrowser) {
       return undefined;
     }
@@ -62,10 +62,10 @@ class TabiusObservableStoreImpl extends ObservableStoreImpl {
   private initializationStartTime = Date.now();
 
   constructor(
-      asyncStoreFactory: () => AsyncStore,
-      transferStateAdapter: TransferStateAdapter,
-      storeName: string,
-      isBrowser: boolean,
+    asyncStoreFactory: () => AsyncStore,
+    transferStateAdapter: TransferStateAdapter,
+    storeName: string,
+    isBrowser: boolean,
   ) {
     super(asyncStoreFactory, transferStateAdapter);
     if (isBrowser) {
@@ -80,10 +80,10 @@ class TabiusObservableStoreImpl extends ObservableStoreImpl {
 export class UserBrowserStore extends TabiusObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(
-        newUserOrCatalogAsyncStoreFactory(USER_STORE_NAME, isPlatformBrowser(platformId)),
-        new AngularTransferStateAdapter(serverState, USER_STORE_NAME, isPlatformBrowser(platformId)),
-        USER_STORE_NAME,
-        isPlatformBrowser(platformId),
+      newUserOrCatalogAsyncStoreFactory(USER_STORE_NAME, isPlatformBrowser(platformId)),
+      new AngularTransferStateAdapter(serverState, USER_STORE_NAME, isPlatformBrowser(platformId)),
+      USER_STORE_NAME,
+      isPlatformBrowser(platformId),
     );
   }
 }
@@ -93,10 +93,10 @@ export class UserBrowserStore extends TabiusObservableStoreImpl {
 export class CatalogBrowserStore extends TabiusObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(
-        newUserOrCatalogAsyncStoreFactory(CATALOG_STORE_NAME, isPlatformBrowser(platformId)),
-        new AngularTransferStateAdapter(serverState, CATALOG_STORE_NAME, isPlatformBrowser(platformId)),
-        CATALOG_STORE_NAME,
-        isPlatformBrowser(platformId),
+      newUserOrCatalogAsyncStoreFactory(CATALOG_STORE_NAME, isPlatformBrowser(platformId)),
+      new AngularTransferStateAdapter(serverState, CATALOG_STORE_NAME, isPlatformBrowser(platformId)),
+      CATALOG_STORE_NAME,
+      isPlatformBrowser(platformId),
     );
   }
 }
@@ -106,10 +106,10 @@ export class CatalogBrowserStore extends TabiusObservableStoreImpl {
 export class AppBrowserStore extends TabiusObservableStoreImpl {
   constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
     super(
-        () => isPlatformBrowser(platformId) ? new LocalStorageAsyncStore(APP_STORE_NAME) : new InMemoryAsyncStore(),
-        new AngularTransferStateAdapter(serverState, APP_STORE_NAME, isPlatformBrowser(platformId)),
-        APP_STORE_NAME,
-        isPlatformBrowser(platformId)
+      () => (isPlatformBrowser(platformId) ? new LocalStorageAsyncStore(APP_STORE_NAME) : new InMemoryAsyncStore()),
+      new AngularTransferStateAdapter(serverState, APP_STORE_NAME, isPlatformBrowser(platformId)),
+      APP_STORE_NAME,
+      isPlatformBrowser(platformId),
     );
   }
 }

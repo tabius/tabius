@@ -1,10 +1,9 @@
-import {Injectable} from '@nestjs/common';
-import {createPool, Pool} from 'mysql2';
-import {SERVER_CONFIG} from '../server-config';
+import { Injectable } from '@nestjs/common';
+import { createPool, Pool } from 'mysql2';
+import { SERVER_CONFIG } from '../server-config';
 
 @Injectable()
 export class DbService {
-
   public readonly pool: Pool;
 
   constructor() {
@@ -12,5 +11,4 @@ export class DbService {
     console.log('DbService: connecting to database:', dbConfig.database);
     this.pool = createPool(dbConfig);
   }
-
 }

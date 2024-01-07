@@ -14,7 +14,6 @@ import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
   providedIn: 'root',
 })
 export class BrowserStateService {
-
   readonly isBrowser: boolean;
   readonly isServer: boolean;
 
@@ -70,7 +69,7 @@ export class BrowserStateService {
 
   /** Returns true if the app is online or on the server side. Returns false only if the app is in browser and offline. */
   isOnline(): boolean {
-    return !this.isBrowser || (!navigator || navigator.onLine === undefined || navigator.onLine);
+    return !this.isBrowser || !navigator || navigator.onLine === undefined || navigator.onLine;
   }
 
   getNoSleepMode$(): Observable<boolean> {
@@ -97,7 +96,7 @@ export class BrowserStateService {
     return this.printMode$;
   }
 
-  getUserAgentString(request: any): string|undefined {
+  getUserAgentString(request: any): string | undefined {
     return this.isBrowser ? navigator && navigator.userAgent : getUserAgentFromRequest(request);
   }
 

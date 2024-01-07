@@ -1,22 +1,23 @@
-import {AsyncStore, KV} from './async-store';
+import { AsyncStore, KV } from './async-store';
 
 const MAX_KEY_CHAR = '~';
 
 /** Indexed DB bases store adapter. */
 export class IndexedDbAsyncStore implements AsyncStore {
-  constructor(private readonly indexDbName: string,
-              private readonly objectStoreName: string,
-              private readonly schemaVersion = 1,
-              private readonly upgradeCallback?: (db: IDBDatabase, event: IDBVersionChangeEvent) => void) {
-  }
+  constructor(
+    private readonly indexDbName: string,
+    private readonly objectStoreName: string,
+    private readonly schemaVersion = 1,
+    private readonly upgradeCallback?: (db: IDBDatabase, event: IDBVersionChangeEvent) => void,
+  ) {}
 
-  get<T = unknown>(key: string): Promise<T|undefined> {
-    return new Promise<T|undefined>((resolve, reject) => {
+  get<T = unknown>(key: string): Promise<T | undefined> {
+    return new Promise<T | undefined>((resolve, reject) => {
       this.execute(db => {
         const request: IDBRequest = db.transaction(this.objectStoreName).objectStore(this.objectStoreName).get(key);
         request.onerror = err => {
           //TODO: do not log to console.
-          console.error(`IndexDB::get() error! Store: ${(this.objectStoreName)}, key:${key}`, err);
+          console.error(`IndexDB::get() error! Store: ${this.objectStoreName}, key:${key}`, err);
           reject();
         };
         request.onsuccess = () => resolve(request.result ? request.result.value : undefined);
@@ -24,14 +25,14 @@ export class IndexedDbAsyncStore implements AsyncStore {
     });
   }
 
-  getAll<T = unknown>(keys: readonly string[]): Promise<(T|undefined)[]> {
+  getAll<T = unknown>(keys: readonly string[]): Promise<(T | undefined)[]> {
     if (keys.length === 0) {
       return Promise.resolve([]);
     }
-    return new Promise<(T|undefined)[]>((resolve, reject) => {
+    return new Promise<(T | undefined)[]>((resolve, reject) => {
       this.execute(db => {
         const store = db.transaction(this.objectStoreName).objectStore(this.objectStoreName);
-        const resultValues = new Array<T|undefined>(keys.length);
+        const resultValues = new Array<T | undefined>(keys.length);
         let nFinished = 0;
         for (let i = 0; i < keys.length; i++) {
           const idx = i;
@@ -53,22 +54,25 @@ export class IndexedDbAsyncStore implements AsyncStore {
     });
   }
 
-  set<T = unknown>(key: string, value: T|undefined): Promise<void> {
+  set<T = unknown>(key: string, value: T | undefined): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.execute(db => {
         if (value === undefined) {
           const request = db.transaction(this.objectStoreName, 'readwrite').objectStore(this.objectStoreName).delete(key);
           request.onerror = err => {
             //TODO: do not log to console.
-            console.error(`IndexDb.delete error in ${(this.objectStoreName)}!`, err);
+            console.error(`IndexDb.delete error in ${this.objectStoreName}!`, err);
             reject();
           };
           request.onsuccess = () => resolve(undefined);
         } else {
-          const request = db.transaction(this.objectStoreName, 'readwrite').objectStore(this.objectStoreName).put({key: key, value: value});
+          const request = db
+            .transaction(this.objectStoreName, 'readwrite')
+            .objectStore(this.objectStoreName)
+            .put({ key: key, value: value });
           request.onerror = err => {
             //TODO: do not log to console.
-            console.error(`IndexDb.put error in ${(this.objectStoreName)}!`, err);
+            console.error(`IndexDb.put error in ${this.objectStoreName}!`, err);
             reject();
           };
           request.onsuccess = () => resolve();
@@ -83,14 +87,14 @@ export class IndexedDbAsyncStore implements AsyncStore {
         const tx = db.transaction(this.objectStoreName, 'readwrite');
         tx.onerror = err => {
           //TODO: do not log to console.
-          console.error(`IndexDb.add error in ${(this.objectStoreName)}!`, err);
+          console.error(`IndexDb.add error in ${this.objectStoreName}!`, err);
           reject();
         };
         tx.oncomplete = () => resolve();
 
         const store = tx.objectStore(this.objectStoreName);
         for (const [key, value] of Object.entries(map)) {
-          store.put({key, value});
+          store.put({ key, value });
         }
       });
     });
@@ -103,10 +107,10 @@ export class IndexedDbAsyncStore implements AsyncStore {
         const query: IDBKeyRange = IDBKeyRange.bound(safeKeyPrefix, safeKeyPrefix + MAX_KEY_CHAR);
         const request = db.transaction(this.objectStoreName).objectStore(this.objectStoreName).getAll(query);
         request.onerror = err => {
-          console.error(`IndexDb.list error in ${(this.objectStoreName)}!`, err);
+          console.error(`IndexDb.list error in ${this.objectStoreName}!`, err);
           reject();
         };
-        request.onsuccess = () => resolve(request.result.map(e => ({key: e.key, value: e.value})));
+        request.onsuccess = () => resolve(request.result.map(e => ({ key: e.key, value: e.value })));
       });
     });
   }
@@ -115,9 +119,7 @@ export class IndexedDbAsyncStore implements AsyncStore {
     const objectStoreName = this.objectStoreName;
     return new Promise<void>((resolve, reject) => {
       this.execute(db => {
-        const request = db.transaction(objectStoreName, 'readwrite')
-            .objectStore(objectStoreName)
-            .clear();
+        const request = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName).clear();
         request.onerror = err => {
           console.error(`IndexDb.clean error in ${objectStoreName}!`, err);
           reject();
@@ -140,9 +142,8 @@ export class IndexedDbAsyncStore implements AsyncStore {
       if (this.upgradeCallback) {
         this.upgradeCallback(db, event);
       } else if (!db.objectStoreNames.contains(this.objectStoreName)) {
-        db.createObjectStore(this.objectStoreName, {keyPath: 'key'});
+        db.createObjectStore(this.objectStoreName, { keyPath: 'key' });
       }
     };
   }
-
 }

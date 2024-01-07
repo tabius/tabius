@@ -1,9 +1,22 @@
-import {isSharp, transpose} from '@common/util/chords-renderer';
-import {Chord, ChordTone} from '@common/util/chords-lib';
-import {parseChords} from '@common/util/chords-parser';
+import { isSharp, transpose } from '@common/util/chords-renderer';
+import { Chord, ChordTone } from '@common/util/chords-lib';
+import { parseChords } from '@common/util/chords-parser';
 
 /** All key variations used by tone detector. */
-export const KEY_VARIANTS = <const>[['A'], ['A#', 'Bb'], ['B'], ['C'], ['C#', 'Db'], ['D'], ['D#', 'Eb'], ['E'], ['F'], ['F#', 'Gb'], ['G'], ['G#', 'Ab']];
+export const KEY_VARIANTS = <const>[
+  ['A'],
+  ['A#', 'Bb'],
+  ['B'],
+  ['C'],
+  ['C#', 'Db'],
+  ['D'],
+  ['D#', 'Eb'],
+  ['E'],
+  ['F'],
+  ['F#', 'Gb'],
+  ['G'],
+  ['G#', 'Ab'],
+];
 
 /** Match score per tone. */
 interface ChordToneMatch {
@@ -20,7 +33,7 @@ interface KeyPattern {
 
 /** Helper factory function. */
 function m(tone: ChordTone, score: number): ChordToneMatch {
-  return {tone, score};
+  return { tone, score };
 }
 
 const KEY_MATCH = 4;
@@ -50,24 +63,24 @@ for (const keyVariants of KEY_VARIANTS) {
     const distance = getTransposeDistance('A', key);
     ALL_MINOR_PATTERNS.push({
       key,
-      minors: AM_PATTERN.minors.map(({tone, score}) => m(transpose(tone, distance, isFlat), score)),
-      majors: AM_PATTERN.majors.map(({tone, score}) => m(transpose(tone, distance, isFlat), score)),
+      minors: AM_PATTERN.minors.map(({ tone, score }) => m(transpose(tone, distance, isFlat), score)),
+      majors: AM_PATTERN.majors.map(({ tone, score }) => m(transpose(tone, distance, isFlat), score)),
     });
   }
 }
 
 /** Returns true if chord type corresponds to major chord. */
 function checkIsMajor(type: string): boolean {
-  return type === 'maj' || type === 'maj7';   // TODO: improve.
+  return type === 'maj' || type === 'maj7'; // TODO: improve.
 }
 
 /** Returns true if chord type corresponds to minor chord. */
 function checkIsMinor(type: string): boolean {
-  return type === 'min' || type === 'min7';   // TODO: improve.
+  return type === 'min' || type === 'min7'; // TODO: improve.
 }
 
 /** Returns key as ChordTone for the given chords sequence or undefined if chords detection is failed. */
-export function detectKeyAsMinor(chords: Chord[]): ChordTone|undefined {
+export function detectKeyAsMinor(chords: Chord[]): ChordTone | undefined {
   if (chords.length === 0) {
     return undefined;
   }
@@ -77,19 +90,19 @@ export function detectKeyAsMinor(chords: Chord[]): ChordTone|undefined {
   }
 
   // Assign weight to each key pattern.
-  for (const {tone, type} of chords) {
+  for (const { tone, type } of chords) {
     // TODO: optimize.
     const isMajor = checkIsMajor(type);
     const isMinor = checkIsMinor(type);
-    for (const {key, majors, minors} of ALL_MINOR_PATTERNS) {
-      const match = isMajor ? majors.find(m => m.tone === tone) : (isMinor ? minors.find(m => m.tone === tone) : undefined);
+    for (const { key, majors, minors } of ALL_MINOR_PATTERNS) {
+      const match = isMajor ? majors.find(m => m.tone === tone) : isMinor ? minors.find(m => m.tone === tone) : undefined;
       const toneWeightPerKey = match ? match.score : MISMATCH;
       weightMap.set(key, weightMap.get(key)! + toneWeightPerKey);
     }
   }
 
   // Return tone with the highest weight.
-  let resultKey: ChordTone|undefined = undefined;
+  let resultKey: ChordTone | undefined = undefined;
   let resultWeight = 0;
   for (const [tone, weight] of weightMap.entries()) {
     if (weight > resultWeight) {
@@ -103,12 +116,18 @@ export function detectKeyAsMinor(chords: Chord[]): ChordTone|undefined {
 }
 
 // TODO: sync with MINOR_KEY_TONES
-const MINOR_VARIANTS: [ChordTone, ChordTone][] = [['F#', 'Gb'], ['Db', 'C#'], ['Ab', 'G#'], ['Eb', 'D#'], ['Bb', 'A#']];
+const MINOR_VARIANTS: [ChordTone, ChordTone][] = [
+  ['F#', 'Gb'],
+  ['Db', 'C#'],
+  ['Ab', 'G#'],
+  ['Eb', 'D#'],
+  ['Bb', 'A#'],
+];
 
 /** Selects best minor tone for 2 keys. */
 function selectBestKeyForMinor(key1: ChordTone, key2: ChordTone): ChordTone {
   for (const v of MINOR_VARIANTS) {
-    if ((v[0] === key1 && v[1] === key2) || (v[0] === key2 || v[1] === key1)) {
+    if ((v[0] === key1 && v[1] === key2) || v[0] === key2 || v[1] === key1) {
       return v[0];
     }
   }
@@ -131,7 +150,7 @@ export function transposeAsMinor(tone: ChordTone, semiTones: number) {
   return defaultVariant;
 }
 
-export function getSongKey(songDetails: ({ content: string })|undefined): ChordTone|undefined {
+export function getSongKey(songDetails: { content: string } | undefined): ChordTone | undefined {
   if (!songDetails) {
     return undefined;
   }
@@ -139,4 +158,3 @@ export function getSongKey(songDetails: ({ content: string })|undefined): ChordT
   chords.splice(Math.min(chords.length, 12));
   return detectKeyAsMinor(chords);
 }
-

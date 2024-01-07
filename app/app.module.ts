@@ -21,7 +21,12 @@ import { LoadingIndicatorComponent } from '@app/components/loading-indicator/loa
 import { CollectionBreadcrumbComponent } from '@app/components/collection-breadcrumb/collection-breadcrumb.component';
 import { SafeHtmlPipe, SafeResourceUrlPipe } from '@app/utils/safe.pipe';
 import { SettingsPageComponent } from '@app/components/settings-page/settings-page.component';
-import { APP_BROWSER_STORE_TOKEN, AUTH0_WEB_CLIENT_AUDIENCE, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
+import {
+  APP_BROWSER_STORE_TOKEN,
+  AUTH0_WEB_CLIENT_AUDIENCE,
+  TABIUS_CATALOG_BROWSER_STORE_TOKEN,
+  TABIUS_USER_BROWSER_STORE_TOKEN,
+} from '@app/app-constants';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { SigninSignoutButtonComponent } from '@app/components/signin-signout-button/signin-signout-button.component';
 import { PwaUpdaterService } from '@app/services/pwa-updater.service';
@@ -52,7 +57,12 @@ import { UserCollectionEditorComponent } from '@app/components/user-collection-e
 import { PopoverModule } from '@app/popover/popover.module';
 import { KeyboardShortcutsPopupComponent } from '@app/components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 import { HelpService } from '@app/services/help.service';
-import { CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent } from '@app/components/head-contributor/head-contributor.component';
+import {
+  CanonicalLinkHeadContributorComponent,
+  HeadContributorComponent,
+  LinkHeadContributorComponent,
+  MetaHeadContributorComponent,
+} from '@app/components/head-contributor/head-contributor.component';
 import { ChordPopoverComponent } from '@app/components/chord-popover/chord-popover.component';
 import { ShowChordPopoverOnClickDirective } from '@app/directives/show-chord-popover-on-click.directive';
 import { JsonLdComponent } from '@app/components/json-ld/json-ld.component';
@@ -139,10 +149,12 @@ if (userAgent !== undefined && userAgent.length > 0) {
     AuthModule.forRoot({
       ...environment.authConfig,
       httpInterceptor: {
-        allowedList: [{
-          uri: `${environment.backendUrl}/api/*`,
-          allowAnonymous: true,
-        }],
+        allowedList: [
+          {
+            uri: `${environment.backendUrl}/api/*`,
+            allowAnonymous: true,
+          },
+        ],
       },
       authorizationParams: {
         audience: AUTH0_WEB_CLIENT_AUDIENCE,
@@ -166,8 +178,8 @@ if (userAgent !== undefined && userAgent.length > 0) {
   bootstrap: [AppComponent],
 })
 export class AppModule {
-
   // noinspection JSUnusedLocalSymbols
-  constructor(private readonly pwa: PwaUpdaterService) { // TODO: initiate update explicitly.
+  constructor(private readonly pwa: PwaUpdaterService) {
+    // TODO: initiate update explicitly.
   }
 }

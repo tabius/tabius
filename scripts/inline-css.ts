@@ -1,4 +1,4 @@
-import {readdirSync, readFileSync, writeFileSync} from 'fs';
+import { readdirSync, readFileSync, writeFileSync } from 'fs';
 
 const fileList = readdirSync('./dist/browser');
 const cssFileName = fileList.find(name => name.startsWith('styles.') && name.endsWith('.css'));

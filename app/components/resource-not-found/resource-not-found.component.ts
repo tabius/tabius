@@ -9,12 +9,9 @@ import { I18N } from '@app/app-i18n';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceNotFoundComponent {
-
   @Input({ required: true }) message!: string;
 
   readonly i18n = I18N.resourceNotFoundComponent;
 
-  constructor(readonly bss: BrowserStateService) {
-  }
-
+  constructor(readonly bss: BrowserStateService) {}
 }

@@ -5,7 +5,12 @@ import { I18N } from '@app/app-i18n';
 import { LINK_CATALOG, LINK_SCENE, LINK_SETTINGS, LINK_STUDIO, LINK_TUNER } from '@common/mounts';
 import { LocationStrategy } from '@angular/common';
 import { BrowserStateService } from '@app/services/browser-state.service';
-import { ContextMenuAction, ContextMenuActionService, isFunctionalTarget, isSubmenuTarget } from '@app/services/context-menu-action.service';
+import {
+  ContextMenuAction,
+  ContextMenuActionService,
+  isFunctionalTarget,
+  isSubmenuTarget,
+} from '@app/services/context-menu-action.service';
 import { PopoverService } from '@app/popover/popover.service';
 import { PopoverRef } from '@app/popover/popover-ref';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -17,11 +22,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent implements OnDestroy {
-
   readonly month = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(4, 6);
   readonly day = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(6, 8);
 
-  readonly footerClass = `c${1 + Date.now() % 5}`;
+  readonly footerClass = `c${1 + (Date.now() % 5)}`;
 
   readonly domain = environment.domain;
 
@@ -32,9 +36,8 @@ export class FooterComponent implements OnDestroy {
   readonly tunerLink = LINK_TUNER;
   readonly settingsLink = LINK_SETTINGS;
 
-
   readonly i18n = I18N.footer;
-  readonly i18nNav = I18N.navbar;//TODO:
+  readonly i18nNav = I18N.navbar; //TODO:
 
   isMainMenuDrawerOpen = false;
 
@@ -46,16 +49,15 @@ export class FooterComponent implements OnDestroy {
 
   private actionMenuPopoverRef?: PopoverRef;
 
-  constructor(readonly router: Router,
-              private readonly location: LocationStrategy,
-              private readonly bss: BrowserStateService,
-              private readonly cdr: ChangeDetectorRef,
-              private readonly contextMenuActionService: ContextMenuActionService,
-              private readonly popoverService: PopoverService,
+  constructor(
+    readonly router: Router,
+    private readonly location: LocationStrategy,
+    private readonly bss: BrowserStateService,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly contextMenuActionService: ContextMenuActionService,
+    private readonly popoverService: PopoverService,
   ) {
-    this.contextMenuActionService.footerActions$.pipe(
-      takeUntilDestroyed(),
-    ).subscribe(actions => {
+    this.contextMenuActionService.footerActions$.pipe(takeUntilDestroyed()).subscribe(actions => {
       this.actions = actions;
       this.menuStack = [];
       this.cdr.markForCheck();

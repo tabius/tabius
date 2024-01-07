@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { FullTextSongSearchResult, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS } from '@common/ajax-model';
+import {
+  FullTextSongSearchResult,
+  MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS,
+  MAX_FULL_TEXT_SEARCH_TITLE_RESULTS,
+} from '@common/ajax-model';
 import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
 import { toSafeSearchText } from '@common/util/misc-utils';
 import { SERVER_CONFIG } from '../server-config';
@@ -10,9 +14,7 @@ const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 
 @Injectable()
 export class FullTextSearchDbi {
-
-  constructor(private readonly nestHttpService: HttpService) {
-  }
+  constructor(private readonly nestHttpService: HttpService) {}
 
   async searchForSongsByText(text: string): Promise<FullTextSongSearchResult[]> {
     const safeSearchText = toSafeSearchText(text);
@@ -22,13 +24,20 @@ export class FullTextSearchDbi {
     // Using 'default' mode unless quoted.
     const exact = isQuoted(text.trim());
     const titleQuery = buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS, exact ? 'exact' : 'default');
-    const contentQuery = buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, exact ? 'exact' : 'default');
+    const contentQuery = buildSphinxQuery(
+      'content',
+      safeSearchText,
+      MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS,
+      exact ? 'exact' : 'default',
+    );
     // 'Default' vs 'infix':
     //  'default' can search different word-forms, but can't search by prefix/infix/suffix
     //  'infix' does not know about word-forms, but can search by prefix/infix/suffix.
     // We use 'infix' results only if there are not enough 'default' results.
     const infixTitleQuery = exact ? '' : buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS, 'infix');
-    const infixContentQuery = exact ? '' : buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, 'infix');
+    const infixContentQuery = exact
+      ? ''
+      : buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, 'infix');
     const queries = [this.query(titleQuery), this.query(contentQuery), this.query(infixTitleQuery), this.query(infixContentQuery)];
     const [titleResults, contentResults, infixTitleResults, infixContentResults]: SphinxSearchResult[] = await Promise.all(queries);
     const titles: FullTextSongSearchResult[] = [];
@@ -89,7 +98,7 @@ type SphinxMatch = [number, string, string, string, string, string]; // id, snip
 
 const SONG_INDEX = SERVER_CONFIG.sphinxSongIndex;
 
-export type MatchMode = 'default'|'exact'|'infix';
+export type MatchMode = 'default' | 'exact' | 'infix';
 
 function buildSphinxQuery(fieldName: string, text: string, maxResults: number, matchMode: MatchMode): string {
   let query = text;
@@ -109,7 +118,10 @@ function buildSphinxQuery(fieldName: string, text: string, maxResults: number, m
 }
 
 /** Converts match returned by sphinx engine to FullTextSongSearchResult structure. */
-function createFullTextResultFromMatch(match: [number, string, string, string, string, string], matchType: 'title'|'content'): FullTextSongSearchResult {
+function createFullTextResultFromMatch(
+  match: [number, string, string, string, string, string],
+  matchType: 'title' | 'content',
+): FullTextSongSearchResult {
   return {
     songId: match[0],
     snippet: match[1],
@@ -123,9 +135,5 @@ function createFullTextResultFromMatch(match: [number, string, string, string, s
 
 /** Returns true if the text is quoted. Both single or double quote characters are checked. */
 function isQuoted(text: string): boolean {
-  return text.length > 1
-    && ((text.startsWith('"') && text.endsWith('"'))
-      || (text.startsWith('\'')) && text.endsWith('\'')
-    );
+  return text.length > 1 && ((text.startsWith('"') && text.endsWith('"')) || (text.startsWith("'") && text.endsWith("'")));
 }
-

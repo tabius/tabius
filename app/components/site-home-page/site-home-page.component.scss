@@ -1,4 +1,4 @@
-@import "app/styles/dimensions";
+@import 'app/styles/dimensions';
 
 :host {
   display: flex;
@@ -8,7 +8,6 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-
 
     .head {
       margin-top: 20px;
@@ -34,7 +33,6 @@
         margin-top: 5px;
         color: #555;
       }
-
     }
 
     .feature-list {
@@ -92,7 +90,6 @@
     .bottom-sign-in-block {
       text-align: center;
     }
-
   }
 }
 

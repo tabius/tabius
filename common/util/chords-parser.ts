@@ -1,6 +1,6 @@
-import {CHORD_TYPE_BY_RAW_NAME, ChordLocation, RAW_CHORD_TYPES_BY_FIRST_CHAR} from '@common/util/chords-parser-lib';
-import {isDefined, isAlpha, isDigit} from '@common/util/misc-utils';
-import {Chord, CHORD_TONES, ChordTone, ChordType} from '@common/util/chords-lib';
+import { CHORD_TYPE_BY_RAW_NAME, ChordLocation, RAW_CHORD_TYPES_BY_FIRST_CHAR } from '@common/util/chords-parser-lib';
+import { isDefined, isAlpha, isDigit } from '@common/util/misc-utils';
+import { Chord, CHORD_TONES, ChordTone, ChordType } from '@common/util/chords-lib';
 
 function isWordChar(char: string): boolean {
   return isAlpha(char) || char === '’';
@@ -10,7 +10,7 @@ const CHORD_BASS_SEPARATOR = '/';
 
 export function parseChords(text: string): ChordLocation[] {
   const allChords: ChordLocation[] = [];
-  for (let idx = 0; idx < text.length;) {
+  for (let idx = 0; idx < text.length; ) {
     let lineEndIdx = text.indexOf('\n', idx);
     if (lineEndIdx === -1) {
       lineEndIdx = text.length;
@@ -70,7 +70,8 @@ export function isMostlyNonChordsTextLine(chordLocations: ChordLocation[], text:
   if (chordLocations.length === 0) {
     return true;
   }
-  if (chordLocations.length >= 3) { // 3 chords in the line - mark this line as a chords line.
+  if (chordLocations.length >= 3) {
+    // 3 chords in the line - mark this line as a chords line.
     return false;
   }
   let alphaLen = 0;
@@ -92,7 +93,7 @@ export function isMostlyNonChordsTextLine(chordLocations: ChordLocation[], text:
     }
   }
   // Return 'true' if % of alpha chars outside of chords is too large.
-  return nonChordsAlphaLen >= alphaLen * 2 / 3;
+  return nonChordsAlphaLen >= (alphaLen * 2) / 3;
 }
 
 /** Returns 'true' if the line looks like tabs: A|--1-2-3--x- */
@@ -109,11 +110,11 @@ export function isTabsLine(text: string, startIdx: number, endIdx: number): bool
 }
 
 /** All possible chord letters (including H). */
-const EXTENDED_CHORD_LETTERS: string[] = CHORD_TONES.map(t => t.length === 1 ? t : undefined).filter(isDefined);
+const EXTENDED_CHORD_LETTERS: string[] = CHORD_TONES.map(t => (t.length === 1 ? t : undefined)).filter(isDefined);
 EXTENDED_CHORD_LETTERS.push('H');
 
 /** Parses 1 chord starting from startIdx (inclusive) and ending before endIdx (exclusive). */
-export function parseChord(text?: string, startIdx?: number, endIdx?: number): ChordLocation|undefined {
+export function parseChord(text?: string, startIdx?: number, endIdx?: number): ChordLocation | undefined {
   if (!text) {
     return undefined;
   }
@@ -122,8 +123,8 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
   if (tone === undefined) {
     return undefined;
   }
-  const chord: Chord = {tone, type: 'maj', bassTone: undefined};
-  let parsedType: ChordType|undefined = undefined;
+  const chord: Chord = { tone, type: 'maj', bassTone: undefined };
+  let parsedType: ChordType | undefined = undefined;
   idx += tone.length;
   const maxIdx = Math.min(text.length, endIdx === undefined ? text.length : endIdx);
 
@@ -159,16 +160,17 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
       }
     }
 
-    if (isWordChar(c)) { // the word continues with some letters -> most probably this is not a chord but an ordinary word.
+    if (isWordChar(c)) {
+      // the word continues with some letters -> most probably this is not a chord but an ordinary word.
       return undefined;
     }
     break;
   }
   const suffixLenInBracesAfterChord = skipTextInBracesAfterChord(text, idx, 4);
-  return {chord, startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx + suffixLenInBracesAfterChord};
+  return { chord, startIdx: startIdx === undefined ? 0 : startIdx, endIdx: idx + suffixLenInBracesAfterChord };
 }
 
-function readNextCharAsTone(text: string, idx: number): ChordTone|undefined {
+function readNextCharAsTone(text: string, idx: number): ChordTone | undefined {
   const c0 = text.charAt(idx);
   let tone = EXTENDED_CHORD_LETTERS.find(c => c === c0);
 
@@ -186,10 +188,9 @@ function readNextCharAsTone(text: string, idx: number): ChordTone|undefined {
     tone += toneSuffix === 'b' || toneSuffix === '♭' ? 'b' : '#';
   }
   return tone as ChordTone;
-
 }
 
-function findPrefixToken(text: string, idx: number, tokens: readonly string[]): string|undefined {
+function findPrefixToken(text: string, idx: number, tokens: readonly string[]): string | undefined {
   for (const token of tokens) {
     if (text.startsWith(token, idx)) {
       return token;
@@ -200,7 +201,7 @@ function findPrefixToken(text: string, idx: number, tokens: readonly string[]): 
 
 /** Returns true if the char at the given position is a text start. Chord parsing must start in this case. */
 function isKnownChordTypeAndTextConflict(c: string, text: string, idx: number): boolean {
-  return (c === '-' || c === '−') && (idx < text.length - 1 && !isWhitespaceOrChordExtender(text.charAt(idx + 1)));
+  return (c === '-' || c === '−') && idx < text.length - 1 && !isWhitespaceOrChordExtender(text.charAt(idx + 1));
 }
 
 /** Return true if a chord in any form can have this character as the last. */
@@ -225,4 +226,3 @@ function skipTextInBracesAfterChord(text: string, idx: number, maxLenInBraces: n
   }
   return 0;
 }
-

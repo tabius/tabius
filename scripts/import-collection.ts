@@ -1,10 +1,10 @@
-import {promisify} from 'util';
-import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {SERVER_CONFIG} from '../backend/server-config';
-import {INVALID_ID} from '@common/common-constants';
-import {MIN_COLLECTION_MOUNT_LENGTH, MIN_SONG_MOUNT_LENGTH} from '@common/catalog-model';
-import {packMediaLinks} from '../backend/db/song-dbi.service';
-import {isValidId} from '@common/util/misc-utils';
+import { promisify } from 'util';
+import { getTranslitLowerCase } from '@common/util/seo-translit';
+import { SERVER_CONFIG } from '../backend/server-config';
+import { INVALID_ID } from '@common/common-constants';
+import { MIN_COLLECTION_MOUNT_LENGTH, MIN_SONG_MOUNT_LENGTH } from '@common/catalog-model';
+import { packMediaLinks } from '../backend/db/song-dbi.service';
+import { isValidId } from '@common/util/misc-utils';
 
 const fs = require('fs');
 const mysql = require('mysql2/promise');
@@ -53,9 +53,8 @@ async function main(): Promise<void> {
 }
 
 main()
-    .then(() => console.info('Done'))
-    .catch(error => console.error(error));
-
+  .then(() => console.info('Done'))
+  .catch(error => console.error(error));
 
 function getCollectionDir(): string {
   return process.argv[2];
@@ -73,8 +72,7 @@ async function loadCollection(dir: string): Promise<CollectionImport> {
 async function loadSongs(dir: string): Promise<SongImport[]> {
   const files = await readDirAsync(dir);
   return Promise.all(
-      files.filter(f => f !== 'index.json' && !f.endsWith('.jpg'))
-          .map(async (f) => await readJsonFromFile<SongImport>(`${dir}/${f}`))
+    files.filter(f => f !== 'index.json' && !f.endsWith('.jpg')).map(async f => await readJsonFromFile<SongImport>(`${dir}/${f}`)),
   );
 }
 
@@ -85,7 +83,11 @@ function assignMounts(collection: CollectionImport, songs: SongImport[]): void {
   }
 }
 
-async function validateImportDataAndAssignCollectionId(collection: CollectionImport, songs: SongImport[], connection: any): Promise<void> {
+async function validateImportDataAndAssignCollectionId(
+  collection: CollectionImport,
+  songs: SongImport[],
+  connection: any,
+): Promise<void> {
   if (collection.type <= 0 || collection.type >= 3) {
     throw new Error(`Illegal collection type: ${collection.type}`);
   }
@@ -102,15 +104,21 @@ async function validateImportDataAndAssignCollectionId(collection: CollectionImp
       throw new Error(`Invalid song mount: ${JSON.stringify(song)}`);
     }
     if (collection.id !== INVALID_ID) {
-      const [songIdRow] = await connection.execute(`SELECT id FROM song WHERE collection_id = ${collection.id} AND mount = '${song.mount}'`);
+      const [songIdRow] = await connection.execute(
+        `SELECT id FROM song WHERE collection_id = ${collection.id} AND mount = '${song.mount}'`,
+      );
       song.id = songIdRow.length === 1 ? songIdRow[0].id || INVALID_ID : INVALID_ID;
     }
   }
 }
 
 async function createCollection(collection: CollectionImport, connection: any): Promise<void> {
-  const [result] = await connection.execute('INSERT INTO collection(name, type, mount, listed) VALUES (?,?,?,?)',
-      [collection.name, collection.type, collection.mount, 1]);
+  const [result] = await connection.execute('INSERT INTO collection(name, type, mount, listed) VALUES (?,?,?,?)', [
+    collection.name,
+    collection.type,
+    collection.mount,
+    1,
+  ]);
   collection.id = result.insertId;
   console.log('Created new collection: ', JSON.stringify(collection));
 }
@@ -122,8 +130,13 @@ async function createSongs(collection: CollectionImport, songs: SongImport[], co
       continue;
     }
     console.log(`Creating song: ${song.name}/${song.mount}`);
-    await connection.execute('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)',
-        [collection.id, song.mount, song.name, song.text, packMediaLinks([song.media])]);
+    await connection.execute('INSERT INTO song(collection_id, mount, title, content, media_links) VALUES(?,?,?,?,?)', [
+      collection.id,
+      song.mount,
+      song.name,
+      song.text,
+      packMediaLinks([song.media]),
+    ]);
   }
 }
 
@@ -134,7 +147,7 @@ async function moveImage(importDir: string, resultImageFileName: string): Promis
   if (imageFile) {
     console.log(`Moving song image: ${resultImageFileName}`);
     const dstDir = `${SERVER_CONFIG.resourcesDir}/images/collection/profile/`;
-    fs.mkdirSync(dstDir, {recursive: true, mode: 0o755});
+    fs.mkdirSync(dstDir, { recursive: true, mode: 0o755 });
     fs.copyFileSync(`${importDir}/${imageFile}`, `${dstDir}/${resultImageFileName}`);
   }
 }

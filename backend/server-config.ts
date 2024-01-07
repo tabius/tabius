@@ -1,4 +1,4 @@
-import {readFileSync} from 'fs';
+import { readFileSync } from 'fs';
 
 export interface TabiusServerConfig {
   /**  e.g. 'tabius.ru' . */
@@ -34,14 +34,14 @@ const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
     // SSR app.
     'http://localhost:12101',
     // Non-SSR app.
-    'http://localhost:12102'
+    'http://localhost:12102',
   ],
   sessionCookieName: 'tabius.sid',
 };
 
 export const SERVER_CONFIG: Readonly<TabiusServerConfig> = {
   ...DEFAULT_CONFIG,
-  ...CONFIG_FROM_FILE
+  ...CONFIG_FROM_FILE,
 };
 
 /** Returns active configuration directory. */

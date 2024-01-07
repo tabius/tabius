@@ -1,7 +1,7 @@
-import {BehaviorSubject, ReplaySubject, timer} from 'rxjs';
-import {take, takeUntil} from 'rxjs/operators';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AbstractAppComponent} from '@app/utils/abstract-app-component';
+import { BehaviorSubject, ReplaySubject, timer } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 
 /**
  * Common base class for all components with a loading indicator.
@@ -24,17 +24,15 @@ export class ComponentWithLoadingIndicator extends AbstractAppComponent {
 
   constructor(loadingTimeout = 800) {
     super();
-    if (this.isBrowser) { // loading indicator is not used during SSR.
-      timer(loadingTimeout).pipe(
-          take(1),
-          takeUntil(this.loaded$),
-          takeUntilDestroyed(),
-      ).subscribe(() => {
-        if (!this.loaded) {
-          this.isLoadingIndicatorVisible$.next(true);
-        }
-      });
+    if (this.isBrowser) {
+      // loading indicator is not used during SSR.
+      timer(loadingTimeout)
+        .pipe(take(1), takeUntil(this.loaded$), takeUntilDestroyed())
+        .subscribe(() => {
+          if (!this.loaded) {
+            this.isLoadingIndicatorVisible$.next(true);
+          }
+        });
     }
   }
-
 }

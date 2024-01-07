@@ -1,7 +1,6 @@
-import {getYoutubeVideoIdFromLink, isValidYoutubeId} from '@common/util/media-links-utils';
+import { getYoutubeVideoIdFromLink, isValidYoutubeId } from '@common/util/media-links-utils';
 
 describe('Media Links Utils', () => {
-
   it('should know valid youtube id form', () => {
     expect(isValidYoutubeId('')).toBeFalsy();
     expect(isValidYoutubeId('123456')).toBeFalsy();
@@ -31,5 +30,4 @@ describe('Media Links Utils', () => {
     expect(getYoutubeVideoIdFromLink('https://youtube.net/watch?v=123456789')).toBeUndefined();
     expect(getYoutubeVideoIdFromLink('https://youtu.bee/watch?v=123456789')).toBeUndefined();
   });
-
 });

@@ -73,7 +73,7 @@ export interface I18n {
       title: string;
       description: string;
       keywords: string[];
-    }
+    };
   };
   scenePage: {
     title: string;
@@ -84,10 +84,10 @@ export interface I18n {
     chordsLayoutTitleSuffix: string;
   };
   collectionBreadcrumb: {
-    catalogLink: string,
-    catalogLinkTitle: string,
-    studioLink: string,
-    studioLinkTitle: string,
+    catalogLink: string;
+    catalogLinkTitle: string;
+    studioLink: string;
+    studioLinkTitle: string;
   };
   footer: {
     closeMenu: string;
@@ -118,7 +118,7 @@ export interface I18n {
       title: (name: string, type: CollectionType) => string;
       description: (firstSongs: string) => string;
       keywords: (name: string) => string[];
-    }
+    };
   };
   shortcuts: {
     title: string;
@@ -134,7 +134,6 @@ export interface I18n {
     right: string;
     collectionPage: {
       addSong: string;
-
     };
     songPage: {
       transposeUp: string;
@@ -164,7 +163,7 @@ export interface I18n {
     tryToReloadPagePrompt: string;
   };
   settingsPage: {
-    meta: PageMetadata,
+    meta: PageMetadata;
     pageHeader: string;
     loadingText: string;
     songRenderingSettingsHeader: string;
@@ -177,7 +176,7 @@ export interface I18n {
       or: string;
       signIn: string;
       toGetAccess: string;
-    },
+    };
     demoSongText: string;
   };
   signinSignoutButton: {
@@ -191,7 +190,7 @@ export interface I18n {
     studioLink: string;
     interestingFacts: string;
     worksWithNoInternetFact: string;
-    noAdsFact: string
+    noAdsFact: string;
     openSourceFact: {
       tabiusSourceCode: string;
       isOpenOnGithub: string;
@@ -276,10 +275,10 @@ export interface I18n {
     editSongButtonDesktop: string;
     editSongButtonMobile: string;
     affiliateLinkButtonTitle: string;
-    affiliateLinkButtonDesktopLabel: string
-    affiliateLinkButtonMobileLabel: string
+    affiliateLinkButtonDesktopLabel: string;
+    affiliateLinkButtonMobileLabel: string;
     searchSongOnYoutubeLinkTitle: string;
-    searchSongOnYoutubeLinkText: string
+    searchSongOnYoutubeLinkText: string;
     fontSize: string;
     gotoRandomSongInCollectionMenu: string;
     gotoRandomSongInCatalogMenu: string;
@@ -308,7 +307,7 @@ export interface I18n {
       title: string;
       description: string;
       keywords: string[];
-    }
+    };
   };
   tunerPage: {
     title: string;
@@ -365,8 +364,8 @@ export interface I18n {
     title: string;
   };
   moveSongToCollectionComponent: {
-    addButtonText: string
-    moveButtonText: string
+    addButtonText: string;
+    moveButtonText: string;
     songIsAddedToCollection: string;
   };
 }

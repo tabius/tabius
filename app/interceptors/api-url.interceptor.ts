@@ -6,7 +6,6 @@ import { BrowserStateService } from '@app/services/browser-state.service';
 /** Sets correct backend URL to requests and adds 'withCredentials:true' option. */
 @Injectable()
 export class ApiUrlInterceptor implements HttpInterceptor {
-
   private readonly backendUrl!: string;
 
   constructor(bss: BrowserStateService) {

@@ -1,28 +1,28 @@
-import {AsyncStore, KV} from './async-store';
+import { AsyncStore, KV } from './async-store';
 
 /** AsyncStore that keeps data in memory. */
 export class InMemoryAsyncStore implements AsyncStore {
   private readonly map = new Map<string, unknown>();
 
-  get<T = unknown>(key: string): Promise<T|undefined> {
-    return Promise.resolve(this.map.get(key) as T|undefined);
+  get<T = unknown>(key: string): Promise<T | undefined> {
+    return Promise.resolve(this.map.get(key) as T | undefined);
   }
 
-  getAll<T = unknown>(keys: readonly string[]): Promise<(T|undefined)[]> {
-    return new Promise<(T|undefined)[]>(resolve => {
-      const result = keys.map(key => this.map.get(key) as T|undefined);
+  getAll<T = unknown>(keys: readonly string[]): Promise<(T | undefined)[]> {
+    return new Promise<(T | undefined)[]>(resolve => {
+      const result = keys.map(key => this.map.get(key) as T | undefined);
       return resolve(result);
     });
   }
 
-  set<T = unknown>(key: string, value: T|undefined): Promise<void> {
+  set<T = unknown>(key: string, value: T | undefined): Promise<void> {
     return new Promise<void>(resolve => {
       this._set(key, value);
       resolve();
     });
   }
 
-  private _set(key: string, value: unknown|undefined): void {
+  private _set(key: string, value: unknown | undefined): void {
     if (value === undefined) {
       this.map.delete(key);
     } else {
@@ -44,7 +44,7 @@ export class InMemoryAsyncStore implements AsyncStore {
       const result: KV<T>[] = [];
       for (const [key, value] of this.map) {
         if (!keyPrefix || keyPrefix.length === 0 || key.startsWith(keyPrefix)) {
-          result.push({key, value: value as T});
+          result.push({ key, value: value as T });
         }
       }
       resolve(result);
@@ -61,9 +61,8 @@ export class InMemoryAsyncStore implements AsyncStore {
   snapshot(): KV<unknown>[] {
     const result: KV<unknown>[] = [];
     for (const [key, value] of this.map) {
-      result.push({key, value});
+      result.push({ key, value });
     }
     return result;
   }
 }
-

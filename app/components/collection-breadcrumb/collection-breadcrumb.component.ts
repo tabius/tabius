@@ -11,7 +11,6 @@ import { I18N } from '@app/app-i18n';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionBreadcrumbComponent implements OnChanges {
-
   @Input() collection?: Collection;
 
   @Input() showCollectionLink = true;

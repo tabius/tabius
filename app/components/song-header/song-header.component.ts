@@ -1,24 +1,23 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {Collection, Song} from '@common/catalog-model';
-import {getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink} from '@common/util/misc-utils';
-import {HelpService} from '@app/services/help.service';
-import {I18N} from '@app/app-i18n';
-import {CatalogService} from '@app/services/catalog.service';
-import {firstValueFrom} from 'rxjs';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Collection, Song } from '@common/catalog-model';
+import { getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink } from '@common/util/misc-utils';
+import { HelpService } from '@app/services/help.service';
+import { I18N } from '@app/app-i18n';
+import { CatalogService } from '@app/services/catalog.service';
+import { firstValueFrom } from 'rxjs';
 
-export type SongHeaderTitleFormat = 'song'|'song-and-collection';
+export type SongHeaderTitleFormat = 'song' | 'song-and-collection';
 
 @Component({
   selector: 'gt-song-header',
   templateUrl: './song-header.component.html',
   styleUrls: ['./song-header.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongHeaderComponent implements OnChanges {
+  @Input({ required: true }) song!: Song;
 
-  @Input({required: true}) song!: Song;
-
-  @Input({required: true}) collection!: Collection;
+  @Input({ required: true }) collection!: Collection;
 
   @Input() showCollectionLink = false;
 
@@ -30,14 +29,12 @@ export class SongHeaderComponent implements OnChanges {
 
   title = '';
 
-  constructor(private readonly helpService: HelpService,
-              private readonly cds: CatalogService,
-  ) {
-  }
+  constructor(private readonly helpService: HelpService, private readonly cds: CatalogService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['collection'] || changes['song']) {
-      this.title = this.song.title + (this.titleFormat === 'song-and-collection' ? ` - ${getNameFirstFormArtistName(this.collection)}` : '');
+      this.title =
+        this.song.title + (this.titleFormat === 'song-and-collection' ? ` - ${getNameFirstFormArtistName(this.collection)}` : '');
     }
   }
 

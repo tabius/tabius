@@ -23,7 +23,6 @@ interface ComponentCollectionData extends Collection {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddSongToCollectionComponent extends AbstractAppComponent {
-
   @Input({ required: true }) songId!: number;
 
   user?: User;
@@ -42,41 +41,46 @@ export class AddSongToCollectionComponent extends AbstractAppComponent {
     private readonly toastService: ToastService,
   ) {
     super();
-    this.changes$.pipe(
-      tap(() => {
-        this.user = undefined;
-        this.song = undefined;
-        this.songDetails = undefined;
-        this.collections = [];
-        this.showRegistrationPrompt = false;
+    this.changes$
+      .pipe(
+        tap(() => {
+          this.user = undefined;
+          this.song = undefined;
+          this.songDetails = undefined;
+          this.collections = [];
+          this.showRegistrationPrompt = false;
+          this.cdr.markForCheck();
+        }),
+        switchMap(() => {
+          const user$ = this.userService.getUser$();
+          const collections$ = user$.pipe(switchMap(user => (user ? this.catalogService.getUserCollections(user.id) : [])));
+          const isSongInCollection$: Observable<boolean[]> = collections$.pipe(
+            switchMap(collections => combineLatest0(collections.map(c => this.catalogService.getSongIdsByCollection(c.id)))),
+            map((songIdsPerCollection: (number[] | undefined)[]) =>
+              songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.songId)),
+            ),
+          );
+          const song$ = this.catalogService.observeSong(this.songId);
+          const songDetails$ = this.catalogService.getSongDetailsById(this.songId);
+          return combineLatest([user$, collections$, isSongInCollection$, song$, songDetails$]);
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe(([user, collections, isSongInCollection, song, songDetails]) => {
+        this.user = user;
+        this.song = song;
+        this.songDetails = songDetails;
+        this.collections = collections
+          .map((collection, index) => ({
+            ...collection,
+            isSongInCollection: isSongInCollection[index],
+            // Today we have only one collection.
+            name: collection.name,
+            routerLink: getCollectionPageLink(collection),
+          }))
+          .filter(c => c.id !== song?.collectionId); // Do not show a primary collection in the list.
         this.cdr.markForCheck();
-      }),
-      switchMap(() => {
-        const user$ = this.userService.getUser$();
-        const collections$ = user$.pipe(switchMap(user => user ? this.catalogService.getUserCollections(user.id) : []));
-        const isSongInCollection$: Observable<boolean[]> = collections$.pipe(
-          switchMap(collections => combineLatest0(collections.map(c => this.catalogService.getSongIdsByCollection(c.id)))),
-          map((songIdsPerCollection: (number[]|undefined)[]) =>
-            songIdsPerCollection.map(songIds => !!songIds && songIds.includes(this.songId))),
-        );
-        const song$ = this.catalogService.observeSong(this.songId);
-        const songDetails$ = this.catalogService.getSongDetailsById(this.songId);
-        return combineLatest([user$, collections$, isSongInCollection$, song$, songDetails$]);
-      }),
-      takeUntilDestroyed(),
-    ).subscribe(([user, collections, isSongInCollection, song, songDetails]) => {
-      this.user = user;
-      this.song = song;
-      this.songDetails = songDetails;
-      this.collections = collections.map((collection, index) => ({
-        ...collection,
-        isSongInCollection: isSongInCollection[index],
-        // Today we have only one collection.
-        name: collection.name,
-        routerLink: getCollectionPageLink(collection),
-      })).filter(c => c.id !== song?.collectionId); // Do not show a primary collection in the list.
-      this.cdr.markForCheck();
-    });
+      });
   }
 
   async toggleCollection(collection: ComponentCollectionData, checkboxElement: EventTarget): Promise<void> {

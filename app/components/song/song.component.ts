@@ -16,7 +16,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongComponent extends ComponentWithLoadingIndicator {
-
   @Input({ required: true }) songId!: number;
   @Input() showCollectionLink = false;
   @Input() activeCollectionId?: number;
@@ -34,49 +33,43 @@ export class SongComponent extends ComponentWithLoadingIndicator {
   schemaItemArtistType?: string;
   schemaItemArtistName?: string;
 
-  constructor(private readonly catalogService: CatalogService,
-              private readonly userService: UserService,
-  ) {
+  constructor(private readonly catalogService: CatalogService, private readonly userService: UserService) {
     super();
 
-    this.changes$.pipe(
-      tap(() => {
-        this.song = undefined;
-        this.songDetails = undefined;
-        this.collection = undefined;
-        this.cdr.markForCheck();
-      }),
-      switchMap(() => {
-        const song$ = this.catalogService.observeSong(this.songId);
-        const primaryCollection$ = song$.pipe(switchMap(song => this.catalogService.observeCollection(song?.collectionId)));
-        const songDetails$ = this.catalogService.getSongDetailsById(this.songId);
-        const activeCollection$ = this.activeCollectionId
-                                  ? this.catalogService.observeCollection(this.activeCollectionId)
-                                  : primaryCollection$;
-        const userSongDetails$ = this.userService.getUserSongSettings(this.songId);
+    this.changes$
+      .pipe(
+        tap(() => {
+          this.song = undefined;
+          this.songDetails = undefined;
+          this.collection = undefined;
+          this.cdr.markForCheck();
+        }),
+        switchMap(() => {
+          const song$ = this.catalogService.observeSong(this.songId);
+          const primaryCollection$ = song$.pipe(switchMap(song => this.catalogService.observeCollection(song?.collectionId)));
+          const songDetails$ = this.catalogService.getSongDetailsById(this.songId);
+          const activeCollection$ = this.activeCollectionId
+            ? this.catalogService.observeCollection(this.activeCollectionId)
+            : primaryCollection$;
+          const userSongDetails$ = this.userService.getUserSongSettings(this.songId);
 
-        return combineLatest([
-          song$,
-          songDetails$,
-          activeCollection$,
-          primaryCollection$,
-          userSongDetails$,
-        ]);
-      }),
-      takeUntilDestroyed(),
-    ).subscribe(([song, songDetails, collection, primaryCollection, songSettings]) => {
-      this.loaded = true;
-      this.cdr.markForCheck();
-      if (!song || !songDetails || !collection || !songSettings) {
-        return; // TODO: not found? 404?
-      }
-      this.song = song;
-      this.songDetails = songDetails;
-      this.collection = collection;
-      this.primaryCollection = primaryCollection;
-      this.songSettings = songSettings;
-      this.updateSchemaFields();
-    });
+          return combineLatest([song$, songDetails$, activeCollection$, primaryCollection$, userSongDetails$]);
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe(([song, songDetails, collection, primaryCollection, songSettings]) => {
+        this.loaded = true;
+        this.cdr.markForCheck();
+        if (!song || !songDetails || !collection || !songSettings) {
+          return; // TODO: not found? 404?
+        }
+        this.song = song;
+        this.songDetails = songDetails;
+        this.collection = collection;
+        this.primaryCollection = primaryCollection;
+        this.songSettings = songSettings;
+        this.updateSchemaFields();
+      });
   }
 
   private updateSchemaFields(): void {
@@ -100,4 +93,4 @@ export class SongComponent extends ComponentWithLoadingIndicator {
   }
 }
 
-export type SongComponentMode = 'song-page-mode'|'print-mode';
+export type SongComponentMode = 'song-page-mode' | 'print-mode';

@@ -19,7 +19,6 @@ export const MIN_SONG_FONT_SIZE = 8;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent extends ComponentWithLoadingIndicator {
-
   readonly i18n = I18N.settingsPage;
 
   deviceSettings!: UserDeviceSettings;
@@ -32,10 +31,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   visualAllMinorToneKeys: ReadonlyArray<string> = MINOR_KEY_TONES;
   visualFavoriteSongKey: string = DEFAULT_FAVORITE_KEY;
 
-  constructor(
-    private readonly uds: UserService,
-    private readonly authService: ClientAuthService,
-  ) {
+  constructor(private readonly uds: UserService, private readonly authService: ClientAuthService) {
     super();
 
     this.updatePageMetadata(this.i18n.meta);
@@ -46,19 +42,19 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
       //TODO: optimize these 2 parallel fetches! Fetch user settings only once.
       this.uds.getH4SiFlag(RefreshMode.Refresh),
       this.uds.getFavoriteKey(RefreshMode.Refresh),
-    ]).pipe(
-      takeUntilDestroyed(),
-    ).subscribe(([user, settings, h4si, favoriteSongKey]) => {
-      this.loaded = true;
-      this.user = user;
-      this.deviceSettings = settings;
-      this.h4Si = h4si;
-      this.visualFavoriteSongKey = h4si && favoriteSongKey.startsWith('B') ? 'H' + favoriteSongKey.substring(1) : favoriteSongKey;
-      this.visualAllMinorToneKeys = this.h4Si
-                                    ? (MINOR_KEY_TONES.map(t => t.startsWith('B') ? `H${t.substring(1)}` : t))
-                                    : MINOR_KEY_TONES;
-      this.cdr.markForCheck();
-    });
+    ])
+      .pipe(takeUntilDestroyed())
+      .subscribe(([user, settings, h4si, favoriteSongKey]) => {
+        this.loaded = true;
+        this.user = user;
+        this.deviceSettings = settings;
+        this.h4Si = h4si;
+        this.visualFavoriteSongKey = h4si && favoriteSongKey.startsWith('B') ? 'H' + favoriteSongKey.substring(1) : favoriteSongKey;
+        this.visualAllMinorToneKeys = this.h4Si
+          ? MINOR_KEY_TONES.map(t => (t.startsWith('B') ? `H${t.substring(1)}` : t))
+          : MINOR_KEY_TONES;
+        this.cdr.markForCheck();
+      });
   }
 
   incFontSize(): void {
@@ -82,7 +78,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   }
 
   setFavoriteSongKey(visualFavoriteSongKey: string): void {
-    const tone: ChordTone = visualFavoriteSongKey === 'H' ? 'B' : visualFavoriteSongKey as ChordTone;
+    const tone: ChordTone = visualFavoriteSongKey === 'H' ? 'B' : (visualFavoriteSongKey as ChordTone);
     this.uds.setFavoriteKey(tone).then();
   }
 

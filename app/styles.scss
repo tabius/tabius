@@ -1,9 +1,9 @@
-@import "styles/dimensions";
-@import "styles/fonts";
-@import "styles/colors";
-@import "styles/buttons";
-@import "styles/checkboxes";
-@import "~node_modules/@angular/cdk/overlay-prebuilt.css";
+@import 'styles/dimensions';
+@import 'styles/fonts';
+@import 'styles/colors';
+@import 'styles/buttons';
+@import 'styles/checkboxes';
+@import '~node_modules/@angular/cdk/overlay-prebuilt.css';
 
 html {
   //noinspection CssInvalidPropertyValue
@@ -21,7 +21,12 @@ body {
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 400;
 }
 
@@ -62,9 +67,10 @@ a {
   color: $color-default-link;
   text-decoration: none;
 
-  &.dark-pill, .dark-pill {
+  &.dark-pill,
+  .dark-pill {
     font-size: 14px;
-    color: #5A5A5A;
+    color: #5a5a5a;
     padding: 1px 5px;
     border-radius: 4px;
     border: solid 1px #ababab;
@@ -130,7 +136,7 @@ c {
   }
 }
 
-input[type=text] {
+input[type='text'] {
   line-height: 24px;
   font-size: 16px;
   padding-left: 5px;

@@ -1,6 +1,5 @@
 // A *very* simple ANSI styling module
 
-
 let coloursEnabled = false;
 
 function ansiStyle(text: string, code: number): string {

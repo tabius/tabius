@@ -1,8 +1,7 @@
-import {parseChord} from '@common/util/chords-parser';
-import {transpose} from '@common/util/chords-renderer';
-import {checkToneIsFlat, detectKeyAsMinor, getTransposeDistance, KEY_VARIANTS} from '@common/util/key-detector';
-import {Chord, CHORD_TONES} from '@common/util/chords-lib';
-
+import { parseChord } from '@common/util/chords-parser';
+import { transpose } from '@common/util/chords-renderer';
+import { checkToneIsFlat, detectKeyAsMinor, getTransposeDistance, KEY_VARIANTS } from '@common/util/key-detector';
+import { Chord, CHORD_TONES } from '@common/util/chords-lib';
 
 function c(chordsLine: string, transposeSteps = 0, isFlat = false): Chord[] {
   const chords: Chord[] = [];
@@ -10,13 +9,12 @@ function c(chordsLine: string, transposeSteps = 0, isFlat = false): Chord[] {
     const chordLocation = parseChord(chordText)!;
     expect(chordLocation || `Failed to parse chord: ${chordText}`).toBeDefined();
     const tone = transpose(chordLocation.chord.tone, transposeSteps, isFlat);
-    chords.push({...chordLocation.chord, tone});
+    chords.push({ ...chordLocation.chord, tone });
   }
   return chords;
 }
 
 describe('Key detector', () => {
-
   describe('getTransposeDistance', () => {
     it('should pass minimal sanity tests', () => {
       expect(getTransposeDistance('A', 'E')).toBe(7);
@@ -41,7 +39,6 @@ describe('Key detector', () => {
   });
 
   describe('detectKeyAsMinor', () => {
-
     it('should return undefined for empty array', () => {
       expect(detectKeyAsMinor([])).toBe(undefined);
     });
@@ -89,7 +86,5 @@ describe('Key detector', () => {
     it('regression test 3', () => {
       expect(detectKeyAsMinor(c('C C F C G F C'))).toBe('A');
     });
-
   });
-
 });

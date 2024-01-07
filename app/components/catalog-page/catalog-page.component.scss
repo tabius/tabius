@@ -1,5 +1,5 @@
-@import "app/styles/dimensions";
-@import "app/styles/colors";
+@import 'app/styles/dimensions';
+@import 'app/styles/colors';
 
 h1 {
   text-align: center;
@@ -94,7 +94,6 @@ h1 {
         height: 16px;
       }
     }
-
   }
 }
 
@@ -115,7 +114,7 @@ h1 {
     }
 
     .letter:after {
-      content: "";
+      content: '';
       height: 2px;
       display: block;
       //background: #fcd14f;
@@ -201,11 +200,11 @@ h1 {
   display: flex;
   justify-content: center;
 
-  .register-prompt, .has-no-rights-prompt {
+  .register-prompt,
+  .has-no-rights-prompt {
     display: flex;
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
   }
 }
-

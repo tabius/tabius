@@ -13,4 +13,3 @@ export function installLogFunctions(): void {
   console.log = (...args: unknown[]): void => consoleLog(getLogMessagePrefix(), ...args);
   console.warn = (...args: unknown[]): void => consoleWarn(getLogMessagePrefix(), ...args);
 }
-

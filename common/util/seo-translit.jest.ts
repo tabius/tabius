@@ -1,9 +1,10 @@
-import {getTranslitAnyCase} from '@common/util/seo-translit';
+import { getTranslitAnyCase } from '@common/util/seo-translit';
 
 describe('SEO-translit', () => {
-
   it('should not latin letters', () => {
-    expect(getTranslitAnyCase('abcdefghikjlmnopqrstuvwxyzABCDEFGHIKJLMNOPQRSTUVWXYZ')).toEqual('abcdefghikjlmnopqrstuvwxyzABCDEFGHIKJLMNOPQRSTUVWXYZ');
+    expect(getTranslitAnyCase('abcdefghikjlmnopqrstuvwxyzABCDEFGHIKJLMNOPQRSTUVWXYZ')).toEqual(
+      'abcdefghikjlmnopqrstuvwxyzABCDEFGHIKJLMNOPQRSTUVWXYZ',
+    );
   });
 
   it('should not change digits', () => {
@@ -27,5 +28,4 @@ describe('SEO-translit', () => {
     expect(getTranslitAnyCase('эХо')).toEqual('ehKho');
     expect(getTranslitAnyCase('Хабаровск')).toEqual('Habarovsk');
   });
-
 });

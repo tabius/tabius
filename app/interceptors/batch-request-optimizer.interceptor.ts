@@ -1,7 +1,7 @@
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {Observable, timer} from 'rxjs';
-import {map, share, switchMap} from 'rxjs/operators';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, timer } from 'rxjs';
+import { map, share, switchMap } from 'rxjs/operators';
 
 /** Prefix for all 'by-ids' requests. Example: /api/song/by-ids/id1,id2,id3 or /api/song/details-by-ids/ia1,id2,id3.. */
 export const BY_IDS_TOKEN = 'by-ids/';
@@ -12,7 +12,6 @@ export const BY_IDS_SEPARATOR = ',';
 /** Merges multiple 'by-ids' requests into a single 'by-ids' request. */
 @Injectable()
 export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
-
   readonly pendingBatchRequests = new Map<string, BatchRequest>();
 
   /** Time in milliseconds the batch request will wait for new requests to merge before the real run. */
@@ -33,19 +32,23 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
     return batch ? this.joinToBatchRequest(batch, ids) : this.startBatchRequest(type, ids, req, next);
   }
 
-  private startBatchRequest(type: string, ids: readonly string[], req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  private startBatchRequest(
+    type: string,
+    ids: readonly string[],
+    req: HttpRequest<any>,
+    next: HttpHandler,
+  ): Observable<HttpEvent<any>> {
     const batchIds = new Set<string>(ids);
-    const response = timer(this.batchWaitTimeInMillis)
-        .pipe(
-            switchMap(() => {
-              this.pendingBatchRequests.delete(type); // delete from the pending list right before real run.
-              const sortedUniqueIds = [...batchIds.keys()].sort();
-              const batchReq = req.clone({url: type + BY_IDS_TOKEN + sortedUniqueIds.join(BY_IDS_SEPARATOR)});
-              return next.handle(batchReq);
-            }),
-            share(),
-        );
-    const batch = {type, ids: batchIds, response};
+    const response = timer(this.batchWaitTimeInMillis).pipe(
+      switchMap(() => {
+        this.pendingBatchRequests.delete(type); // delete from the pending list right before real run.
+        const sortedUniqueIds = [...batchIds.keys()].sort();
+        const batchReq = req.clone({ url: type + BY_IDS_TOKEN + sortedUniqueIds.join(BY_IDS_SEPARATOR) });
+        return next.handle(batchReq);
+      }),
+      share(),
+    );
+    const batch = { type, ids: batchIds, response };
     this.pendingBatchRequests.set(type, batch);
     return this.selectFromBatchResponse(batch, ids);
   }
@@ -57,26 +60,26 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
 
   private selectFromBatchResponse(batch: BatchRequest, ids: readonly string[]): Observable<HttpEvent<any>> {
     return batch.response.pipe(
-        map(event => {
-          if (event instanceof HttpResponse) {
-            const results = event.body as { id: string|number }[];
-            const filteredResults: any[] = [];
-            if (results.length > 0) {
-              const unifyTypes = typeof (results[0].id) === 'number' ? (v) => Number(v) : (v) => v;
-              for (const id of ids) {
-                const typeSafeId = unifyTypes(id);
-                for (const result of results) {
-                  if (result.id === typeSafeId) {
-                    filteredResults.push(result);
-                    break;
-                  }
+      map(event => {
+        if (event instanceof HttpResponse) {
+          const results = event.body as { id: string | number }[];
+          const filteredResults: any[] = [];
+          if (results.length > 0) {
+            const unifyTypes = typeof results[0].id === 'number' ? v => Number(v) : v => v;
+            for (const id of ids) {
+              const typeSafeId = unifyTypes(id);
+              for (const result of results) {
+                if (result.id === typeSafeId) {
+                  filteredResults.push(result);
+                  break;
                 }
               }
             }
-            return event.clone({body: filteredResults});
           }
-          return event;
-        })
+          return event.clone({ body: filteredResults });
+        }
+        return event;
+      }),
     );
   }
 }

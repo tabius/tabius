@@ -1,8 +1,8 @@
-import {HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH} from '@common/common-constants';
-import {ChordTone} from '@common/util/chords-lib';
+import { HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH } from '@common/common-constants';
+import { ChordTone } from '@common/util/chords-lib';
 
 /** The only role we have today. Can add new collections and songs. */
-export type UserRole = 'moderator'
+export type UserRole = 'moderator';
 
 export interface User {
   /** Unique user identifier provided by Auth0. 'sub' field in Auth0 profile. */
@@ -21,9 +21,8 @@ export interface User {
   mount: string;
 }
 
-
 /** 'c' for Classic, 'e' for Electro. */
-export type TunerToneType = 'c'|'e';
+export type TunerToneType = 'c' | 'e';
 
 /**
  * Settings that stored in the browser and never saved on server.
@@ -48,14 +47,13 @@ export function newDefaultUserDeviceSettings(): UserDeviceSettings {
 /** User settings stored on the server. */
 export interface UserSettings {
   /** Per-song settings. */
-  songs: { [songId: number]: UserSongSettings },
+  songs: { [songId: number]: UserSongSettings };
 
   /** If true => 'B' will be rendered as 'H' for the tone Si. */
-  h4Si: boolean,
+  h4Si: boolean;
 
   /** Favorite minor key. Default: 'Am'. */
   favKey: ChordTone;
-
 }
 
 /** Per song settings. */
@@ -93,10 +91,10 @@ const SONG_FONT_SIZE_HIRES_DESKTOP = 20;
 export function getDefaultUserSongFontSize(): number {
   const width = typeof window === 'object' && window.innerWidth;
   return !width || (width >= MIN_DESKTOP_WIDTH && width < HIRES_DESKTOP_WIDTH)
-         ? SONG_FONT_SIZE_DESKTOP
-         : width < MIN_DESKTOP_WIDTH
-           ? SONG_FONT_SIZE_MOBILE
-           : SONG_FONT_SIZE_HIRES_DESKTOP;
+    ? SONG_FONT_SIZE_DESKTOP
+    : width < MIN_DESKTOP_WIDTH
+    ? SONG_FONT_SIZE_MOBILE
+    : SONG_FONT_SIZE_HIRES_DESKTOP;
 }
 
 export interface CatalogNavigationHistory {

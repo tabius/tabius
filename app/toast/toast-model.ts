@@ -1,6 +1,6 @@
-import {OverlayRef} from '@angular/cdk/overlay';
+import { OverlayRef } from '@angular/cdk/overlay';
 
-export type ToastType = 'warning'|'info'|'success';
+export type ToastType = 'warning' | 'info' | 'success';
 
 export class Toast {
   type: ToastType = 'warning';
@@ -8,8 +8,7 @@ export class Toast {
 }
 
 export class ToastRef {
-  constructor(private readonly overlay: OverlayRef) {
-  }
+  constructor(private readonly overlay: OverlayRef) {}
 
   isVisible(): boolean {
     return this.overlay.overlayElement !== undefined;

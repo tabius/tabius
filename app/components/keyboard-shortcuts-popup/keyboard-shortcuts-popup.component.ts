@@ -15,4 +15,3 @@ export class KeyboardShortcutsPopupComponent {
 
   readonly i18n = I18N.shortcuts;
 }
-

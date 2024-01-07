@@ -1,4 +1,4 @@
-export function isEqualByStringify(oldValue: any|undefined, newValue: any|undefined): boolean {
+export function isEqualByStringify(oldValue: any | undefined, newValue: any | undefined): boolean {
   if (oldValue === newValue) {
     return true;
   }

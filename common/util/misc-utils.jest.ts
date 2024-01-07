@@ -1,7 +1,6 @@
-import {toSafeSearchText} from '@common/util/misc-utils';
+import { toSafeSearchText } from '@common/util/misc-utils';
 
 describe('toSafeSearchText', () => {
-
   it('should keep letters and numbers', () => {
     expect(toSafeSearchText('letters and numbers123')).toBe('letters and numbers123');
   });

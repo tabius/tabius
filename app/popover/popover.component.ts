@@ -1,5 +1,5 @@
-import {BasePortalOutlet, CdkPortalOutlet, ComponentPortal, TemplatePortal} from '@angular/cdk/portal';
-import {ChangeDetectionStrategy, Component, ComponentRef, EmbeddedViewRef, ViewChild} from '@angular/core';
+import { BasePortalOutlet, CdkPortalOutlet, ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
+import { ChangeDetectionStrategy, Component, ComponentRef, EmbeddedViewRef, ViewChild } from '@angular/core';
 
 /**
  * Internal component that wraps user-provided popover content.
@@ -11,7 +11,7 @@ import {ChangeDetectionStrategy, Component, ComponentRef, EmbeddedViewRef, ViewC
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PopoverComponent extends BasePortalOutlet {
-  @ViewChild(CdkPortalOutlet, {static: true}) portalOutlet!: CdkPortalOutlet;
+  @ViewChild(CdkPortalOutlet, { static: true }) portalOutlet!: CdkPortalOutlet;
 
   attachComponentPortal<T>(componentPortal: ComponentPortal<any>): ComponentRef<T> {
     return this.portalOutlet.attachComponentPortal(componentPortal);

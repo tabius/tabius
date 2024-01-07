@@ -1,6 +1,6 @@
-@import "styles/colors";
-@import "styles/dimensions";
-@import "styles/utils";
+@import 'styles/colors';
+@import 'styles/dimensions';
+@import 'styles/utils';
 
 :host {
   line-height: $footer-info-line-height; /* Vertically center the text there */
@@ -74,7 +74,7 @@
     gt-svg-icon {
       width: 22px;
       height: 22px;
-      fill: #BBB;
+      fill: #bbb;
     }
   }
 }
@@ -97,7 +97,8 @@
       width: 100%;
       @include disable-selection;
 
-      &.btn-flat-white:focus, &.btn-flat-white:hover {
+      &.btn-flat-white:focus,
+      &.btn-flat-white:hover {
         background-color: white;
       }
 
@@ -117,7 +118,7 @@
         .menu-button-text {
           font-size: 16px;
           letter-spacing: 2px;
-          padding-bottom: 3px;;
+          padding-bottom: 3px;
         }
       }
 

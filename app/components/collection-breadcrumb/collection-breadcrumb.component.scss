@@ -1,12 +1,12 @@
-@import "app/styles/colors";
-@import "app/styles/dimensions";
+@import 'app/styles/colors';
+@import 'app/styles/dimensions';
 
 .sep {
   padding-right: 5px;
   color: #999;
 }
 
-[icon=level-up] {
+[icon='level-up'] {
   display: inline-block;
   width: 16px;
   height: 16px;

@@ -1,7 +1,7 @@
 // noinspection HttpUrlsUsage
 
-import {buildInfo} from '@app/environments/build';
-import {TabiusEnv} from '@app/environments';
+import { buildInfo } from '@app/environments/build';
+import { TabiusEnv } from '@app/environments';
 
 const APP_DOMAIN = 'localhost';
 
@@ -25,7 +25,7 @@ export const environment: TabiusEnv = {
     clientId: 'elgYidwkWEROavQBMADZdDUKQCtoVIYC',
     cacheLocation: 'localstorage',
     httpInterceptor: {
-      allowedList: [{uri: `${backendUrl}/api/*`, allowAnonymous: true}]
-    }
-  }
+      allowedList: [{ uri: `${backendUrl}/api/*`, allowAnonymous: true }],
+    },
+  },
 };

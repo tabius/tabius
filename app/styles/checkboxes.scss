@@ -6,7 +6,7 @@ label.checkbox {
   cursor: pointer;
   line-height: $checkbox-line-height;
 
-  input[type=checkbox] {
+  input[type='checkbox'] {
     opacity: 0;
     width: 0;
   }
@@ -17,9 +17,10 @@ label.checkbox {
     padding-left: $checkbox-size + 10px;
   }
 
-  span::before, span::after {
+  span::before,
+  span::after {
     position: absolute;
-    content: "";
+    content: '';
     display: inline-block; /* Needed for the line-height to take effect. */
   }
 
@@ -44,17 +45,17 @@ label.checkbox {
   }
 
   /* Hide the check-mark by default. */
-  input[type="checkbox"] + span::after {
+  input[type='checkbox'] + span::after {
     content: none;
   }
 
   /* Show on the checked state. */
-  input[type="checkbox"]:checked + span::after {
-    content: "";
+  input[type='checkbox']:checked + span::after {
+    content: '';
   }
 
   /* Adding focus styles on the outer-box of the fake checkbox. */
-  input[type="checkbox"]:focus + span::before {
+  input[type='checkbox']:focus + span::before {
     outline: rgb(59, 153, 252) auto 5px;
   }
 }

@@ -1,4 +1,14 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnChanges,
+  PLATFORM_ID,
+  ViewChild,
+} from '@angular/core';
 import { ChordImagePainter } from '@app/utils/chord-image-painter';
 import { ChordLayout } from '@common/util/chords-layout-lib';
 import { isPlatformBrowser } from '@angular/common';
@@ -13,7 +23,6 @@ import { getDefaultH4SiFlag } from '@common/user-model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChordImageComponent implements AfterViewInit, OnChanges {
-
   @Input({ required: true }) layout!: ChordLayout;
   @Input() size = 2.3;
   @Input() h4Si = getDefaultH4SiFlag();

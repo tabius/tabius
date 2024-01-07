@@ -1,6 +1,6 @@
-@import "styles/dimensions";
-@import "styles/fonts";
-@import "styles/colors";
+@import 'styles/dimensions';
+@import 'styles/fonts';
+@import 'styles/colors';
 
 :host {
   display: flex;
@@ -15,7 +15,7 @@
       margin-bottom: 10px;
       font-size: 20px;
 
-      [icon=level-up] {
+      [icon='level-up'] {
         display: inline-block;
         width: 16px;
         height: 16px;

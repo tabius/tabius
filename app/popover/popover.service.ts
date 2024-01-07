@@ -1,4 +1,10 @@
-import { ComponentType, ConnectionPositionPair, FlexibleConnectedPositionStrategyOrigin, Overlay, PositionStrategy } from '@angular/cdk/overlay';
+import {
+  ComponentType,
+  ConnectionPositionPair,
+  FlexibleConnectedPositionStrategyOrigin,
+  Overlay,
+  PositionStrategy,
+} from '@angular/cdk/overlay';
 import { ComponentPortal, PortalInjector, TemplatePortal } from '@angular/cdk/portal';
 import { Injectable, InjectionToken, Injector, TemplateRef } from '@angular/core';
 
@@ -28,13 +34,13 @@ const defaultConfig: PopoverConfig = {
   providedIn: 'root',
 })
 export class PopoverService {
-  constructor(private readonly overlay: Overlay, private readonly injector: Injector) {
-  }
+  constructor(private readonly overlay: Overlay, private readonly injector: Injector) {}
 
-  open<D = any>(componentOrTemplate: ComponentType<any>|TemplateRef<any>,
-                target: FlexibleConnectedPositionStrategyOrigin|null,
-                config: Partial<PopoverConfig> = {}): PopoverRef<D> {
-
+  open<D = any>(
+    componentOrTemplate: ComponentType<any> | TemplateRef<any>,
+    target: FlexibleConnectedPositionStrategyOrigin | null,
+    config: Partial<PopoverConfig> = {},
+  ): PopoverRef<D> {
     // Disable arrow rendering if there is no target element.
     const arrowSize = !!target ? config.arrowSize || defaultConfig.arrowSize : 0;
     const popoverConfig: PopoverConfig = { ...defaultConfig, ...config, arrowSize };
@@ -50,11 +56,13 @@ export class PopoverService {
 
     const popoverRef = new PopoverRef(overlayRef, positionStrategy, popoverConfig);
 
-    const popover = overlayRef.attach(new ComponentPortal(
-      PopoverComponent,
-      null,
-      new PortalInjector(this.injector, new WeakMap<any, any>([[PopoverRef, popoverRef]])),
-    )).instance;
+    const popover = overlayRef.attach(
+      new ComponentPortal(
+        PopoverComponent,
+        null,
+        new PortalInjector(this.injector, new WeakMap<any, any>([[PopoverRef, popoverRef]])),
+      ),
+    ).instance;
 
     if (componentOrTemplate instanceof TemplateRef) {
       // rendering a provided template dynamically
@@ -76,7 +84,10 @@ export class PopoverService {
           null,
           new PortalInjector(
             this.injector,
-            new WeakMap<any, any>([[POPOVER_DATA, config.data], [PopoverRef, popoverRef]]),
+            new WeakMap<any, any>([
+              [POPOVER_DATA, config.data],
+              [PopoverRef, popoverRef],
+            ]),
           ),
         ),
       );
@@ -85,12 +96,12 @@ export class PopoverService {
     return popoverRef;
   }
 
-  private buildPositionStrategy(target: FlexibleConnectedPositionStrategyOrigin|null, popoverConfig: PopoverConfig): PositionStrategy {
+  private buildPositionStrategy(
+    target: FlexibleConnectedPositionStrategyOrigin | null,
+    popoverConfig: PopoverConfig,
+  ): PositionStrategy {
     if (target === null) {
-      return this.overlay.position()
-        .global()
-        .centerHorizontally()
-        .centerVertically();
+      return this.overlay.position().global().centerHorizontally().centerVertically();
     }
     const { arrowSize, arrowOffset } = popoverConfig;
     const panelOffset = arrowSize / 2;
@@ -159,7 +170,7 @@ export class PopoverService {
 
     if (popoverConfig.preferredPosition) {
       const { overlayX, overlayY } = popoverConfig.preferredPosition;
-      positions.sort(p => p.overlayX === overlayX && p.overlayY === overlayY ? -1 : 0);
+      positions.sort(p => (p.overlayX === overlayX && p.overlayY === overlayY ? -1 : 0));
     }
 
     return this.overlay

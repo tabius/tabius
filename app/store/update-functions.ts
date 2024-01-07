@@ -1,4 +1,4 @@
-import {isEqualByShallowArrayCompare, isEqualByStringify} from './equality-functions';
+import { isEqualByShallowArrayCompare, isEqualByStringify } from './equality-functions';
 
 export interface Versioned {
   readonly version: number;
@@ -9,7 +9,7 @@ export interface Versioned {
 export const DO_NOT_PREFETCH = undefined;
 
 /** Returns true if update is needed. */
-export function checkUpdateByVersion(oldValue: Versioned|undefined, newValue: Versioned|undefined): boolean {
+export function checkUpdateByVersion(oldValue: Versioned | undefined, newValue: Versioned | undefined): boolean {
   if (oldValue === newValue) {
     return false;
   }
@@ -19,14 +19,17 @@ export function checkUpdateByVersion(oldValue: Versioned|undefined, newValue: Ve
   return newValue.version > oldValue.version;
 }
 
-export function checkUpdateByShallowArrayCompare(oldValue: readonly any[]|undefined, newValue: readonly any[]|undefined): boolean {
+export function checkUpdateByShallowArrayCompare(
+  oldValue: readonly any[] | undefined,
+  newValue: readonly any[] | undefined,
+): boolean {
   return !isEqualByShallowArrayCompare(oldValue, newValue);
 }
 
-export function checkUpdateByStringify(oldValue: any|undefined, newValue: any|undefined): boolean {
+export function checkUpdateByStringify(oldValue: any | undefined, newValue: any | undefined): boolean {
   return !isEqualByStringify(oldValue, newValue);
 }
 
-export function checkUpdateByReference(oldValue: any|undefined, newValue: any|undefined): boolean {
+export function checkUpdateByReference(oldValue: any | undefined, newValue: any | undefined): boolean {
   return newValue !== oldValue;
 }

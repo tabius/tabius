@@ -19,10 +19,7 @@ export class ModeratorPromptComponent implements AfterViewInit {
   /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
-  constructor(private readonly el: ElementRef,
-              private readonly bss: BrowserStateService,
-  ) {
-  }
+  constructor(private readonly el: ElementRef, private readonly bss: BrowserStateService) {}
 
   close(): void {
     this.closeRequest.next({});

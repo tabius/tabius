@@ -1,6 +1,5 @@
-@import "app/styles/colors";
-@import "app/styles/dimensions";
-
+@import 'app/styles/colors';
+@import 'app/styles/dimensions';
 
 .mobile-buttons-row {
   min-width: 300px;
@@ -25,7 +24,8 @@
 $random-collection-icon-size: 52px;
 
 .sticky-sidebar {
-  .left-bar, .right-bar {
+  .left-bar,
+  .right-bar {
     position: fixed;
     width: $sticky-sidebar-width;
     top: 40px;
@@ -43,13 +43,15 @@ $random-collection-icon-size: 52px;
       width: $sticky-sidebar-width;
       height: $sticky-sidebar-width;
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         fill: $color-default-link;
         opacity: 1;
       }
     }
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       border: 1px solid #f3f3f3;
 
       gt-svg-icon {
@@ -77,5 +79,4 @@ $random-collection-icon-size: 52px;
   .right-bar {
     right: 0;
   }
-
 }

@@ -15,14 +15,9 @@ interface AppStateOnSignIn {
 
 @Injectable({ providedIn: 'root' })
 export class ClientAuthService {
-
   private readonly auth0Service?: AuthService<AppStateOnSignIn>;
 
-  constructor(
-    injector: Injector,
-    browserStateService: BrowserStateService,
-    router: Router,
-  ) {
+  constructor(injector: Injector, browserStateService: BrowserStateService, router: Router) {
     if (browserStateService.isBrowser) {
       this.auth0Service = injector.get(AuthService);
       this.auth0Service.appState$.subscribe(state => {
@@ -34,7 +29,7 @@ export class ClientAuthService {
     }
   }
 
-  get user$(): Observable<User|null|undefined> {
+  get user$(): Observable<User | null | undefined> {
     if (!this.auth0Service) {
       return of(null); // Server side mode.
     }

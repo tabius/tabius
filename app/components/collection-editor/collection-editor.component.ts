@@ -1,29 +1,28 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {getTranslitLowerCase} from '@common/util/seo-translit';
-import {CollectionType} from '@common/catalog-model';
-import {CatalogService} from '@app/services/catalog.service';
-import {ToastService} from '@app/toast/toast.service';
-import {MOUNT_COLLECTION_PREFIX} from '@common/mounts';
-import {Router} from '@angular/router';
-import {scrollToView} from '@common/util/misc-utils';
-import {I18N} from '@app/app-i18n';
-import {BrowserStateService} from '@app/services/browser-state.service';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { getTranslitLowerCase } from '@common/util/seo-translit';
+import { CollectionType } from '@common/catalog-model';
+import { CatalogService } from '@app/services/catalog.service';
+import { ToastService } from '@app/toast/toast.service';
+import { MOUNT_COLLECTION_PREFIX } from '@common/mounts';
+import { Router } from '@angular/router';
+import { scrollToView } from '@common/util/misc-utils';
+import { I18N } from '@app/app-i18n';
+import { BrowserStateService } from '@app/services/browser-state.service';
 
 @Component({
   selector: 'gt-collection-editor',
   templateUrl: './collection-editor.component.html',
   styleUrls: ['./collection-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionEditorComponent implements OnInit {
-
   @Input() scrollIntoViewAndFocus = true;
 
   /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
-  @ViewChild('editorBlock', {static: false, read: ElementRef}) private editorBlockRef!: ElementRef;
-  @ViewChild('collectionNameInput', {static: false, read: ElementRef}) private collectionNameInputRef!: ElementRef;
+  @ViewChild('editorBlock', { static: false, read: ElementRef }) private editorBlockRef!: ElementRef;
+  @ViewChild('collectionNameInput', { static: false, read: ElementRef }) private collectionNameInputRef!: ElementRef;
 
   readonly i18n = I18N.collectionEditor;
 
@@ -35,12 +34,12 @@ export class CollectionEditorComponent implements OnInit {
 
   readonly CollectionType = CollectionType;
 
-  constructor(private readonly cds: CatalogService,
-              private readonly toastService: ToastService,
-              private readonly router: Router,
-              private readonly bss: BrowserStateService,
-  ) {
-  }
+  constructor(
+    private readonly cds: CatalogService,
+    private readonly toastService: ToastService,
+    private readonly router: Router,
+    private readonly bss: BrowserStateService,
+  ) {}
 
   ngOnInit(): void {
     if (this.scrollIntoViewAndFocus && this.bss.isBrowser) {
@@ -54,7 +53,6 @@ export class CollectionEditorComponent implements OnInit {
       }, 200);
     }
   }
-
 
   create(): void {
     this.createImpl().catch(err => {
@@ -77,7 +75,7 @@ export class CollectionEditorComponent implements OnInit {
     const collection = await this.cds.createListedCollection({
       name: this.name,
       mount: this.mount,
-      type: this.collectionType
+      type: this.collectionType,
     });
     this.close();
     this.router.navigate([MOUNT_COLLECTION_PREFIX + collection.mount]).catch(err => console.error(err));

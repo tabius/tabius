@@ -1,9 +1,9 @@
-import {User, UserSettings} from '@common/user-model';
-import {Collection, CollectionType, Song, SongDetails} from '@common/catalog-model';
-import {ChordTone} from '@common/util/chords-lib';
+import { User, UserSettings } from '@common/user-model';
+import { Collection, CollectionType, Song, SongDetails } from '@common/catalog-model';
+import { ChordTone } from '@common/util/chords-lib';
 
 export interface AjaxSessionInfo {
-  userId: string|undefined;
+  userId: string | undefined;
 }
 
 export interface TabiusAjaxResponse {
@@ -11,7 +11,7 @@ export interface TabiusAjaxResponse {
 }
 
 export interface LoginResponse {
-  readonly user: User|undefined;
+  readonly user: User | undefined;
   readonly settings: UserSettings;
 }
 
@@ -39,9 +39,8 @@ export interface CreateUserCollectionResponse {
   collections: Collection[];
 }
 
-
 export interface UpdateCollectionRequest {
-  id: number,
+  id: number;
   name: string;
   mount: string;
 }
@@ -86,7 +85,6 @@ export interface DeleteSongResponse {
   updatedCollections: DeleteSongResponseCollectionInfo[];
 }
 
-
 export interface FullTextSongSearchRequest {
   text: string;
 }
@@ -128,7 +126,7 @@ export interface RemoveSongFromSecondaryCollectionResponse {
 export const MAX_FULL_TEXT_SEARCH_TITLE_RESULTS = 50;
 export const MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS = 50;
 
-export type FullTextSongSearchResultMatchType = 'title'|'content';
+export type FullTextSongSearchResultMatchType = 'title' | 'content';
 
 export interface FullTextSongSearchResult {
   songId: number;

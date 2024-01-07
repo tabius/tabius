@@ -6,7 +6,7 @@
  * 0 is an open string >=1 are the finger positions above the neck.
  */
 
-export type FingerPositions = Array<number|null>;
+export type FingerPositions = Array<number | null>;
 
 export function playChordSound(fingerPositions: FingerPositions): void {
   const context = new AudioContext();
@@ -109,9 +109,8 @@ export function playChordSound(fingerPositions: FingerPositions): void {
   playChord(fingerPositions);
 }
 
-
 export function convertChordToFingerPositions(layout: string): FingerPositions {
   const fingerSeparatorIndex = layout?.indexOf('&');
   const fretsString = layout.substring(0, fingerSeparatorIndex > 0 ? fingerSeparatorIndex : layout.length);
-  return fretsString.split('').map(c => c === '-' ? null : Number(c));
+  return fretsString.split('').map(c => (c === '-' ? null : Number(c)));
 }

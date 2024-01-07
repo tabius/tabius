@@ -1,5 +1,5 @@
-@import "app/styles/dimensions";
-@import "app/styles/fonts";
+@import 'app/styles/dimensions';
+@import 'app/styles/fonts';
 
 :host {
   margin-top: 10px;
@@ -9,7 +9,8 @@
 .editor-block {
   min-width: calc(80vw);
 
-  input, textarea {
+  input,
+  textarea {
     box-sizing: border-box;
     font-size: 16px;
     font-family: $font-family-mono;
@@ -87,8 +88,8 @@
 
 @media only screen and (min-width: $min-desktop-width) {
   .editor-block {
-
-    input, textarea {
+    input,
+    textarea {
       font-size: 18px;
     }
 

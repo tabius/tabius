@@ -1,7 +1,7 @@
-import {VISUAL_TYPE_BY_CHORD_TYPE} from '@common/util/chords-parser-lib';
-import {parseChords} from '@common/util/chords-parser';
-import {isAlpha} from '@common/util/misc-utils';
-import {Chord, ChordTone} from '@common/util/chords-lib';
+import { VISUAL_TYPE_BY_CHORD_TYPE } from '@common/util/chords-parser-lib';
+import { parseChords } from '@common/util/chords-parser';
+import { isAlpha } from '@common/util/misc-utils';
+import { Chord, ChordTone } from '@common/util/chords-lib';
 
 export interface ChordRenderingOptions {
   readonly tag?: string;
@@ -94,7 +94,7 @@ export function transpose(tone: ChordTone, semiTones: number, isFlat = false): C
 }
 
 export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, minResultStringLength = 0): string {
-  let {tone, bassTone} = chord;
+  let { tone, bassTone } = chord;
   if (options.transpose) {
     tone = transpose(tone, options.transpose);
     bassTone = bassTone ? transpose(bassTone, options.transpose) : undefined;
@@ -116,12 +116,12 @@ export function renderChord(chord: Chord, options: ChordRenderingOptions = {}, m
   const chordString = `${toneString + visualType + bassSuffix}`;
   const trailingSpaceCount = minResultStringLength - chordString.length;
   const trailingSpaces = trailingSpaceCount > 0 ? ' '.repeat(trailingSpaceCount) : '';
-  const {tag} = options;
+  const { tag } = options;
   return (tag ? `<${tag}>${chordString}</${tag}>` : chordString) + trailingSpaces;
 }
 
 export function renderChords(text: string, options: ChordRenderingOptions = {}): string {
-  const {tag, transpose, hideChords} = options;
+  const { tag, transpose, hideChords } = options;
   if (!tag && !transpose && !hideChords) {
     return text;
   }

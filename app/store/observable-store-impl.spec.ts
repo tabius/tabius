@@ -1,9 +1,9 @@
-import {ObservableStoreImpl} from './observable-store-impl';
-import {AsyncStore, KV} from './async-store';
-import {ObservableStore, RefreshMode, skipUpdateCheck} from './observable-store';
-import {delay, switchMap} from 'rxjs/operators';
-import {firstValueFrom, of, ReplaySubject} from 'rxjs';
-import {checkUpdateByStringify} from './update-functions';
+import { ObservableStoreImpl } from './observable-store-impl';
+import { AsyncStore, KV } from './async-store';
+import { ObservableStore, RefreshMode, skipUpdateCheck } from './observable-store';
+import { delay, switchMap } from 'rxjs/operators';
+import { firstValueFrom, of, ReplaySubject } from 'rxjs';
+import { checkUpdateByStringify } from './update-functions';
 
 /** No-Op impl used in tests. */
 class NoOpAsyncStore implements AsyncStore {
@@ -14,12 +14,12 @@ class NoOpAsyncStore implements AsyncStore {
     return Promise.resolve();
   }
 
-  get<T = unknown>(key: string): Promise<T|undefined> {
+  get<T = unknown>(key: string): Promise<T | undefined> {
     this.calls.push('get');
     return Promise.resolve(undefined);
   }
 
-  getAll<T = unknown>(keys: ReadonlyArray<string>): Promise<(T|undefined)[]> {
+  getAll<T = unknown>(keys: ReadonlyArray<string>): Promise<(T | undefined)[]> {
     this.calls.push('getAll');
     return Promise.resolve([]);
   }
@@ -29,7 +29,7 @@ class NoOpAsyncStore implements AsyncStore {
     return Promise.resolve([]);
   }
 
-  set<T = unknown>(key: string, value: T|undefined): Promise<void> {
+  set<T = unknown>(key: string, value: T | undefined): Promise<void> {
     this.calls.push('set');
     return Promise.resolve();
   }
@@ -43,7 +43,6 @@ class NoOpAsyncStore implements AsyncStore {
     this.calls.push('snapshot');
     return [];
   }
-
 }
 
 /** Creates new ObservableStoreImpl with NoOpAsyncStore. */
@@ -52,13 +51,12 @@ function newObservableStoreForTest(asyncStore = new NoOpAsyncStore()): Observabl
 }
 
 describe('ObservableStore', () => {
-
   it('fetches and sets value to adapter if it was missed', async () => {
     let setKey = '';
     let setValue: any = undefined;
 
     class AsyncStoreForTest extends NoOpAsyncStore {
-      set<T>(key: string, value: T|undefined): Promise<void> {
+      set<T>(key: string, value: T | undefined): Promise<void> {
         setKey += key; // the way to check in this test that 'set' was called only once.
         setValue = value;
         return Promise.resolve();
@@ -69,7 +67,9 @@ describe('ObservableStore', () => {
 
     const getKey = 'key';
     const fetchedValue = 'fetched';
-    const returnValue = await firstValueFrom(store.get<string>(getKey, () => of(fetchedValue), RefreshMode.DoNotRefresh, skipUpdateCheck));
+    const returnValue = await firstValueFrom(
+      store.get<string>(getKey, () => of(fetchedValue), RefreshMode.DoNotRefresh, skipUpdateCheck),
+    );
 
     expect(returnValue).toBe(fetchedValue);
     expect(setKey).toBe(getKey);
@@ -115,7 +115,10 @@ describe('ObservableStore', () => {
     const resolver$ = new ReplaySubject(1);
     const fetchFn = () => {
       nFetchesCalled++;
-      return resolver$.pipe(delay(100), switchMap(() => of(value)));
+      return resolver$.pipe(
+        delay(100),
+        switchMap(() => of(value)),
+      );
     };
     const store = newObservableStoreForTest();
     const v1$$ = firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
@@ -131,7 +134,8 @@ describe('ObservableStore', () => {
     const value = 'Value';
 
     class TestStoreAdapter extends NoOpAsyncStore {
-      get = <T>(k: string): Promise<T|undefined> => (Promise.resolve(k === key ? value : undefined) as unknown as Promise<T|undefined>);
+      get = <T>(k: string): Promise<T | undefined> =>
+        Promise.resolve(k === key ? value : undefined) as unknown as Promise<T | undefined>;
     }
 
     let nFetchesCalled = 0;
@@ -152,7 +156,8 @@ describe('ObservableStore', () => {
     const value = 'Value';
 
     class TestStoreAdapter extends NoOpAsyncStore {
-      get = <T>(k: string): Promise<T|undefined> => (Promise.resolve(k === key ? value : undefined) as unknown as Promise<T|undefined>);
+      get = <T>(k: string): Promise<T | undefined> =>
+        Promise.resolve(k === key ? value : undefined) as unknown as Promise<T | undefined>;
     }
 
     const fetchFn = () => {

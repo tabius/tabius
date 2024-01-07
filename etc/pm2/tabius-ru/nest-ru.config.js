@@ -12,8 +12,7 @@ module.exports = {
       env: {
         NO_COLOR: '1',
         TABIUS_CONFIG_DIR: '/opt/tabius-ru/',
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
-

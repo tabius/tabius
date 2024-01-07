@@ -1,20 +1,17 @@
-import {ApplicationRef, Inject, Injectable} from '@angular/core';
-import {SwUpdate} from '@angular/service-worker';
-import {first} from 'rxjs/operators';
-import {APP_BROWSER_STORE_TOKEN} from '@app/app-constants';
-import {DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck} from '@app/store';
-import {concat, firstValueFrom, interval} from 'rxjs';
+import { ApplicationRef, Inject, Injectable } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
+import { first } from 'rxjs/operators';
+import { APP_BROWSER_STORE_TOKEN } from '@app/app-constants';
+import { DO_NOT_PREFETCH, ObservableStore, RefreshMode, skipUpdateCheck } from '@app/store';
+import { concat, firstValueFrom, interval } from 'rxjs';
 
 const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PwaUpdaterService {
-
-  constructor(appRef: ApplicationRef,
-              updates: SwUpdate,
-              @Inject(APP_BROWSER_STORE_TOKEN) appStore: ObservableStore) {
+  constructor(appRef: ApplicationRef, updates: SwUpdate, @Inject(APP_BROWSER_STORE_TOKEN) appStore: ObservableStore) {
     if (!updates.isEnabled) {
       return;
     }
@@ -35,7 +32,9 @@ export class PwaUpdaterService {
       }
       console.debug('Found new app update: ', event);
       // Ensure we have no reload loop for whatever reason it may happen
-      const lastForcedUpdateTime = await firstValueFrom(appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck));
+      const lastForcedUpdateTime = await firstValueFrom(
+        appStore.get<number>(LAST_FORCED_UPDATE_TIME_KEY, DO_NOT_PREFETCH, RefreshMode.DoNotRefresh, skipUpdateCheck),
+      );
       const now = Date.now();
       if (!(lastForcedUpdateTime === undefined || lastForcedUpdateTime < now - 60_000)) {
         console.info(`Ignoring update, time since last forced update: ${now - lastForcedUpdateTime}ms`);
@@ -48,4 +47,3 @@ export class PwaUpdaterService {
     });
   }
 }
-

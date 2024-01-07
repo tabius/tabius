@@ -1,5 +1,5 @@
-@import "app/styles/colors";
-@import "app/styles/dimensions";
+@import 'app/styles/colors';
+@import 'app/styles/dimensions';
 
 :host {
   color: #cecece;
@@ -79,7 +79,7 @@ a {
       }
 
       &:hover {
-        background-color: #1D1B29;
+        background-color: #1d1b29;
       }
 
       &.home {
@@ -200,7 +200,6 @@ a {
       }
     }
   }
-
 }
 
 @media only screen and (max-height: $hires-desktop-height) {
@@ -277,7 +276,4 @@ a {
       }
     }
   }
-
 }
-
-
