@@ -6,6 +6,5 @@ export class TabiusAuthHttpInterceptor extends Auth0HttpInterceptor {
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // TabiusAuthHttpInterceptor is used for Auth0 debugging only today.
     return super.intercept(req, next);
-
   }
 }

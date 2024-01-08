@@ -11,6 +11,7 @@
 }
 
 @mixin multi-column-mode-style {
+  // Important: sync with SongTextComponent.CSS_COLUMN_GAP.
   column-gap: 50px;
   column-rule: 1px solid #e8e8e8;
 }

@@ -26,7 +26,7 @@ import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { assertTruthy } from 'assertic';
 
 /** Heuristic used to enable multi-column mode. */
-const IDEAL_SONG_LINES_PER_COLUMN = 17; // (4 chords + 4 text lines) * 2 + 1 line between
+const IDEAL_SONG_LINES_PER_COLUMN = 18; // (4 chords + 4 text lines) * 2 + 1 line after the first and 1 line after the second verse.
 
 /** Note: must be lower-case! */
 const CHORDS_TAG = 'c';
@@ -156,19 +156,29 @@ export class SongTextComponent extends AbstractAppComponent {
     }
   }
 
+  private readonly CSS_COLUMN_GAP = 50;
+
   is2ColumnMode(): boolean {
     const { lineCount, maxLineWidth } = this.getSongStats();
-    return lineCount > IDEAL_SONG_LINES_PER_COLUMN && !this.is3ColumnMode() && this.availableWidth / (1 + maxLineWidth) >= 2;
+    return (
+      lineCount > IDEAL_SONG_LINES_PER_COLUMN &&
+      !this.is3ColumnMode() &&
+      this.availableWidth >= 2 * maxLineWidth + this.CSS_COLUMN_GAP
+    );
   }
 
   is3ColumnMode(): boolean {
     const { lineCount, maxLineWidth } = this.getSongStats();
-    return lineCount > 2 * IDEAL_SONG_LINES_PER_COLUMN && !this.is4ColumnMode() && this.availableWidth / (1 + maxLineWidth) >= 3;
+    return (
+      lineCount > 2 * IDEAL_SONG_LINES_PER_COLUMN &&
+      !this.is4ColumnMode() &&
+      this.availableWidth >= 3 * maxLineWidth + 2 * this.CSS_COLUMN_GAP
+    );
   }
 
   is4ColumnMode(): boolean {
     const { lineCount, maxLineWidth } = this.getSongStats();
-    return lineCount > 3 * IDEAL_SONG_LINES_PER_COLUMN && this.availableWidth / (1 + maxLineWidth) >= 4;
+    return lineCount > 3 * IDEAL_SONG_LINES_PER_COLUMN && this.availableWidth >= 4 * maxLineWidth + 3 * this.CSS_COLUMN_GAP;
   }
 
   private getSongStats(): SongStats {
@@ -187,7 +197,6 @@ export class SongTextComponent extends AbstractAppComponent {
         i = lineSepIdx + 1;
         this.songStats.lineCount++;
       }
-      this.songStats.maxLineWidth += 20; // For margins.
     }
     return this.songStats;
   }
