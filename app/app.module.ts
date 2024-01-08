@@ -21,12 +21,7 @@ import { LoadingIndicatorComponent } from '@app/components/loading-indicator/loa
 import { CollectionBreadcrumbComponent } from '@app/components/collection-breadcrumb/collection-breadcrumb.component';
 import { SafeHtmlPipe, SafeResourceUrlPipe } from '@app/utils/safe.pipe';
 import { SettingsPageComponent } from '@app/components/settings-page/settings-page.component';
-import {
-  APP_BROWSER_STORE_TOKEN,
-  AUTH0_WEB_CLIENT_AUDIENCE,
-  TABIUS_CATALOG_BROWSER_STORE_TOKEN,
-  TABIUS_USER_BROWSER_STORE_TOKEN,
-} from '@app/app-constants';
+import { APP_BROWSER_STORE_TOKEN, AUTH0_WEB_CLIENT_AUDIENCE, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { SigninSignoutButtonComponent } from '@app/components/signin-signout-button/signin-signout-button.component';
 import { PwaUpdaterService } from '@app/services/pwa-updater.service';
@@ -37,7 +32,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SongComponent } from '@app/components/song/song.component';
 import { SongHeaderComponent } from '@app/components/song-header/song-header.component';
 import { SongVideoComponent } from '@app/components/song-video/song-video.component';
-import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
+import { AuthModule } from '@auth0/auth0-angular';
 import { SongEditorComponent } from '@app/components/song-editor/song-editor.component';
 import { BatchRequestOptimizerInterceptor } from '@app/interceptors/batch-request-optimizer.interceptor';
 import { CachingAndMultiplexingInterceptor } from '@app/interceptors/caching-and-multiplexing-interceptor.service';
@@ -57,12 +52,7 @@ import { UserCollectionEditorComponent } from '@app/components/user-collection-e
 import { PopoverModule } from '@app/popover/popover.module';
 import { KeyboardShortcutsPopupComponent } from '@app/components/keyboard-shortcuts-popup/keyboard-shortcuts-popup.component';
 import { HelpService } from '@app/services/help.service';
-import {
-  CanonicalLinkHeadContributorComponent,
-  HeadContributorComponent,
-  LinkHeadContributorComponent,
-  MetaHeadContributorComponent,
-} from '@app/components/head-contributor/head-contributor.component';
+import { CanonicalLinkHeadContributorComponent, HeadContributorComponent, LinkHeadContributorComponent, MetaHeadContributorComponent } from '@app/components/head-contributor/head-contributor.component';
 import { ChordPopoverComponent } from '@app/components/chord-popover/chord-popover.component';
 import { ShowChordPopoverOnClickDirective } from '@app/directives/show-chord-popover-on-click.directive';
 import { JsonLdComponent } from '@app/components/json-ld/json-ld.component';
@@ -71,6 +61,7 @@ import { ScenePageComponent } from './components/scene-page/scene-page.component
 import * as Sentry from '@sentry/angular-ivy';
 import { MoveSongToCollectionComponent } from './components/move-song-to-collection/move-song-to-collection.component';
 import { NgOptimizedImage } from '@angular/common';
+import { TabiusAuthHttpInterceptor } from '@app/interceptors/auth.interceptor';
 
 const interceptors: Array<Provider> = [
   { provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true },
@@ -80,7 +71,7 @@ const interceptors: Array<Provider> = [
 
 const userAgent = typeof window === 'object' ? window.navigator?.userAgent : undefined;
 if (userAgent !== undefined && userAgent.length > 0) {
-  interceptors.push({ provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true });
+  interceptors.push({ provide: HTTP_INTERCEPTORS, useClass: TabiusAuthHttpInterceptor, multi: true });
 } else {
   console.log('Running in SSR mode');
 }
@@ -148,6 +139,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
     ToastModule,
     AuthModule.forRoot({
       ...environment.authConfig,
+      useRefreshTokens: true,
       httpInterceptor: {
         allowedList: [
           {

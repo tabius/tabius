@@ -47,7 +47,7 @@
     "@angular/router": "^17.0.8",
     "@angular/service-worker": "^17.0.8",
     "@angular/ssr": "^17.0.9",
-    "@auth0/auth0-angular": "2.2.2",
+    "@auth0/auth0-angular": "^2.2.2",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "10.3.0",
     "@nestjs/core": "10.3.0",
