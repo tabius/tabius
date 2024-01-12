@@ -34,7 +34,7 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
   constructor(private readonly uds: UserService) {
     super();
     this.uds
-      .getUserDeviceSettings()
+      .userDeviceSettings$()
       .pipe(takeUntilDestroyed())
       .subscribe(deviceSettings => {
         this.deviceSettings = deviceSettings;

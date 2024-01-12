@@ -180,7 +180,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
       );
 
     this.uds
-      .getUserDeviceSettings()
+      .userDeviceSettings$()
       .pipe(takeUntilDestroyed())
       .subscribe(deviceSettings => {
         this.deviceSettings = deviceSettings;

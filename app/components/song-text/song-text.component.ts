@@ -80,7 +80,7 @@ export class SongTextComponent extends AbstractAppComponent {
     }
 
     this.uds
-      .getUserDeviceSettings()
+      .userDeviceSettings$()
       .pipe(takeUntilDestroyed())
       .subscribe(deviceSettings => {
         this.deviceSettings = deviceSettings;
