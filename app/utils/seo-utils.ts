@@ -1,12 +1,6 @@
 import { Meta, Title } from '@angular/platform-browser';
 import { DeepReadonly } from '@common/typescript-extras';
-
-export interface PageMetadata {
-  title: string;
-  description: string;
-  keywords: string[];
-  image?: string;
-}
+import { PageMetadata } from '@common/common-model';
 
 export function updatePageMetadata(title: Title, meta: Meta, page: DeepReadonly<PageMetadata>): void {
   title.setTitle(page.title);

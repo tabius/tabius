@@ -42,7 +42,7 @@ import { getSongKey } from '@common/util/key-detector';
 import { ChordTone } from '@common/util/chords-lib';
 import { getTransposeActionKey, updateUserSongSetting } from '@app/components/song-chords/song-chords.component';
 import { BreadcrumbList, WithContext } from 'schema-dts';
-import { getSongJsonLdBreadcrumbList } from '@common/util/json-ld';
+import { getSongJsonLdBreadcrumbList } from '@app/utils/json-ld';
 import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
 import { assertTruthy } from 'assertic';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

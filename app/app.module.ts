@@ -21,12 +21,7 @@ import { LoadingIndicatorComponent } from '@app/components/loading-indicator/loa
 import { CollectionBreadcrumbComponent } from '@app/components/collection-breadcrumb/collection-breadcrumb.component';
 import { SafeHtmlPipe, SafeResourceUrlPipe } from '@app/utils/safe.pipe';
 import { SettingsPageComponent } from '@app/components/settings-page/settings-page.component';
-import {
-  APP_BROWSER_STORE_TOKEN,
-  AUTH0_WEB_CLIENT_AUDIENCE,
-  TABIUS_CATALOG_BROWSER_STORE_TOKEN,
-  TABIUS_USER_BROWSER_STORE_TOKEN,
-} from '@app/app-constants';
+import { APP_BROWSER_STORE_TOKEN, TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { SigninSignoutButtonComponent } from '@app/components/signin-signout-button/signin-signout-button.component';
 import { PwaUpdaterService } from '@app/services/pwa-updater.service';
@@ -72,6 +67,7 @@ import * as Sentry from '@sentry/angular-ivy';
 import { MoveSongToCollectionComponent } from './components/move-song-to-collection/move-song-to-collection.component';
 import { NgOptimizedImage } from '@angular/common';
 import { TabiusAuthHttpInterceptor } from '@app/interceptors/auth.interceptor';
+import { AUTH0_WEB_CLIENT_AUDIENCE } from '@common/common-constants';
 
 const interceptors: Array<Provider> = [
   { provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true },

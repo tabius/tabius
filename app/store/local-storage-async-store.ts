@@ -8,21 +8,20 @@ import { fromEvent, Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 
 export class LocalStorageAsyncStore implements AsyncStore {
-  constructor(private readonly storeKeyPrefix) {
-  }
+  constructor(private readonly storeKeyPrefix) {}
 
-  get<T = unknown>(key: string): Promise<T|undefined> {
+  get<T = unknown>(key: string): Promise<T | undefined> {
     return Promise.resolve(LocalStorageAsyncStore._get(this.convertUserKeyToStoreKey(key)));
   }
 
-  getAll<T = unknown>(keys: readonly string[]): Promise<(T|undefined)[]> {
-    return new Promise<(T|undefined)[]>(resolve => {
+  getAll<T = unknown>(keys: readonly string[]): Promise<(T | undefined)[]> {
+    return new Promise<(T | undefined)[]>(resolve => {
       const result = keys.map(key => LocalStorageAsyncStore._get<T>(this.convertUserKeyToStoreKey(key)));
       resolve(result);
     });
   }
 
-  set<T = unknown>(key: string, value: T|undefined): Promise<void> {
+  set<T = unknown>(key: string, value: T | undefined): Promise<void> {
     return new Promise<void>(resolve => {
       LocalStorageAsyncStore._set(this.convertUserKeyToStoreKey(key), value);
       resolve();
@@ -38,12 +37,12 @@ export class LocalStorageAsyncStore implements AsyncStore {
     });
   }
 
-  private static _get<T = unknown>(storeKey: string): T|undefined {
+  private static _get<T = unknown>(storeKey: string): T | undefined {
     const serializedValue = window.localStorage.getItem(storeKey);
     return serializedValue === null ? undefined : JSON.parse(serializedValue);
   }
 
-  private static _set<T = unknown>(storeKey: string, value: T|undefined): void {
+  private static _set<T = unknown>(storeKey: string, value: T | undefined): void {
     if (value === undefined) {
       window.localStorage.removeItem(storeKey);
       return;
@@ -64,7 +63,7 @@ export class LocalStorageAsyncStore implements AsyncStore {
       for (let i = 0; i < window.localStorage.length; i++) {
         const storeKey = window.localStorage.key(i);
         if (storeKey && storeKey.startsWith(storeUserKeyPrefix)) {
-          const value: T|undefined = LocalStorageAsyncStore._get(storeKey);
+          const value: T | undefined = LocalStorageAsyncStore._get(storeKey);
           if (value !== undefined) {
             result.push({ key: this.convertStoreKeyToUserKey(storeKey), value });
           }
@@ -100,11 +99,10 @@ export class LocalStorageAsyncStore implements AsyncStore {
     throw new Error('Not supported');
   }
 
-  observe<T = unknown>(): Observable<{ key: string, value: T|null }> {
+  observe<T = unknown>(): Observable<{ key: string; value: T | null }> {
     return fromEvent<StorageEvent>(window, 'storage').pipe(
       filter(e => (e.key || '').startsWith(this.storeKeyPrefix)),
-      map(e => ({ key: truthy(e.key), value: e.newValue === null ? null : JSON.parse(e.newValue) as T })),
+      map(e => ({ key: truthy(e.key), value: e.newValue === null ? null : (JSON.parse(e.newValue) as T) })),
     );
   }
-
 }

@@ -3,7 +3,7 @@ import { TRANSLATIONS_MAP_EN } from './i18n-en';
 import { DeepReadonly } from '@common/typescript-extras';
 import { CollectionType } from '@common/catalog-model';
 import { User } from '@common/user-model';
-import { PageMetadata } from '@app/utils/seo-utils';
+import { PageMetadata } from '@common/common-model';
 
 export function getI18n(lang: string): DeepReadonly<I18n> {
   // Note: for the new & incomplete translations we can use deep-mere with EN.

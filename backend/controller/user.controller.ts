@@ -5,7 +5,7 @@ import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model'
 import { conformsTo, validate } from '../util/validation';
 import { UpdateFavoriteSongKeyValidator, UserSongSettingsValidator } from '../util/validators';
 import { ServerAuthService } from '../service/server-auth.service';
-import { isEqualByStringify } from '@app/store';
+import { isEqualByStringify } from '@common/util/equality-functions';
 
 @Controller('/api/user')
 export class UserController {

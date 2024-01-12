@@ -1,4 +1,4 @@
-import { isEqualByShallowArrayCompare, isEqualByStringify } from './equality-functions';
+import { isEqualByShallowArrayCompare, isEqualByStringify } from '@common/util/equality-functions';
 
 export interface Versioned {
   readonly version: number;

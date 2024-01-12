@@ -4,7 +4,7 @@ import { User } from '@common/user-model';
 import { CollectionDbi } from '../db/collection-dbi.service';
 import { isValidId } from '@common/util/misc-utils';
 import { UserDbi } from '../db/user-dbi.service';
-import { INVALID_ID } from '@common/common-constants';
+import { AUTH0_WEB_CLIENT_AUDIENCE, INVALID_ID } from '@common/common-constants';
 import * as Express from 'express-session';
 import { AuthenticationClient, AuthenticationClientOptions } from 'auth0';
 import { SERVER_CONFIG } from '../server-config';
@@ -13,7 +13,6 @@ import { nanoid } from 'nanoid';
 
 import { JwtRsaVerifier } from 'aws-jwt-verify';
 import { JwtRsaVerifierProperties } from 'aws-jwt-verify/jwt-rsa';
-import { AUTH0_WEB_CLIENT_AUDIENCE } from '@app/app-constants';
 import { truthy } from 'assertic';
 
 const USER_SESSION_KEY = 'user';

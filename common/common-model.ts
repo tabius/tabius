@@ -5,3 +5,10 @@ export interface WithId {
 export interface Versioned {
   readonly version: number;
 }
+
+export interface PageMetadata {
+  title: string;
+  description: string;
+  keywords: string[];
+  image?: string;
+}

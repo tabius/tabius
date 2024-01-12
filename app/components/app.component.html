@@ -1,30 +1,30 @@
-<ng-container *ngIf="!(printMode$|async)">
-    <header>
-        <gt-navbar></gt-navbar>
-    </header>
+@if ((printMode$|async) === null) {
+  Loading...
+} @else if ((printMode$|async) === true) {
+  <router-outlet></router-outlet>
+} @else {
+  <header>
+    <gt-navbar></gt-navbar>
+  </header>
 
-    <div class="mobile push"></div>
-    <div class="desktop push"></div>
+  <div class="mobile push"></div>
+  <div class="desktop push"></div>
 
-    <main>
-        <router-outlet></router-outlet>
-    </main>
-
-    <footer>
-        <gt-footer></gt-footer>
-    </footer>
-
-</ng-container>
-
-<ng-container *ngIf="printMode$|async">
+  <main>
     <router-outlet></router-outlet>
-</ng-container>
+  </main>
+
+  <footer>
+    <gt-footer></gt-footer>
+  </footer>
+}
 
 <ng-template #keyboardShortcuts let-data let-popover="popover">
-    <gt-keyboard-shortcuts-popup [page]="data" [popover]="popover"></gt-keyboard-shortcuts-popup>
+  <gt-keyboard-shortcuts-popup [page]="data" [popover]="popover"></gt-keyboard-shortcuts-popup>
 </ng-template>
 
 <ng-template #navigationHistory let-popover="popover">
-    <gt-catalog-navigation-history-popup [popover]="popover"></gt-catalog-navigation-history-popup>
+  <gt-catalog-navigation-history-popup [popover]="popover"></gt-catalog-navigation-history-popup>
 </ng-template>
+
 

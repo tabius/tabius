@@ -11,5 +11,3 @@ export const TABIUS_CATALOG_BROWSER_STORE_TOKEN = 'catalog';
 export const APP_BROWSER_STORE_TOKEN = 'tabius';
 
 export const TELEGRAM_CHANNEL_URL = environment.telegramUrl;
-
-export const AUTH0_WEB_CLIENT_AUDIENCE = 'tabius-web-api';

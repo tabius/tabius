@@ -18,3 +18,5 @@ export const USER_COLLECTION_MOUNT_SEPARATOR = '--';
 export const USER_FAV_COLLECTION_SUFFIX = 'favorite';
 
 export const MIN_LEN_FOR_FULL_TEXT_SEARCH = 4;
+
+export const AUTH0_WEB_CLIENT_AUDIENCE = 'tabius-web-api';
