@@ -1,33 +1,19 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
 import { Collection, CollectionDetails } from '@common/catalog-model';
 import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
-import {
-  CreateListedCollectionRequestValidator,
-  CreateUserCollectionRequestValidator,
-  isCollectionMount,
-  paramToArrayOfNumericIds,
-  paramToId,
-} from '../util/validators';
-import {
-  CreateListedCollectionRequest,
-  CreateListedCollectionResponse,
-  CreateUserCollectionRequest,
-  CreateUserCollectionResponse,
-  DeleteUserCollectionResponse,
-  GetUserCollectionsResponse,
-  UpdateCollectionRequest,
-  UpdateCollectionResponse,
-} from '@common/ajax-model';
+import { createListedCollectionRequestAssertion, createUserCollectionRequestAssertion, isCollectionMount, paramToArrayOfNumericIds, paramToId } from '../util/validators';
+import { CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse } from '@common/ajax-model';
 import { User } from '@common/user-model';
 import { ServerAuthService } from '../service/server-auth.service';
-import { conformsTo, validate } from '../util/validation';
 import { canManageCollectionContent, isModerator, isValidUserId } from '@common/util/misc-utils';
 import { SongDbi } from '../db/song-dbi.service';
 import { AsyncFreshValue } from 'frescas';
+import { validateObject } from 'assertic';
 
 @Controller('/api/collection')
 export class CollectionController {
-  constructor(private readonly collectionDbi: CollectionDbi, private readonly songDbi: SongDbi) {}
+  constructor(private readonly collectionDbi: CollectionDbi, private readonly songDbi: SongDbi) {
+  }
 
   private allListedCollections = new AsyncFreshValue<Array<Collection>>({
     refreshPeriodMillis: 30 * 1000,
@@ -64,9 +50,8 @@ export class CollectionController {
   @Get('/by-mount/:mount')
   async getByMount(@Param('mount') mountParam: string): Promise<Collection> {
     console.log('CollectionController.getByMount', mountParam);
-    const vr = isCollectionMount()(mountParam);
-    if (!vr.success) {
-      throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
+    if (!isCollectionMount(mountParam)) {
+      throw new HttpException(`Bad collection mount: ${mountParam}`, HttpStatus.BAD_REQUEST);
     }
     const collection = await this.collectionDbi.getByMount(mountParam);
     if (!collection) {
@@ -104,9 +89,9 @@ export class CollectionController {
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr1 = validate(request, conformsTo(CreateListedCollectionRequestValidator));
-    if (!vr1.success) {
-      throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
+    const error = validateObject(request, createListedCollectionRequestAssertion);
+    if (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
 
     const existingCollection = await this.collectionDbi.getByMount(request.mount);
@@ -131,9 +116,9 @@ export class CollectionController {
   ): Promise<CreateUserCollectionResponse> {
     console.log('CollectionController.createUserCollection', request);
     const user = ServerAuthService.getUserOrFail(session);
-    const vr = validate(request, conformsTo(CreateUserCollectionRequestValidator));
-    if (!vr.success) {
-      throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
+    const error = validateObject(request, createUserCollectionRequestAssertion);
+    if (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
     const userCollections = await this.collectionDbi.getAllUserCollections(user.id);
     if (userCollections.find(c => c.name === request.name)) {

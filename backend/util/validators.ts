@@ -1,41 +1,11 @@
 import { isValidId } from '@common/util/misc-utils';
 import { UserSongSettings } from '@common/user-model';
-import {
-  eachItem,
-  equals,
-  error,
-  isArray,
-  isBoolean,
-  isNumber,
-  isString,
-  maxLength,
-  min,
-  minLength,
-  optional,
-  success,
-  SuccessResult,
-  ValidationResult,
-  Validator,
-} from '../util/validation';
 import { CreateListedCollectionRequest, CreateUserCollectionRequest, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
-import {
-  CollectionType,
-  MAX_COLLECTION_MOUNT_LENGTH,
-  MAX_COLLECTION_NAME_LENGTH,
-  MAX_SONG_CONTENT_LENGTH,
-  MAX_SONG_MOUNT_LENGTH,
-  MAX_SONG_TITLE_LENGTH,
-  MIN_COLLECTION_MOUNT_LENGTH,
-  MIN_COLLECTION_NAME_LENGTH,
-  MIN_SONG_CONTENT_LENGTH,
-  MIN_SONG_MOUNT_LENGTH,
-  MIN_SONG_TITLE_LENGTH,
-  Song,
-  SongDetails,
-} from '@common/catalog-model';
+import { CollectionType, MAX_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_NAME_LENGTH, MAX_SONG_CONTENT_LENGTH, MAX_SONG_MOUNT_LENGTH, MAX_SONG_TITLE_LENGTH, MIN_COLLECTION_MOUNT_LENGTH, MIN_COLLECTION_NAME_LENGTH, MIN_SONG_CONTENT_LENGTH, MIN_SONG_MOUNT_LENGTH, MIN_SONG_TITLE_LENGTH, Song, SongDetails } from '@common/catalog-model';
 import { INVALID_ID } from '@common/common-constants';
 import { getTranslitLowerCase } from '@common/util/seo-translit';
-import { CHORD_TONES } from '@common/util/chords-lib';
+import { CHORD_TONES, ChordTone } from '@common/util/chords-lib';
+import { $u, arrayAssertion, assertBoolean, assertString, isNumber, ObjectAssertion, undefinedOr } from 'assertic';
 
 export function paramToId(value: string): number {
   const id = +value;
@@ -58,69 +28,90 @@ export function paramToArrayOfNumericIds(value: string): number[] {
   return result;
 }
 
-const end = <T>(v): SuccessResult<T> => success<T>(v);
-type Next<T> = (arg: T) => ValidationResult<T>;
-
-export const isVersion = (): Next<number> => min(0);
-export const isNumericId = (): Next<number> => min(1);
-export const checkStringLength = (minLen: number, maxLen: number, next: Next<string> = end): Next<string> =>
-  isString(minLength(minLen, maxLength(maxLen, next)));
-export const isSongMount = (): Next<string> =>
-  checkStringLength(MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
-export const isNewSongMount = (): Next<string> => checkStringLength(0, MAX_SONG_MOUNT_LENGTH, isTranslitLowerCase());
-export const isCollectionMount = (): Next<string> => checkStringLength(MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
-export const isCollectionType = (): Next<CollectionType> =>
-  equals(CollectionType.Band, CollectionType.Person, CollectionType.Compilation);
-export const checkChordTone = () => equals(...CHORD_TONES);
-
-export function isTranslitLowerCase(next: Next<string> = end): (arg: string) => ValidationResult<string> {
-  return (arg: string): ValidationResult<string> => (arg == getTranslitLowerCase(arg) ? next(arg) : error('', ''));
+export function isVersion(value: unknown): value is number {
+  return typeof value === 'number' && value >= 0;
 }
 
-export const UserSongSettingsValidator: Validator<UserSongSettings> = {
-  songId: isNumericId(),
-  transpose: isNumber(),
+export function isNumericId(value: unknown): value is number {
+  return typeof value === 'number' && value >= 1;
+}
+
+export function checkStringLength(value: unknown, minLen: number, maxLen: number): boolean {
+  return typeof value === 'string' && value.length >= minLen && value.length <= maxLen;
+}
+
+export function isSongMount(value: unknown): boolean {
+  return checkStringLength(value, MIN_SONG_MOUNT_LENGTH, MAX_SONG_MOUNT_LENGTH) && isTranslitLowerCase(value);
+}
+
+export function isNewSongMount(value: unknown): value is string {
+  return checkStringLength(value, 0, MAX_SONG_MOUNT_LENGTH) && isTranslitLowerCase(value);
+}
+
+export function isCollectionMount(value: unknown): boolean {
+  return checkStringLength(value, MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
+}
+
+export function isCollectionType(value: unknown): value is CollectionType {
+  return value === CollectionType.Band || value === CollectionType.Person || value === CollectionType.Compilation;
+}
+
+export function checkChordTone(value: unknown): value is ChordTone {
+  return CHORD_TONES.includes(value as ChordTone);
+}
+
+export function isTranslitLowerCase(value: unknown): boolean {
+  return typeof value === 'string' && value === getTranslitLowerCase(value);
+}
+
+export const UserSongSettingsValidator: ObjectAssertion<UserSongSettings> = {
+  songId: $u(isSongId),
+  transpose: $u(isNumber),
 };
 
-export const SongValidator: Validator<Song> = {
-  id: isNumericId(),
-  version: isVersion(),
-  title: checkStringLength(MIN_SONG_TITLE_LENGTH, MAX_SONG_TITLE_LENGTH),
-  mount: isSongMount(),
-  collectionId: isNumericId(),
+export const songAssertion: ObjectAssertion<Song> = {
+  id: $u(isNumericId),
+  version: $u(isVersion),
+  title: $u(v => checkStringLength(v, MIN_SONG_TITLE_LENGTH, MAX_SONG_TITLE_LENGTH)),
+  mount: $u(isSongMount),
+  collectionId: $u(isNumericId),
 };
 
-export const NewSongValidator: Validator<Song> = {
-  ...SongValidator,
-  id: equals(INVALID_ID),
-  version: equals(0),
-  mount: isNewSongMount(),
+export const newSongAssertion: ObjectAssertion<Song> = {
+  ...songAssertion,
+  id: $u(v => v === INVALID_ID),
+  version: $u(v => v === 0),
+  mount: $u(isNewSongMount),
 };
 
-export const SongDetailsValidator: Validator<SongDetails> = {
-  id: isNumericId(),
-  version: isVersion(),
-  content: checkStringLength(MIN_SONG_CONTENT_LENGTH, MAX_SONG_CONTENT_LENGTH),
-  mediaLinks: isArray(eachItem(isString())),
-  scene: optional<boolean>(isBoolean()),
+export const songDetailsAssertion: ObjectAssertion<SongDetails> = {
+  id: $u(isNumericId),
+  version: $u(isVersion),
+  content: $u(v => checkStringLength(v, MIN_SONG_CONTENT_LENGTH, MAX_SONG_CONTENT_LENGTH)),
+  mediaLinks: arrayAssertion(assertString),
+  scene: undefinedOr(assertBoolean),
 };
 
-export const NewSongDetailsValidator: Validator<SongDetails> = {
-  ...SongDetailsValidator,
-  id: equals(INVALID_ID),
-  version: equals(0),
+export const newSongDetailsAssertion: ObjectAssertion<SongDetails> = {
+  ...songDetailsAssertion,
+  id: $u(v => v === INVALID_ID),
+  version: $u(v => v === 0),
 };
 
-export const CreateListedCollectionRequestValidator: Validator<CreateListedCollectionRequest> = {
-  mount: isCollectionMount(),
-  name: checkStringLength(MIN_COLLECTION_NAME_LENGTH, MAX_COLLECTION_NAME_LENGTH),
-  type: isCollectionType(),
+export const createListedCollectionRequestAssertion: ObjectAssertion<CreateListedCollectionRequest> = {
+  mount: $u(isCollectionMount),
+  name: $u(v => checkStringLength(v, MIN_COLLECTION_NAME_LENGTH, MAX_COLLECTION_NAME_LENGTH)),
+  type: $u(isCollectionType),
 };
 
-export const CreateUserCollectionRequestValidator: Validator<CreateUserCollectionRequest> = {
-  name: checkStringLength(MIN_COLLECTION_NAME_LENGTH, MAX_COLLECTION_NAME_LENGTH),
+export const createUserCollectionRequestAssertion: ObjectAssertion<CreateUserCollectionRequest> = {
+  name: $u(v => checkStringLength(v, MIN_COLLECTION_NAME_LENGTH, MAX_COLLECTION_NAME_LENGTH)),
 };
 
-export const UpdateFavoriteSongKeyValidator: Validator<UpdateFavoriteSongKeyRequest> = {
-  key: checkChordTone(),
+export const updateFavoriteSongKeyRequestAssertion: ObjectAssertion<UpdateFavoriteSongKeyRequest> = {
+  key: $u(checkChordTone),
 };
+
+export function isSongId(value: unknown): value is number {
+  return typeof value === 'number' && value > 0;
+}

@@ -1,36 +1,14 @@
 import { SongDbi } from '../db/song-dbi.service';
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
 import { Song, SongDetails } from '@common/catalog-model';
-import {
-  isNumericId,
-  NewSongDetailsValidator,
-  NewSongValidator,
-  paramToArrayOfNumericIds,
-  paramToId,
-  SongDetailsValidator,
-  SongValidator,
-} from '../util/validators';
+import { isSongId, newSongAssertion, newSongDetailsAssertion, paramToArrayOfNumericIds, paramToId, songAssertion, songDetailsAssertion } from '../util/validators';
 import { User } from '@common/user-model';
-import { conformsTo, isBoolean, validate } from '../util/validation';
 import { ServerAuthService } from '../service/server-auth.service';
-import {
-  AddSongToSecondaryCollectionRequest,
-  AddSongToSecondaryCollectionResponse,
-  DeleteSongResponse,
-  FullTextSongSearchRequest,
-  FullTextSongSearchResponse,
-  MoveSongToAnotherCollectionRequest,
-  MoveSongToAnotherCollectionResponse,
-  RemoveSongFromSecondaryCollectionRequest,
-  RemoveSongFromSecondaryCollectionResponse,
-  UpdateSongRequest,
-  UpdateSongResponse,
-  UpdateSongSceneFlagRequest,
-} from '@common/ajax-model';
+import { AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest } from '@common/ajax-model';
 import { canManageCollectionContent, isModerator, isValidId } from '@common/util/misc-utils';
 import { FullTextSearchDbi } from '../db/full-text-search-dbi.service';
 import { CollectionDbi } from '../db/collection-dbi.service';
-import { assertTruthy } from 'assertic';
+import { assertTruthy, isBoolean, validateObject } from 'assertic';
 
 @Controller('/api/song')
 export class SongController {
@@ -38,7 +16,8 @@ export class SongController {
     private readonly songDbi: SongDbi,
     private readonly collectionDbi: CollectionDbi,
     private readonly fullTextSearchDbi: FullTextSearchDbi,
-  ) {}
+  ) {
+  }
 
   /** Returns found songs  by ids. The order of results is not specified. */
   @Get('/by-ids/:ids')
@@ -86,13 +65,13 @@ export class SongController {
     if (!canManageCollectionContent(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr1 = validate(request.song, conformsTo(NewSongValidator));
-    if (!vr1.success) {
-      throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
+    const error1 = validateObject(request.song, newSongAssertion);
+    if (error1) {
+      throw new HttpException(error1, HttpStatus.BAD_REQUEST);
     }
-    const vr2 = validate(request.details, conformsTo(NewSongDetailsValidator));
-    if (!vr2.success) {
-      throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
+    const error2 = validateObject(request.details, newSongDetailsAssertion);
+    if (error2) {
+      throw new HttpException(error2, HttpStatus.BAD_REQUEST);
     }
     const songId = await this.songDbi.create(request.song, request.details);
     if (!isValidId(songId)) {
@@ -113,13 +92,13 @@ export class SongController {
     if (!canManageCollectionContent(user, collection)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const vr1 = validate(request.song, conformsTo(SongValidator));
-    if (!vr1.success) {
-      throw new HttpException(vr1.toString(), HttpStatus.BAD_REQUEST);
+    const error1 = validateObject(request.song, songAssertion);
+    if (error1) {
+      throw new HttpException(error1, HttpStatus.BAD_REQUEST);
     }
-    const vr2 = validate(request.details, conformsTo(SongDetailsValidator));
-    if (!vr2.success) {
-      throw new HttpException(vr2.toString(), HttpStatus.BAD_REQUEST);
+    const error2 = validateObject(request.details, songDetailsAssertion);
+    if (error2) {
+      throw new HttpException(error2, HttpStatus.BAD_REQUEST);
     }
     await this.songDbi.update(request.song, request.details);
     return this.getSongUpdateResponse(request.song.id, request.song.collectionId);
@@ -133,19 +112,17 @@ export class SongController {
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
-    const songIdVr = validate(request.songId, isNumericId());
-    if (!songIdVr.success) {
-      throw new HttpException(songIdVr.toString(), HttpStatus.BAD_REQUEST);
+    if (!isSongId(request.songId)) {
+      throw new HttpException(`Not a valid song id: ${request.songId}`, HttpStatus.BAD_REQUEST);
     }
-    const flagVr = validate(request.flag, isBoolean());
-    if (!flagVr.success) {
-      throw new HttpException(flagVr.toString(), HttpStatus.BAD_REQUEST);
+    if (!isBoolean(request.flag)) {
+      throw new HttpException(`Not a valid flag: ${request.flag}`, HttpStatus.BAD_REQUEST);
     }
     await this.songDbi.updateSceneFlag(request.songId, request.flag);
     return this.getSongUpdateResponse(request.songId, undefined);
   }
 
-  private async getSongUpdateResponse(songId: number, collectionId: number | undefined): Promise<UpdateSongResponse> {
+  private async getSongUpdateResponse(songId: number, collectionId: number|undefined): Promise<UpdateSongResponse> {
     const [songFromDb, detailsFromDb, songs] = await Promise.all([
       this.songDbi.getSongs([songId]),
       this.songDbi.getSongsDetails([songId]),
@@ -302,7 +279,7 @@ export class SongController {
 
   /** Returns random song from public collection. */
   @Get(['/random-song-id', '/random-song-id/:collectionId'])
-  async getRandomSong(@Param('collectionId') collectionIdParam: string): Promise<number | undefined> {
+  async getRandomSong(@Param('collectionId') collectionIdParam: string): Promise<number|undefined> {
     console.log('SongController.getRandomSong', collectionIdParam);
     if (collectionIdParam) {
       const collectionId = paramToId(collectionIdParam);

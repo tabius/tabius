@@ -1,4 +1,4 @@
-export const CHORD_TONES = <const>['A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab'];
+export const CHORD_TONES = ['A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab'] as const;
 
 export type ChordTone = (typeof CHORD_TONES)[number];
 

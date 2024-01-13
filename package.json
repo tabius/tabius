@@ -54,7 +54,7 @@
     "@nestjs/platform-express": "10.3.0",
     "@sentry/angular-ivy": "7.92.0",
     "@sentry/tracing": "7.92.0",
-    "assertic": "1.0.4",
+    "assertic": "^1.1.1",
     "async-mutex": "0.4.0",
     "auth0": "4.2.0",
     "aws-jwt-verify": "^4.0.0",
@@ -74,7 +74,6 @@
     "rxjs": "7.8.1",
     "schema-dts": "1.1.2",
     "tslib": "2.6.2",
-    "validator": "13.11.0",
     "zone.js": "0.14.2"
   },
   "devDependencies": {

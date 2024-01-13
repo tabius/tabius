@@ -2,10 +2,10 @@ import { Body, Controller, Get, HttpException, HttpStatus, Put, Session } from '
 import { UserDbi } from '../db/user-dbi.service';
 import { newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings } from '@common/user-model';
 import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
-import { conformsTo, validate } from '../util/validation';
-import { UpdateFavoriteSongKeyValidator, UserSongSettingsValidator } from '../util/validators';
+import { updateFavoriteSongKeyRequestAssertion, UserSongSettingsValidator } from '../util/validators';
 import { ServerAuthService } from '../service/server-auth.service';
 import { isEqualByStringify } from '@common/util/equality-functions';
+import { validateObject } from 'assertic';
 
 @Controller('/api/user')
 export class UserController {
@@ -39,9 +39,9 @@ export class UserController {
 
   @Put('/settings/song')
   async setSongSettings(@Session() session, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
-    const vr = validate(songSettings, conformsTo(UserSongSettingsValidator));
-    if (!vr.success) {
-      throw new HttpException(vr.toString(), HttpStatus.BAD_REQUEST);
+    const error = validateObject(songSettings, UserSongSettingsValidator);
+    if (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
     const user: User = ServerAuthService.getUserOrFail(session);
     console.log('UserController.setSongSettings', user.email, songSettings);
@@ -70,7 +70,10 @@ export class UserController {
 
   @Put('/settings/favKey')
   async setFavKey(@Session() session, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
-    validate(request, conformsTo(UpdateFavoriteSongKeyValidator));
+    const error = validateObject(request, updateFavoriteSongKeyRequestAssertion);
+    if (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
     const user: User = ServerAuthService.getUserOrFail(session);
     console.log('UserController.setFavKey', user.email, request);
     const settings = await this.getUserSettings(user);
