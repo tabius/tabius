@@ -8,7 +8,15 @@ import { ServerAuthService } from './service/server-auth.service';
 
 @Module({
   imports: [ServerDbModule],
-  providers: [Logger, { provide: APP_INTERCEPTOR, useClass: ServerAuthService }],
-  controllers: [UserController, SongController, CollectionController],
+  providers: [
+    Logger,
+    { provide: APP_INTERCEPTOR, useClass: ServerAuthService },
+  ],
+  controllers: [
+    CollectionController,
+    SongController,
+    UserController,
+  ],
 })
-export class ServerMainModule {}
+export class BackendModule {
+}

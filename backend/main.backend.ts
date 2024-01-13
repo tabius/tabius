@@ -1,7 +1,7 @@
 import 'core-js';
 import { installLogFunctions } from './util/log';
 import { NestFactory } from '@nestjs/core';
-import { ServerMainModule } from './server-main.module';
+import { BackendModule } from './backend.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import session from 'express-session';
 import { SERVER_CONFIG } from './server-config';
@@ -13,7 +13,7 @@ async function bootstrap(): Promise<void> {
   const nestAppOptions: NestApplicationOptions = {
     logger: false,
   };
-  const nestApp = await NestFactory.create(ServerMainModule, nestAppOptions);
+  const nestApp = await NestFactory.create(BackendModule, nestAppOptions);
   nestApp.enableCors(buildCorsOptions());
   nestApp.use(
     session({

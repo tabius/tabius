@@ -1,8 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService, User } from '@auth0/auth0-angular';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { User } from 'auth0';
 import { environment } from '@app/environments/environment';
 import { Router } from '@angular/router';
 import { AuthorizationParams } from '@auth0/auth0-spa-js';

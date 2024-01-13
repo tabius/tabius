@@ -12,7 +12,7 @@ export interface User {
   /** User email. */
   email: string;
   /** Full avatar URL. */
-  picture: string;
+  picture?: string;
   /** List of user roles. */
   roles: Array<UserRole>;
   /** Default collection associated with the user. */
