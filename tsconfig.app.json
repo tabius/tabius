@@ -6,6 +6,6 @@
   ],
   "angularCompilerOptions": {
     "strictInputAccessModifiers": true,
-//    "strictTemplates": true
+    "strictTemplates": true
   }
 }
