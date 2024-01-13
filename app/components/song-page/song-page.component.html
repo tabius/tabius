@@ -35,7 +35,7 @@
             </gt-moderator-prompt>
             <gt-song-editor *ngIf="hasEditRight"
                             (closeRequest)="closeEditor()"
-                            (onMountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
+                            (mountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
                             [songId]="song.id"
                             [activeCollectionId]="activeCollection?.id || song.collectionId"
             ></gt-song-editor>

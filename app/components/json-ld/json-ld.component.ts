@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnChanges } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
@@ -6,12 +6,13 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JsonLdComponent {
+export class JsonLdComponent implements OnChanges {
   @Input() json: object = {};
 
   @HostBinding('innerHTML') jsonLd!: SafeHtml;
 
-  constructor(private readonly sanitizer: DomSanitizer) {}
+  constructor(private readonly sanitizer: DomSanitizer) {
+  }
 
   ngOnChanges(): void {
     const jsonString = JSON.stringify(this.json, null, 2).replace(/<\/script>/g, '<\\/script>');

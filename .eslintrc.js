@@ -7,9 +7,9 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   extends: [
     // 'eslint:recommended',
-    // 'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
     // 'plugin:@typescript-eslint/recommended',
-    // 'plugin:@angular-eslint/recommended',
+    'plugin:@angular-eslint/recommended',
   ],
   rules: {
     // '@typescript-eslint/explicit-function-return-type': ['error'],

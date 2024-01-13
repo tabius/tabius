@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 export interface HeadElementData {
@@ -16,12 +16,13 @@ export interface HeadElementData {
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeadContributorComponent implements OnChanges {
+export class HeadContributorComponent implements OnChanges, OnDestroy {
   @Input() data?: HeadElementData;
 
   private element?: Element;
 
-  constructor(@Inject(DOCUMENT) private readonly document: Document) {}
+  constructor(@Inject(DOCUMENT) private readonly document: Document) {
+  }
 
   ngOnChanges(): void {
     this.removeElement();

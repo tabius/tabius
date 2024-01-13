@@ -68,6 +68,7 @@ import { MoveSongToCollectionComponent } from './components/move-song-to-collect
 import { NgOptimizedImage } from '@angular/common';
 import { TabiusAuthHttpInterceptor } from '@app/interceptors/auth.interceptor';
 import { AUTH0_WEB_CLIENT_AUDIENCE } from '@common/common-constants';
+import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 
 const interceptors: Array<Provider> = [
   { provide: HTTP_INTERCEPTORS, useClass: CachingAndMultiplexingInterceptor, multi: true },
@@ -84,6 +85,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
 
 @NgModule({
   declarations: [
+    AbstractAppComponent,
     AddSongToCollectionComponent,
     AppComponent,
     CanonicalLinkHeadContributorComponent,

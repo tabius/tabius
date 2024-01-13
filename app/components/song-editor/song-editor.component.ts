@@ -47,7 +47,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   @Output() closeRequest = new EventEmitter<SongEditResult>();
 
   /** Emitted when song mount is changed right before the song is updated in DB and the editor is closed. */
-  @Output() onMountChangeBeforeUpdate = new EventEmitter<string>();
+  @Output() mountChangeBeforeUpdate = new EventEmitter<string>();
 
   readonly i18n = I18N.songEditorComponent;
 
@@ -195,7 +195,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
       return false;
     }
     if (this.mount !== this.song.mount) {
-      this.onMountChangeBeforeUpdate.emit(this.mount);
+      this.mountChangeBeforeUpdate.emit(this.mount);
     }
     const updatedSong: Song = { ...this.song, title: this.songTitle, mount: this.mount };
     const updatedDetails: SongDetails = {
