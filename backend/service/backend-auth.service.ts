@@ -6,9 +6,7 @@ import { isValidId } from '@common/util/misc-utils';
 import { UserDbi } from '../db/user-dbi.service';
 import { AUTH0_WEB_CLIENT_AUDIENCE, INVALID_ID } from '@common/common-constants';
 import * as Express from 'express-session';
-import { UserInfoClient } from 'auth0';
 import { SERVER_CONFIG } from '../server-config';
-import { Mutex } from 'async-mutex';
 import { nanoid } from 'nanoid';
 
 import { JwtRsaVerifier } from 'aws-jwt-verify';
@@ -17,17 +15,6 @@ import { truthy } from 'assertic';
 
 const USER_SESSION_KEY = 'user';
 
-const auth0UserInfoClient = new UserInfoClient({
-  domain: SERVER_CONFIG.auth.domain,
-});
-
-interface Auth0UserProfile {
-  sub: string;
-  email: string;
-  picture?: string;
-  nickname: string;
-}
-
 interface Auth0JwtPayload {
   sub: string;
   exp: number;
@@ -35,12 +22,14 @@ interface Auth0JwtPayload {
   aud: string[];
   azp: string;
   scope: string;
+  // Custom fields added to AT by tabius actions in Auth0 login flow.
+  email: string;
 }
 
 type Auth0JwtVerifier = JwtRsaVerifier<object, JwtRsaVerifierProperties<object>, boolean>;
 
 @Injectable()
-export class ServerAuthService implements NestInterceptor {
+export class BackendAuthService implements NestInterceptor {
   private readonly jwtVerifier: Auth0JwtVerifier;
 
   constructor(private readonly userDbi: UserDbi, private readonly collectionDbi: CollectionDbi) {
@@ -56,13 +45,15 @@ export class ServerAuthService implements NestInterceptor {
     const req = context.switchToHttp().getRequest();
     // TODO: validate input data.
 
-    let userIdFromAccessToken: string|undefined = undefined;
+    let userIdFromAccessToken: string | undefined = undefined;
+    let userEmailFromAccessToken: string | undefined = undefined;
 
     let accessToken = req.headers['authorization']?.split(' ')[1];
     if (accessToken) {
       try {
         const jwtPayload = (await this.jwtVerifier.verify(accessToken)) as unknown as Auth0JwtPayload;
         userIdFromAccessToken = truthy(jwtPayload.sub, () => `Auth0JwtPayload has no sub: ${JSON.stringify(jwtPayload)}`);
+        userEmailFromAccessToken = truthy(jwtPayload.email, () => `Auth0JwtPayload has no email: ${JSON.stringify(jwtPayload)}`);
         console.log(`Found user id in access token: ${userIdFromAccessToken}`);
       } catch (e) {
         console.log('Got bad access token. Access token is set to undefined!', accessToken, e);
@@ -73,26 +64,21 @@ export class ServerAuthService implements NestInterceptor {
     console.log(`ServerAuthService[${req.path}] user: ${userIdFromAccessToken}, has token: ${!!accessToken}`);
 
     // Check if the current session is still valid for the user saved in the session.
-    let user: User|undefined = req.session[USER_SESSION_KEY];
+    let user: User | undefined = req.session[USER_SESSION_KEY];
     if (user?.id !== userIdFromAccessToken) {
-      console.log('Access token in session does not match access token in request. Resetting.');
+      console.log('User id from session does not match user id from request access token. Resetting.');
       req.session[USER_SESSION_KEY] = undefined;
       user = undefined;
     }
 
-    if (!user && userIdFromAccessToken) {
-      const auth0Profile: Auth0UserProfile|undefined = await this.getAuth0UserProfileWithMutex(userIdFromAccessToken, accessToken);
-      if (auth0Profile) {
-        user = {
-          id: auth0Profile.sub,
-          email: auth0Profile.email,
-          picture: auth0Profile.picture,
-          nickname: auth0Profile.nickname,
-          collectionId: INVALID_ID,
-          roles: [],
-          mount: '',
-        };
-      }
+    if (!user && userIdFromAccessToken && userEmailFromAccessToken) {
+      user = {
+        id: userIdFromAccessToken,
+        email: userEmailFromAccessToken,
+        collectionId: INVALID_ID,
+        roles: [],
+        mount: '',
+      };
     } else if (user) {
       console.debug(`ServerAuthService.intercept: Found user in session: ${user.email}`);
     }
@@ -125,14 +111,14 @@ export class ServerAuthService implements NestInterceptor {
     return user;
   }
 
-  static getUserOrUndefined(session: Express.Session): User|undefined {
+  static getUserOrUndefined(session: Express.Session): User | undefined {
     return session[USER_SESSION_KEY];
   }
 
   /** This mapping is immutable, so it is safe to cache */
   private readonly userIdToCollectionIdCache = new Map<string, number>();
 
-  private async getUserCollectionId(userId: string): Promise<number|undefined> {
+  private async getUserCollectionId(userId: string): Promise<number | undefined> {
     let collectionId = this.userIdToCollectionIdCache.get(userId);
     if (isValidId(collectionId)) {
       return collectionId;
@@ -143,42 +129,4 @@ export class ServerAuthService implements NestInterceptor {
     }
     return collectionId;
   }
-
-  private async getAuth0UserProfileWithMutex(userId: string, accessToken: string): Promise<Auth0UserProfile|undefined> {
-    const lp = 'getAuth0UserProfileWithMutex: ';
-    const cachedAuth0Profile1 = auth0ProfileByUserId.get(userId);
-    console.debug(`${lp} Using cached info: ${!!cachedAuth0Profile1}`);
-    if (cachedAuth0Profile1 || cachedAuth0Profile1 === null) {
-      return cachedAuth0Profile1 || undefined;
-    }
-    const mutex = auth0MutexByUserId.get(userId) || new Mutex();
-    auth0MutexByUserId.set(userId, mutex);
-    return mutex.runExclusive(async () => {
-      // Run DCL first.
-      const cachedAuth0Profile2 = auth0ProfileByUserId.get(userId);
-      if (cachedAuth0Profile2 !== undefined) {
-        console.debug(`${lp} Found auth0 user profile info in cache after double checking`);
-        return cachedAuth0Profile2 || undefined;
-      }
-      try {
-        console.log(`${lp} Fetching user profile from auth0 server`);
-        const { data } = await auth0UserInfoClient.getUserInfo(accessToken);
-        console.log('Got response', data);
-        auth0ProfileByUserId.set(userId, data);
-        return data;
-      } catch (error) {
-        console.error('Error fetching user profile data from Auth0', undefined);
-      }
-    });
-  }
 }
-
-/**
- * Short living cache to handle multiple API-requests that require auth during web application startup in browser.
- * Once cached, the user information must be available from the request.session.
- */
-const auth0ProfileByUserId = new Map<string, Auth0UserProfile|null>();
-setInterval(() => auth0ProfileByUserId.clear(), 15_000);
-
-/** Used to avoid running parallel requests to auth0 by the same access token. */
-const auth0MutexByUserId = new Map<string, Mutex>();

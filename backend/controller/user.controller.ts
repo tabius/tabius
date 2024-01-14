@@ -3,7 +3,7 @@ import { UserDbi } from '../db/user-dbi.service';
 import { newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings } from '@common/user-model';
 import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
 import { updateFavoriteSongKeyRequestAssertion, UserSongSettingsValidator } from '../util/validators';
-import { ServerAuthService } from '../service/server-auth.service';
+import { BackendAuthService } from '../service/backend-auth.service';
 import { isEqualByStringify } from '@common/util/equality-functions';
 import { validateObject } from 'assertic';
 
@@ -14,7 +14,7 @@ export class UserController {
   /** Login callback. Called on successful user login. */
   @Get('/login')
   async login(@Session() session): Promise<LoginResponse> {
-    const user = ServerAuthService.getUserOrUndefined(session);
+    const user = BackendAuthService.getUserOrUndefined(session);
     if (!user) {
       return {
         user: undefined,
@@ -32,7 +32,7 @@ export class UserController {
 
   @Get('/settings')
   async getSettings(@Session() session): Promise<UserSettings> {
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     console.log('UserController.getSettings', user.email);
     return await this.getUserSettings(user);
   }
@@ -43,7 +43,7 @@ export class UserController {
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     console.log('UserController.setSongSettings', user.email, songSettings);
     const settings = await this.getUserSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
@@ -60,7 +60,7 @@ export class UserController {
 
   @Put('/settings/h4Si')
   async setH4Si(@Session() session, @Body() { h4SiFlag }: { h4SiFlag: boolean | undefined }): Promise<UserSettings> {
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     console.log('UserController.setH4Si', user.email, h4SiFlag);
     const settings = await this.getUserSettings(user);
     const updatedSettings = { ...settings, h4Si: !!h4SiFlag };
@@ -74,7 +74,7 @@ export class UserController {
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     console.log('UserController.setFavKey', user.email, request);
     const settings = await this.getUserSettings(user);
     const updatedSettings = { ...settings, favKey: request.key };

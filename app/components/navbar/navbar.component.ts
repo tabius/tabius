@@ -106,10 +106,7 @@ export class NavbarComponent {
 
   getUserIconText(): string {
     const { user } = this;
-    if (!user) {
-      return '-';
-    }
-    return user.nickname && user.nickname.length > 0 ? user.nickname.charAt(0).toUpperCase() : '+';
+    return user ? user.email.charAt(0).toUpperCase() : '-';
   }
 
   showUserInfo(): void {

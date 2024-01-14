@@ -7,12 +7,8 @@ export type UserRole = 'moderator';
 export interface User {
   /** Unique user identifier provided by Auth0. 'sub' field in Auth0 profile. */
   id: string;
-  /** User nickname. Provided by auth0. */
-  nickname: string;
   /** User email. */
   email: string;
-  /** Full avatar URL. */
-  picture?: string;
   /** List of user roles. */
   roles: Array<UserRole>;
   /** Default collection associated with the user. */

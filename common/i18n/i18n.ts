@@ -36,7 +36,7 @@ export interface I18n {
     settings: string;
     studio: string;
     tuner: string;
-    userIconTitle(username: string): string;
+    userIconTitle(email: string): string;
   };
   page404: {
     message: string;

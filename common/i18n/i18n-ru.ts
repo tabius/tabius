@@ -25,7 +25,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   navbar: {
     accountInfoNotLoggedInToast: 'Вы не вошли в систему',
-    accountInfoToast: (user: User) => `Аккаунт: ${user.nickname}, ${user.email}`,
+    accountInfoToast: (user: User) => `Аккаунт: ${user.email}`,
     catalog: 'КАТАЛОГ',
     historyButton: 'ИСТОРИЯ',
     historyButtonTitle: 'История просмотра каталога',
@@ -36,7 +36,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     settings: 'НАСТРОЙКИ',
     studio: 'СТУДИЯ',
     tuner: 'ТЮНЕР',
-    userIconTitle: (username: string) => `Аккаунт: ${username}`,
+    userIconTitle: (email: string) => `Аккаунт: ${email}`,
   },
   page404: {
     message: 'Страница не найдена!',

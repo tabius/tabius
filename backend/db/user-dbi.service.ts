@@ -11,11 +11,12 @@ export class UserDbi {
     console.log('UserDbi.createUser', user);
 
     const now = new Date();
+    const nickname = ''; // TODO: remove from DB.
     await this.db.pool
       .promise()
       .query(
         'INSERT INTO user(id, email, nickname, collection_id, mount, login_date, settings) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE collection_id = ?',
-        [user.id, user.email, user.nickname, user.collectionId, user.mount, now, '{}', user.collectionId],
+        [user.id, user.email, nickname, user.collectionId, user.mount, now, '{}', user.collectionId],
       );
 
     console.log('UserDbi.createUser: user record successfully created/updated', user.email);

@@ -11,8 +11,7 @@ export class JsonLdComponent implements OnChanges {
 
   @HostBinding('innerHTML') jsonLd!: SafeHtml;
 
-  constructor(private readonly sanitizer: DomSanitizer) {
-  }
+  constructor(private readonly sanitizer: DomSanitizer) {}
 
   ngOnChanges(): void {
     const jsonString = JSON.stringify(this.json, null, 2).replace(/<\/script>/g, '<\\/script>');

@@ -1,10 +1,25 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
 import { Collection, CollectionDetails } from '@common/catalog-model';
 import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
-import { createListedCollectionRequestAssertion, createUserCollectionRequestAssertion, isCollectionMount, paramToArrayOfNumericIds, paramToId } from '../util/validators';
-import { CreateListedCollectionRequest, CreateListedCollectionResponse, CreateUserCollectionRequest, CreateUserCollectionResponse, DeleteUserCollectionResponse, GetUserCollectionsResponse, UpdateCollectionRequest, UpdateCollectionResponse } from '@common/ajax-model';
+import {
+  createListedCollectionRequestAssertion,
+  createUserCollectionRequestAssertion,
+  isCollectionMount,
+  paramToArrayOfNumericIds,
+  paramToId,
+} from '../util/validators';
+import {
+  CreateListedCollectionRequest,
+  CreateListedCollectionResponse,
+  CreateUserCollectionRequest,
+  CreateUserCollectionResponse,
+  DeleteUserCollectionResponse,
+  GetUserCollectionsResponse,
+  UpdateCollectionRequest,
+  UpdateCollectionResponse,
+} from '@common/ajax-model';
 import { User } from '@common/user-model';
-import { ServerAuthService } from '../service/server-auth.service';
+import { BackendAuthService } from '../service/backend-auth.service';
 import { canManageCollectionContent, isModerator, isValidUserId } from '@common/util/misc-utils';
 import { SongDbi } from '../db/song-dbi.service';
 import { AsyncFreshValue } from 'frescas';
@@ -12,8 +27,7 @@ import { validateObject } from 'assertic';
 
 @Controller('/api/collection')
 export class CollectionController {
-  constructor(private readonly collectionDbi: CollectionDbi, private readonly songDbi: SongDbi) {
-  }
+  constructor(private readonly collectionDbi: CollectionDbi, private readonly songDbi: SongDbi) {}
 
   private allListedCollections = new AsyncFreshValue<Array<Collection>>({
     refreshPeriodMillis: 30 * 1000,
@@ -85,7 +99,7 @@ export class CollectionController {
     @Body() request: CreateListedCollectionRequest,
   ): Promise<CreateListedCollectionResponse> {
     console.log('CollectionController.createListedCollection', request);
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
@@ -115,7 +129,7 @@ export class CollectionController {
     @Body() request: CreateUserCollectionRequest,
   ): Promise<CreateUserCollectionResponse> {
     console.log('CollectionController.createUserCollection', request);
-    const user = ServerAuthService.getUserOrFail(session);
+    const user = BackendAuthService.getUserOrFail(session);
     const error = validateObject(request, createUserCollectionRequestAssertion);
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -143,7 +157,7 @@ export class CollectionController {
   @Put('/user')
   async updateUserCollection(@Session() session, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
     console.log('CollectionController.updateUserCollection', request);
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.id);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -161,7 +175,7 @@ export class CollectionController {
   @Delete('/user/:collectionId')
   async deleteUserCollection(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
     console.log('CollectionController.deleteUserCollection', idParam);
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     const collectionId = +idParam;
     if (collectionId === user.collectionId) {
       throw new HttpException(`Can't remove primary user collection`, HttpStatus.BAD_REQUEST);

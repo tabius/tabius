@@ -38,7 +38,7 @@
         <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
             <a routerLink="{{settingsLink}}">
                 <div *ngIf="user" class="user-icon-desktop"
-                     title="{{i18n.userIconTitle(user.nickname)}}"
+                     title="{{i18n.userIconTitle(user.email)}}"
                      (click)="showUserInfo()">
                     {{ getUserIconText() }}
                 </div>

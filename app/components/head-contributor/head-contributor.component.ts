@@ -21,8 +21,7 @@ export class HeadContributorComponent implements OnChanges, OnDestroy {
 
   private element?: Element;
 
-  constructor(@Inject(DOCUMENT) private readonly document: Document) {
-  }
+  constructor(@Inject(DOCUMENT) private readonly document: Document) {}
 
   ngOnChanges(): void {
     this.removeElement();

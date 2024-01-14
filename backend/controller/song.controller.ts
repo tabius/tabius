@@ -1,10 +1,31 @@
 import { SongDbi } from '../db/song-dbi.service';
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
 import { Song, SongDetails } from '@common/catalog-model';
-import { isSongId, newSongAssertion, newSongDetailsAssertion, paramToArrayOfNumericIds, paramToId, songAssertion, songDetailsAssertion } from '../util/validators';
+import {
+  isSongId,
+  newSongAssertion,
+  newSongDetailsAssertion,
+  paramToArrayOfNumericIds,
+  paramToId,
+  songAssertion,
+  songDetailsAssertion,
+} from '../util/validators';
 import { User } from '@common/user-model';
-import { ServerAuthService } from '../service/server-auth.service';
-import { AddSongToSecondaryCollectionRequest, AddSongToSecondaryCollectionResponse, DeleteSongResponse, FullTextSongSearchRequest, FullTextSongSearchResponse, MoveSongToAnotherCollectionRequest, MoveSongToAnotherCollectionResponse, RemoveSongFromSecondaryCollectionRequest, RemoveSongFromSecondaryCollectionResponse, UpdateSongRequest, UpdateSongResponse, UpdateSongSceneFlagRequest } from '@common/ajax-model';
+import { BackendAuthService } from '../service/backend-auth.service';
+import {
+  AddSongToSecondaryCollectionRequest,
+  AddSongToSecondaryCollectionResponse,
+  DeleteSongResponse,
+  FullTextSongSearchRequest,
+  FullTextSongSearchResponse,
+  MoveSongToAnotherCollectionRequest,
+  MoveSongToAnotherCollectionResponse,
+  RemoveSongFromSecondaryCollectionRequest,
+  RemoveSongFromSecondaryCollectionResponse,
+  UpdateSongRequest,
+  UpdateSongResponse,
+  UpdateSongSceneFlagRequest,
+} from '@common/ajax-model';
 import { canManageCollectionContent, isModerator, isValidId } from '@common/util/misc-utils';
 import { FullTextSearchDbi } from '../db/full-text-search-dbi.service';
 import { CollectionDbi } from '../db/collection-dbi.service';
@@ -16,8 +37,7 @@ export class SongController {
     private readonly songDbi: SongDbi,
     private readonly collectionDbi: CollectionDbi,
     private readonly fullTextSearchDbi: FullTextSearchDbi,
-  ) {
-  }
+  ) {}
 
   /** Returns found songs  by ids. The order of results is not specified. */
   @Get('/by-ids/:ids')
@@ -57,7 +77,7 @@ export class SongController {
   @Post()
   async create(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     console.log('SongController.create', request);
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -84,7 +104,7 @@ export class SongController {
   @Put()
   async update(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     console.log('SongController.update', request);
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -108,7 +128,7 @@ export class SongController {
   @Put('scene')
   async updateSceneFlag(@Session() session, @Body() request: UpdateSongSceneFlagRequest): Promise<UpdateSongResponse> {
     console.log('SongController.updateSceneFlag', request);
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
@@ -122,7 +142,7 @@ export class SongController {
     return this.getSongUpdateResponse(request.songId, undefined);
   }
 
-  private async getSongUpdateResponse(songId: number, collectionId: number|undefined): Promise<UpdateSongResponse> {
+  private async getSongUpdateResponse(songId: number, collectionId: number | undefined): Promise<UpdateSongResponse> {
     const [songFromDb, detailsFromDb, songs] = await Promise.all([
       this.songDbi.getSongs([songId]),
       this.songDbi.getSongsDetails([songId]),
@@ -142,7 +162,7 @@ export class SongController {
     @Param('collectionId') collectionIdParam: string,
   ): Promise<DeleteSongResponse> {
     console.log(`SongController.delete ${idParam}, collection: ${collectionIdParam}`);
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     const songId = +idParam;
     const collectionId = +collectionIdParam;
     const collection = await this.collectionDbi.getCollectionById(collectionId);
@@ -184,7 +204,7 @@ export class SongController {
   ): Promise<AddSongToSecondaryCollectionResponse> {
     console.log('SongController.addSongToCollection', request);
     const { songId, collectionId } = request;
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     //todo: check if song exists & is in the listed collection or is in the user collection.
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
@@ -210,7 +230,7 @@ export class SongController {
   ): Promise<RemoveSongFromSecondaryCollectionResponse> {
     console.log('SongController.removeSongFromSecondaryCollection', request);
     const { songId, collectionId } = request;
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -235,7 +255,7 @@ export class SongController {
     // noinspection SuspiciousTypeOfGuard: TODO: use validators framework.
     assertTruthy(typeof songId === 'number' && typeof sourceCollectionId === 'number' && typeof targetCollectionId === 'number');
 
-    const user: User = ServerAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(session);
     const song = await this.songDbi.getSong(songId);
     if (!song) {
       throw new HttpException('Song not found: ' + songId, HttpStatus.BAD_REQUEST);
@@ -279,7 +299,7 @@ export class SongController {
 
   /** Returns random song from public collection. */
   @Get(['/random-song-id', '/random-song-id/:collectionId'])
-  async getRandomSong(@Param('collectionId') collectionIdParam: string): Promise<number|undefined> {
+  async getRandomSong(@Param('collectionId') collectionIdParam: string): Promise<number | undefined> {
     console.log('SongController.getRandomSong', collectionIdParam);
     if (collectionIdParam) {
       const collectionId = paramToId(collectionIdParam);

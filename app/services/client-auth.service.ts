@@ -2,10 +2,10 @@ import { Injectable, Injector } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { AuthService, User } from '@auth0/auth0-angular';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { environment } from '@app/environments/environment';
 import { Router } from '@angular/router';
 import { AuthorizationParams } from '@auth0/auth0-spa-js';
 import { truthy } from 'assertic';
+import { environment } from '@app/environments/environment';
 
 /** State of the application when signin() method is called. */
 interface AppStateOnSignIn {
@@ -60,7 +60,13 @@ export class ClientAuthService {
     this.getAuthService().loginWithRedirect({ authorizationParams });
   }
 
-  async signout(): Promise<void> {
-    return firstValueFrom(this.getAuthService().logout({ logoutParams: { returnTo: environment.url } }));
+  async logout(): Promise<void> {
+    await firstValueFrom(
+      this.getAuthService().logout({
+        logoutParams: {
+          returnTo: typeof window !== 'undefined' ? window.location.origin : environment.url,
+        },
+      }),
+    );
   }
 }

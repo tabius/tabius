@@ -25,7 +25,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   },
   navbar: {
     accountInfoNotLoggedInToast: 'You are not logged in',
-    accountInfoToast: (user: User) => `Account: ${user.nickname}, ${user.email}`,
+    accountInfoToast: (user: User) => `Account: ${user.email}`,
     catalog: 'CATALOG',
     scene: 'SCENE',
     historyButton: 'HISTORY',
@@ -36,7 +36,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     settings: 'SETTINGS',
     studio: 'STUDIO',
     tuner: 'TUNER',
-    userIconTitle: (username: string) => `Account: ${username}`,
+    userIconTitle: (email: string) => `Account: ${email}`,
   },
   page404: {
     message: 'Page not found!',

@@ -26,6 +26,6 @@ export class SigninSignoutButtonComponent {
   }
 
   signOut(): void {
-    this.authService.signout().then();
+    this.authService.logout().then();
   }
 }

@@ -3,7 +3,8 @@ import {
   Component,
   HostListener,
   Inject,
-  Input, OnChanges,
+  Input,
+  OnChanges,
   Optional,
   SimpleChanges,
   TemplateRef,
@@ -127,8 +128,8 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
       const { transpose } = this.songSettings;
       let songHtml =
         this.song && this.isBrowser
-        ? renderChords(this.song.content, { tag: CHORDS_TAG, transpose, hideChords: false, useH: this.h4Si })
-        : '';
+          ? renderChords(this.song.content, { tag: CHORDS_TAG, transpose, hideChords: false, useH: this.h4Si })
+          : '';
       if (this.multiColumnMode) {
         songHtml = preserveBlocksOnColumnBreak(songHtml);
       }
@@ -187,7 +188,7 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
       const songFontSize = this.usePrintFontSize ? SONG_PRINT_FONT_SIZE : this.songFontSize || 16;
       const { content } = this.song;
       // Simple heuristic for the song text width.
-      for (let i = 0; i < content.length;) {
+      for (let i = 0; i < content.length; ) {
         const lineSepIdx = content.indexOf('\n', i);
         if (lineSepIdx === -1) {
           break;
@@ -212,7 +213,7 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
   }
 
   getChordInfo(event: MouseEvent): ChordClickInfo {
-    const element = event.target as HTMLElement|undefined;
+    const element = event.target as HTMLElement | undefined;
     if (!element) {
       return undefined;
     }
@@ -288,7 +289,7 @@ function preserveBlockOnColumnBreak(blockHtml: string): string {
   return resultHtml;
 }
 
-let canvasForTextWidth: HTMLCanvasElement|undefined;
+let canvasForTextWidth: HTMLCanvasElement | undefined;
 
 function getTextWidth(text: string, fontSizePx: number): number {
   if (typeof window === 'undefined') {
