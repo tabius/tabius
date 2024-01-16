@@ -12,7 +12,7 @@ import { PopoverConfig } from './popover-config';
 /**
  * Reference to a popover opened via the Popover service.
  */
-export class PopoverRef<T = any> {
+export class PopoverRef<T = void> {
   private afterClosed$ = new Subject<T | undefined>();
 
   constructor(private overlayRef: OverlayRef, private positionStrategy: PositionStrategy, public config: PopoverConfig) {

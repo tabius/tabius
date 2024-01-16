@@ -91,7 +91,7 @@ interface SphinxSearchResult {
   /** Array of matches. Every match is an array of values mentioned in attribute names. */
   readonly matches: SphinxMatch[];
   /** More metrics. Not used. */
-  readonly meta?: any;
+  readonly meta?: unknown;
 }
 
 type SphinxMatch = [number, string, string, string, string, string]; // id, snippet, song title, collection name, collection mount, song mount
