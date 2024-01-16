@@ -4,7 +4,7 @@ import { PopoverService } from '@app/popover/popover.service';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogNavigationHistoryService {
-  navigationHistoryTemplate?: TemplateRef<{}>;
+  navigationHistoryTemplate?: TemplateRef<void>;
   private popoverRef?: PopoverRef;
 
   constructor(private readonly popover: PopoverService) {}

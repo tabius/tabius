@@ -97,7 +97,7 @@ export function playChordSound(fingerPositions: FingerPositions): void {
     return A * Math.pow(2, (fret + offsets[stringIndex]) / 12);
   }
 
-  // noinspection JSUnusedLocalSymbols
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function mute(): void {
     dampening = 0.89;
   }

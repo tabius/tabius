@@ -13,7 +13,7 @@ export class ApiUrlInterceptor implements HttpInterceptor {
     this.backendUrl = bss.isServer ? environment.ssrBackendUrl : environment.backendUrl;
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
+  intercept(req: HttpRequest<unknown>, next: HttpHandler) {
     const completeUrlRequest = req.clone({
       url: `${this.backendUrl}${req.url}`,
       withCredentials: true,

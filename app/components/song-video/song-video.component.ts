@@ -3,6 +3,7 @@ import { BrowserStateService } from '@app/services/browser-state.service';
 import { getFirstYoutubeVideoIdFromLinks } from '@common/util/media-links-utils';
 import { isBotUserAgent } from '@common/util/misc-utils';
 import { REQUEST } from '@app/express.tokens';
+import type { Request } from 'express';
 
 @Component({
   selector: 'gt-song-video',
@@ -25,7 +26,7 @@ export class SongVideoComponent implements OnChanges {
   readonly videoCssStyle: Record<string, string | number> = {};
   private readonly isBot: boolean;
 
-  constructor(private readonly bss: BrowserStateService, @Optional() @Inject(REQUEST) request: any) {
+  constructor(private readonly bss: BrowserStateService, @Optional() @Inject(REQUEST) request: Request) {
     this.isBot = isBotUserAgent(this.bss.getUserAgentString(request));
     this.updateVisibleFlag();
 

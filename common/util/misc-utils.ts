@@ -1,13 +1,7 @@
 import { Collection, CollectionType, Song } from '@common/catalog-model';
 import { MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX } from '@common/mounts';
 import { map } from 'rxjs/operators';
-import {
-  DESKTOP_LOW_HEIGHT_NAV_HEIGHT,
-  DESKTOP_NAV_HEIGHT,
-  HIRES_DESKTOP_HEIGHT,
-  MIN_DESKTOP_WIDTH,
-  MOBILE_NAV_HEIGHT,
-} from '@common/common-constants';
+import { DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT } from '@common/common-constants';
 import { combineLatest, from, Observable, of } from 'rxjs';
 import { User } from '@common/user-model';
 import type { Request } from 'express';

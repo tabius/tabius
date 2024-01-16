@@ -69,7 +69,7 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
 
   popoverChordLayout?: ChordLayout;
 
-  @ViewChild('chordPopover', { static: true }) chordPopoverTemplate!: TemplateRef<{}>;
+  @ViewChild('chordPopover', { static: true }) chordPopoverTemplate!: TemplateRef<void>;
 
   constructor(private readonly uds: UserService, @Optional() @Inject(REQUEST) request: Request) {
     super();

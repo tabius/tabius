@@ -14,6 +14,7 @@ import { HelpService } from '@app/services/help.service';
 import { ShortcutsService } from '@app/services/shortcuts.service';
 import { REQUEST } from '@app/express.tokens';
 import { CatalogNavigationHistoryService } from '@app/services/catalog-navigation-history.service';
+import type { Request } from 'express';
 
 @Component({
   selector: 'gt-app',
@@ -22,8 +23,8 @@ import { CatalogNavigationHistoryService } from '@app/services/catalog-navigatio
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements AfterViewInit {
-  @ViewChild('keyboardShortcuts', { static: true }) keyboardShortcuts!: TemplateRef<{}>;
-  @ViewChild('navigationHistory', { static: true }) navigationHistory!: TemplateRef<{}>;
+  @ViewChild('keyboardShortcuts', { static: true }) keyboardShortcuts!: TemplateRef<void>;
+  @ViewChild('navigationHistory', { static: true }) navigationHistory!: TemplateRef<void>;
 
   readonly printMode$: Observable<boolean>;
 
@@ -32,7 +33,7 @@ export class AppComponent implements AfterViewInit {
     private readonly shortcutsService: ShortcutsService,
     private readonly helpService: HelpService,
     private readonly navigationHistoryService: CatalogNavigationHistoryService,
-    @Optional() @Inject(REQUEST) request: any,
+    @Optional() @Inject(REQUEST) request: Request,
   ) {
     bss.initWideScreenModeState(request);
     this.printMode$ = bss.getPrintMode();

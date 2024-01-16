@@ -29,7 +29,7 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     responseInterceptor.response = new HttpResponse({ body: [{ id: '0' }, { id: '1' }] });
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
-    const results: any[] = [];
+    const results: unknown[] = [];
     await Promise.all([
       http
         .get('/api/collection/by-ids/0')
@@ -64,7 +64,7 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     responseInterceptor.response = new HttpResponse({ body: [{ id: '1' }, { id: '2' }, { id: '0' }, { id: '5' }] });
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
-    const results: any[] = [];
+    const results: unknown[] = [];
     await Promise.all([
       http
         .get('/api/collection/by-ids/0')
@@ -107,7 +107,7 @@ describe(`BatchRequestOptimizerInterceptor`, () => {
     responseInterceptor.response = new HttpResponse({ body: [{ id: 100 }] });
     const testBed = getTestBed();
     const http = testBed.get<HttpClient>(HttpClient);
-    const results: any[] = [];
+    const results: unknown[] = [];
     await http
       .get('/api/collection/by-ids/100')
       .toPromise()

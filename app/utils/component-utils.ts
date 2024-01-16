@@ -1,11 +1,12 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { I18N } from '@app/app-i18n';
+import type { Response } from 'express';
 
 interface PageWithNotFoundFlag {
   notFound: boolean;
   readonly cdr: ChangeDetectorRef;
-  readonly response?: any;
+  readonly response?: Response;
   readonly title?: Title;
   readonly meta?: Meta;
 }
@@ -18,7 +19,7 @@ export function switchToNotFoundMode(page: PageWithNotFoundFlag): void {
   page.cdr.markForCheck();
 }
 
-export function addStatus404ToResponse(response: any): void {
+export function addStatus404ToResponse(response: Response | undefined): void {
   if (response) {
     response.statusCode = 404;
     response.statusMessage = 'The page was not found';

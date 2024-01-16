@@ -6,7 +6,7 @@ export type HelpPageType = 'song' | 'collection';
 
 @Injectable({ providedIn: 'root' })
 export class HelpService {
-  keyboardShortcutsTemplate?: TemplateRef<{}>;
+  keyboardShortcutsTemplate?: TemplateRef<void>;
 
   private activeHelpPage?: HelpPageType;
   private helpPopoverRef?: PopoverRef;
