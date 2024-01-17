@@ -1,27 +1,21 @@
 1.
 Install sphinx search.
- - wget http://sphinxsearch.com/files/sphinxsearch_2.3.2-beta-1~xenial_amd64.deb
- - sudo apt install libmysqlclient20 libpq5 libodbc1 libltdl7 libmysqlclient-dev
- - sudo dpkg -i sphinxsearch_2.3.2-beta-1~xenial_amd64.deb
+ - sudo apt install sphinxsearch -f
+ - sudo apt install libmariadb-dev
  - download latest version: http://sphinxsearch.com/downloads/current/
  - unpack it and replace all binaries in /usr/bin/ to the newer version (sphinx /bin folder)
+ - replace sphinxsearch in /etc/init.d with the file from this folder. Fix config path
 
-2.
-mkdir -p /opt/tabius/sphinx/data
-sudo mkdir -p /usr/local/var/data/
+2. Create dirs and index
+ - create dir: /opt/tabius-common/sphinx
+ - init index: sudo indexer --rotate tabius_ru_song_index -c /home/bigapple/work/tabius/etc/sphinx/sphinx.conf
+ - sudo mkdir -p /usr/local/var/data/
 
 3.
-sudo indexer --rotate song_index -c /opt/tabius/sphinx/sphinx.conf
-
-4.
-Update start command in /etc/init.d/sphinxsearch to use '-c /opt/tabius/sphinx/sphinx.conf'
-start-stop-daemon --start --pidfile $PIDFILE --exec ${DAEMON} -- -c /opt/tabius/sphinx/sphinx.conf
-
-5.
 Restart Sphinx
 sudo /etc/init.d/sphinxsearch start
 
-6.
+4.
 Test with curl:
 curl -d "query=SELECT id FROM song_index WHERE MATCH('@title утро') LIMIT 1" -X POST http://localhost:9307/sql
 curl -d "query=SELECT id, SNIPPET(content, '') AS snippet FROM song_index WHERE MATCH('@content утро') LIMIT 1" -X POST http://localhost:9307/sql

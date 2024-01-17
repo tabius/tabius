@@ -54,7 +54,7 @@ export class PopoverService {
       scrollStrategy: this.overlay.scrollStrategies.reposition(),
     });
 
-    const popoverRef = new PopoverRef(overlayRef, positionStrategy, popoverConfig);
+    const popoverRef = new PopoverRef<D>(overlayRef, positionStrategy, popoverConfig);
 
     const popover = overlayRef.attach(
       new ComponentPortal(
