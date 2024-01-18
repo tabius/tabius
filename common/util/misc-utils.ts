@@ -1,7 +1,6 @@
 import { Collection, CollectionType, Song } from '@common/catalog-model';
 import { MOUNT_COLLECTION_PREFIX, MOUNT_PRINT_SUFFIX, MOUNT_SONG_PREFIX } from '@common/mounts';
 import { map } from 'rxjs/operators';
-import { DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT } from '@common/common-constants';
 import { combineLatest, from, Observable, of } from 'rxjs';
 import { User } from '@common/user-model';
 import type { Request } from 'express';
@@ -98,7 +97,6 @@ export function countOccurrences(text: string, token: string): number {
 export function bound(min: number, value: number, max: number): number {
   return value <= min ? min : value >= max ? max : value;
 }
-
 
 export function canManageCollectionContent(user: User | undefined, collection: Collection): user is User {
   if (isModerator(user)) {

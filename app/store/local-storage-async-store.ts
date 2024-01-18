@@ -5,7 +5,7 @@
 import { truthy } from 'assertic';
 import { AsyncStore, KV } from './async-store';
 import { fromEvent, Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 export class LocalStorageAsyncStore implements AsyncStore {
   constructor(private readonly storeKeyPrefix) {}

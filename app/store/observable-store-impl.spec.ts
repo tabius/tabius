@@ -14,27 +14,32 @@ class NoOpAsyncStore implements AsyncStore {
     return Promise.resolve();
   }
 
-  get<T = unknown>(key: string): Promise<T | undefined> {
+  // eslint-disable-next-line
+  get<T = unknown>(_key: string): Promise<T | undefined> {
     this.calls.push('get');
     return Promise.resolve(undefined);
   }
 
-  getAll<T = unknown>(keys: ReadonlyArray<string>): Promise<(T | undefined)[]> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getAll<T = unknown>(_keys: ReadonlyArray<string>): Promise<(T | undefined)[]> {
     this.calls.push('getAll');
     return Promise.resolve([]);
   }
 
-  list<T = unknown>(keyPrefix?: string): Promise<KV<T>[]> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  list<T = unknown>(_keyPrefix?: string): Promise<KV<T>[]> {
     this.calls.push('list');
     return Promise.resolve([]);
   }
 
-  set<T = unknown>(key: string, value: T | undefined): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  set<T = unknown>(_key: string, _value: T | undefined): Promise<void> {
     this.calls.push('set');
     return Promise.resolve();
   }
 
-  setAll<T = unknown>(map: { [p: string]: T }): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setAll<T = unknown>(_map: { [p: string]: T }): Promise<void> {
     this.calls.push('setAll');
     return Promise.resolve();
   }
