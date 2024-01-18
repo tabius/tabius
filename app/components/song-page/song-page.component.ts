@@ -10,10 +10,7 @@ import {
   canManageCollectionContent,
   getNameFirstFormArtistName,
   getSongPageLink,
-  isInputEvent,
   nothingThen,
-  scrollToView,
-  scrollToViewByEndPos,
 } from '@common/util/misc-utils';
 import { parseChordsLine } from '@common/util/chords-parser';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
@@ -26,7 +23,7 @@ import {
 } from '@common/mounts';
 import { getCollectionImageUrl, getFullLink } from '@app/utils/url-utils';
 import { getToneWithH4SiFix, TONES_COUNT } from '@common/util/chords-renderer';
-import { getDefaultUserSongFontSize, User, UserDeviceSettings, UserSongSettings } from '@common/user-model';
+import { User, UserDeviceSettings, UserSongSettings } from '@common/user-model';
 import { HelpService } from '@app/services/help.service';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
 import {
@@ -47,6 +44,7 @@ import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
 import { assertTruthy } from 'assertic';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-utils';
+import { getDefaultUserSongFontSize, isInputEvent, scrollToView, scrollToViewByEndPos } from '@app/utils/misc-utils';
 
 @Component({
   templateUrl: './song-page.component.html',

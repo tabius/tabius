@@ -12,7 +12,6 @@ import {
   getNameFirstFormArtistName,
   getSongPageLink,
   isDefined,
-  isInputEvent,
   nothingThen,
   sortSongsAlphabetically,
 } from '@common/util/misc-utils';
@@ -29,6 +28,7 @@ import { ShortcutsService } from '@app/services/shortcuts.service';
 import { truthy } from 'assertic';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-utils';
+import { isInputEvent } from '@app/utils/misc-utils';
 
 export class CollectionViewModel {
   readonly displayName: string;

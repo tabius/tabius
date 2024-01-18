@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UserService } from '@app/services/user.service';
-import { DEFAULT_FAVORITE_KEY, getDefaultUserSongFontSize, User, UserDeviceSettings } from '@common/user-model';
+import { DEFAULT_FAVORITE_KEY, User, UserDeviceSettings } from '@common/user-model';
 import { combineLatest } from 'rxjs';
 import { SongDetails } from '@common/catalog-model';
 import { RefreshMode } from '@app/store/observable-store';
@@ -9,6 +9,7 @@ import { I18N } from '@app/app-i18n';
 import { ChordTone, MINOR_KEY_TONES } from '@common/util/chords-lib';
 import { ClientAuthService } from '@app/services/client-auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getDefaultUserSongFontSize } from '@app/utils/misc-utils';
 
 export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;

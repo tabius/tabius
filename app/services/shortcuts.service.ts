@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { switchMap, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
-import { getSongPageLink, isInputEvent, nothingThen } from '@common/util/misc-utils';
+import { getSongPageLink, nothingThen } from '@common/util/misc-utils';
 import { Router } from '@angular/router';
 import { HelpService } from '@app/services/help.service';
 import { CatalogNavigationHistoryService } from '@app/services/catalog-navigation-history.service';
+import { isInputEvent } from '@app/utils/misc-utils';
 
 const DOUBLE_PRESS_TIMEOUT_MILLIS = 500;
 

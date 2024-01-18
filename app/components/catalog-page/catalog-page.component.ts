@@ -4,14 +4,7 @@ import { CatalogService } from '@app/services/catalog.service';
 import { FormControl } from '@angular/forms';
 import { debounce, throttleTime } from 'rxjs/operators';
 import { timer } from 'rxjs';
-import {
-  canCreateNewPublicCollection,
-  getCollectionPageLink,
-  isAlpha,
-  isInputEvent,
-  isTouchDevice,
-  scrollToView,
-} from '@common/util/misc-utils';
+import { canCreateNewPublicCollection, getCollectionPageLink, isAlpha } from '@common/util/misc-utils';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
 import { UserService } from '@app/services/user.service';
 import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
@@ -20,6 +13,7 @@ import { I18N } from '@app/app-i18n';
 import { environment } from '@app/environments/environment';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { isInputEvent, isTouchDevice, scrollToView } from '@app/utils/misc-utils';
 
 interface LetterBlock {
   letter: string;

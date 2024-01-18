@@ -8,10 +8,10 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { scrollToView } from '@common/util/misc-utils';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { I18N } from '@app/app-i18n';
 import { ClientAuthService } from '@app/services/client-auth.service';
+import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
   selector: 'gt-user-registration-prompt',

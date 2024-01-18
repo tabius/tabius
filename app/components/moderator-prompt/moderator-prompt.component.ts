@@ -1,9 +1,9 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
 import { TELEGRAM_CHANNEL_URL } from '@app/app-constants';
 import { I18N } from '@app/app-i18n';
-import { scrollToView } from '@common/util/misc-utils';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { LINK_STUDIO } from '@common/mounts';
+import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
   selector: 'gt-moderator-prompt',

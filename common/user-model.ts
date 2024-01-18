@@ -1,4 +1,3 @@
-import { HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH } from '@common/common-constants';
 import { ChordTone } from '@common/util/chords-lib';
 
 /** The only role we have today. Can add new collections and songs. */
@@ -30,14 +29,6 @@ export interface UserDeviceSettings {
   /** If true -> repeat mode is checked by default in tuner. */
   tunerRepeatMode: boolean;
   tunerToneType: TunerToneType;
-}
-
-export function newDefaultUserDeviceSettings(): UserDeviceSettings {
-  return {
-    songFontSize: getDefaultUserSongFontSize(),
-    tunerRepeatMode: false,
-    tunerToneType: 'c',
-  };
 }
 
 /** User settings stored on the server. */
@@ -78,19 +69,6 @@ export function newDefaultUserSettings(): UserSettings {
     h4Si: getDefaultH4SiFlag(),
     favKey: 'A',
   };
-}
-
-const SONG_FONT_SIZE_MOBILE = 16;
-const SONG_FONT_SIZE_DESKTOP = 18;
-const SONG_FONT_SIZE_HIRES_DESKTOP = 20;
-
-export function getDefaultUserSongFontSize(): number {
-  const width = typeof window === 'object' && window.innerWidth;
-  return !width || (width >= MIN_DESKTOP_WIDTH && width < HIRES_DESKTOP_WIDTH)
-    ? SONG_FONT_SIZE_DESKTOP
-    : width < MIN_DESKTOP_WIDTH
-    ? SONG_FONT_SIZE_MOBILE
-    : SONG_FONT_SIZE_HIRES_DESKTOP;
 }
 
 export interface CatalogNavigationHistory {

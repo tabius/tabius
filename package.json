@@ -91,7 +91,7 @@
     "@types/express-session": "1.17.7",
     "@types/hammerjs": "2.0.41",
     "@types/jest": "^29.4.0",
-    "@types/node": "18.15.3",
+    "@types/node": "^18.19.8",
     "@types/validator": "13.11.1",
     "@typescript-eslint/eslint-plugin": "6.17.0",
     "@typescript-eslint/parser": "6.17.0",

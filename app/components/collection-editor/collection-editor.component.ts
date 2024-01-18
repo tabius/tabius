@@ -5,9 +5,9 @@ import { CatalogService } from '@app/services/catalog.service';
 import { ToastService } from '@app/toast/toast.service';
 import { MOUNT_COLLECTION_PREFIX } from '@common/mounts';
 import { Router } from '@angular/router';
-import { scrollToView } from '@common/util/misc-utils';
 import { I18N } from '@app/app-i18n';
 import { BrowserStateService } from '@app/services/browser-state.service';
+import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
   selector: 'gt-collection-editor',

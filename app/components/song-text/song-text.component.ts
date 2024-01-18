@@ -17,7 +17,7 @@ import { renderChords } from '@common/util/chords-renderer';
 import { REQUEST } from '@app/express.tokens';
 import { getUserAgentFromRequest, isSmallScreenDevice } from '@common/util/misc-utils';
 import { SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH } from '@common/common-constants';
-import { newDefaultUserDeviceSettings, newDefaultUserSongSettings, UserDeviceSettings } from '@common/user-model';
+import { newDefaultUserSongSettings, UserDeviceSettings } from '@common/user-model';
 import { ChordLayout } from '@common/util/chords-layout-lib';
 import { parseChord } from '@common/util/chords-parser';
 import { ChordClickInfo } from '@app/directives/show-chord-popover-on-click.directive';
@@ -25,6 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Request } from 'express';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { assertTruthy } from 'assertic';
+import { newDefaultUserDeviceSettings } from '@app/utils/misc-utils';
 
 /** Heuristic used to enable multi-column mode. */
 const IDEAL_SONG_LINES_PER_COLUMN = 18; // (4 chords + 4 text lines) * 2 + 1 line after the first and 1 line after the second verse.

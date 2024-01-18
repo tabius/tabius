@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { UserService } from '@app/services/user.service';
-import { newDefaultUserDeviceSettings, TunerToneType } from '@common/user-model';
+import { TunerToneType } from '@common/user-model';
 import { I18N } from '@app/app-i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
+import { newDefaultUserDeviceSettings } from '@app/utils/misc-utils';
 
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 

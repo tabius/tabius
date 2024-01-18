@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Input, OnDestroy } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { combineLatest, Observable, of } from 'rxjs';
-import { combineLatest0, findParentOrSelfWithClass, getCollectionPageLink, getSongPageLink, isDefined, isElementToIgnoreKeyEvent, isTouchDevice, sortSongsAlphabetically } from '@common/util/misc-utils';
+import { combineLatest0, getCollectionPageLink, getSongPageLink, isDefined, sortSongsAlphabetically } from '@common/util/misc-utils';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { Router } from '@angular/router';
 import { Collection, Song } from '@common/catalog-model';
@@ -10,7 +10,7 @@ import { ShortcutsService } from '@app/services/shortcuts.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map, switchMap } from 'rxjs/operators';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
-import { isBrowser } from '@app/utils/misc-utils';
+import { findParentOrSelfWithClass, isBrowser, isElementToIgnoreKeyEvent, isTouchDevice } from '@app/utils/misc-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Hammer = isBrowser ? require('hammerjs') : ({} as any);

@@ -5,7 +5,6 @@ import {
   CatalogNavigationHistory,
   CatalogNavigationHistoryStep,
   DEFAULT_FAVORITE_KEY,
-  newDefaultUserDeviceSettings,
   newDefaultUserSettings,
   newDefaultUserSongSettings,
   newEmptyCatalogNavigationHistory,
@@ -33,6 +32,7 @@ import { ClientAuthService } from '@app/services/client-auth.service';
 import { TrieStore } from 'otrie';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 import { isEqualByStringify } from '@common/util/equality-functions';
+import { newDefaultUserDeviceSettings } from '@app/utils/misc-utils';
 
 const DEVICE_SETTINGS_KEY = 'device-settings';
 const USER_SETTINGS_FETCH_DATE_KEY = 'user-settings-fetch-date';

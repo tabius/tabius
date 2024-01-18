@@ -5,7 +5,10 @@
     "app/polyfills.ts"
   ],
   "angularCompilerOptions": {
-    "strictInputAccessModifiers": true,
-//    "strictTemplates": true
+    "strictInputAccessModifiers": true
+    //    "strictTemplates": true
+  },
+  "compilerOptions": {
+    "lib": ["DOM"]
   }
 }

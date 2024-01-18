@@ -99,25 +99,6 @@ export function bound(min: number, value: number, max: number): number {
   return value <= min ? min : value >= max ? max : value;
 }
 
-export function scrollToView(element: HTMLElement | undefined, paddingTop = 0): void {
-  if (!element) {
-    return;
-  }
-  window.scroll({ left: window.scrollX, top: element.offsetTop - getCurrentNavbarHeight() - paddingTop, behavior: 'smooth' });
-}
-
-// noinspection JSUnusedGlobalSymbols
-export function scrollToViewByEndPos(element: HTMLElement | undefined, paddingBottom = 0): void {
-  if (!element) {
-    return;
-  }
-  const footerHeight = 42;
-  const headerHeight = getCurrentNavbarHeight();
-  const visibleHeight = window.innerHeight - headerHeight - footerHeight - paddingBottom;
-  const elementRect = element.getBoundingClientRect();
-  const elementHeightToShow = Math.min(elementRect.height, visibleHeight);
-  scrollToView(element, -(elementRect.height - elementHeightToShow));
-}
 
 export function canManageCollectionContent(user: User | undefined, collection: Collection): user is User {
   if (isModerator(user)) {
@@ -158,27 +139,12 @@ export function waitForAllPromisesAndReturnFirstArg<T>(first: T, promises: Promi
   return combineLatest([first$, ...promises.map(p => from(p))]).pipe(map(arr => arr[0] as T));
 }
 
-export function isTouchDevice(): boolean {
-  return typeof document === 'object' && 'ontouchstart' in document.documentElement;
-}
-
 export function sortSongsAlphabetically(songs: Song[]): Song[] {
   return songs.sort((s1, s2) => (s1.title === s2.title ? (s1.id < s2.id ? -1 : 1) : s1.title.localeCompare(s2.title)));
 }
 
 export function trackById<T extends { id: number | string }>(_: number, entity: T): number | string {
   return entity.id;
-}
-
-/** Returns true if the element is input element: <textarea> or <input>. */
-export function isInputEvent(event: KeyboardEvent): boolean {
-  return isElementToIgnoreKeyEvent(event.target as HTMLElement);
-}
-
-/** Returns true if the element is input element: <textarea> or <input>. */
-export function isElementToIgnoreKeyEvent(element: HTMLElement | undefined): boolean {
-  const tagName = element ? element.tagName.toLowerCase() : '';
-  return tagName === 'textarea' || (tagName === 'input' && element?.getAttribute('type') !== 'checkbox');
 }
 
 const ALPHA_EN = /^[A-Z]+$/i;
@@ -204,24 +170,6 @@ export function toSafeSearchText(text: string): string {
     }
   }
   return safeText.trim();
-}
-
-export function getCurrentNavbarHeight(): number {
-  return window.innerWidth >= MIN_DESKTOP_WIDTH
-    ? window.innerHeight < HIRES_DESKTOP_HEIGHT
-      ? DESKTOP_LOW_HEIGHT_NAV_HEIGHT
-      : DESKTOP_NAV_HEIGHT
-    : MOBILE_NAV_HEIGHT;
-}
-
-export function findParentOrSelfWithClass(el: Element | undefined | null, className: string): Element | undefined {
-  if (!el) {
-    return undefined;
-  }
-  if (el.classList.contains(className)) {
-    return el;
-  }
-  return findParentOrSelfWithClass(el.parentElement, className);
 }
 
 /** Returns true if userAgent string is bot. */
