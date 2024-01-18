@@ -7,15 +7,11 @@ import {
 import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
 import { toSafeSearchText } from '@common/util/misc-utils';
 import { SERVER_CONFIG } from '../server-config';
-import { firstValueFrom } from 'rxjs';
-import { HttpService } from '@nestjs/axios';
 
 const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 
 @Injectable()
 export class FullTextSearchDbi {
-  constructor(private readonly nestHttpService: HttpService) {}
-
   async searchForSongsByText(text: string): Promise<FullTextSongSearchResult[]> {
     const safeSearchText = toSafeSearchText(text);
     if (safeSearchText.length < MIN_LEN_FOR_FULL_TEXT_SEARCH) {
@@ -74,10 +70,19 @@ export class FullTextSearchDbi {
       return { matches: [] };
     }
     const encodedQuery = encodeURIComponent(query);
-    const params = `query=${encodedQuery}`;
     try {
-      const axiosResponse = await firstValueFrom(this.nestHttpService.post<SphinxSearchResult>(SPHINX_SQL_URL, params));
-      return axiosResponse.data;
+      const response = await fetch(SPHINX_SQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `query=${encodedQuery}`,
+      });
+      if (!response.ok) {
+        console.error('Error', response);
+        return { matches: [] };
+      }
+      return (await response.json()) as SphinxSearchResult;
     } catch (e) {
       console.error('Error querying sphinx', e);
       return { matches: [] };
