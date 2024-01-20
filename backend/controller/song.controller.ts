@@ -77,7 +77,7 @@ export class SongController {
   @Post()
   async create(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     console.log('SongController.create', request);
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user = BackendAuthService.getUserOrFail(session);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);

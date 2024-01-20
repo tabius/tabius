@@ -101,7 +101,10 @@ export const newSongAssertion: ObjectAssertion<Song> = {
 export const songDetailsAssertion: ObjectAssertion<SongDetails> = {
   id: $u(isNumericId),
   version: $u(isVersion),
-  content: $u(v => checkStringLength(v, MIN_SONG_CONTENT_LENGTH, MAX_SONG_CONTENT_LENGTH)),
+  content: $u(
+    v => checkStringLength(v, MIN_SONG_CONTENT_LENGTH, MAX_SONG_CONTENT_LENGTH),
+    () => 'Song content is too short',
+  ),
   mediaLinks: arrayAssertion(assertString),
   scene: undefinedOr(assertBoolean),
 };

@@ -66,9 +66,11 @@ export class BackendAuthService implements NestInterceptor {
     // Check if the current session is still valid for the user saved in the session.
     let user: User | undefined = req.session[USER_SESSION_KEY];
     if (user?.id !== userIdFromAccessToken) {
-      console.log('User id from session does not match user id from request access token. Resetting.');
+      if (user) {
+        console.log('User id from session does not match user id from request access token. Resetting.');
+        user = undefined;
+      }
       req.session[USER_SESSION_KEY] = undefined;
-      user = undefined;
     }
 
     if (!user && userIdFromAccessToken && userEmailFromAccessToken) {
