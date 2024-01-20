@@ -1,6 +1,7 @@
 import { isSharp, transpose } from '@common/util/chords-renderer';
 import { Chord, ChordTone } from '@common/util/chords-lib';
 import { parseChords } from '@common/util/chords-parser';
+import { truthy } from 'assertic';
 
 /** All key variations used by tone detector. */
 export const KEY_VARIANTS = <const>[
@@ -97,7 +98,8 @@ export function detectKeyAsMinor(chords: Chord[]): ChordTone | undefined {
     for (const { key, majors, minors } of ALL_MINOR_PATTERNS) {
       const match = isMajor ? majors.find(m => m.tone === tone) : isMinor ? minors.find(m => m.tone === tone) : undefined;
       const toneWeightPerKey = match ? match.score : MISMATCH;
-      weightMap.set(key, weightMap.get(key)! + toneWeightPerKey);
+      const keyWeight = truthy(weightMap.get(key), () => `Weight not found: ${key}`);
+      weightMap.set(key, keyWeight + toneWeightPerKey);
     }
   }
 

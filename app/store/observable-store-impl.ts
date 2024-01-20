@@ -93,7 +93,7 @@ export class ObservableStoreImpl implements ObservableStore {
     checkUpdateFn: CheckUpdateFn<T>,
   ): Promise<void> {
     // First get op. First create a blocking promise for concurrent first gets.
-    let firstGetResolveFn: (() => void) | undefined = undefined;
+    let firstGetResolveFn: () => void = () => fail('A stub for firstGetResolveFn should never be called');
     const firstGetOp: InitOp = {
       promise: new Promise<void>(resolve => (firstGetResolveFn = resolve)),
     };
@@ -112,7 +112,7 @@ export class ObservableStoreImpl implements ObservableStore {
         await this.set(key, valueFromFetch, checkUpdateFn);
       }
     } finally {
-      firstGetResolveFn!();
+      firstGetResolveFn();
       this.inFlightInitRxOps.delete(key);
     }
   }

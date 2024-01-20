@@ -160,7 +160,7 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
   }
 
   onRepeatModeCheckboxChanged(event: Event) {
-    this.setRepeatMode((event.target! as HTMLInputElement).checked);
+    this.setRepeatMode((event.target as HTMLInputElement).checked);
   }
 
   getToneType(): TunerToneType {

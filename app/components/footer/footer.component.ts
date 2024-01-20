@@ -121,10 +121,11 @@ export class FooterComponent implements OnDestroy {
   }
 
   popMenuState(): void {
-    if (this.menuStack.length === 0) {
+    const prevActions = this.menuStack.pop();
+    if (!prevActions) {
       return;
     }
-    this.actions = this.menuStack.pop()!;
+    this.actions = prevActions;
     this.menuStack = [...this.menuStack];
   }
 }

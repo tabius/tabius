@@ -69,6 +69,7 @@ export class PopoverService {
       popover.attachTemplatePortal(
         new TemplatePortal(
           componentOrTemplate,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           null!, //TODO
           {
             $implicit: config.data,

@@ -2,12 +2,14 @@ import { parseChord } from '@common/util/chords-parser';
 import { transpose } from '@common/util/chords-renderer';
 import { checkToneIsFlat, detectKeyAsMinor, getTransposeDistance, KEY_VARIANTS } from '@common/util/key-detector';
 import { Chord, CHORD_TONES } from '@common/util/chords-lib';
+import { assertTruthy } from 'assertic';
 
 function c(chordsLine: string, transposeSteps = 0, isFlat = false): Chord[] {
   const chords: Chord[] = [];
   for (const chordText of chordsLine.split(' ')) {
-    const chordLocation = parseChord(chordText)!;
+    const chordLocation = parseChord(chordText);
     expect(chordLocation || `Failed to parse chord: ${chordText}`).toBeDefined();
+    assertTruthy(chordLocation);
     const tone = transpose(chordLocation.chord.tone, transposeSteps, isFlat);
     chords.push({ ...chordLocation.chord, tone });
   }

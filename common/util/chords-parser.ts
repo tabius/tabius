@@ -1,6 +1,7 @@
 import { CHORD_TYPE_BY_RAW_NAME, ChordLocation, RAW_CHORD_TYPES_BY_FIRST_CHAR } from '@common/util/chords-parser-lib';
-import { isDefined, isAlpha, isDigit } from '@common/util/misc-utils';
+import { isAlpha, isDefined, isDigit } from '@common/util/misc-utils';
 import { Chord, CHORD_TONES, ChordTone, ChordType } from '@common/util/chords-lib';
+import { truthy } from 'assertic';
 
 function isWordChar(char: string): boolean {
   return isAlpha(char) || char === '’';
@@ -140,7 +141,7 @@ export function parseChord(text?: string, startIdx?: number, endIdx?: number): C
         const rawType = findPrefixToken(text, idx, typesByFirstChar);
         if (rawType !== undefined) {
           idx += rawType.length;
-          chord.type = CHORD_TYPE_BY_RAW_NAME.get(rawType)!;
+          chord.type = truthy(CHORD_TYPE_BY_RAW_NAME.get(rawType), () => `Can't find chord type by raw type: ${rawType}`);
           parsedType = chord.type;
           continue;
         }

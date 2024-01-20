@@ -211,6 +211,6 @@ export function sortSongsAndRelatedItems<T>(songs: Song[], items: T[]): [Song[],
     itemBySong.set(songs[index].id, items[index]);
   }
   const sortedSongs = sortSongsAlphabetically(songs);
-  const sortedItems = songs.map(s => itemBySong.get(s.id)!);
+  const sortedItems = songs.map(s => truthy(itemBySong.get(s.id), () => `Item by song is not found: ${s.id}`));
   return [sortedSongs, sortedItems];
 }

@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
 import { I18N } from '@app/app-i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { assertTruthy } from 'assertic';
 
 @Component({
   templateUrl: './studio-page.component.html',
@@ -88,7 +89,8 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
     this.cdr.markForCheck();
     if (editResult.type === 'created') {
       // go to the newly created song.
-      const songMount = editResult.song!.mount;
+      assertTruthy(editResult.song, 'Song must be defined');
+      const songMount = editResult.song.mount;
       this.router.navigate([getSongPageLink(this.primaryUserCollectionMount, songMount)]).then();
     }
   }

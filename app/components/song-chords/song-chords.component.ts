@@ -15,6 +15,7 @@ import { getSongKey, getTransposeDistance, transposeAsMinor } from '@common/util
 import { SongDetails } from '@common/catalog-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
+import { assertTruthy } from 'assertic';
 
 @Component({
   selector: 'gt-song-chords',
@@ -71,8 +72,8 @@ export class SongChordsComponent extends AbstractAppComponent {
       });
   }
 
-  getChordInfo(event: MouseEvent, chord: Chord | undefined): ChordClickInfo {
-    return { element: event.target as HTMLElement, chord: chord! };
+  getChordInfo(event: MouseEvent, chord: Chord): ChordClickInfo {
+    return { element: event.target as HTMLElement, chord };
   }
 
   private updateChordList(): void {
@@ -95,8 +96,9 @@ export class SongChordsComponent extends AbstractAppComponent {
   }
 
   onTransposeClicked(steps: number): void {
-    const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
-    this.uds.setUserSongSettings({ ...this.songSettings!, transpose }).then();
+    assertTruthy(this.songSettings, 'Song settings are not defined');
+    const transpose = steps === 0 ? 0 : (this.songSettings.transpose + steps) % TONES_COUNT;
+    this.uds.setUserSongSettings({ ...this.songSettings, transpose }).then();
   }
 
   transposeToFavoriteKeyClicked(): void {
@@ -121,7 +123,7 @@ export function updateUserSongSetting(
   if (originalSongKey && transposeActionKey && songSettings) {
     const transposeDistance = getTransposeDistance(originalSongKey, transposeActionKey);
     const transpose = (transposeDistance + TONES_COUNT) % TONES_COUNT;
-    uds.setUserSongSettings({ ...songSettings!, transpose }).then();
+    uds.setUserSongSettings({ ...songSettings, transpose }).then();
   }
 }
 

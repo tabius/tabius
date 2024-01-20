@@ -6,12 +6,7 @@ import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { map, switchMap, take, throttleTime } from 'rxjs/operators';
 import { switchToNotFoundMode } from '@app/utils/component-utils';
 import { UserService } from '@app/services/user.service';
-import {
-  canManageCollectionContent,
-  getNameFirstFormArtistName,
-  getSongPageLink,
-  nothingThen,
-} from '@common/util/misc-utils';
+import { canManageCollectionContent, getNameFirstFormArtistName, getSongPageLink, nothingThen } from '@common/util/misc-utils';
 import { parseChordsLine } from '@common/util/chords-parser';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
 import {
@@ -258,7 +253,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         } else if (this.isUserCollection) {
           this.router.navigate([MOUNT_STUDIO]).catch(err => console.error(err));
         } else {
-          this.router.navigate([MOUNT_COLLECTION_PREFIX + this.collectionMount!]).catch(err => console.error(err));
+          assertTruthy(this.collectionMount, 'Collection mount is not defined');
+          this.router.navigate([MOUNT_COLLECTION_PREFIX + this.collectionMount]).catch(err => console.error(err));
         }
       });
   }
@@ -352,8 +348,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   async transpose(steps: number): Promise<void> {
     if (this.songSettings) {
-      const transpose = steps === 0 ? 0 : (this.songSettings!.transpose + steps) % TONES_COUNT;
-      await this.uds.setUserSongSettings({ ...this.songSettings!, transpose });
+      const transpose = steps === 0 ? 0 : (this.songSettings.transpose + steps) % TONES_COUNT;
+      await this.uds.setUserSongSettings({ ...this.songSettings, transpose });
     }
   }
 

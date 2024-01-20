@@ -115,12 +115,15 @@ export class CatalogService {
 
   /** Returns list of all collection's song ids. The songs in the list are always sorted by id. */
   getSongIdsByCollection(collectionId: number | undefined): Observable<number[] | undefined> {
+    if (!collectionId) {
+      return of(undefined);
+    }
     return this.store.get<number[]>(
       getCollectionSongListKey(collectionId),
       () =>
         this.httpClient
           .get<Song[]>(`/api/song/by-collection/${collectionId}`)
-          .pipe(switchMap(songs => from(this.updateCollectionSongsOnFetch(collectionId!, songs, false)))),
+          .pipe(switchMap(songs => from(this.updateCollectionSongsOnFetch(collectionId, songs, false)))),
       RefreshMode.RefreshOnce,
       checkUpdateByShallowArrayCompare,
     );
