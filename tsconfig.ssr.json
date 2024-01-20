@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
+    "lib": ["DOM"],
     "types": [
       "node",
       "hammerjs"

@@ -2,7 +2,7 @@ import { firstValueFrom, from, Observable, of, ReplaySubject } from 'rxjs';
 import { AsyncStore, KV } from './async-store';
 import { catchError, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { CheckUpdateFn, FetchFn, ObservableStore, RefreshMode, skipUpdateCheck } from './observable-store';
-import { truthy } from 'assertic';
+import { fail, truthy } from 'assertic';
 
 export interface TransferStateAdapter {
   /**

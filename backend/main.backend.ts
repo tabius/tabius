@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { BackendModule } from './backend.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import session from 'express-session';
-import { SERVER_CONFIG } from './server-config';
+import { SERVER_CONFIG } from './backend-config';
 import { NestApplicationOptions } from '@nestjs/common';
 
 installLogFunctions();

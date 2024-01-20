@@ -6,7 +6,7 @@ import { isValidId } from '@common/util/misc-utils';
 import { UserDbi } from '../db/user-dbi.service';
 import { AUTH0_WEB_CLIENT_AUDIENCE, INVALID_ID } from '@common/common-constants';
 import * as Express from 'express-session';
-import { SERVER_CONFIG } from '../server-config';
+import { SERVER_CONFIG } from '../backend-config';
 import { nanoid } from 'nanoid';
 
 import { JwtRsaVerifier } from 'aws-jwt-verify';
