@@ -22,7 +22,6 @@ export class PwaUpdaterService {
     const oncePerDayWhenAppIsStable$ = concat(appIsStable$, oncePerDay$);
 
     oncePerDayWhenAppIsStable$.subscribe(() => {
-      console.debug(`Checking for updates [${updates.isEnabled}]…`);
       updates.checkForUpdate().catch(err => console.error(err));
     });
 
