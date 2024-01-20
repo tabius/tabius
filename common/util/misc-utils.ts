@@ -145,6 +145,10 @@ export function trackById<T extends { id: number | string }>(_: number, entity: 
   return entity.id;
 }
 
+export function trackByUrl<T extends { url: string }>(_: number, entity: T): number | string {
+  return entity.url;
+}
+
 const ALPHA_EN = /^[A-Z]+$/i;
 const ALPHA_RU = /^[А-ЯЁ]+$/i;
 const DIGIT = /^\d$/;

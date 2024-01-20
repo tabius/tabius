@@ -8,6 +8,8 @@ import { checkUpdateByShallowArrayCompare } from '@app/store';
 import { I18N } from '@app/app-i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
+import { trackByUrl } from '@common/util/misc-utils';
+import { MOUNT_COLLECTION, MOUNT_COLLECTION_PREFIX } from '@common/mounts';
 
 @Component({
   selector: 'gt-catalog-navigation-history-popup',
@@ -33,6 +35,7 @@ export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent
       .getCatalogNavigationHistory()
       .pipe(takeUntilDestroyed())
       .subscribe(history => {
+        console.debug('steps', history.steps);
         this.allSteps = history.steps;
         this.updateVisibleSteps(history.steps, this.currentUrl);
         this.cd.markForCheck();
@@ -56,5 +59,12 @@ export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent
     this.currentUrl = newUrl;
     this.visibleSteps = this.allSteps.filter(s => s.url !== this.currentUrl);
     this.visibleSteps.reverse();
+  }
+
+  protected readonly trackByUrl = trackByUrl;
+
+  isCollectionMount(url: string): boolean {
+    console.log('url', url);
+    return url.startsWith(`/${MOUNT_COLLECTION_PREFIX}`);
   }
 }
