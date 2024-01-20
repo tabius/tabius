@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-export interface TabiusServerConfig {
+export interface TabiusBackendConfig {
   /**  e.g. 'tabius.ru' . */
   serverHost: string;
   serverPort: number;
@@ -24,9 +24,9 @@ export interface TabiusServerConfig {
 }
 
 const serverConfigAsString = readFileSync(getConfigFilePath('server-config.json')).toString();
-const CONFIG_FROM_FILE: TabiusServerConfig = JSON.parse(serverConfigAsString) as TabiusServerConfig;
+const CONFIG_FROM_FILE: TabiusBackendConfig = JSON.parse(serverConfigAsString) as TabiusBackendConfig;
 
-const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
+const DEFAULT_CONFIG: Partial<TabiusBackendConfig> = {
   serverPort: 12100,
   corsOriginWhitelist: [
     // Nest server.
@@ -39,7 +39,7 @@ const DEFAULT_CONFIG: Partial<TabiusServerConfig> = {
   sessionCookieName: 'tabius.sid',
 };
 
-export const SERVER_CONFIG: Readonly<TabiusServerConfig> = {
+export const SERVER_CONFIG: Readonly<TabiusBackendConfig> = {
   ...DEFAULT_CONFIG,
   ...CONFIG_FROM_FILE,
 };
