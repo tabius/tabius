@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, from, Observable, of } from 'rxjs';
 import { Collection, CollectionDetails, Song, SongDetails } from '@common/catalog-model';
-import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { TABIUS_CATALOG_BROWSER_STORE_TOKEN } from '@app/app-constants';
 import {
   AddSongToSecondaryCollectionRequest,
@@ -177,7 +177,16 @@ export class CatalogService {
   getSongDetailsById(songId: number | undefined, refreshCachedVersion = true): Observable<SongDetails | undefined> {
     return this.store.get<SongDetails>(
       getSongDetailsKey(songId),
-      () => this.httpClient.get<SongDetails[]>(`/api/song/details-by-ids/${songId}`).pipe(mapToFirstInArray),
+      () =>
+        this.httpClient.get<Array<SongDetails>>(`/api/song/details-by-ids/${songId}`).pipe(
+          mapToFirstInArray,
+          tap(song => {
+            if (song) {
+              // Replace tab characters in the song text with spaces. This code can be removed after DB cleanup.
+              song.content = song.content.replace(/\t/g, '    ');
+            }
+          }),
+        ),
       refreshCachedVersion ? RefreshMode.RefreshOnce : RefreshMode.DoNotRefresh,
       checkUpdateByVersion,
     );

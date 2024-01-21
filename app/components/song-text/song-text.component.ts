@@ -16,7 +16,7 @@ import { UserService } from '@app/services/user.service';
 import { renderChords } from '@common/util/chords-renderer';
 import { REQUEST } from '@app/express.tokens';
 import { getUserAgentFromRequest, isSmallScreenDevice } from '@common/util/misc-utils';
-import { SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH } from '@common/common-constants';
+import { MIN_DESKTOP_WIDTH, SSR_DESKTOP_WIDTH, SSR_MOBILE_WIDTH } from '@common/common-constants';
 import { newDefaultUserSongSettings, UserDeviceSettings } from '@common/user-model';
 import { ChordLayout } from '@common/util/chords-layout-lib';
 import { parseChord } from '@common/util/chords-parser';
@@ -155,9 +155,13 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
   private updateAvailableWidth(): void {
     if (this.multiColumnMode) {
       this.availableWidth = window.innerWidth || this.widthFromUserAgent;
+      if (this.availableWidth > MIN_DESKTOP_WIDTH) {
+        this.availableWidth -= 150; // Navigation borders in desktop mode.
+      }
     }
   }
 
+  // Important: sync with `.multi-column-mode-style.column-gap`.
   private readonly CSS_COLUMN_GAP = 50;
 
   is2ColumnMode(): boolean {
@@ -194,7 +198,8 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
         if (lineSepIdx === -1) {
           break;
         }
-        const lineWidth = getTextWidth(content.substring(i, lineSepIdx), songFontSize);
+        const line = content.substring(i, lineSepIdx);
+        const lineWidth = getTextWidth(line, songFontSize);
         this.songStats.maxLineWidth = Math.max(this.songStats.maxLineWidth, lineWidth);
         i = lineSepIdx + 1;
         this.songStats.lineCount++;

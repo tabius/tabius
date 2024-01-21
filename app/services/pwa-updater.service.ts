@@ -26,6 +26,7 @@ export class PwaUpdaterService {
     });
 
     updates.versionUpdates.subscribe(async event => {
+      console.debug('Version update event', event.type);
       if (event.type === 'NO_NEW_VERSION_DETECTED') {
         return;
       }

@@ -66,7 +66,7 @@ export const MAX_SONG_CONTENT_LENGTH = 10000;
 export interface SongDetails extends WithId, Versioned {
   /** Text of the song with tabs & chords. */
   content: string;
-  /** List of media links: Youtube, etc...*/
+  /** List of media links: YouTube, etc...*/
   mediaLinks: string[];
   /** If 'true' the song is included into the 'Song Of The Day' list shown on the Scene page. */
   scene?: boolean;
