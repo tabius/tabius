@@ -9,7 +9,7 @@ import { I18N } from '@app/app-i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { trackByUrl } from '@common/util/misc-utils';
-import { MOUNT_COLLECTION, MOUNT_COLLECTION_PREFIX } from '@common/mounts';
+import { MOUNT_COLLECTION_PREFIX } from '@common/mounts';
 
 @Component({
   selector: 'gt-catalog-navigation-history-popup',
@@ -28,7 +28,11 @@ export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent
 
   readonly i18n = I18N.navigationHistoryPopup;
 
-  constructor(private readonly uds: UserService, private readonly cd: ChangeDetectorRef, private readonly router: Router) {
+  constructor(
+    private readonly uds: UserService,
+    private readonly cd: ChangeDetectorRef,
+    private readonly router: Router,
+  ) {
     super();
     this.currentUrl = this.router.url;
     this.uds
