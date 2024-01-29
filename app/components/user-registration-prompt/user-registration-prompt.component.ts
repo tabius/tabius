@@ -53,6 +53,6 @@ export class UserRegistrationPromptComponent implements AfterViewInit {
   }
 
   onSignInClicked(): void {
-    this.authService.signin();
+    this.authService.login();
   }
 }

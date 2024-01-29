@@ -88,7 +88,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   }
 
   openSignInDialog(): void {
-    this.authService.signin();
+    this.authService.login();
   }
 }
 

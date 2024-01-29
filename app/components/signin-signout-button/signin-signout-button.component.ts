@@ -22,7 +22,7 @@ export class SigninSignoutButtonComponent {
   }
 
   signIn(): void {
-    this.authService.signin();
+    this.authService.login();
   }
 
   signOut(): void {
