@@ -3,7 +3,6 @@ import { installLogFunctions } from './util/log';
 import { NestFactory } from '@nestjs/core';
 import { BackendModule } from './backend.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import session from 'express-session';
 import { SERVER_CONFIG } from './backend-config';
 import { NestApplicationOptions } from '@nestjs/common';
 
@@ -15,14 +14,6 @@ async function bootstrap(): Promise<void> {
   };
   const nestApp = await NestFactory.create(BackendModule, nestAppOptions);
   nestApp.enableCors(buildCorsOptions());
-  nestApp.use(
-    session({
-      secret: 'we have no secret',
-      name: SERVER_CONFIG.sessionCookieName,
-      resave: false,
-      saveUninitialized: false,
-    }),
-  );
   console.log(`Starting nest server on ${SERVER_CONFIG.serverPort} port`);
   await nestApp.listen(SERVER_CONFIG.serverPort);
 }

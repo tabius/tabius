@@ -7,7 +7,6 @@ export interface TabiusBackendConfig {
   /** e.g. /opt/tabius... */
   resourcesDir: string;
   corsOriginWhitelist: string[];
-  sessionCookieName: string;
   /** MariaDB/MySQL connector config. */
   dbConfig: any;
 
@@ -36,7 +35,6 @@ const DEFAULT_CONFIG: Partial<TabiusBackendConfig> = {
     // Non-SSR app.
     'http://localhost:12102',
   ],
-  sessionCookieName: 'tabius.sid',
 };
 
 export const SERVER_CONFIG: Readonly<TabiusBackendConfig> = {

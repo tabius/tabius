@@ -1,5 +1,5 @@
 import { SongDbi } from '../db/song-dbi.service';
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
 import { Song, SongDetails } from '@common/catalog-model';
 import {
   isSongId,
@@ -75,9 +75,9 @@ export class SongController {
 
   /** Creates song and returns updated song & details. */
   @Post()
-  async create(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
+  async create(@Req() req, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     console.log('SongController.create', request);
-    const user = BackendAuthService.getUserOrFail(session);
+    const user = BackendAuthService.getUserOrFail(req);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -102,9 +102,9 @@ export class SongController {
 
   /** Updates song and returns updated song & details. */
   @Put()
-  async update(@Session() session, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
+  async update(@Req() req, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     console.log('SongController.update', request);
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -126,9 +126,9 @@ export class SongController {
 
   /** Updates song's 'scene' flag and returns updated song & details. */
   @Put('scene')
-  async updateSceneFlag(@Session() session, @Body() request: UpdateSongSceneFlagRequest): Promise<UpdateSongResponse> {
+  async updateSceneFlag(@Req() req, @Body() request: UpdateSongSceneFlagRequest): Promise<UpdateSongResponse> {
     console.log('SongController.updateSceneFlag', request);
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
@@ -157,12 +157,12 @@ export class SongController {
   /** Deletes the song and returns updated collection details. */
   @Delete(':songId/:collectionId')
   async delete(
-    @Session() session,
+    @Req() req,
     @Param('songId') idParam: string,
     @Param('collectionId') collectionIdParam: string,
   ): Promise<DeleteSongResponse> {
     console.log(`SongController.delete ${idParam}, collection: ${collectionIdParam}`);
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     const songId = +idParam;
     const collectionId = +collectionIdParam;
     const collection = await this.collectionDbi.getCollectionById(collectionId);
@@ -199,12 +199,12 @@ export class SongController {
   /** Adds song to secondary collection. */
   @Put('add-to-secondary-collection')
   async addSongToSecondaryCollection(
-    @Session() session,
+    @Req() req,
     @Body() request: AddSongToSecondaryCollectionRequest,
   ): Promise<AddSongToSecondaryCollectionResponse> {
     console.log('SongController.addSongToCollection', request);
     const { songId, collectionId } = request;
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     //todo: check if song exists & is in the listed collection or is in the user collection.
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
@@ -225,12 +225,12 @@ export class SongController {
   /** Removes song to secondary collection. */
   @Put('remove-from-secondary-collection')
   async removeSongFromSecondaryCollection(
-    @Session() session,
+    @Req() req,
     @Body() request: RemoveSongFromSecondaryCollectionRequest,
   ): Promise<RemoveSongFromSecondaryCollectionResponse> {
     console.log('SongController.removeSongFromSecondaryCollection', request);
     const { songId, collectionId } = request;
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     const collection = await this.collectionDbi.getCollectionById(collectionId);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -246,7 +246,7 @@ export class SongController {
   /** Removes song from the source collection and adds it to the target collection. */
   @Put('move-to-another-collection')
   async moveSongToAnotherCollection(
-    @Session() session,
+    @Req() req,
     @Body() request: MoveSongToAnotherCollectionRequest,
   ): Promise<MoveSongToAnotherCollectionResponse> {
     console.log('moveSongToAnotherCollection', request);
@@ -255,7 +255,7 @@ export class SongController {
     // noinspection SuspiciousTypeOfGuard: TODO: use validators framework.
     assertTruthy(typeof songId === 'number' && typeof sourceCollectionId === 'number' && typeof targetCollectionId === 'number');
 
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     const song = await this.songDbi.getSong(songId);
     if (!song) {
       throw new HttpException('Song not found: ' + songId, HttpStatus.BAD_REQUEST);

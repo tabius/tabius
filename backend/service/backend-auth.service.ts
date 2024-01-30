@@ -5,7 +5,6 @@ import { CollectionDbi } from '../db/collection-dbi.service';
 import { isValidId } from '@common/util/misc-utils';
 import { UserDbi } from '../db/user-dbi.service';
 import { AUTH0_WEB_CLIENT_AUDIENCE, INVALID_ID } from '@common/common-constants';
-import * as Express from 'express-session';
 import { SERVER_CONFIG } from '../backend-config';
 import { nanoid } from 'nanoid';
 
@@ -13,7 +12,11 @@ import { JwtRsaVerifier } from 'aws-jwt-verify';
 import { JwtRsaVerifierProperties } from 'aws-jwt-verify/jwt-rsa';
 import { truthy } from 'assertic';
 
-const USER_SESSION_KEY = 'user';
+const TABIUS_REQUEST_DATA_FIELD_NAME = '_tabius';
+
+interface TabiusRequestData {
+  user: User | undefined;
+}
 
 interface Auth0JwtPayload {
   sub: string;
@@ -32,7 +35,10 @@ type Auth0JwtVerifier = JwtRsaVerifier<object, JwtRsaVerifierProperties<object>,
 export class BackendAuthService implements NestInterceptor {
   private readonly jwtVerifier: Auth0JwtVerifier;
 
-  constructor(private readonly userDbi: UserDbi, private readonly collectionDbi: CollectionDbi) {
+  constructor(
+    private readonly userDbi: UserDbi,
+    private readonly collectionDbi: CollectionDbi,
+  ) {
     const domain = SERVER_CONFIG.auth.domain;
     this.jwtVerifier = JwtRsaVerifier.create({
       issuer: `https://${domain}/`,
@@ -49,11 +55,19 @@ export class BackendAuthService implements NestInterceptor {
     let userEmailFromAccessToken: string | undefined = undefined;
 
     let accessToken = req.headers['authorization']?.split(' ')[1];
+    let user: User | undefined;
     if (accessToken) {
       try {
         const jwtPayload = (await this.jwtVerifier.verify(accessToken)) as unknown as Auth0JwtPayload;
         userIdFromAccessToken = truthy(jwtPayload.sub, () => `Auth0JwtPayload has no sub: ${JSON.stringify(jwtPayload)}`);
         userEmailFromAccessToken = truthy(jwtPayload.email, () => `Auth0JwtPayload has no email: ${JSON.stringify(jwtPayload)}`);
+        user = {
+          id: userIdFromAccessToken,
+          email: userEmailFromAccessToken,
+          collectionId: INVALID_ID,
+          roles: [],
+          mount: '',
+        };
         console.log(`Found user id in access token: ${userIdFromAccessToken}`);
       } catch (e) {
         console.log('Got bad access token. Access token is set to undefined!', accessToken, e);
@@ -63,58 +77,35 @@ export class BackendAuthService implements NestInterceptor {
 
     console.log(`ServerAuthService[${req.path}] user: ${userIdFromAccessToken}, has token: ${!!accessToken}`);
 
-    // Check if the current session is still valid for the user saved in the session.
-    let user: User | undefined = req.session[USER_SESSION_KEY];
-    if (user?.id !== userIdFromAccessToken) {
-      if (user) {
-        console.log('User id from session does not match user id from request access token. Resetting.');
-        user = undefined;
-      }
-      req.session[USER_SESSION_KEY] = undefined;
-    }
-
-    if (!user && userIdFromAccessToken && userEmailFromAccessToken) {
-      user = {
-        id: userIdFromAccessToken,
-        email: userEmailFromAccessToken,
-        collectionId: INVALID_ID,
-        roles: [],
-        mount: '',
-      };
-    } else if (user) {
-      console.debug(`ServerAuthService.intercept: Found user in session: ${user.email}`);
-    }
     if (user) {
       if (!isValidId(user.collectionId)) {
-        // First auth service interception in the session: create or populate cached user structure.
+        // TODO: optimize using `frescas` package.
         user.collectionId = (await this.getUserCollectionId(user.id)) || 0;
         if (!isValidId(user.collectionId)) {
           user.mount = nanoid(8);
           user.collectionId = await this.collectionDbi.createPrimaryUserCollection(user);
           await this.userDbi.createUser(user);
         } else {
-          console.log('ServerAuthService.intercept: Filling user properties: ', user);
           user.mount = truthy(await this.userDbi.getUserMount(user.id));
           user.roles = truthy(await this.userDbi.getUserRoles(user.id));
         }
       }
-      req.session[USER_SESSION_KEY] = user;
-    } else {
-      req.session[USER_SESSION_KEY] = undefined;
     }
+    req[TABIUS_REQUEST_DATA_FIELD_NAME] = { user };
     return next.handle();
   }
 
-  static getUserOrFail(session: Express.Session): User {
-    const user = session[USER_SESSION_KEY];
+  static getUserOrFail(request: Express.Request): User {
+    const user = BackendAuthService.getUserOrUndefined(request);
     if (!user) {
-      throw new HttpException('Session has no user data', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Request has no user data', HttpStatus.UNAUTHORIZED);
     }
     return user;
   }
 
-  static getUserOrUndefined(session: Express.Session): User | undefined {
-    return session[USER_SESSION_KEY];
+  static getUserOrUndefined(request: Express.Request): User | undefined {
+    const { user } = (request[TABIUS_REQUEST_DATA_FIELD_NAME] || {}) as TabiusRequestData;
+    return user;
   }
 
   /** This mapping is immutable, so it is safe to cache */

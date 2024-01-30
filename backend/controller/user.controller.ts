@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Put, Session } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Put, Req } from '@nestjs/common';
 import { UserDbi } from '../db/user-dbi.service';
 import { newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings } from '@common/user-model';
 import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
@@ -13,8 +13,8 @@ export class UserController {
 
   /** Login callback. Called on successful user login. */
   @Get('/login')
-  async login(@Session() session): Promise<LoginResponse> {
-    const user = BackendAuthService.getUserOrUndefined(session);
+  async login(@Req() req): Promise<LoginResponse> {
+    const user = BackendAuthService.getUserOrUndefined(req);
     if (!user) {
       return {
         user: undefined,
@@ -31,19 +31,19 @@ export class UserController {
   }
 
   @Get('/settings')
-  async getSettings(@Session() session): Promise<UserSettings> {
-    const user: User = BackendAuthService.getUserOrFail(session);
+  async getSettings(@Req() req): Promise<UserSettings> {
+    const user: User = BackendAuthService.getUserOrFail(req);
     console.log('UserController.getSettings', user.email);
     return await this.getUserSettings(user);
   }
 
   @Put('/settings/song')
-  async setSongSettings(@Session() session, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
+  async setSongSettings(@Req() req, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
     const error = validateObject(songSettings, UserSongSettingsValidator);
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     console.log('UserController.setSongSettings', user.email, songSettings);
     const settings = await this.getUserSettings(user);
     const defaultSettings = newDefaultUserSongSettings(songSettings.songId);
@@ -59,8 +59,8 @@ export class UserController {
   }
 
   @Put('/settings/h4Si')
-  async setH4Si(@Session() session, @Body() { h4SiFlag }: { h4SiFlag: boolean | undefined }): Promise<UserSettings> {
-    const user: User = BackendAuthService.getUserOrFail(session);
+  async setH4Si(@Req() req, @Body() { h4SiFlag }: { h4SiFlag: boolean | undefined }): Promise<UserSettings> {
+    const user: User = BackendAuthService.getUserOrFail(req);
     console.log('UserController.setH4Si', user.email, h4SiFlag);
     const settings = await this.getUserSettings(user);
     const updatedSettings = { ...settings, h4Si: !!h4SiFlag };
@@ -69,12 +69,12 @@ export class UserController {
   }
 
   @Put('/settings/favKey')
-  async setFavKey(@Session() session, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
+  async setFavKey(@Req() req, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
     const error = validateObject(request, updateFavoriteSongKeyRequestAssertion);
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     console.log('UserController.setFavKey', user.email, request);
     const settings = await this.getUserSettings(user);
     const updatedSettings = { ...settings, favKey: request.key };

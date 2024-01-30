@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Session } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
 import { Collection, CollectionDetails } from '@common/catalog-model';
 import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
 import {
@@ -95,11 +95,11 @@ export class CollectionController {
 
   @Post()
   async createListedCollection(
-    @Session() session,
+    @Req() req,
     @Body() request: CreateListedCollectionRequest,
   ): Promise<CreateListedCollectionResponse> {
     console.log('CollectionController.createListedCollection', request);
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     if (!isModerator(user)) {
       throw new HttpException('Insufficient rights', HttpStatus.FORBIDDEN);
     }
@@ -125,11 +125,11 @@ export class CollectionController {
 
   @Post('/user')
   async createUserCollection(
-    @Session() session,
+    @Req() req,
     @Body() request: CreateUserCollectionRequest,
   ): Promise<CreateUserCollectionResponse> {
     console.log('CollectionController.createUserCollection', request);
-    const user = BackendAuthService.getUserOrFail(session);
+    const user = BackendAuthService.getUserOrFail(req);
     const error = validateObject(request, createUserCollectionRequestAssertion);
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -155,9 +155,9 @@ export class CollectionController {
 
   /** Updates collection and returns updated song & details. */
   @Put('/user')
-  async updateUserCollection(@Session() session, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
+  async updateUserCollection(@Req() req, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
     console.log('CollectionController.updateUserCollection', request);
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     const collection = await this.collectionDbi.getCollectionById(request.id);
     if (!collection) {
       throw new HttpException('Collection not found', HttpStatus.BAD_REQUEST);
@@ -173,9 +173,9 @@ export class CollectionController {
 
   /** Deletes collection and returns list of all user collection. */
   @Delete('/user/:collectionId')
-  async deleteUserCollection(@Session() session, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
+  async deleteUserCollection(@Req() req, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
     console.log('CollectionController.deleteUserCollection', idParam);
-    const user: User = BackendAuthService.getUserOrFail(session);
+    const user: User = BackendAuthService.getUserOrFail(req);
     const collectionId = +idParam;
     if (collectionId === user.collectionId) {
       throw new HttpException(`Can't remove primary user collection`, HttpStatus.BAD_REQUEST);
