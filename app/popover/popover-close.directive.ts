@@ -1,6 +1,7 @@
-import { Directive, HostListener, Input, Optional } from '@angular/core';
+import { Directive, HostListener, Inject, Input, Optional } from '@angular/core';
 
 import { PopoverRef } from './popover-ref';
+import { POPOVER_REF } from '@app/popover/popover.service';
 
 /**
  * Button that will close the current popover.
@@ -10,10 +11,10 @@ import { PopoverRef } from './popover-ref';
 @Directive({
   selector: '[gt-popoverClose]',
 })
-export class PopoverCloseDirective<T = any> {
+export class PopoverCloseDirective<T = unknown> {
   @Input('gt-popoverClose') popoverResult!: T;
 
-  constructor(@Optional() private popoverRef: PopoverRef<T>) {}
+  constructor(@Inject(POPOVER_REF) @Optional() private popoverRef: PopoverRef<T>) {}
 
   @HostListener('click') onClick(): void {
     if (!this.popoverRef) {

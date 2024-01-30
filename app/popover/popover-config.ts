@@ -1,15 +1,17 @@
+import { HorizontalConnectionPos, VerticalConnectionPos } from '@angular/cdk/overlay';
+
 /**
  * Configuration for opening a popover with the Popover service.
  */
-export interface PopoverConfig<T = any> {
+export interface PopoverConfig<DataType = unknown> {
   backdropClass: string | string[];
-  data?: T;
+  data?: DataType;
   disableClose: boolean;
   panelClass: string | string[];
   arrowOffset: number;
   arrowSize: number;
   preferredPosition?: {
-    overlayX: string;
-    overlayY: string;
+    overlayX: HorizontalConnectionPos;
+    overlayY: VerticalConnectionPos;
   };
 }

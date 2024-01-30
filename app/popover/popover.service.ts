@@ -5,19 +5,12 @@ import {
   Overlay,
   PositionStrategy,
 } from '@angular/cdk/overlay';
-import { ComponentPortal, PortalInjector, TemplatePortal } from '@angular/cdk/portal';
+import { ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
 import { Injectable, InjectionToken, Injector, TemplateRef } from '@angular/core';
 
 import { PopoverConfig } from './popover-config';
 import { PopoverRef } from './popover-ref';
 import { PopoverComponent } from './popover.component';
-
-/**
- * Injection token that can be used to access the data that was passed in to a popover.
- *
- * Original code: https://stackblitz.com/edit/cdk-popover-example-p1
- */
-export const POPOVER_DATA = new InjectionToken('popover.data');
 
 const defaultConfig: PopoverConfig = {
   backdropClass: '',
@@ -27,17 +20,18 @@ const defaultConfig: PopoverConfig = {
   arrowSize: 20,
 };
 
-/**
- * Service to open modal and manage popovers.
- */
+/** Injection token that can be used to access the popover reference. */
+export const POPOVER_REF = new InjectionToken<Request>('POPOVER_REF');
+
+/** Service to open a modal and manage popover state.*/
 @Injectable({
   providedIn: 'root',
 })
 export class PopoverService {
-  constructor(private readonly overlay: Overlay, private readonly injector: Injector) {}
+  constructor(private readonly overlay: Overlay) {}
 
-  open<D = any>(
-    componentOrTemplate: ComponentType<any> | TemplateRef<any>,
+  open<D = unknown>(
+    componentOrTemplate: ComponentType<unknown> | TemplateRef<unknown>,
     target: FlexibleConnectedPositionStrategyOrigin | null,
     config: Partial<PopoverConfig> = {},
   ): PopoverRef<D> {
@@ -56,44 +50,29 @@ export class PopoverService {
 
     const popoverRef = new PopoverRef<D>(overlayRef, positionStrategy, popoverConfig);
 
-    const popover = overlayRef.attach(
-      new ComponentPortal(
-        PopoverComponent,
-        null,
-        new PortalInjector(this.injector, new WeakMap<any, any>([[PopoverRef, popoverRef]])),
-      ),
-    ).instance;
+    const popoverInjector = Injector.create({
+      providers: [
+        {
+          provide: POPOVER_REF,
+          useValue: popoverRef,
+        },
+      ],
+    });
+
+    const popover = overlayRef.attach(new ComponentPortal(PopoverComponent, null, popoverInjector)).instance;
 
     if (componentOrTemplate instanceof TemplateRef) {
-      // rendering a provided template dynamically
-      popover.attachTemplatePortal(
-        new TemplatePortal(
-          componentOrTemplate,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          null!, //TODO
-          {
-            $implicit: config.data,
-            popover: popoverRef,
-          },
-        ),
+      const templatePortal = new TemplatePortal(
+        componentOrTemplate,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        null!,
+        { $implicit: config.data, popover: popoverRef },
       );
+      popover.attachTemplatePortal(templatePortal);
     } else {
-      // rendering a provided component dynamically
-      popover.attachComponentPortal(
-        new ComponentPortal(
-          componentOrTemplate,
-          null,
-          new PortalInjector(
-            this.injector,
-            new WeakMap<any, any>([
-              [POPOVER_DATA, config.data],
-              [PopoverRef, popoverRef],
-            ]),
-          ),
-        ),
-      );
+      const componentPortal = new ComponentPortal(componentOrTemplate, null, popoverInjector);
+      popover.attachComponentPortal(componentPortal);
     }
-
     return popoverRef;
   }
 
@@ -105,30 +84,29 @@ export class PopoverService {
       return this.overlay.position().global().centerHorizontally().centerVertically();
     }
     const { arrowSize, arrowOffset } = popoverConfig;
-    const panelOffset = arrowSize / 2;
+    const popoverOffset = arrowSize / 2;
 
     // Preferred positions, in order of priority.
+    // How to read: 'overlayX/Y' point touches 'originX/Y' point.
+    // Example: center-bottom overlay point touches center-top point of the origin.
     const positions: ConnectionPositionPair[] = [
-      // top center
       {
         overlayX: 'center',
         overlayY: 'bottom',
         originX: 'center',
         originY: 'top',
         panelClass: ['bottom', 'center'],
-        offsetY: -1 * panelOffset,
+        offsetY: -1 * popoverOffset,
       },
-      // top left
       {
         overlayX: 'start',
         overlayY: 'bottom',
         originX: 'center',
         originY: 'top',
         panelClass: ['bottom', 'left'],
-        offsetX: -1 * arrowOffset,
-        offsetY: -1 * panelOffset,
+        offsetX: -arrowOffset,
+        offsetY: -1 * popoverOffset,
       },
-      // top right
       {
         overlayX: 'end',
         overlayY: 'bottom',
@@ -136,28 +114,25 @@ export class PopoverService {
         originY: 'top',
         panelClass: ['bottom', 'right'],
         offsetX: arrowOffset,
-        offsetY: -1 * panelOffset,
+        offsetY: -1 * popoverOffset,
       },
-      // bottom center
       {
         overlayX: 'center',
         overlayY: 'top',
         originX: 'center',
         originY: 'bottom',
         panelClass: ['top', 'center'],
-        offsetY: panelOffset,
+        offsetY: popoverOffset,
       },
-      // bottom left
       {
         overlayX: 'start',
         overlayY: 'top',
         originX: 'center',
         originY: 'bottom',
         panelClass: ['top', 'left'],
-        offsetX: -1 * arrowOffset,
-        offsetY: panelOffset,
+        offsetX: -arrowOffset,
+        offsetY: popoverOffset,
       },
-      // bottom right
       {
         overlayX: 'end',
         overlayY: 'top',
@@ -165,7 +140,7 @@ export class PopoverService {
         originY: 'bottom',
         panelClass: ['top', 'right'],
         offsetX: arrowOffset,
-        offsetY: panelOffset,
+        offsetY: popoverOffset,
       },
     ];
 

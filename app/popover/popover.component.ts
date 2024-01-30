@@ -13,7 +13,7 @@ import { ChangeDetectionStrategy, Component, ComponentRef, EmbeddedViewRef, View
 export class PopoverComponent extends BasePortalOutlet {
   @ViewChild(CdkPortalOutlet, { static: true }) portalOutlet!: CdkPortalOutlet;
 
-  attachComponentPortal<T>(componentPortal: ComponentPortal<any>): ComponentRef<T> {
+  attachComponentPortal<T>(componentPortal: ComponentPortal<T>): ComponentRef<T> {
     return this.portalOutlet.attachComponentPortal(componentPortal);
   }
 
