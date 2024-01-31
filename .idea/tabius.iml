@@ -10,6 +10,7 @@
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/.angular" />
       <excludeFolder url="file://$MODULE_DIR$/playwright-report" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/playwright/playwright-report" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

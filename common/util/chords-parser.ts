@@ -66,6 +66,12 @@ export function parseChordsLine(text: string, startIdx?: number, endIdx?: number
   return chordLocations;
 }
 
+/**
+ * Tokens not considered as a valid song text in isMostlyNonChordsTextLine.
+ * Affect logic of isMostlyNonChordsTextLine.
+ */
+const INTRO_TOKENS = ['Intro:', 'Вступление:', 'Проигрыш:'];
+
 /** Returns 'true' if the line looks like a normal (non-cords) line. */
 export function isMostlyNonChordsTextLine(chordLocations: ChordLocation[], text: string, startIdx: number, endIdx: number): boolean {
   if (chordLocations.length === 0) {
@@ -93,8 +99,22 @@ export function isMostlyNonChordsTextLine(chordLocations: ChordLocation[], text:
       }
     }
   }
+
   // Return 'true' if % of alpha chars outside of chords is too large.
-  return nonChordsAlphaLen >= (alphaLen * 2) / 3;
+  const minNonAlphaLengthForNonChordsLine = (alphaLen * 2) / 3;
+  if (nonChordsAlphaLen < minNonAlphaLengthForNonChordsLine) {
+    return false;
+  }
+  const line = text.substring(startIdx, endIdx);
+  for (const introToken of INTRO_TOKENS) {
+    if (line.includes(introToken)) {
+      nonChordsAlphaLen -= introToken.length;
+      if (nonChordsAlphaLen < minNonAlphaLengthForNonChordsLine) {
+        return false;
+      }
+    }
+  }
+  return nonChordsAlphaLen >= minNonAlphaLengthForNonChordsLine;
 }
 
 /** Returns 'true' if the line looks like tabs: A|--1-2-3--x- */

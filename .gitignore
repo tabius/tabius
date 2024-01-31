@@ -10,7 +10,7 @@ app/environments/build.ts
 # Build artifacts
 /dist
 /local
-/node_modules
+node_modules
 /npm-debug.log.*
 *.log
 .angular
