@@ -62,7 +62,7 @@ export function isNewSongMount(value: unknown): value is string {
   return checkStringLength(value, 0, MAX_SONG_MOUNT_LENGTH) && isTranslitLowerCase(value);
 }
 
-export function isCollectionMount(value: unknown): boolean {
+export function isCollectionMount(value: unknown): value is string {
   return checkStringLength(value, MIN_COLLECTION_MOUNT_LENGTH, MAX_COLLECTION_MOUNT_LENGTH);
 }
 

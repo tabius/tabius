@@ -1,6 +1,10 @@
 import { Application, NextFunction, Request, Response } from 'express';
 import { assertObject, assertTruthy, ObjectAssertion, truthy, ValueAssertion } from 'assertic';
 
+export enum UrlParameter {
+  mount = 'mount',
+}
+
 export interface BaseHandler {
   path: string;
 }
@@ -10,6 +14,7 @@ export interface RequestContext<RequestBodyType = void> {
   req: Request;
   res: Response;
   userId?: string;
+  mount?: string;
 }
 
 export type UrlTokensValidator = Record<string, ValueAssertion<string>>;
@@ -54,9 +59,7 @@ export function mount(app: Application, { method, handler }: RouteRegistrationIn
       } else {
         result = await runPostHandler(handler, requestContext);
       }
-      const response = buildErrorResponse(result);
-      res.status(response.status);
-      res.send(response);
+      res.send(result);
     }),
   );
 }
@@ -111,7 +114,15 @@ class RequestContextImpl<RequestBodyType> implements RequestContext<RequestBodyT
   }
 
   get userId(): string {
-    return truthy(this.data.userId, 'No userId in the context');
+    return truthy(this.data.userId, 'No "userId" in the context');
+  }
+
+  get mount(): string {
+    return this.getParameter(UrlParameter.mount);
+  }
+
+  private getParameter(param: UrlParameter): string {
+    return truthy(this.data.req.params[param], `No "${param}" in the context`);
   }
 }
 

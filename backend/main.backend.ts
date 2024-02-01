@@ -1,10 +1,12 @@
 import 'core-js';
 import { installLogFunctions } from './util/log';
 import { NestFactory } from '@nestjs/core';
-import { BackendModule } from './backend.module';
+import { BackendModule, setApp } from './backend.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { SERVER_CONFIG } from './backend-config';
 import { NestApplicationOptions } from '@nestjs/common';
+import { registerRoutes } from '@backend/handlers/routes';
+import { Application } from 'express';
 
 installLogFunctions();
 
@@ -14,6 +16,10 @@ async function bootstrap(): Promise<void> {
   };
   const nestApp = await NestFactory.create(BackendModule, nestAppOptions);
   nestApp.enableCors(buildCorsOptions());
+  setApp(nestApp);
+
+  registerRoutes(nestApp.getHttpAdapter() as unknown as Application);
+
   console.log(`Starting nest server on ${SERVER_CONFIG.serverPort} port`);
   await nestApp.listen(SERVER_CONFIG.serverPort);
 }

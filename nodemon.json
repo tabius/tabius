@@ -1,7 +1,7 @@
 {
   "watch": [
     "common",
-    "server"
+    "backend"
   ],
   "ext": "ts",
   "ignore": [
