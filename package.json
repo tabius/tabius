@@ -29,7 +29,8 @@
     "pw-tests-ui-org": "TEST_ENV=org playwright test --ui",
     "format": "prettier --write \"./**/*.{ts,js,scss}\"",
     "lint": "eslint . --ext .ts,.html",
-    "jest": "jest"
+    "jest": "jest",
+    "api-tests": "jest tests/api"
   },
   "private": true,
   "dependencies": {

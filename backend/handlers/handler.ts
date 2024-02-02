@@ -43,7 +43,7 @@ export const mountPost = <Req, Res>(app: Application, handler: PostHandler<Req, 
   mount(app, { method: 'post', handler: handler as PostHandler });
 
 export function mount(app: Application, { method, handler }: RouteRegistrationInfo): void {
-  const pathPrefix = `/`;
+  const pathPrefix = `/api/`;
   const path = `${pathPrefix}${handler.path}`;
   console.log(`${`${method.toUpperCase()}     `.substring(0, 8)} ${path}`);
   app[method](
@@ -54,6 +54,7 @@ export function mount(app: Application, { method, handler }: RouteRegistrationIn
       // TODO: check permissions.
       const userId: string | undefined = undefined;
       const requestContext = newRequestContext(undefined, req, res, userId);
+      console.log(`${method.toUpperCase()} ${req.path}`);
       if (method === 'get') {
         result = await runGetHandler(handler, requestContext);
       } else {
@@ -134,27 +135,28 @@ export function catchRouteErrors(fn: ExpressFunction): ExpressFunction {
       await fn(req, res, next);
     } catch (error) {
       const response = buildErrorResponse(error);
-      if (response.status >= 500) {
+      if (response.statusCode >= 500) {
         console.error(`catchRouteErrors: ${req.path}`, error);
       } else {
         console.log(`catchRouteErrors: ${req.path}`, error);
       }
-      res.status(response.status);
+      res.status(response.statusCode);
       res.send(response);
     }
   };
 }
 
 interface TResponse<T> {
-  status: number;
-  result: T;
+  statusCode: number;
+  result?: T;
+  message?: string;
 }
 
-function buildErrorResponse(error: unknown): TResponse<{ error: string }> {
+function buildErrorResponse(error: unknown): TResponse<void> {
   const errorMessage = typeof error === 'object' ? (error as Error).message : typeof error === 'string' ? error : undefined;
-  const status = parseStatusCodeFromErrorMessageToken(errorMessage);
-  const publicErrorMessage = status === INTERNAL_ERROR_STATUS || !errorMessage ? 'Internal error' : errorMessage;
-  return { status, result: { error: publicErrorMessage } };
+  const statusCode = parseStatusCodeFromErrorMessageToken(errorMessage);
+  const message = statusCode === INTERNAL_ERROR_STATUS || !errorMessage ? 'Internal error' : cutErrorMessageToken(errorMessage);
+  return { statusCode, message };
 }
 
 export function parseErrorTokenFromErrorMessage(errorMessage: string): string {
@@ -186,6 +188,11 @@ export const NOT_FOUND_STATUS = 404;
 
 export const INTERNAL_ERROR = 'INTERNAL_ERROR';
 export const INTERNAL_ERROR_STATUS = 500;
+
+export function cutErrorMessageToken(message: string): string {
+  const errorToken = parseErrorTokenFromErrorMessage(message);
+  return errorToken.length > 0 ? message.substring(errorToken.length + 1).trimStart() : message;
+}
 
 export function parseStatusCodeFromErrorMessageToken(message: unknown): number {
   if (typeof message !== 'string') return 500;

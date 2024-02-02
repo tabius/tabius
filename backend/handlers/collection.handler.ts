@@ -5,10 +5,10 @@ import { getApp } from '@backend/backend.module';
 import { CollectionDbi } from '@backend/db/collection-dbi.service';
 
 // TODO: add api prefix
-export const COLLECTION_RESOURCE = 'collections';
+export const COLLECTION_RESOURCE = 'collection';
 
 export const collectionGetByMount: GetHandler<Collection> = {
-  path: `${COLLECTION_RESOURCE}/:${UrlParameter.mount}`,
+  path: `${COLLECTION_RESOURCE}/by-mount/:${UrlParameter.mount}`,
   async handler({ mount }: RequestContext) {
     if (!isCollectionMount(mount)) {
       // TODO: validate before calling the handler.

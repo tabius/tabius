@@ -60,20 +60,6 @@ export class CollectionController {
     };
   }
 
-  /** Returns collection by mount. */
-  @Get('/by-mount/:mount')
-  async getByMount(@Param('mount') mountParam: string): Promise<Collection> {
-    console.log('CollectionController.getByMount', mountParam);
-    if (!isCollectionMount(mountParam)) {
-      throw new HttpException(`Bad collection mount: ${mountParam}`, HttpStatus.BAD_REQUEST);
-    }
-    const collection = await this.collectionDbi.getByMount(mountParam);
-    if (!collection) {
-      throw new HttpException(`Collection is not found ${mountParam}`, HttpStatus.NOT_FOUND);
-    }
-    return collection;
-  }
-
   @Get('/by-ids/:ids')
   getCollectionsByIds(@Param('ids') idsParam: string): Promise<Collection[]> {
     // TODO: check permissions?
