@@ -1,12 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
 import { Collection, CollectionDetails } from '@common/catalog-model';
 import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
-import {
-  createListedCollectionRequestAssertion,
-  createUserCollectionRequestAssertion,
-  paramToArrayOfNumericIds,
-  paramToId,
-} from '../util/validators';
+import { createListedCollectionRequestAssertion, createUserCollectionRequestAssertion, paramToId } from '../util/validators';
 import {
   CreateListedCollectionRequest,
   CreateListedCollectionResponse,
