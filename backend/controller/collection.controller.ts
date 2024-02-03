@@ -4,7 +4,6 @@ import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-
 import {
   createListedCollectionRequestAssertion,
   createUserCollectionRequestAssertion,
-  isCollectionMount,
   paramToArrayOfNumericIds,
   paramToId,
 } from '../util/validators';
@@ -27,7 +26,10 @@ import { validateObject } from 'assertic';
 
 @Controller('/api/collection')
 export class CollectionController {
-  constructor(private readonly collectionDbi: CollectionDbi, private readonly songDbi: SongDbi) {}
+  constructor(
+    private readonly collectionDbi: CollectionDbi,
+    private readonly songDbi: SongDbi,
+  ) {}
 
   private allListedCollections = new AsyncFreshValue<Array<Collection>>({
     refreshPeriodMillis: 30 * 1000,
@@ -60,14 +62,6 @@ export class CollectionController {
     };
   }
 
-  @Get('/by-ids/:ids')
-  getCollectionsByIds(@Param('ids') idsParam: string): Promise<Collection[]> {
-    // TODO: check permissions?
-    console.log('CollectionController.getCollectionsByIds', idsParam);
-    const collectionIds = paramToArrayOfNumericIds(idsParam);
-    return this.collectionDbi.getCollectionsByIds(collectionIds);
-  }
-
   @Get('/details-by-id/:id')
   async getCollectionDetailsById(@Param('id') idParam: string): Promise<CollectionDetails> {
     console.log('CollectionController.getCollectionDetailsById', idParam);
@@ -80,10 +74,7 @@ export class CollectionController {
   }
 
   @Post()
-  async createListedCollection(
-    @Req() req,
-    @Body() request: CreateListedCollectionRequest,
-  ): Promise<CreateListedCollectionResponse> {
+  async createListedCollection(@Req() req, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
     console.log('CollectionController.createListedCollection', request);
     const user: User = BackendAuthService.getUserOrFail(req);
     if (!isModerator(user)) {
@@ -110,10 +101,7 @@ export class CollectionController {
   }
 
   @Post('/user')
-  async createUserCollection(
-    @Req() req,
-    @Body() request: CreateUserCollectionRequest,
-  ): Promise<CreateUserCollectionResponse> {
+  async createUserCollection(@Req() req, @Body() request: CreateUserCollectionRequest): Promise<CreateUserCollectionResponse> {
     console.log('CollectionController.createUserCollection', request);
     const user = BackendAuthService.getUserOrFail(req);
     const error = validateObject(request, createUserCollectionRequestAssertion);

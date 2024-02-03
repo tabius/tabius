@@ -1,8 +1,8 @@
 import { GetHandler, mountGet } from '@backend/handlers/handler';
 import { Application } from 'express';
-import { collectionGetByMount } from '@backend/handlers/collection.handler';
+import { collectionGetByMount, collectionGetListByIds } from '@backend/handlers/collection.handler';
 
-export function   registerRoutes(app: Application): void {
+export function registerRoutes(app: Application): void {
   // Shortcuts.
   const get = (getHandler: GetHandler<any>): void => mountGet(app, getHandler);
 
@@ -10,6 +10,7 @@ export function   registerRoutes(app: Application): void {
 
   console.log('registerRoutes: STARTED');
   get(collectionGetByMount);
+  get(collectionGetListByIds);
 
   console.log('registerRoutes: DONE');
 }

@@ -1,8 +1,13 @@
 import { Application, NextFunction, Request, Response } from 'express';
-import { assertObject, assertTruthy, ObjectAssertion, truthy, ValueAssertion } from 'assertic';
+import { assertObject, assertTruthy, formatError, ObjectAssertion, truthy, ValueAssertion } from 'assertic';
+import { isCollectionMount, paramToArrayOfNumericIds } from '@backend/util/validators';
+import * as url from 'url';
+import { CollectionDbi } from '@backend/db/collection-dbi.service';
+import { getApp } from '@backend/backend.module';
 
 export enum UrlParameter {
   mount = 'mount',
+  ids = 'ids',
 }
 
 export interface BaseHandler {
@@ -13,8 +18,10 @@ export interface RequestContext<RequestBodyType = void> {
   request: RequestBodyType;
   req: Request;
   res: Response;
-  userId?: string;
-  mount?: string;
+  userId: string;
+  mount: string;
+  ids: number[];
+  collectionDbi: CollectionDbi;
 }
 
 export type UrlTokensValidator = Record<string, ValueAssertion<string>>;
@@ -50,7 +57,7 @@ export function mount(app: Application, { method, handler }: RouteRegistrationIn
     path,
     catchRouteErrors(async (req, res) => {
       let result: ResponseOrValue<unknown>;
-      // TODO: validateUrlParameters(req, handler).
+      validateUrlParameters(req, handler);
       // TODO: check permissions.
       const userId: string | undefined = undefined;
       const requestContext = newRequestContext(undefined, req, res, userId);
@@ -83,7 +90,7 @@ async function runPostHandler<RequestBodyType, ResponseResultType>(
 }
 
 function newRequestContext<RequestBodyType>(
-  openapiRequest: RequestBodyType,
+  apiRequest: RequestBodyType,
   req: Request,
   res: Response,
   userId: string | undefined,
@@ -91,7 +98,7 @@ function newRequestContext<RequestBodyType>(
   return new RequestContextImpl<RequestBodyType>(
     // Empty/undefined/null values in the wrapped structure are safe because all access methods are guarded.
     {
-      request: openapiRequest,
+      request: apiRequest,
       req,
       res,
       userId,
@@ -100,7 +107,7 @@ function newRequestContext<RequestBodyType>(
 }
 
 class RequestContextImpl<RequestBodyType> implements RequestContext<RequestBodyType> {
-  constructor(readonly data: RequestContext<RequestBodyType>) {}
+  constructor(readonly data: Pick<RequestContext<RequestBodyType>, 'request' | 'req' | 'res'> & { userId?: string }) {}
 
   get request(): RequestBodyType {
     return this.data.request;
@@ -122,8 +129,17 @@ class RequestContextImpl<RequestBodyType> implements RequestContext<RequestBodyT
     return this.getParameter(UrlParameter.mount);
   }
 
+  get ids(): number[] {
+    const ids = truthy(this.getParameter(UrlParameter.ids), 'No "ids" in the context');
+    return paramToArrayOfNumericIds(ids);
+  }
+
   private getParameter(param: UrlParameter): string {
     return truthy(this.data.req.params[param], `No "${param}" in the context`);
+  }
+
+  get collectionDbi(): CollectionDbi {
+    return getApp().get(CollectionDbi);
   }
 }
 
@@ -146,7 +162,7 @@ export function catchRouteErrors(fn: ExpressFunction): ExpressFunction {
   };
 }
 
-interface TResponse<T> {
+export interface TResponse<T = unknown> {
   statusCode: number;
   result?: T;
   message?: string;
@@ -223,3 +239,45 @@ export function registerStatusCodeByErrorToken(errorToken: string, statusCode: n
 export function getStatusCodeByErrorToken(errorToken: string): number | undefined {
   return statusCodeByErrorToken.get(errorToken);
 }
+
+/** Validates request parameters using global + custom validators.*/
+function validateUrlParameters(
+  req: Request,
+  {
+    pathValidator,
+    queryValidator,
+  }: {
+    pathValidator?: UrlTokensValidator;
+    queryValidator?: UrlTokensValidator;
+  },
+): void {
+  for (const key in req.params) {
+    const value = req.params[key];
+    const validator: ValueAssertion<unknown> = pathValidator?.[key] || URL_PARAMETER_VALIDATOR[key as UrlParameter];
+    assertTruthy(value, () => `Path parameter has no validator: ${key}`);
+    validator(value, BAD_REQUEST);
+  }
+
+  const parsedUrl = url.parse(req.url, true);
+  for (const key in parsedUrl.query) {
+    const value = parsedUrl.query[key];
+    const validator: ValueAssertion<unknown> = queryValidator?.[key] || URL_PARAMETER_VALIDATOR[key as UrlParameter];
+    assertTruthy(validator, () => `${BAD_REQUEST}: Unknown parameter: ${key}`);
+    validator(value, BAD_REQUEST);
+  }
+}
+
+const assertCollectionMount: ValueAssertion<string> = (value: unknown, context = undefined): asserts value is string => {
+  assertTruthy(isCollectionMount(value), () => formatError(context, 'Invalid collection mount:', value));
+};
+
+const assertSerializedArrayOfIds: ValueAssertion<string> = (value: unknown, context = undefined): asserts value is string => {
+  assertTruthy(typeof value === 'string' && value.length > 0 && !value.split(',').some(v => isNaN(+v)), () =>
+    formatError(context, 'Invalid list of ids:', value),
+  );
+};
+
+export const URL_PARAMETER_VALIDATOR: Record<UrlParameter, ValueAssertion<unknown>> = {
+  [UrlParameter.mount]: assertCollectionMount,
+  [UrlParameter.ids]: assertSerializedArrayOfIds,
+};
