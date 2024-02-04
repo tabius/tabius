@@ -32,7 +32,7 @@ const SELECT_COLLECTION_DETAILS_SQL = 'SELECT id, version, band_ids FROM collect
 export class CollectionDbi {
   constructor(private readonly db: DbService) {}
 
-  async getAllCollections(kind: 'listed-only' | 'all'): Promise<Collection[]> {
+  async getAllCollections(kind: 'listed-only' | 'all'): Promise<Array<Collection>> {
     const [rows] = await this.db.pool
       .promise()
       .query<CollectionRow[]>(SELECT_COLLECTION_SQL + (kind === 'listed-only' ? ' WHERE listed = 1' : ''));

@@ -61,7 +61,20 @@ describe('collection', () => {
     });
 
     test('returns error for non-numeric ids', async () => {
-      await expectGet<TResponse>('/api/collection/by-ids/a,1497', 400, { statusCode: 400, message: `Invalid list of ids: <string:a,1497>` });
+      await expectGet<TResponse>('/api/collection/by-ids/a,1497', 400, {
+        statusCode: 400,
+        message: `Invalid list of ids: <string:a,1497>`,
+      });
+    });
+  });
+
+  describe('all-listed', () => {
+    test('works as expected ', async () => {
+      await expectGet<Array<Collection>>('/api/collection/all-listed', 200, collections => {
+        expect(collections.length).toBeGreaterThanOrEqual(300);
+        expect(collections.some(c => c.id === collection1497.id)).toBe(true);
+        return true;
+      });
     });
   });
 });

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
-import { Collection, CollectionDetails } from '@common/catalog-model';
+import { CollectionDetails } from '@common/catalog-model';
 import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
 import { createListedCollectionRequestAssertion, createUserCollectionRequestAssertion, paramToId } from '../util/validators';
 import {
@@ -16,8 +16,8 @@ import { User } from '@common/user-model';
 import { BackendAuthService } from '../service/backend-auth.service';
 import { canManageCollectionContent, isModerator, isValidUserId } from '@common/util/misc-utils';
 import { SongDbi } from '../db/song-dbi.service';
-import { AsyncFreshValue } from 'frescas';
 import { validateObject } from 'assertic';
+import { allListedCollections } from '@backend/handlers/collection.handler';
 
 @Controller('/api/collection')
 export class CollectionController {
@@ -25,18 +25,6 @@ export class CollectionController {
     private readonly collectionDbi: CollectionDbi,
     private readonly songDbi: SongDbi,
   ) {}
-
-  private allListedCollections = new AsyncFreshValue<Array<Collection>>({
-    refreshPeriodMillis: 30 * 1000,
-    load: async () => this.collectionDbi.getAllCollections('listed-only'),
-  });
-
-  /** Returns list of all 'listed' collections. */
-  @Get('/all-listed')
-  getAllListedCollections(): Promise<Array<Collection>> {
-    console.log('CollectionController.getAllListedCollections');
-    return this.allListedCollections.get();
-  }
 
   /** Returns list of all user collections. */
   @Get('/user/:userId')
@@ -91,7 +79,7 @@ export class CollectionController {
     }
     return {
       collectionId,
-      collections: await this.getAllListedCollections(),
+      collections: await allListedCollections.get(),
     };
   }
 
