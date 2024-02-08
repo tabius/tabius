@@ -5,6 +5,9 @@ import { isBotUserAgent } from '@common/util/misc-utils';
 import { REQUEST } from '@app/express.tokens';
 import type { Request } from 'express';
 
+const defaultVideoWidth = 300;
+const defaultVideoHeight = 169;
+
 @Component({
   selector: 'gt-song-video',
   templateUrl: './song-video.component.html',
@@ -26,15 +29,16 @@ export class SongVideoComponent implements OnChanges {
   readonly videoCssStyle: Record<string, string | number> = {};
   private readonly isBot: boolean;
 
-  constructor(private readonly bss: BrowserStateService, @Optional() @Inject(REQUEST) request: Request) {
+  constructor(
+    private readonly bss: BrowserStateService,
+    @Optional() @Inject(REQUEST) request: Request,
+  ) {
     this.isBot = isBotUserAgent(this.bss.getUserAgentString(request));
     this.updateVisibleFlag();
 
     // Up-scale video in mobile phone screen size range to make it use the whole width of the screen.
     if (bss.isSmallScreenMode) {
-      const defaultVideoWidth = 300;
-      const defaultVideoHeight = 169;
-      const videoWidth = bss.isBrowser ? Math.min(480, Math.max(defaultVideoWidth, window.innerWidth - 20)) : defaultVideoWidth;
+      const videoWidth = this.bss.isBrowser ? getSmallScreenYoutubeVideoWidthInBrowser() : defaultVideoWidth;
       const videoHeight = defaultVideoHeight * (videoWidth / defaultVideoWidth);
       this.videoCssStyle = { 'width.px': videoWidth, 'height.px': videoHeight };
     } else {
@@ -52,4 +56,8 @@ export class SongVideoComponent implements OnChanges {
     this.isFrameVisible = !!this.youtubeId && !this.isBot && this.bss.isOnline();
     this.isVideoLoadAllowed = this.isFrameVisible && this.bss.isBrowser;
   }
+}
+
+export function getSmallScreenYoutubeVideoWidthInBrowser(): number {
+  return Math.min(480, Math.max(defaultVideoWidth, window.document.body.clientWidth - 20));
 }

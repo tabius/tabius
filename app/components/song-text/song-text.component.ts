@@ -26,6 +26,7 @@ import type { Request } from 'express';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { assertTruthy } from 'assertic';
 import { newDefaultUserDeviceSettings } from '@app/utils/misc-utils';
+import { getSmallScreenYoutubeVideoWidthInBrowser } from '@app/components/song-video/song-video.component';
 
 /** Heuristic used to enable multi-column mode. */
 const IDEAL_SONG_LINES_PER_COLUMN = 18; // (4 chords + 4 text lines) * 2 + 1 line after the first and 1 line after the second verse.
@@ -72,7 +73,10 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
 
   @ViewChild('chordPopover', { static: true }) chordPopoverTemplate!: TemplateRef<void>;
 
-  constructor(private readonly uds: UserService, @Optional() @Inject(REQUEST) request: Request) {
+  constructor(
+    private readonly uds: UserService,
+    @Optional() @Inject(REQUEST) request: Request,
+  ) {
     super();
     if (!this.isBrowser) {
       const userAgent = getUserAgentFromRequest(request);
@@ -154,9 +158,13 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
 
   private updateAvailableWidth(): void {
     if (this.multiColumnMode) {
-      this.availableWidth = window.innerWidth || this.widthFromUserAgent;
-      if (this.availableWidth > MIN_DESKTOP_WIDTH) {
+      const clientWidth = window.document.body.clientWidth || this.widthFromUserAgent;
+      this.availableWidth = clientWidth;
+      this.availableWidth -= 40; // Main block padding left & right.
+      if (clientWidth > MIN_DESKTOP_WIDTH) {
         this.availableWidth -= 150; // Navigation borders in desktop mode.
+      } else {
+        this.availableWidth = Math.max(this.availableWidth, getSmallScreenYoutubeVideoWidthInBrowser());
       }
     }
   }
@@ -169,6 +177,7 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
     return (
       lineCount > IDEAL_SONG_LINES_PER_COLUMN &&
       !this.is3ColumnMode() &&
+      !this.is4ColumnMode() &&
       this.availableWidth >= 2 * maxLineWidth + this.CSS_COLUMN_GAP
     );
   }
