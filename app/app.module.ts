@@ -147,7 +147,6 @@ if (userAgent !== undefined && userAgent.length > 0) {
     ToastModule,
     AuthModule.forRoot({
       ...environment.authConfig,
-      useRefreshTokens: true,
       httpInterceptor: {
         allowedList: [
           {
