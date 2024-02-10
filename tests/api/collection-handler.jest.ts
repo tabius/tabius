@@ -1,6 +1,6 @@
 import { expectGet } from './utils';
-import { Collection } from '@common/catalog-model';
-import { TResponse } from '@backend/handlers/handler';
+import { Collection, CollectionDetails } from '@common/catalog-model';
+import { ApiResponse } from '@backend/handlers/handler';
 
 const collection1497 = {
   id: 1497,
@@ -18,7 +18,7 @@ describe('collection', () => {
     });
 
     test('returns NOT_FOUND on not found mount', async () => {
-      await expectGet<TResponse>('/api/collection/by-mount/unknown', 404, {
+      await expectGet<ApiResponse>('/api/collection/by-mount/unknown', 404, {
         statusCode: 404,
         message: 'Collection is not found unknown',
       });
@@ -26,7 +26,7 @@ describe('collection', () => {
 
     test('returns BAD_REQUEST on invalid mount ', async () => {
       const badMount = 'a'.repeat(50);
-      await expectGet<TResponse>(`/api/collection/by-mount/${badMount}`, 400, {
+      await expectGet<ApiResponse>(`/api/collection/by-mount/${badMount}`, 400, {
         statusCode: 400,
         message: `Invalid collection mount: <string:${badMount}>`,
       });
@@ -61,9 +61,30 @@ describe('collection', () => {
     });
 
     test('returns error for non-numeric ids', async () => {
-      await expectGet<TResponse>('/api/collection/by-ids/a,1497', 400, {
+      await expectGet<ApiResponse>('/api/collection/by-ids/a,1497', 400, {
         statusCode: 400,
         message: `Invalid list of ids: <string:a,1497>`,
+      });
+    });
+  });
+
+  describe('details-by-id', () => {
+    test('returns expected result', async () => {
+      await expectGet<CollectionDetails>('/api/collection/details-by-id/1497', 200, { bandIds: [], id: 1497, version: 2 });
+    });
+
+    test('returns NOT_FOUND on not found id', async () => {
+      await expectGet<ApiResponse>('/api/collection/details-by-id/10000000', 404, {
+        statusCode: 404,
+        message: 'Collection is not found: 10000000',
+      });
+    });
+
+    test('returns BAD_REQUEST on invalid id ', async () => {
+      const badId = 'bad-id';
+      await expectGet<ApiResponse>(`/api/collection/details-by-id/${badId}`, 400, {
+        statusCode: 400,
+        message: `Invalid id: <string:${badId}>`,
       });
     });
   });

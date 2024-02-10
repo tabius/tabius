@@ -1,12 +1,13 @@
 import { Application, NextFunction, Request, Response } from 'express';
 import { assertObject, assertTruthy, formatError, ObjectAssertion, truthy, ValueAssertion } from 'assertic';
-import { isCollectionMount, paramToArrayOfNumericIds } from '@backend/util/validators';
+import { isCollectionMount, paramToArrayOfNumericIds, paramToId } from '@backend/util/validators';
 import * as url from 'url';
 import { CollectionDbi } from '@backend/db/collection-dbi.service';
 import { getApp } from '@backend/backend.module';
 
 export enum UrlParameter {
   mount = 'mount',
+  id = 'id',
   ids = 'ids',
 }
 
@@ -20,6 +21,7 @@ export interface RequestContext<RequestBodyType = void> {
   res: Response;
   userId: string;
   mount: string;
+  id: number;
   ids: number[];
   collectionDbi: CollectionDbi;
 }
@@ -129,6 +131,11 @@ class RequestContextImpl<RequestBodyType> implements RequestContext<RequestBodyT
     return this.getParameter(UrlParameter.mount);
   }
 
+  get id(): number {
+    const id = truthy(this.getParameter(UrlParameter.id), 'No "id" in the context');
+    return paramToId(id);
+  }
+
   get ids(): number[] {
     const ids = truthy(this.getParameter(UrlParameter.ids), 'No "ids" in the context');
     return paramToArrayOfNumericIds(ids);
@@ -162,13 +169,13 @@ export function catchRouteErrors(fn: ExpressFunction): ExpressFunction {
   };
 }
 
-export interface TResponse<T = unknown> {
+export interface ApiResponse<T = unknown> {
   statusCode: number;
   result?: T;
   message?: string;
 }
 
-function buildErrorResponse(error: unknown): TResponse<void> {
+function buildErrorResponse(error: unknown): ApiResponse<void> {
   const errorMessage = typeof error === 'object' ? (error as Error).message : typeof error === 'string' ? error : undefined;
   const statusCode = parseStatusCodeFromErrorMessageToken(errorMessage);
   const message = statusCode === INTERNAL_ERROR_STATUS || !errorMessage ? 'Internal error' : cutErrorMessageToken(errorMessage);
@@ -271,13 +278,18 @@ const assertCollectionMount: ValueAssertion<string> = (value: unknown, context =
   assertTruthy(isCollectionMount(value), () => formatError(context, 'Invalid collection mount:', value));
 };
 
-const assertSerializedArrayOfIds: ValueAssertion<string> = (value: unknown, context = undefined): asserts value is string => {
+const assertSerializedArrayOfNumericIds: ValueAssertion<string> = (value: unknown, context = undefined): asserts value is string => {
   assertTruthy(typeof value === 'string' && value.length > 0 && !value.split(',').some(v => isNaN(+v)), () =>
     formatError(context, 'Invalid list of ids:', value),
   );
 };
 
+const assertSerializedNumericId: ValueAssertion<string> = (value: unknown, context = undefined): asserts value is string => {
+  assertTruthy(typeof value === 'string' && +value > 0, () => formatError(context, 'Invalid id:', value));
+};
+
 export const URL_PARAMETER_VALIDATOR: Record<UrlParameter, ValueAssertion<unknown>> = {
   [UrlParameter.mount]: assertCollectionMount,
-  [UrlParameter.ids]: assertSerializedArrayOfIds,
+  [UrlParameter.id]: assertSerializedNumericId,
+  [UrlParameter.ids]: assertSerializedArrayOfNumericIds,
 };

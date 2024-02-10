@@ -1,4 +1,4 @@
-import { Collection } from '@common/catalog-model';
+import { Collection, CollectionDetails } from '@common/catalog-model';
 import { GetHandler, NOT_FOUND, RequestContext, UrlParameter } from '@backend/handlers/handler';
 import { truthy } from 'assertic';
 import { AsyncFreshValue } from 'frescas';
@@ -21,6 +21,15 @@ export const collectionGetListByIds: GetHandler<Array<Collection>> = {
   path: `${COLLECTION_RESOURCE}/by-ids/:${UrlParameter.ids}`,
   async handler({ ids, collectionDbi }: RequestContext) {
     return collectionDbi.getCollectionsByIds(ids);
+  },
+};
+
+/** Returns list of collections by array of ids. */
+export const collectionGetDetailsById: GetHandler<CollectionDetails> = {
+  path: `${COLLECTION_RESOURCE}/details-by-id/:${UrlParameter.id}`,
+  async handler({ id, collectionDbi }: RequestContext) {
+    const details = await collectionDbi.getCollectionDetails(id);
+    return truthy(details, `${NOT_FOUND}: Collection is not found: ${id}`);
   },
 };
 

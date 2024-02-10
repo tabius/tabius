@@ -45,17 +45,6 @@ export class CollectionController {
     };
   }
 
-  @Get('/details-by-id/:id')
-  async getCollectionDetailsById(@Param('id') idParam: string): Promise<CollectionDetails> {
-    console.log('CollectionController.getCollectionDetailsById', idParam);
-    const collectionId = paramToId(idParam);
-    const details = await this.collectionDbi.getCollectionDetails(collectionId);
-    if (!details) {
-      throw new HttpException(`Collection is not found ${idParam}`, HttpStatus.NOT_FOUND);
-    }
-    return details;
-  }
-
   @Post()
   async createListedCollection(@Req() req, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
     console.log('CollectionController.createListedCollection', request);
