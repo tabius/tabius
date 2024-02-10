@@ -12,7 +12,7 @@ export const collectionGetByMount: GetHandler<Collection> = {
   path: `${COLLECTION_RESOURCE}/by-mount/:${UrlParameter.mount}`,
   async handler({ mount, collectionDbi }: RequestContext) {
     const collection = await collectionDbi.getByMount(mount);
-    return truthy(collection, () => `${NOT_FOUND} Collection is not found ${mount}`);
+    return truthy(collection, () => `${NOT_FOUND}: Collection is not found ${mount}`);
   },
 };
 
