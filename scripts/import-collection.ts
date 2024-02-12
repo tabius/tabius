@@ -4,7 +4,7 @@ import { SERVER_CONFIG } from '../backend/server-config';
 import { INVALID_ID } from '@common/common-constants';
 import { MIN_COLLECTION_MOUNT_LENGTH, MIN_SONG_MOUNT_LENGTH } from '@common/catalog-model';
 import { packMediaLinks } from '../backend/db/song-dbi.service';
-import { isValidId } from '@common/util/misc-utils';
+import { isNumericId } from '@common/util/misc-utils';
 
 const fs = require('fs');
 const mysql = require('mysql2/promise');
@@ -40,7 +40,7 @@ async function main(): Promise<void> {
   try {
     assignMounts(collection, songs);
     await validateImportDataAndAssignCollectionId(collection, songs, connection);
-    if (!isValidId(collection.id)) {
+    if (!isNumericId(collection.id)) {
       await createCollection(collection, connection);
     } else {
       console.log(`Adding song to the existing collection: ${collection.id}/${collection.mount}`);
@@ -125,7 +125,7 @@ async function createCollection(collection: CollectionImport, connection: any): 
 
 async function createSongs(collection: CollectionImport, songs: SongImport[], connection: any): Promise<void> {
   for (const song of songs) {
-    if (isValidId(song.id)) {
+    if (isNumericId(song.id)) {
       console.log(`Skipping existing song: ${song.name}/${song.mount}`);
       continue;
     }

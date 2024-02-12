@@ -1,6 +1,7 @@
 import { expectGet } from './utils';
 import { Collection, CollectionDetails } from '@common/catalog-model';
 import { ApiResponse } from '@backend/handlers/handler';
+import { GetUserCollectionsResponse } from '@common/ajax-model';
 
 const collection1497 = {
   id: 1497,
@@ -95,6 +96,34 @@ describe('collection', () => {
         expect(collections.length).toBeGreaterThanOrEqual(300);
         expect(collections.some(c => c.id === collection1497.id)).toBe(true);
         return true;
+      });
+    });
+  });
+
+  describe('user', () => {
+    test('works as expected ', async () => {
+      await expectGet<GetUserCollectionsResponse>(
+        `/api/collection/user/${encodeURIComponent('auth0|62fa85bf6553a51b3501ff56')}`,
+        200,
+        ({ collectionInfos }) => {
+          expect(collectionInfos.length).toBeGreaterThanOrEqual(2);
+          expect(collectionInfos.some(i => i.collection.id === 2083)).toBe(true);
+          return true;
+        },
+      );
+    });
+
+    test('returns NOT_FOUND on not found id', async () => {
+      await expectGet<ApiResponse>(`/api/collection/user/${encodeURIComponent('auth0|11111111111111111111111')}`, 404, {
+        statusCode: 404,
+        message: 'User not found: auth0|11111111111111111111111',
+      });
+    });
+
+    test('returns BAD_REQUEST on invalid id ', async () => {
+      await expectGet<ApiResponse>(`/api/collection/user/abc`, 400, {
+        message: 'Invalid user id: <string:abc>',
+        statusCode: 400,
       });
     });
   });

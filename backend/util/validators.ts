@@ -1,4 +1,3 @@
-import { isValidId } from '@common/util/misc-utils';
 import { UserSongSettings } from '@common/user-model';
 import { CreateListedCollectionRequest, CreateUserCollectionRequest, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
 import {
@@ -23,7 +22,7 @@ import { $u, arrayAssertion, assertBoolean, assertString, isNumber, ObjectAssert
 
 export function paramToId(value: string): number {
   const id = +value;
-  if (!isValidId(id)) {
+  if (!isNumericId(id)) {
     throw new Error(`Invalid id: ${value}`);
   }
   return id;

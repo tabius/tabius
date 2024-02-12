@@ -4,11 +4,14 @@ import { isCollectionMount, paramToArrayOfNumericIds, paramToId } from '@backend
 import * as url from 'url';
 import { CollectionDbi } from '@backend/db/collection-dbi.service';
 import { getApp } from '@backend/backend.module';
+import { isUserId } from '@common/util/misc-utils';
+import { SongDbi } from '@backend/db/song-dbi.service';
 
 export enum UrlParameter {
   mount = 'mount',
   id = 'id',
   ids = 'ids',
+  userId = 'userId',
 }
 
 export interface BaseHandler {
@@ -20,10 +23,12 @@ export interface RequestContext<RequestBodyType = void> {
   req: Request;
   res: Response;
   userId: string;
+  userIdParam: string;
   mount: string;
   id: number;
   ids: number[];
   collectionDbi: CollectionDbi;
+  songDbi: SongDbi;
 }
 
 export type UrlTokensValidator = Record<string, ValueAssertion<string>>;
@@ -127,6 +132,10 @@ class RequestContextImpl<RequestBodyType> implements RequestContext<RequestBodyT
     return truthy(this.data.userId, 'No "userId" in the context');
   }
 
+  get userIdParam(): string {
+    return this.getParameter(UrlParameter.userId);
+  }
+
   get mount(): string {
     return this.getParameter(UrlParameter.mount);
   }
@@ -147,6 +156,10 @@ class RequestContextImpl<RequestBodyType> implements RequestContext<RequestBodyT
 
   get collectionDbi(): CollectionDbi {
     return getApp().get(CollectionDbi);
+  }
+
+  get songDbi(): SongDbi {
+    return getApp().get(SongDbi);
   }
 }
 
@@ -278,6 +291,10 @@ const assertCollectionMount: ValueAssertion<string> = (value: unknown, context =
   assertTruthy(isCollectionMount(value), () => formatError(context, 'Invalid collection mount:', value));
 };
 
+const assertUserId: ValueAssertion<string> = (value: unknown, context = undefined): asserts value is string => {
+  assertTruthy(isUserId(value), () => formatError(context, 'Invalid user id:', value));
+};
+
 const assertSerializedArrayOfNumericIds: ValueAssertion<string> = (value: unknown, context = undefined): asserts value is string => {
   assertTruthy(typeof value === 'string' && value.length > 0 && !value.split(',').some(v => isNaN(+v)), () =>
     formatError(context, 'Invalid list of ids:', value),
@@ -292,4 +309,5 @@ export const URL_PARAMETER_VALIDATOR: Record<UrlParameter, ValueAssertion<unknow
   [UrlParameter.mount]: assertCollectionMount,
   [UrlParameter.id]: assertSerializedNumericId,
   [UrlParameter.ids]: assertSerializedArrayOfNumericIds,
+  [UrlParameter.userId]: assertUserId,
 };

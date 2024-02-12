@@ -1,9 +1,10 @@
 import { Collection, CollectionDetails } from '@common/catalog-model';
 import { GetHandler, NOT_FOUND, RequestContext, UrlParameter } from '@backend/handlers/handler';
-import { truthy } from 'assertic';
+import { assertTruthy, truthy } from 'assertic';
 import { AsyncFreshValue } from 'frescas';
 import { getApp } from '@backend/backend.module';
 import { CollectionDbi } from '@backend/db/collection-dbi.service';
+import { GetUserCollectionsResponse, UserCollectionInfo } from '@common/ajax-model';
 
 export const COLLECTION_RESOURCE = 'collection';
 
@@ -45,4 +46,19 @@ export const allListedCollections = new AsyncFreshValue<Array<Collection>>({
 export const collectionGetList: GetHandler<Array<Collection>> = {
   path: `${COLLECTION_RESOURCE}/all-listed`,
   handler: () => allListedCollections.get(),
+};
+
+/** Returns list of all user collections. */
+export const collectionGetListByUserId: GetHandler<GetUserCollectionsResponse> = {
+  path: `${COLLECTION_RESOURCE}/user/:${UrlParameter.userId}`,
+  handler: async ({ userIdParam, collectionDbi, songDbi }) => {
+    const collections = await collectionDbi.getAllUserCollections(userIdParam);
+    // Every user has at least one collection: primary (or favorite).
+    assertTruthy(collections.length > 0, () => `${NOT_FOUND}: User not found: ${userIdParam}`);
+    const songIds: number[][] = await Promise.all(
+      collections.map(collection => songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collection.id)),
+    );
+    const collectionInfos = collections.map<UserCollectionInfo>((collection, index) => ({ collection, songIds: songIds[index] }));
+    return { collectionInfos };
+  },
 };

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListe
 import { CatalogService } from '@app/services/catalog.service';
 import { combineLatest } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import { bound, countOccurrences, getSongPageLink, isValidId } from '@common/util/misc-utils';
+import { bound, countOccurrences, getSongPageLink, isNumericId } from '@common/util/misc-utils';
 import { Song, SongDetails } from '@common/catalog-model';
 import { ToastService } from '@app/toast/toast.service';
 import { INVALID_ID } from '@common/common-constants';
@@ -104,7 +104,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   }
 
   get isCreateMode(): boolean {
-    return !isValidId(this.songId);
+    return !isNumericId(this.songId);
   }
 
   get isUpdateMode(): boolean {

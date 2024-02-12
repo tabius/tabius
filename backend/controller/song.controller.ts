@@ -26,7 +26,7 @@ import {
   UpdateSongResponse,
   UpdateSongSceneFlagRequest,
 } from '@common/ajax-model';
-import { canManageCollectionContent, isModerator, isValidId } from '@common/util/misc-utils';
+import { canManageCollectionContent, isModerator, isNumericId } from '@common/util/misc-utils';
 import { FullTextSearchDbi } from '../db/full-text-search-dbi.service';
 import { CollectionDbi } from '../db/collection-dbi.service';
 import { assertTruthy, isBoolean, validateObject } from 'assertic';
@@ -94,7 +94,7 @@ export class SongController {
       throw new HttpException(error2, HttpStatus.BAD_REQUEST);
     }
     const songId = await this.songDbi.create(request.song, request.details);
-    if (!isValidId(songId)) {
+    if (!isNumericId(songId)) {
       throw new HttpException(`Failed to create song: ${songId}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return await this.getSongUpdateResponse(songId, request.song.collectionId);

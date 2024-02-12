@@ -25,7 +25,7 @@ import {
 } from '@app/store';
 import { map, switchMap, take } from 'rxjs/operators';
 import { TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
-import { isValidId } from '@common/util/misc-utils';
+import { isNumericId } from '@common/util/misc-utils';
 import { ChordTone } from '@common/util/chords-lib';
 import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
 import { ClientAuthService } from '@app/services/client-auth.service';
@@ -112,7 +112,7 @@ export class UserService {
   }
 
   getUserSongSettings(songId: number | undefined): Observable<UserSongSettings> {
-    if (!isValidId(songId)) {
+    if (!isNumericId(songId)) {
       return of(newDefaultUserSongSettings(0));
     }
     return this.getUser$().pipe(
@@ -306,5 +306,5 @@ export class UserService {
 }
 
 function getUserSongSettingsKey(songId: number | undefined): string | undefined {
-  return isValidId(songId) ? SONG_SETTINGS_KEY_PREFIX + songId : undefined;
+  return isNumericId(songId) ? SONG_SETTINGS_KEY_PREFIX + songId : undefined;
 }

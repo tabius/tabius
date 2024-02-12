@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { Collection } from '@common/catalog-model';
 import { LINK_CATALOG, LINK_STUDIO } from '@common/mounts';
-import { getCollectionPageLink, isValidUserId } from '@common/util/misc-utils';
+import { getCollectionPageLink, isUserId } from '@common/util/misc-utils';
 import { I18N } from '@app/app-i18n';
 
 @Component({
@@ -29,7 +29,7 @@ export class CollectionBreadcrumbComponent implements OnChanges {
 
   ngOnChanges(): void {
     if (this.collection) {
-      this.showStudioLink = isValidUserId(this.collection.userId);
+      this.showStudioLink = isUserId(this.collection.userId);
       this.showCatalogLink = !this.showStudioLink;
       this.collectionPageLink = getCollectionPageLink(this.collection);
     } else {

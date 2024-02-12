@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from './db.service';
 import { Collection, CollectionDetails, CollectionType } from '@common/catalog-model';
-import { isValidId, toArrayOfInts } from '@common/util/misc-utils';
+import { isNumericId, toArrayOfInts } from '@common/util/misc-utils';
 import { User } from '@common/user-model';
 import { USER_COLLECTION_MOUNT_SEPARATOR, USER_FAV_COLLECTION_SUFFIX } from '@common/common-constants';
 import { getTranslitLowerCase } from '@common/util/seo-translit';
@@ -76,7 +76,7 @@ export class CollectionDbi {
   }
 
   async createPrimaryUserCollection(user: User): Promise<number> {
-    if (isValidId(user.collectionId)) {
+    if (isNumericId(user.collectionId)) {
       throw new Error(`User already has valid primary collection id assigned: ${user.id}, collectionId: ${user.collectionId}`);
     }
     console.log(`CollectionDbi.createPrimaryUserCollection: ${user.email}`);

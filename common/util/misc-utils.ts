@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { combineLatest, from, Observable, of } from 'rxjs';
 import { User } from '@common/user-model';
 import type { Request } from 'express';
+import { isHexString } from 'assertic';
 
 export function toArrayOfInts(text: string, sep: string): number[] {
   if (!text || text.length === 0) {
@@ -12,12 +13,41 @@ export function toArrayOfInts(text: string, sep: string): number[] {
   return text.split(sep).map(v => +v);
 }
 
-export function isValidId(id: number | undefined): id is number {
+export function isNumericId(id: number | undefined): id is number {
   return id !== undefined && id > 0;
 }
 
-export function isValidUserId(id: string | undefined): id is string {
-  return !!id && id.length > 0;
+export function isUserId(id: unknown): id is string {
+  return isAuth0UserId(id);
+}
+
+export function isAuth0SocialUserId(value: unknown): value is string {
+  return isAuth0GoogleUserId(value);
+}
+
+const DIGIT_STRING_REGEX = /^[0-9]*$/;
+const AUTH0_DATABASE_USER_ID_PREFIX = 'auth0|';
+const AUTH0_SOCIAL_GOOGLE_USER_ID_PREFIX = 'google-oauth2|';
+
+export function isAuth0GoogleUserId(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  if (value.length !== AUTH0_SOCIAL_GOOGLE_USER_ID_PREFIX.length + 21) return false;
+  if (!value.startsWith(AUTH0_SOCIAL_GOOGLE_USER_ID_PREFIX)) return false;
+  const numericPart = value.substring(AUTH0_SOCIAL_GOOGLE_USER_ID_PREFIX.length);
+  return DIGIT_STRING_REGEX.test(numericPart);
+}
+
+export function isAuth0DatabaseUserId(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  if (value.length < 28 || value.length > 34) return false;
+  if (!value.startsWith(AUTH0_DATABASE_USER_ID_PREFIX)) return false;
+  if (value.toLocaleLowerCase() !== value) return false;
+  const hexPart = value.substring(AUTH0_DATABASE_USER_ID_PREFIX.length);
+  return isHexString(hexPart);
+}
+
+export function isAuth0UserId(value: unknown): value is string {
+  return isAuth0DatabaseUserId(value) || isAuth0SocialUserId(value);
 }
 
 export function getNameFirstFormArtistName(collection: { type: CollectionType; name: string }): string {

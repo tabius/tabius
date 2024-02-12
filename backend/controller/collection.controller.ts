@@ -13,7 +13,7 @@ import {
 } from '@common/ajax-model';
 import { User } from '@common/user-model';
 import { BackendAuthService } from '../service/backend-auth.service';
-import { canManageCollectionContent, isModerator, isValidUserId } from '@common/util/misc-utils';
+import { canManageCollectionContent, isModerator, isUserId } from '@common/util/misc-utils';
 import { SongDbi } from '../db/song-dbi.service';
 import { validateObject } from 'assertic';
 import { allListedCollections } from '@backend/handlers/collection.handler';
@@ -24,25 +24,6 @@ export class CollectionController {
     private readonly collectionDbi: CollectionDbi,
     private readonly songDbi: SongDbi,
   ) {}
-
-  /** Returns list of all user collections. */
-  @Get('/user/:userId')
-  async getAllUserCollections(@Param('userId') userId: string): Promise<GetUserCollectionsResponse> {
-    console.log('CollectionController.getAllUserCollections', userId);
-    if (!isValidUserId(userId)) {
-      throw new HttpException(`Invalid user id: ${userId}`, HttpStatus.BAD_REQUEST);
-    }
-    const collections = await this.collectionDbi.getAllUserCollections(userId);
-    const songIds: number[][] = await Promise.all(
-      collections.map(collection => this.songDbi.getPrimaryAndSecondarySongIdsByCollectionId(collection.id)),
-    );
-    return {
-      collectionInfos: collections.map((collection, index) => ({
-        collection,
-        songIds: songIds[index],
-      })),
-    };
-  }
 
   @Post()
   async createListedCollection(@Req() req, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {

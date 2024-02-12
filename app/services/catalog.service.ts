@@ -25,8 +25,8 @@ import {
 import {
   combineLatest0,
   isDefined,
-  isValidId,
-  isValidUserId,
+  isNumericId,
+  isUserId,
   mapToFirstInArray,
   waitForAllPromisesAndReturnFirstArg,
 } from '@common/util/misc-utils';
@@ -197,13 +197,13 @@ export class CatalogService {
     primaryCollectionId: number | undefined,
     songMount: string,
   ): Observable<Song | undefined> {
-    if (!isValidId(collectionId) || !songMount) {
+    if (!isNumericId(collectionId) || !songMount) {
       return of(undefined);
     }
     return this.getSongIdsByCollection(collectionId).pipe(
       switchMap(songIds => (songIds ? this.getSongsByIds(songIds) : of([]))),
       map(songsIds =>
-        songsIds.find(s => s?.mount === songMount && (!isValidId(primaryCollectionId) || s.collectionId === primaryCollectionId)),
+        songsIds.find(s => s?.mount === songMount && (!isNumericId(primaryCollectionId) || s.collectionId === primaryCollectionId)),
       ),
     );
   }
@@ -291,7 +291,7 @@ export class CatalogService {
   }
 
   async deleteUserCollection(collectionId: number | undefined): Promise<void> {
-    if (!isValidId(collectionId)) {
+    if (!isNumericId(collectionId)) {
       return;
     }
     const { userId, collections } = await firstValueFrom(
@@ -388,13 +388,13 @@ export class CatalogService {
    * If collection id is not valid or not defined returns a song from the whole public catalog.
    */
   getRandomSongId(collectionId?: number): Observable<number | undefined> {
-    const url = `/api/song/random-song-id/${isValidId(collectionId) ? collectionId : ''}`;
+    const url = `/api/song/random-song-id/${isNumericId(collectionId) ? collectionId : ''}`;
     return this.httpClient.get<number | undefined>(url).pipe(shareReplay(1));
   }
 
   /** Returns 1 song to be shown on the scene for today. */
   getSceneSongId(collectionId?: number): Observable<number> {
-    const url = `/api/song/scene-song-id/${isValidId(collectionId) ? collectionId : ''}`;
+    const url = `/api/song/scene-song-id/${isNumericId(collectionId) ? collectionId : ''}`;
     // TODO: cache for some period? up to 1 day.
     return this.httpClient.get<number>(url).pipe(shareReplay(1));
   }
@@ -426,11 +426,11 @@ export class CatalogService {
 }
 
 function getCollectionKey(collectionId: number | undefined): string | undefined {
-  return isValidId(collectionId) ? COLLECTION_KEY_PREFIX + collectionId : undefined;
+  return isNumericId(collectionId) ? COLLECTION_KEY_PREFIX + collectionId : undefined;
 }
 
 function getCollectionDetailsKey(collectionId: number | undefined): string | undefined {
-  return isValidId(collectionId) ? COLLECTION_DETAILS_KEY_PREFIX + collectionId : undefined;
+  return isNumericId(collectionId) ? COLLECTION_DETAILS_KEY_PREFIX + collectionId : undefined;
 }
 
 function getCollectionIdByMountKey(collectionMount: string | undefined): string | undefined {
@@ -438,17 +438,17 @@ function getCollectionIdByMountKey(collectionMount: string | undefined): string 
 }
 
 function getCollectionSongListKey(collectionId: number | undefined): string | undefined {
-  return isValidId(collectionId) ? COLLECTION_SONG_LIST_KEY_PREFIX + collectionId : undefined;
+  return isNumericId(collectionId) ? COLLECTION_SONG_LIST_KEY_PREFIX + collectionId : undefined;
 }
 
 function getSongKey(songId: number | undefined): string | undefined {
-  return isValidId(songId) ? SONG_KEY_PREFIX + songId : undefined;
+  return isNumericId(songId) ? SONG_KEY_PREFIX + songId : undefined;
 }
 
 function getSongDetailsKey(songId: number | undefined): string | undefined {
-  return isValidId(songId) ? SONG_DETAILS_KEY_PREFIX + songId : undefined;
+  return isNumericId(songId) ? SONG_DETAILS_KEY_PREFIX + songId : undefined;
 }
 
 function getUserCollectionsKey(userId: string | undefined): string | undefined {
-  return isValidUserId(userId) ? USER_COLLECTIONS_KEY + userId : undefined;
+  return isUserId(userId) ? USER_COLLECTIONS_KEY + userId : undefined;
 }
