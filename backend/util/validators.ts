@@ -1,5 +1,5 @@
 import { UserSongSettings } from '@common/user-model';
-import { CreateListedCollectionRequest, CreateUserCollectionRequest, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
+import { CreateListedCollectionRequest, CreateUserCollectionRequest, UpdateFavoriteSongKeyRequest } from '@common/api-model';
 import {
   CollectionType,
   MAX_COLLECTION_MOUNT_LENGTH,

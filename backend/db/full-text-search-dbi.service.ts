@@ -3,7 +3,7 @@ import {
   FullTextSongSearchResult,
   MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS,
   MAX_FULL_TEXT_SEARCH_TITLE_RESULTS,
-} from '@common/ajax-model';
+} from '@common/api-model';
 import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
 import { toSafeSearchText } from '@common/util/misc-utils';
 import { SERVER_CONFIG } from '../backend-config';

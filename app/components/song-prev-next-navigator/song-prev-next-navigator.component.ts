@@ -60,8 +60,8 @@ export class SongPrevNextNavigatorComponent extends AbstractAppComponent impleme
             return of([undefined, undefined, undefined, undefined, undefined]);
           }
           const { prevSong, nextSong } = this.songId
-                                         ? findPrevAndNextSongs(this.songId, allSongs)
-                                         : { prevSong: allSongs[allSongs.length - 1], nextSong: allSongs[0] };
+            ? findPrevAndNextSongs(this.songId, allSongs)
+            : { prevSong: allSongs[allSongs.length - 1], nextSong: allSongs[0] };
           return combineLatest([
             of(collection),
             of(prevSong),
@@ -158,7 +158,7 @@ export class SongPrevNextNavigatorComponent extends AbstractAppComponent impleme
     }
   }
 
-  navigate(link: string|undefined): void {
+  navigate(link: string | undefined): void {
     if (link) {
       this.router.navigate([link]).catch(err => console.error(err));
     }
@@ -188,7 +188,7 @@ export class SongPrevNextNavigatorComponent extends AbstractAppComponent impleme
 }
 
 export function getAllSongsInCollectionsSorted(
-  collection: Collection|undefined,
+  collection: Collection | undefined,
   catalogDataService: CatalogService,
 ): Observable<Array<Song>> {
   return catalogDataService.getSongIdsByCollection(collection?.id).pipe(
@@ -216,7 +216,7 @@ export function findPrevAndNextSongs(songId: number, allSongs: Song[], title?: s
 
 // On Android the button text is selected and 'Search' footer appears.
 // Preventing default to prevent this unwanted behavior.
-function stopAndPreventDefaultOnRandomSongButtonClick(event: MouseEvent|undefined): void {
+function stopAndPreventDefaultOnRandomSongButtonClick(event: MouseEvent | undefined): void {
   if (event) {
     event.stopPropagation();
     event.preventDefault();

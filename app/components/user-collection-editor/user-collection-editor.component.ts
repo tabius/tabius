@@ -19,7 +19,10 @@ export class UserCollectionEditorComponent {
 
   deleteConfirmationFlag = false;
 
-  constructor(private readonly toastService: ToastService, private readonly cds: CatalogService) {}
+  constructor(
+    private readonly toastService: ToastService,
+    private readonly cds: CatalogService,
+  ) {}
 
   close(): void {
     this.closeRequest.emit();

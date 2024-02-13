@@ -25,7 +25,10 @@ export class ShowChordPopoverOnClickDirective implements OnDestroy {
   private lastClickedChordElement?: Element;
   private popoverChordLayout?: ChordLayout;
 
-  constructor(private readonly el: ElementRef, private readonly popoverService: PopoverService) {}
+  constructor(
+    private readonly el: ElementRef,
+    private readonly popoverService: PopoverService,
+  ) {}
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent): void {

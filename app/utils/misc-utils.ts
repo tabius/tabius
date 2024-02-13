@@ -1,4 +1,11 @@
-import { DESKTOP_LOW_HEIGHT_NAV_HEIGHT, DESKTOP_NAV_HEIGHT, HIRES_DESKTOP_HEIGHT, HIRES_DESKTOP_WIDTH, MIN_DESKTOP_WIDTH, MOBILE_NAV_HEIGHT } from '@common/common-constants';
+import {
+  DESKTOP_LOW_HEIGHT_NAV_HEIGHT,
+  DESKTOP_NAV_HEIGHT,
+  HIRES_DESKTOP_HEIGHT,
+  HIRES_DESKTOP_WIDTH,
+  MIN_DESKTOP_WIDTH,
+  MOBILE_NAV_HEIGHT,
+} from '@common/common-constants';
 import { UserDeviceSettings } from '@common/user-model';
 
 export const isBrowser: boolean = typeof window === 'object';
@@ -10,10 +17,10 @@ const SONG_FONT_SIZE_HIRES_DESKTOP = 20;
 export function getDefaultUserSongFontSize(): number {
   const width = typeof window === 'object' && window.innerWidth;
   return !width || (width >= MIN_DESKTOP_WIDTH && width < HIRES_DESKTOP_WIDTH)
-         ? SONG_FONT_SIZE_DESKTOP
-         : width < MIN_DESKTOP_WIDTH
-           ? SONG_FONT_SIZE_MOBILE
-           : SONG_FONT_SIZE_HIRES_DESKTOP;
+    ? SONG_FONT_SIZE_DESKTOP
+    : width < MIN_DESKTOP_WIDTH
+      ? SONG_FONT_SIZE_MOBILE
+      : SONG_FONT_SIZE_HIRES_DESKTOP;
 }
 
 export function newDefaultUserDeviceSettings(): UserDeviceSettings {
@@ -44,7 +51,6 @@ export function scrollToViewByEndPos(element: HTMLElement | undefined, paddingBo
   scrollToView(element, -(elementRect.height - elementHeightToShow));
 }
 
-
 export function isTouchDevice(): boolean {
   return typeof document === 'object' && 'ontouchstart' in document.documentElement;
 }
@@ -62,10 +68,10 @@ export function isElementToIgnoreKeyEvent(element: HTMLElement | undefined): boo
 
 export function getCurrentNavbarHeight(): number {
   return window.innerWidth >= MIN_DESKTOP_WIDTH
-         ? window.innerHeight < HIRES_DESKTOP_HEIGHT
-           ? DESKTOP_LOW_HEIGHT_NAV_HEIGHT
-           : DESKTOP_NAV_HEIGHT
-         : MOBILE_NAV_HEIGHT;
+    ? window.innerHeight < HIRES_DESKTOP_HEIGHT
+      ? DESKTOP_LOW_HEIGHT_NAV_HEIGHT
+      : DESKTOP_NAV_HEIGHT
+    : MOBILE_NAV_HEIGHT;
 }
 
 export function findParentOrSelfWithClass(el: Element | undefined | null, className: string): Element | undefined {
@@ -77,4 +83,3 @@ export function findParentOrSelfWithClass(el: Element | undefined | null, classN
   }
   return findParentOrSelfWithClass(el.parentElement, className);
 }
-

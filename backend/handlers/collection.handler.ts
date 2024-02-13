@@ -1,10 +1,11 @@
 import { Collection, CollectionDetails } from '@common/catalog-model';
-import { GetHandler, NOT_FOUND, RequestContext, UrlParameter } from '@backend/handlers/handler';
+import { GetHandler, RequestContext } from '@backend/handlers/handler';
 import { assertTruthy, truthy } from 'assertic';
 import { AsyncFreshValue } from 'frescas';
 import { getApp } from '@backend/backend.module';
 import { CollectionDbi } from '@backend/db/collection-dbi.service';
-import { GetUserCollectionsResponse, UserCollectionInfo } from '@common/ajax-model';
+import { GetUserCollectionsResponse, UserCollectionInfo } from '@common/api-model';
+import { NOT_FOUND, UrlParameter } from '@backend/handlers/protocol';
 
 export const COLLECTION_RESOURCE = 'collection';
 
@@ -35,7 +36,7 @@ export const collectionGetDetailsById: GetHandler<CollectionDetails> = {
 };
 
 export const allListedCollections = new AsyncFreshValue<Array<Collection>>({
-  refreshPeriodMillis: 30 * 1000,
+  refreshPeriodMillis: 30_000,
   load: async () => {
     const collectionDbi = getApp().get(CollectionDbi);
     return collectionDbi.getAllCollections('listed-only');

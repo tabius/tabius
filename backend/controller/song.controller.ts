@@ -25,7 +25,7 @@ import {
   UpdateSongRequest,
   UpdateSongResponse,
   UpdateSongSceneFlagRequest,
-} from '@common/ajax-model';
+} from '@common/api-model';
 import { canManageCollectionContent, isModerator, isNumericId } from '@common/util/misc-utils';
 import { FullTextSearchDbi } from '../db/full-text-search-dbi.service';
 import { CollectionDbi } from '../db/collection-dbi.service';

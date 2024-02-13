@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, HttpException, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
 import { CollectionDbi, generateCollectionMountForUser } from '../db/collection-dbi.service';
 import { createListedCollectionRequestAssertion, createUserCollectionRequestAssertion } from '../util/validators';
 import {
@@ -7,13 +7,12 @@ import {
   CreateUserCollectionRequest,
   CreateUserCollectionResponse,
   DeleteUserCollectionResponse,
-  GetUserCollectionsResponse,
   UpdateCollectionRequest,
   UpdateCollectionResponse,
-} from '@common/ajax-model';
+} from '@common/api-model';
 import { User } from '@common/user-model';
 import { BackendAuthService } from '../service/backend-auth.service';
-import { canManageCollectionContent, isModerator, isUserId } from '@common/util/misc-utils';
+import { canManageCollectionContent, isModerator } from '@common/util/misc-utils';
 import { SongDbi } from '../db/song-dbi.service';
 import { validateObject } from 'assertic';
 import { allListedCollections } from '@backend/handlers/collection.handler';

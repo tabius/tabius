@@ -23,7 +23,11 @@ export class ToastComponent implements OnDestroy {
   animationState: ToastAnimationState = 'default';
   private readonly intervalId: number;
 
-  constructor(readonly toast: Toast, private readonly ref: ToastRef, private readonly cdr: ChangeDetectorRef) {
+  constructor(
+    readonly toast: Toast,
+    private readonly ref: ToastRef,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
     this.intervalId = window.setTimeout(() => {
       this.animationState = 'closing';
       this.cdr.markForCheck();

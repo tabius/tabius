@@ -27,7 +27,11 @@ export class UserRegistrationPromptComponent implements AfterViewInit {
   /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
 
-  constructor(private readonly el: ElementRef, private readonly bss: BrowserStateService, public authService: ClientAuthService) {}
+  constructor(
+    private readonly el: ElementRef,
+    private readonly bss: BrowserStateService,
+    public authService: ClientAuthService,
+  ) {}
 
   close(): void {
     this.closeRequest.next({});

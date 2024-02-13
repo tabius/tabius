@@ -29,7 +29,10 @@ export class SongHeaderComponent implements OnChanges {
 
   title = '';
 
-  constructor(private readonly helpService: HelpService, private readonly cds: CatalogService) {}
+  constructor(
+    private readonly helpService: HelpService,
+    private readonly cds: CatalogService,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['collection'] || changes['song']) {

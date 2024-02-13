@@ -27,7 +27,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 import { TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
 import { isNumericId } from '@common/util/misc-utils';
 import { ChordTone } from '@common/util/chords-lib';
-import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
+import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/api-model';
 import { ClientAuthService } from '@app/services/client-auth.service';
 import { TrieStore } from 'otrie';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';

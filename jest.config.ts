@@ -10,6 +10,7 @@ const config: Config.InitialOptions = {
   },
   moduleNameMapper: {
     '^@common/(.*)$': '<rootDir>/common/$1',
+    '^@backend/(.*)$': '<rootDir>/backend/$1',
   },
   testEnvironment: 'node',
 };

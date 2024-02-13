@@ -32,7 +32,11 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
 
   private primaryUserCollectionMount: string = '';
 
-  constructor(private readonly uds: UserService, private readonly cds: CatalogService, private readonly router: Router) {
+  constructor(
+    private readonly uds: UserService,
+    private readonly cds: CatalogService,
+    private readonly router: Router,
+  ) {
     super();
     const user$ = this.uds.getUser$();
     const allUserCollectionIds$ = user$.pipe(switchMap(user => this.cds.getUserCollectionIds(user && user.id)));

@@ -42,7 +42,10 @@ export class SongChordsComponent extends AbstractAppComponent {
   originalSongKey?: ChordTone;
   transposeActionKey?: ChordTone;
 
-  constructor(private readonly uds: UserService, private readonly cds: CatalogService) {
+  constructor(
+    private readonly uds: UserService,
+    private readonly cds: CatalogService,
+  ) {
     super();
 
     this.changes$

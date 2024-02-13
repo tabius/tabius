@@ -21,7 +21,7 @@ import {
   UpdateSongRequest,
   UpdateSongResponse,
   UpdateSongSceneFlagRequest,
-} from '@common/ajax-model';
+} from '@common/api-model';
 import {
   combineLatest0,
   isDefined,

@@ -33,7 +33,10 @@ export class SongComponent extends ComponentWithLoadingIndicator {
   schemaItemArtistType?: string;
   schemaItemArtistName?: string;
 
-  constructor(private readonly catalogService: CatalogService, private readonly userService: UserService) {
+  constructor(
+    private readonly catalogService: CatalogService,
+    private readonly userService: UserService,
+  ) {
     super();
 
     this.changes$

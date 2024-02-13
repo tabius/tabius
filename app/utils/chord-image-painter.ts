@@ -16,7 +16,10 @@ interface ChordImageStyle {
 }
 
 class ChordImagePenStyle implements ChordImageStyle {
-  constructor(public color: string, public size: number) {}
+  constructor(
+    public color: string,
+    public size: number,
+  ) {}
 
   apply(ctx: CanvasRenderingContext2D): void {
     ctx.strokeStyle = this.color;
@@ -26,7 +29,10 @@ class ChordImagePenStyle implements ChordImageStyle {
 }
 
 class ChordImageFontStyle implements ChordImageStyle {
-  constructor(public fontName: string, public size: number) {}
+  constructor(
+    public fontName: string,
+    public size: number,
+  ) {}
 
   apply(ctx: CanvasRenderingContext2D): void {
     ctx.font = `${this.size}px ${this.fontName}`;

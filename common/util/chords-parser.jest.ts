@@ -124,10 +124,9 @@ describe('Chords parser, parseChordsLine', () => {
   });
 
   it('skips intro tokens', () => {
-    expect(parseChordsLine('Intro: Am')).toEqual([  { chord: c('A', 'min'), startIdx: 7, endIdx: 9 }]);
-    expect(parseChordsLine('Вступление: Am')).toEqual([  { chord: c('A', 'min'), startIdx: 12, endIdx: 14 }]);
+    expect(parseChordsLine('Intro: Am')).toEqual([{ chord: c('A', 'min'), startIdx: 7, endIdx: 9 }]);
+    expect(parseChordsLine('Вступление: Am')).toEqual([{ chord: c('A', 'min'), startIdx: 12, endIdx: 14 }]);
   });
-
 });
 
 describe('Chords parser, parseChords', () => {

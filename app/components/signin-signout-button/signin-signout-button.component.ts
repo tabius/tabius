@@ -14,7 +14,10 @@ export class SigninSignoutButtonComponent {
 
   readonly i18n = I18N.signinSignoutButton;
 
-  constructor(private readonly cd: ChangeDetectorRef, public authService: ClientAuthService) {
+  constructor(
+    private readonly cd: ChangeDetectorRef,
+    public authService: ClientAuthService,
+  ) {
     this.authService.user$.pipe(takeUntilDestroyed()).subscribe(user => {
       this.username = user?.name || user?.email;
       this.cd.markForCheck();

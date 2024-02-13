@@ -32,7 +32,10 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   visualAllMinorToneKeys: ReadonlyArray<string> = MINOR_KEY_TONES;
   visualFavoriteSongKey: string = DEFAULT_FAVORITE_KEY;
 
-  constructor(private readonly uds: UserService, private readonly authService: ClientAuthService) {
+  constructor(
+    private readonly uds: UserService,
+    private readonly authService: ClientAuthService,
+  ) {
     super();
 
     this.updatePageMetadata(this.i18n.meta);

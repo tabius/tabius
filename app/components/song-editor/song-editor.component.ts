@@ -65,7 +65,10 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   @ViewChild('textArea', { static: false, read: ElementRef }) private contentRef!: ElementRef;
   @ViewChild('firstFormElement', { static: false, read: ElementRef }) private titleElementRef!: ElementRef;
 
-  constructor(private readonly cds: CatalogService, private readonly toastService: ToastService) {
+  constructor(
+    private readonly cds: CatalogService,
+    private readonly toastService: ToastService,
+  ) {
     super();
     this.changes$
       .pipe(

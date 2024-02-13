@@ -15,7 +15,10 @@ export class ScenePageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.scenePage;
   songId = -1;
 
-  constructor(private readonly catalogService: CatalogService, private readonly helpService: HelpService) {
+  constructor(
+    private readonly catalogService: CatalogService,
+    private readonly helpService: HelpService,
+  ) {
     super();
     this.catalogService
       .getSceneSongId()

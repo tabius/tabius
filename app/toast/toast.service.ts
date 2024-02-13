@@ -12,7 +12,10 @@ import { I18N } from '@app/app-i18n';
 export class ToastService {
   private lastToast?: ToastRef;
 
-  constructor(private overlay: Overlay, private parentInjector: Injector) {}
+  constructor(
+    private overlay: Overlay,
+    private parentInjector: Injector,
+  ) {}
 
   warning(err: unknown, fallback = I18N.common.unexpectedError): ToastRef {
     const message = typeof err === 'string' ? err : fallback;

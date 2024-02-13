@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Put, Req } from '@nestjs/common';
 import { UserDbi } from '../db/user-dbi.service';
 import { newDefaultUserSettings, newDefaultUserSongSettings, User, UserSettings, UserSongSettings } from '@common/user-model';
-import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/ajax-model';
+import { LoginResponse, UpdateFavoriteSongKeyRequest } from '@common/api-model';
 import { updateFavoriteSongKeyRequestAssertion, UserSongSettingsValidator } from '../util/validators';
 import { BackendAuthService } from '../service/backend-auth.service';
 import { isEqualByStringify } from '@common/util/equality-functions';

@@ -15,7 +15,11 @@ import { PopoverConfig } from './popover-config';
 export class PopoverRef<T = void> {
   private afterClosed$ = new Subject<T | undefined>();
 
-  constructor(private overlayRef: OverlayRef, private positionStrategy: PositionStrategy, public config: PopoverConfig) {
+  constructor(
+    private overlayRef: OverlayRef,
+    private positionStrategy: PositionStrategy,
+    public config: PopoverConfig,
+  ) {
     if (!config.disableClose) {
       this.overlayRef.backdropClick().subscribe(() => {
         this.close();

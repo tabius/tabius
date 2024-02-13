@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { ToastService } from '@app/toast/toast.service';
-import { CreateUserCollectionRequest } from '@common/ajax-model';
+import { CreateUserCollectionRequest } from '@common/api-model';
 import { CatalogService } from '@app/services/catalog.service';
 import { map, switchMap } from 'rxjs/operators';
 import { combineLatest0, getCollectionPageLink } from '@common/util/misc-utils';
@@ -32,7 +32,10 @@ export class UserCollectionsListComponent extends AbstractAppComponent {
 
   newCollectionName = '';
 
-  constructor(private readonly cds: CatalogService, private readonly toastService: ToastService) {
+  constructor(
+    private readonly cds: CatalogService,
+    private readonly toastService: ToastService,
+  ) {
     super();
     this.changes$
       .pipe(

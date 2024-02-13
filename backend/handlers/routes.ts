@@ -1,6 +1,12 @@
 import { GetHandler, mountGet } from '@backend/handlers/handler';
 import { Application } from 'express';
-import { collectionGetByMount, collectionGetDetailsById, collectionGetList, collectionGetListByIds, collectionGetListByUserId } from '@backend/handlers/collection.handler';
+import {
+  collectionGetByMount,
+  collectionGetDetailsById,
+  collectionGetList,
+  collectionGetListByIds,
+  collectionGetListByUserId,
+} from '@backend/handlers/collection.handler';
 
 export function registerRoutes(app: Application): void {
   // Shortcuts.

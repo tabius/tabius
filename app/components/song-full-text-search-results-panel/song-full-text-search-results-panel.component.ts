@@ -6,7 +6,7 @@ import {
   FullTextSongSearchResult,
   MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS,
   MAX_FULL_TEXT_SEARCH_TITLE_RESULTS,
-} from '@common/ajax-model';
+} from '@common/api-model';
 import { getSongPageLink, toSafeSearchText } from '@common/util/misc-utils';
 import { getSongTextWithNoChords } from '@app/components/song-page/song-page.component';
 import { MIN_LEN_FOR_FULL_TEXT_SEARCH } from '@common/common-constants';
@@ -31,7 +31,10 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   contentResults: FullTextSongSearchResult[] = [];
   loading = false;
 
-  constructor(private readonly httpClient: HttpClient, private readonly cd: ChangeDetectorRef) {}
+  constructor(
+    private readonly httpClient: HttpClient,
+    private readonly cd: ChangeDetectorRef,
+  ) {}
 
   ngOnChanges(): void {
     this.clearResults();

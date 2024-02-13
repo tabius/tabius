@@ -2,14 +2,6 @@ import { User, UserSettings } from '@common/user-model';
 import { Collection, CollectionType, Song, SongDetails } from '@common/catalog-model';
 import { ChordTone } from '@common/util/chords-lib';
 
-export interface AjaxSessionInfo {
-  userId: string | undefined;
-}
-
-export interface TabiusAjaxResponse {
-  session?: AjaxSessionInfo;
-}
-
 export interface LoginResponse {
   readonly user: User | undefined;
   readonly settings: UserSettings;
@@ -22,7 +14,7 @@ export interface CreateListedCollectionRequest {
 }
 
 export interface CreateListedCollectionResponse {
-  /** Id of the created collection. */
+  /** ID of the created collection. */
   collectionId: number;
   /** List of all listed collections. */
   collections: Collection[];
@@ -33,7 +25,7 @@ export interface CreateUserCollectionRequest {
 }
 
 export interface CreateUserCollectionResponse {
-  /** Id of the created collection. */
+  /** ID of the created collection. */
   collectionId: number;
   /** List of all user collections. */
   collections: Collection[];

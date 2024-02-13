@@ -6,13 +6,20 @@ import { CollectionDbi } from '@backend/db/collection-dbi.service';
 import { getApp } from '@backend/backend.module';
 import { isUserId } from '@common/util/misc-utils';
 import { SongDbi } from '@backend/db/song-dbi.service';
-
-export enum UrlParameter {
-  mount = 'mount',
-  id = 'id',
-  ids = 'ids',
-  userId = 'userId',
-}
+import {
+  ApiResponse,
+  BAD_REQUEST,
+  BAD_REQUEST_STATUS,
+  FORBIDDEN,
+  FORBIDDEN_STATUS,
+  INTERNAL_ERROR,
+  INTERNAL_ERROR_STATUS,
+  NOT_FOUND,
+  NOT_FOUND_STATUS,
+  UNAUTHORIZED,
+  UNAUTHORIZED_STATUS,
+  UrlParameter,
+} from '@backend/handlers/protocol';
 
 export interface BaseHandler {
   path: string;
@@ -42,19 +49,24 @@ export interface GetHandler<ResponseResultType = unknown> extends BaseHandler {
   handler: (context: RequestContext) => Promise<ResponseOrValue<ResponseResultType>>;
 }
 
-export interface PostHandler<RequestBodyType = unknown, ResponseResultType = unknown> extends BaseHandler {
+export interface PppHandler<RequestBodyType = unknown, ResponseResultType = unknown> extends BaseHandler {
   pathValidator?: UrlTokensValidator;
   queryValidator?: UrlTokensValidator;
   validator: ObjectAssertion<RequestBodyType>;
   handler: (context: RequestContext<RequestBodyType>) => Promise<ResponseOrValue<ResponseResultType>>;
 }
 
-export type RouteRegistrationInfo = { method: 'get'; handler: GetHandler } | { method: 'post'; handler: PostHandler };
+export type RouteRegistrationInfo =
+  | { method: 'get'; handler: GetHandler }
+  | { method: 'post' | 'put' | 'patch'; handler: PppHandler };
 
 export const mountGet = (app: Application, handler: GetHandler): void => mount(app, { method: 'get', handler });
 
-export const mountPost = <Req, Res>(app: Application, handler: PostHandler<Req, Res>): void =>
-  mount(app, { method: 'post', handler: handler as PostHandler });
+export const mountPost = <Req, Res>(app: Application, handler: PppHandler<Req, Res>): void =>
+  mount(app, { method: 'post', handler: handler as PppHandler });
+
+export const mountPut = <Req, Res>(app: Application, handler: PppHandler<Req, Res>): void =>
+  mount(app, { method: 'put', handler: handler as PppHandler });
 
 export function mount(app: Application, { method, handler }: RouteRegistrationInfo): void {
   const pathPrefix = `/api/`;
@@ -69,10 +81,15 @@ export function mount(app: Application, { method, handler }: RouteRegistrationIn
       const userId: string | undefined = undefined;
       const requestContext = newRequestContext(undefined, req, res, userId);
       console.log(`${method.toUpperCase()} ${req.path}`);
-      if (method === 'get') {
-        result = await runGetHandler(handler, requestContext);
-      } else {
-        result = await runPostHandler(handler, requestContext);
+      switch (method) {
+        case 'get':
+          result = await runGetHandler(handler, requestContext);
+          break;
+        case 'patch':
+        case 'post':
+        case 'put':
+          result = await runPppHandler(handler, requestContext);
+          break;
       }
       res.send(result);
     }),
@@ -86,8 +103,8 @@ async function runGetHandler<ResponseResultType>(
   return await handler.handler(requestContext);
 }
 
-async function runPostHandler<RequestBodyType, ResponseResultType>(
-  handler: PostHandler<RequestBodyType, ResponseResultType>,
+async function runPppHandler<RequestBodyType, ResponseResultType>(
+  handler: PppHandler<RequestBodyType, ResponseResultType>,
   requestContext: RequestContextImpl<RequestBodyType>,
 ): Promise<ResponseOrValue<ResponseResultType>> {
   const apiRequest = requestContext.req.body as unknown;
@@ -182,12 +199,6 @@ export function catchRouteErrors(fn: ExpressFunction): ExpressFunction {
   };
 }
 
-export interface ApiResponse<T = unknown> {
-  statusCode: number;
-  result?: T;
-  message?: string;
-}
-
 function buildErrorResponse(error: unknown): ApiResponse<void> {
   const errorMessage = typeof error === 'object' ? (error as Error).message : typeof error === 'string' ? error : undefined;
   const statusCode = parseStatusCodeFromErrorMessageToken(errorMessage);
@@ -209,21 +220,6 @@ export function parseErrorTokenFromErrorMessage(errorMessage: string): string {
   }
   return errorTokenEndIndex > 1 ? errorMessage.substring(0, errorTokenEndIndex) : '';
 }
-
-export const BAD_REQUEST = 'BAD_REQUEST';
-export const BAD_REQUEST_STATUS = 400;
-
-export const UNAUTHORIZED = 'UNAUTHORIZED';
-export const UNAUTHORIZED_STATUS = 401;
-
-export const FORBIDDEN = 'FORBIDDEN';
-export const FORBIDDEN_STATUS = 403;
-
-export const NOT_FOUND = 'NOT_FOUND';
-export const NOT_FOUND_STATUS = 404;
-
-export const INTERNAL_ERROR = 'INTERNAL_ERROR';
-export const INTERNAL_ERROR_STATUS = 500;
 
 export function cutErrorMessageToken(message: string): string {
   const errorToken = parseErrorTokenFromErrorMessage(message);

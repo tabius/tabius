@@ -33,7 +33,11 @@ export class MoveSongToCollectionComponent implements OnChanges {
   private readonly currentCollectionId$ = new BehaviorSubject<number | undefined>(undefined);
   readonly trackById = trackById;
 
-  constructor(private readonly cds: CatalogService, private readonly uds: UserService, private readonly toastService: ToastService) {
+  constructor(
+    private readonly cds: CatalogService,
+    private readonly uds: UserService,
+    private readonly toastService: ToastService,
+  ) {
     this.collections$ = combineLatest([this.uds.getUser$(), this.currentCollectionId$]).pipe(
       map(([user]) => user),
       filter(isDefined),
