@@ -44,7 +44,7 @@ export const SERVER_CONFIG: Readonly<TabiusBackendConfig> = {
 
 /** Returns active configuration directory. */
 export function getConfigFilePath(fileOrSubdirPath: string): string {
-  const configDir = process.env.TABIUS_CONFIG_DIR || '/home/bigapple/work/tabius/local/server-config';
+  const configDir = process.env.TABIUS_CONFIG_DIR || '/home/houston/work/tabius/local/server-config';
   // if (!configDir) {
   //   throw new Error('No TABIUS_CONFIG_DIR environment variable found!');
   // }

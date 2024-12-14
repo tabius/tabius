@@ -63,7 +63,7 @@ import { ShowChordPopoverOnClickDirective } from '@app/directives/show-chord-pop
 import { JsonLdComponent } from '@app/components/json-ld/json-ld.component';
 import { CatalogNavigationHistoryPopupComponent } from '@app/components/catalog-navigation-history-popup/catalog-navigation-history-popup.component';
 import { ScenePageComponent } from './components/scene-page/scene-page.component';
-import * as Sentry from '@sentry/angular-ivy';
+import * as Sentry from '@sentry/angular';
 import { MoveSongToCollectionComponent } from './components/move-song-to-collection/move-song-to-collection.component';
 import { NgOptimizedImage } from '@angular/common';
 import { TabiusAuthHttpInterceptor } from '@app/interceptors/auth.interceptor';

@@ -2,13 +2,12 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from '@app/app.module';
 import { enableProdMode } from '@angular/core';
 import { environment } from '@app/environments/environment';
-import * as Sentry from '@sentry/angular-ivy';
-import { BrowserTracing } from '@sentry/browser';
+import * as Sentry from '@sentry/angular';
 
 if (environment.production) {
   Sentry.init({
     dsn: environment.sentryConfig.dsn,
-    integrations: [new BrowserTracing()],
+    integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: 0.2,
   });
 

@@ -7,8 +7,5 @@
   "angularCompilerOptions": {
     "strictInputAccessModifiers": true
     //    "strictTemplates": true
-  },
-  "compilerOptions": {
-    "lib": ["DOM"]
   }
 }
