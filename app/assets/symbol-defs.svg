@@ -1,4 +1,4 @@
-<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg">
   <defs>
 
     <symbol id="scene" viewBox="0 0 490 490">
@@ -341,5 +341,9 @@
       <path d="M209.794,467.185l-8.514,39.083c14.054,3.062,28.505,4.946,42.953,5.6l1.809-39.959C233.844,471.357,221.648,469.766,209.794,467.185z" />
     </symbol>
 
+    <symbol id="login" viewBox="0 -960 960 960" width="40">
+      <path
+        d="M480.67-120v-66.67h292.66v-586.66H480.67V-840h292.66q27 0 46.84 19.83Q840-800.33 840-773.33v586.66q0 27-19.83 46.84Q800.33-120 773.33-120H480.67Zm-63.34-176.67-47-48 102-102H120v-66.66h351l-102-102 47-48 184 184-182.67 182.66Z" />
+    </symbol>
   </defs>
 </svg>

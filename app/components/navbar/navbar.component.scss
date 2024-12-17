@@ -145,7 +145,7 @@ a {
           fill: $color-nav-settings;
         }
 
-        .user-icon-desktop {
+        .user-icon-desktop, .login-icon-desktop {
           display: inline-block;
           position: absolute;
           top: 13px;
@@ -159,6 +159,18 @@ a {
           font-size: 20px;
           text-align: center;
           line-height: 30px;
+
+          &.login-icon-desktop {
+            border: none;
+            margin-right: 10px;
+            cursor: pointer;
+            gt-svg-icon {
+              fill: #ccc;
+              display: block;
+              height: 30px;
+              width: 30px;
+            }
+          }
         }
       }
 
@@ -258,7 +270,9 @@ a {
       }
 
       .user-icon-mobile {
-        display: inline-block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         height: 30px;
         width: 30px;
         border-radius: 30%;
@@ -273,6 +287,11 @@ a {
         fill: #ccc;
         height: 32px;
         width: 32px;
+      }
+
+      .login-icon {
+        margin-right: 5px;
+        cursor: pointer;
       }
     }
   }

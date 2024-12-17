@@ -20,6 +20,7 @@ import { ContextMenuAction, ContextMenuActionService } from '@app/services/conte
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { CatalogNavigationHistoryService } from '@app/services/catalog-navigation-history.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ClientAuthService } from '@app/services/client-auth.service';
 
 enum NavSection {
   Home = 1,
@@ -47,6 +48,7 @@ export class NavbarComponent {
 
   readonly NavSection = NavSection;
   readonly i18n = I18N.navbar;
+  readonly I18N = I18N;
 
   /** Extra action used in mobile mode only. */
   contextMenuAction?: ContextMenuAction;
@@ -56,6 +58,7 @@ export class NavbarComponent {
   @ViewChild('showHistoryButton', { static: true, read: ElementRef }) private showHistoryButton?: ElementRef;
 
   constructor(
+    readonly authService: ClientAuthService,
     private readonly userService: UserService,
     private readonly router: Router,
     private readonly toast: ToastService,

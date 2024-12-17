@@ -37,11 +37,17 @@
     </div>
     <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
       <a routerLink="{{settingsLink}}">
-        <div *ngIf="user" class="user-icon-desktop"
-             title="{{i18n.userIconTitle(user.email)}}"
-             (click)="showUserInfo()">
-          {{ getUserIconText() }}
-        </div>
+        @if (user) {
+          <div class="user-icon-desktop"
+               title="{{i18n.userIconTitle(user.email)}}"
+               (click)="showUserInfo()">
+            {{ getUserIconText() }}
+          </div>
+        } @else {
+          <div class="login-icon-desktop" [title]="I18N.signinSignoutButton.signIn" (click)="authService.login()">
+            <gt-svg-icon icon="login"></gt-svg-icon>
+          </div>
+        }
         <div class="indicator-block"></div>
         <gt-svg-icon icon="settings"></gt-svg-icon>
         <div class="title">{{ i18n.settings }}</div>
@@ -76,18 +82,28 @@
 
     <div class="spacer"></div>
 
-    <div *ngIf="(noSleepMode$|async)" class="item">
-      <a (click)="toggleNoSleep()">
-        <gt-svg-icon icon="no-sleep" class="no-sleep-icon"></gt-svg-icon>
-      </a>
-    </div>
+    @if (noSleepMode$|async) {
+      <div class="item">
+        <a (click)="toggleNoSleep()">
+          <gt-svg-icon icon="no-sleep" class="no-sleep-icon"></gt-svg-icon>
+        </a>
+      </div>
+    }
 
-    <div *ngIf="contextMenuAction" (click)="activateContextMenuAction()" class="item">
-      <gt-svg-icon [icon]="contextMenuAction.icon"></gt-svg-icon>
-    </div>
+    @if (contextMenuAction) {
+      <div (click)="activateContextMenuAction()" class="item">
+        <gt-svg-icon [icon]="contextMenuAction.icon"></gt-svg-icon>
+      </div>
+    }
 
-    <div *ngIf="user" class="item" (click)="showUserInfo()">
-      <div class="user-icon-mobile">{{ getUserIconText() }}</div>
-    </div>
+    @if (user) {
+      <div class="item" (click)="showUserInfo()">
+        <div class="user-icon-mobile">{{ getUserIconText() }}</div>
+      </div>
+    } @else {
+      <div class="item" (click)="authService.login()">
+        <gt-svg-icon icon="login" class="login-icon"></gt-svg-icon>
+      </div>
+    }
   </nav>
 </div>
