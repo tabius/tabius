@@ -1,38 +1,38 @@
 <div *ngIf="chordLayouts.length > 0">
-    <div class="title" [ngClass]="{'with-controls' : showControls}">
-        <h3>{{ i18n.chordsTitle }}</h3>
-        <div class="controls-block" *ngIf="showControls">
-            <button class="btn btn-flat-white" (click)="onTransposeClicked(-1)" title="{{i18n.transposeDown}}">
-                <gt-svg-icon icon="arrow-down"></gt-svg-icon>
-            </button>
+  <div class="title" [ngClass]="{'with-controls' : showControls}">
+    <h3>{{ i18n.chordsTitle }}</h3>
+    <div class="controls-block" *ngIf="showControls">
+      <button class="btn btn-flat-white" (click)="onTransposeClicked(-1)" title="{{i18n.transposeDown}}">
+        <gt-svg-icon icon="arrow-down"></gt-svg-icon>
+      </button>
 
-            <button class="btn btn-flat-white" (click)="onTransposeClicked(+1)" title="{{i18n.transposeUp}}">
-                <gt-svg-icon icon="arrow-up"></gt-svg-icon>
-            </button>
+      <button class="btn btn-flat-white" (click)="onTransposeClicked(+1)" title="{{i18n.transposeUp}}">
+        <gt-svg-icon icon="arrow-up"></gt-svg-icon>
+      </button>
 
-            <button class="btn btn-flat-white" (click)="onTransposeClicked(0)" title="{{i18n.originalKey}}">
-                <gt-svg-icon icon="reset" class="close-icon"></gt-svg-icon>
-            </button>
+      <button class="btn btn-flat-white" (click)="onTransposeClicked(0)" title="{{i18n.originalKey}}">
+        <gt-svg-icon icon="reset" class="close-icon"></gt-svg-icon>
+      </button>
 
-            <button *ngIf="transposeActionKey" class="btn btn-flat-white" (click)="transposeToFavoriteKeyClicked()" title="{{getTransposeKeyTitle()}}">
-                {{ getTransposeKeyAsMinor() }}
-            </button>
-        </div>
+      <button *ngIf="transposeActionKey" class="btn btn-flat-white" (click)="transposeToFavoriteKeyClicked()" title="{{getTransposeKeyTitle()}}">
+        {{ getTransposeKeyAsMinor() }}
+      </button>
     </div>
+  </div>
 
-    <gt-chord-image *ngFor="let layout of chordLayouts"
-                    [layout]="layout"
-                    [h4Si]="h4Si"
-                    class="chord-image"
-                    gtChordPopoverOnClick
-                    [gtChordPopoverOnClick_chord]="layout.chord"
-                    [gtChordPopoverOnClick_popoverTemplate]="chordPopover"
-                    [gtChordPopoverOnClick_getChordInfo]="getChordInfo"
-                    (gtChordPopoverOnClick_onChordLayoutChanged)="popoverChordLayout = $event"
-    >
-        <ng-template #chordPopover let-popover="popover">
-            <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si" [popover]="popover"></gt-chord-popover>
-        </ng-template>
-    </gt-chord-image>
+  <gt-chord-image *ngFor="let layout of chordLayouts"
+                  [layout]="layout"
+                  [h4Si]="h4Si"
+                  class="chord-image"
+                  gtChordPopoverOnClick
+                  [gtChordPopoverOnClick_chord]="layout.chord"
+                  [gtChordPopoverOnClick_popoverTemplate]="chordPopover"
+                  [gtChordPopoverOnClick_getChordInfo]="getChordInfo"
+                  (gtChordPopoverOnClick_onChordLayoutChanged)="popoverChordLayout = $event"
+  >
+    <ng-template #chordPopover let-popover="popover">
+      <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si" [popover]="popover"></gt-chord-popover>
+    </ng-template>
+  </gt-chord-image>
 
 </div>

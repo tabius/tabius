@@ -1,93 +1,93 @@
 <!-- desktop layout -->
 <div class="desktop">
-    <nav>
-        <div class="item home">
-            <a routerLink="/">
-                <div class="logo">tabius</div>
-                <div class="logo2">{{ i18n.logo2 }}</div>
-            </a>
-        </div>
-        <div class="item catalog" [class.active]="getActiveSection() === NavSection.Catalog">
-            <a routerLink="{{catalogLink}}" (click)="resetCollectionPageScroll()">
-                <div class="indicator-block"></div>
-                <gt-svg-icon icon="artist"></gt-svg-icon>
-                <div class="title">{{ i18n.catalog }}</div>
-            </a>
-        </div>
-        <div class="item scene" [class.active]="getActiveSection() === NavSection.Scene">
-            <a routerLink="{{sceneLink}}">
-                <div class="indicator-block"></div>
-                <gt-svg-icon icon="scene"></gt-svg-icon>
-                <div class="title">{{ i18n.scene }}</div>
-            </a>
-        </div>
-        <div class="item studio" [class.active]="getActiveSection()=== NavSection.Studio">
-            <a routerLink="{{studioLink}}">
-                <div class="indicator-block"></div>
-                <gt-svg-icon icon="studio"></gt-svg-icon>
-                <div class="title">{{ i18n.studio }}</div>
-            </a>
-        </div>
-        <div class="item tuner" [class.active]="getActiveSection() === NavSection.Tuner">
-            <a routerLink="{{tunerLink}}">
-                <div class="indicator-block"></div>
-                <gt-svg-icon icon="tuner"></gt-svg-icon>
-                <div class="title">{{ i18n.tuner }}</div>
-            </a>
-        </div>
-        <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
-            <a routerLink="{{settingsLink}}">
-                <div *ngIf="user" class="user-icon-desktop"
-                     title="{{i18n.userIconTitle(user.email)}}"
-                     (click)="showUserInfo()">
-                    {{ getUserIconText() }}
-                </div>
-                <div class="indicator-block"></div>
-                <gt-svg-icon icon="settings"></gt-svg-icon>
-                <div class="title">{{ i18n.settings }}</div>
-            </a>
-        </div>
-    </nav>
-    <div class="sub-nav">
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item history">
-            <a href="#" class="btn btn-flat-white" #showHistoryButton
-               [attr.title]="i18n.historyButtonTitle"
-               (click)="onShowHistoryClicked($event)"
-            >
-                ☰ {{ i18n.historyButton }}
-            </a>
-        </div>
+  <nav>
+    <div class="item home">
+      <a routerLink="/">
+        <div class="logo">tabius</div>
+        <div class="logo2">{{ i18n.logo2 }}</div>
+      </a>
     </div>
+    <div class="item catalog" [class.active]="getActiveSection() === NavSection.Catalog">
+      <a routerLink="{{catalogLink}}" (click)="resetCollectionPageScroll()">
+        <div class="indicator-block"></div>
+        <gt-svg-icon icon="artist"></gt-svg-icon>
+        <div class="title">{{ i18n.catalog }}</div>
+      </a>
+    </div>
+    <div class="item scene" [class.active]="getActiveSection() === NavSection.Scene">
+      <a routerLink="{{sceneLink}}">
+        <div class="indicator-block"></div>
+        <gt-svg-icon icon="scene"></gt-svg-icon>
+        <div class="title">{{ i18n.scene }}</div>
+      </a>
+    </div>
+    <div class="item studio" [class.active]="getActiveSection()=== NavSection.Studio">
+      <a routerLink="{{studioLink}}">
+        <div class="indicator-block"></div>
+        <gt-svg-icon icon="studio"></gt-svg-icon>
+        <div class="title">{{ i18n.studio }}</div>
+      </a>
+    </div>
+    <div class="item tuner" [class.active]="getActiveSection() === NavSection.Tuner">
+      <a routerLink="{{tunerLink}}">
+        <div class="indicator-block"></div>
+        <gt-svg-icon icon="tuner"></gt-svg-icon>
+        <div class="title">{{ i18n.tuner }}</div>
+      </a>
+    </div>
+    <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
+      <a routerLink="{{settingsLink}}">
+        <div *ngIf="user" class="user-icon-desktop"
+             title="{{i18n.userIconTitle(user.email)}}"
+             (click)="showUserInfo()">
+          {{ getUserIconText() }}
+        </div>
+        <div class="indicator-block"></div>
+        <gt-svg-icon icon="settings"></gt-svg-icon>
+        <div class="title">{{ i18n.settings }}</div>
+      </a>
+    </div>
+  </nav>
+  <div class="sub-nav">
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item history">
+      <a href="#" class="btn btn-flat-white" #showHistoryButton
+         [attr.title]="i18n.historyButtonTitle"
+         (click)="onShowHistoryClicked($event)"
+      >
+        ☰ {{ i18n.historyButton }}
+      </a>
+    </div>
+  </div>
 </div>
 
 <!-- mobile layout (see footer component for the global menu popover.) -->
 <div class="mobile">
-    <nav>
-        <div class="item logo">
-            <a routerLink="/">
-                <div class="logo">tabius</div>
-            </a>
-        </div>
+  <nav>
+    <div class="item logo">
+      <a routerLink="/">
+        <div class="logo">tabius</div>
+      </a>
+    </div>
 
-        <div class="spacer"></div>
+    <div class="spacer"></div>
 
-        <div *ngIf="(noSleepMode$|async)" class="item">
-            <a (click)="toggleNoSleep()">
-                <gt-svg-icon icon="no-sleep" class="no-sleep-icon"></gt-svg-icon>
-            </a>
-        </div>
+    <div *ngIf="(noSleepMode$|async)" class="item">
+      <a (click)="toggleNoSleep()">
+        <gt-svg-icon icon="no-sleep" class="no-sleep-icon"></gt-svg-icon>
+      </a>
+    </div>
 
-        <div *ngIf="contextMenuAction" (click)="activateContextMenuAction()" class="item">
-            <gt-svg-icon [icon]="contextMenuAction.icon"></gt-svg-icon>
-        </div>
+    <div *ngIf="contextMenuAction" (click)="activateContextMenuAction()" class="item">
+      <gt-svg-icon [icon]="contextMenuAction.icon"></gt-svg-icon>
+    </div>
 
-        <div *ngIf="user" class="item" (click)="showUserInfo()">
-            <div class="user-icon-mobile">{{ getUserIconText() }}</div>
-        </div>
-    </nav>
+    <div *ngIf="user" class="item" (click)="showUserInfo()">
+      <div class="user-icon-mobile">{{ getUserIconText() }}</div>
+    </div>
+  </nav>
 </div>

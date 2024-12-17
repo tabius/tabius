@@ -1,20 +1,20 @@
 <ul>
-    <li *ngFor="let collectionInfo of collectionInfos" class="collection-list-item" [attr.data-pw]="collectionInfo.id">
-        <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{ collectionInfo.linkText }}</a>
-    </li>
+  <li *ngFor="let collectionInfo of collectionInfos" class="collection-list-item" [attr.data-pw]="collectionInfo.id">
+    <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{ collectionInfo.linkText }}</a>
+  </li>
 </ul>
 
 <form #createCollectionForm="ngForm" (ngSubmit)="createCollection()" class="new-collection-form">
-    <input type="text" [(ngModel)]="newCollectionName"
-           name="name" required
-           class="new-collection-name-input"
-           placeholder="{{i18n.newCollectionInputPlaceholder}}"
-    />
-    <button type="submit"
-            class="btn create-button"
-            title="{{i18n.createCollectionButtonTitle}}"
-            [disabled]="!createCollectionForm.form.valid">
-        {{ i18n.createCollectionButton }}
-    </button>
+  <input type="text" [(ngModel)]="newCollectionName"
+         name="name" required
+         class="new-collection-name-input"
+         placeholder="{{i18n.newCollectionInputPlaceholder}}"
+  />
+  <button type="submit"
+          class="btn create-button"
+          title="{{i18n.createCollectionButtonTitle}}"
+          [disabled]="!createCollectionForm.form.valid">
+    {{ i18n.createCollectionButton }}
+  </button>
 
 </form>

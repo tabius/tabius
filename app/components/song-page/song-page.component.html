@@ -1,70 +1,70 @@
 <gt-head-canonical-link *ngIf="canonicalPageUrl" [href]="canonicalPageUrl"></gt-head-canonical-link>
 
 <div class="content">
-    <!-- Loading indicator -->
-    <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-        <div class="message">{{ i18n.loadingSong }}</div>
-        <gt-loading-indicator></gt-loading-indicator>
+  <!-- Loading indicator -->
+  <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
+    <div class="message">{{ i18n.loadingSong }}</div>
+    <gt-loading-indicator></gt-loading-indicator>
+  </div>
+
+  <!-- Not found block -->
+  <gt-resource-not-found *ngIf="notFound" message="{{i18n.songNotFound}}"></gt-resource-not-found>
+
+  <!-- Main content -->
+  <div *ngIf="song">
+
+    <div class="breadcrumb-block">
+      <gt-collection-breadcrumb [collection]="activeCollection"></gt-collection-breadcrumb>
+      <gt-json-ld *ngIf="jsonLdBreadcrumb" [json]="jsonLdBreadcrumb"></gt-json-ld>
     </div>
 
-    <!-- Not found block -->
-    <gt-resource-not-found *ngIf="notFound" message="{{i18n.songNotFound}}"></gt-resource-not-found>
+    <gt-song [songId]="song.id" [activeCollectionId]="activeCollection?.id"></gt-song>
 
-    <!-- Main content -->
-    <div *ngIf="song">
-
-        <div class="breadcrumb-block">
-            <gt-collection-breadcrumb [collection]="activeCollection"></gt-collection-breadcrumb>
-            <gt-json-ld *ngIf="jsonLdBreadcrumb" [json]="jsonLdBreadcrumb"></gt-json-ld>
-        </div>
-
-        <gt-song [songId]="song.id" [activeCollectionId]="activeCollection?.id"></gt-song>
-
-        <div class="user-controls">
-            <gt-add-song-to-collection *ngIf="isBrowser" [songId]="song.id"></gt-add-song-to-collection>
-        </div>
-
-        <div *ngIf="editorIsOpen" class="edit-song-block">
-            <gt-user-registration-prompt *ngIf="!user"
-                                         (closeRequest)="closeEditor()"
-                                         class="register-prompt"
-            ></gt-user-registration-prompt>
-            <gt-moderator-prompt *ngIf="!!user && !hasEditRight"
-                                 (closeRequest)="closeEditor()"
-                                 class="has-no-rights-prompt">
-            </gt-moderator-prompt>
-            <gt-song-editor *ngIf="hasEditRight"
-                            (closeRequest)="closeEditor()"
-                            (mountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
-                            [songId]="song.id"
-                            [activeCollectionId]="activeCollection?.id || song.collectionId"
-            ></gt-song-editor>
-        </div>
-
-        <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen && isBrowser">
-            <div class="button-item">
-                <a class="btn btn-info" (click)="openEditor()" title="{{i18n.editSongButtonTitle}}">
-                    <span class="desktop-only-inline">{{ i18n.editSongButtonDesktop }}</span>
-                    <span class="mobile-only-inline">{{ i18n.editSongButtonMobile }}</span>
-                </a>
-            </div>
-            <div class="button-item" *ngIf="isSearchVideoOnYoutubeLinkVisible">
-                <a class="btn" href="{{youtubeSearchSongLink}}" title="{{i18n.searchSongOnYoutubeLinkTitle}}" target="_blank">
-                    <span class="desktop-only-inline">{{ i18n.searchSongOnYoutubeLinkText }}</span>
-                </a>
-            </div>
-            <div class="button-item" *ngIf="affiliateSongLink">
-                <a class="btn affiliate-button" href="{{affiliateSongLink}}" title="{{i18n.affiliateLinkButtonTitle}}" target="_blank">
-                    <span class="desktop-only-inline">{{ i18n.affiliateLinkButtonDesktopLabel }}</span>
-                    <span class="mobile-only-inline">{{ i18n.affiliateLinkButtonMobileLabel }}</span>
-                </a>
-            </div>
-        </div>
-
-        <gt-song-prev-next-navigator *ngIf="isBrowser && !editorIsOpen"
-                                     [songId]="song.id"
-                                     [activeCollectionId]="activeCollection?.id"
-        ></gt-song-prev-next-navigator>
+    <div class="user-controls">
+      <gt-add-song-to-collection *ngIf="isBrowser" [songId]="song.id"></gt-add-song-to-collection>
     </div>
+
+    <div *ngIf="editorIsOpen" class="edit-song-block">
+      <gt-user-registration-prompt *ngIf="!user"
+                                   (closeRequest)="closeEditor()"
+                                   class="register-prompt"
+      ></gt-user-registration-prompt>
+      <gt-moderator-prompt *ngIf="!!user && !hasEditRight"
+                           (closeRequest)="closeEditor()"
+                           class="has-no-rights-prompt">
+      </gt-moderator-prompt>
+      <gt-song-editor *ngIf="hasEditRight"
+                      (closeRequest)="closeEditor()"
+                      (mountChangeBeforeUpdate)="onMountChangeBeforeUpdate($event)"
+                      [songId]="song.id"
+                      [activeCollectionId]="activeCollection?.id || song.collectionId"
+      ></gt-song-editor>
+    </div>
+
+    <div class="bottom-action-buttons-block" *ngIf="!editorIsOpen && isBrowser">
+      <div class="button-item">
+        <a class="btn btn-info" (click)="openEditor()" title="{{i18n.editSongButtonTitle}}">
+          <span class="desktop-only-inline">{{ i18n.editSongButtonDesktop }}</span>
+          <span class="mobile-only-inline">{{ i18n.editSongButtonMobile }}</span>
+        </a>
+      </div>
+      <div class="button-item" *ngIf="isSearchVideoOnYoutubeLinkVisible">
+        <a class="btn" href="{{youtubeSearchSongLink}}" title="{{i18n.searchSongOnYoutubeLinkTitle}}" target="_blank">
+          <span class="desktop-only-inline">{{ i18n.searchSongOnYoutubeLinkText }}</span>
+        </a>
+      </div>
+      <div class="button-item" *ngIf="affiliateSongLink">
+        <a class="btn affiliate-button" href="{{affiliateSongLink}}" title="{{i18n.affiliateLinkButtonTitle}}" target="_blank">
+          <span class="desktop-only-inline">{{ i18n.affiliateLinkButtonDesktopLabel }}</span>
+          <span class="mobile-only-inline">{{ i18n.affiliateLinkButtonMobileLabel }}</span>
+        </a>
+      </div>
+    </div>
+
+    <gt-song-prev-next-navigator *ngIf="isBrowser && !editorIsOpen"
+                                 [songId]="song.id"
+                                 [activeCollectionId]="activeCollection?.id"
+    ></gt-song-prev-next-navigator>
+  </div>
 
 </div>

@@ -10,10 +10,10 @@
      [gtChordPopoverOnClick_getChordInfo]="getChordInfo"
      (gtChordPopoverOnClick_onChordLayoutChanged)="this.popoverChordLayout = $event"
 >
-    <div *ngIf="isBrowser" [innerHTML]="getSongHtml() | safeHtml"></div>
-    <div *ngIf="!isBrowser">{{ song.content }}</div>
+  <div *ngIf="isBrowser" [innerHTML]="getSongHtml() | safeHtml"></div>
+  <div *ngIf="!isBrowser">{{ song.content }}</div>
 </div>
 
 <ng-template #chordPopover let-popover="popover">
-    <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si" [popover]="popover"></gt-chord-popover>
+  <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si" [popover]="popover"></gt-chord-popover>
 </ng-template>

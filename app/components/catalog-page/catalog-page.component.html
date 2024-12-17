@@ -1,103 +1,103 @@
 <h1>{{ i18n.title }}</h1>
 
 <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator" data-pw="loading-indicator">
-    <div class="message">{{ i18n.loadingMessage }}</div>
-    <gt-loading-indicator></gt-loading-indicator>
+  <div class="message">{{ i18n.loadingMessage }}</div>
+  <gt-loading-indicator></gt-loading-indicator>
 </div>
 
 <div *ngIf="loaded" data-pw="loaded-content">
 
-    <div style="display: flex; justify-content: center;">
-        <div style="display: inline-block">
-            <div class="search-input-block">
-                <input #searchField type="text"
-                       [value]="searchValue"
-                       [formControl]="collectionFilterControl"
-                       placeholder="{{i18n.searchInputPlaceholder}}"
-                       title="{{i18n.searchInputTitle}}"
-                >
-                <div *ngIf="isVirtualKeyboardShownOnInput" class="search-buttons-block">
-                    <button (click)="gotoResults()" class="btn btn-hide-keyboard" title="{{i18n.gotoResultsTitle}}">
-                        <gt-svg-icon icon="search"></gt-svg-icon>
-                    </button>
-                    <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">
-                        <gt-svg-icon icon="undo"></gt-svg-icon>
-                    </button>
-                </div>
-                <div *ngIf="!isVirtualKeyboardShownOnInput">
-                    <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">{{ i18n.clear }}</button>
-                </div>
-            </div>
-
-            <div class="letters-navigator-root">
-                <div class="letters-navigator">
-                    <div *ngFor="let letterBlock of letterBlocks; trackBy: trackByLetter"
-                         class="letter-link-block"
-                         [class.selected]="isLetterSelected(letterBlock.letter)"
-                         (click)="activateLetter(letterBlock.letter)"
-                    >
-                        <a class="letter-link">{{ letterBlock.letter }}</a>
-                    </div>
-                    <div class="letter-link-block">
-                        <a (click)="activateLetter(null)" class="letter-link" title="{{i18n.showAllCollectionsTitle}}">{{ i18n.showAllCollections }}</a>
-                    </div>
-                </div>
-            </div>
+  <div style="display: flex; justify-content: center;">
+    <div style="display: inline-block">
+      <div class="search-input-block">
+        <input #searchField type="text"
+               [value]="searchValue"
+               [formControl]="collectionFilterControl"
+               placeholder="{{i18n.searchInputPlaceholder}}"
+               title="{{i18n.searchInputTitle}}"
+        >
+        <div *ngIf="isVirtualKeyboardShownOnInput" class="search-buttons-block">
+          <button (click)="gotoResults()" class="btn btn-hide-keyboard" title="{{i18n.gotoResultsTitle}}">
+            <gt-svg-icon icon="search"></gt-svg-icon>
+          </button>
+          <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">
+            <gt-svg-icon icon="undo"></gt-svg-icon>
+          </button>
         </div>
+        <div *ngIf="!isVirtualKeyboardShownOnInput">
+          <button (click)="activateLetter(null)" class="btn" title="{{i18n.clearButtonTitle}}">{{ i18n.clear }}</button>
+        </div>
+      </div>
+
+      <div class="letters-navigator-root">
+        <div class="letters-navigator">
+          <div *ngFor="let letterBlock of letterBlocks; trackBy: trackByLetter"
+               class="letter-link-block"
+               [class.selected]="isLetterSelected(letterBlock.letter)"
+               (click)="activateLetter(letterBlock.letter)"
+          >
+            <a class="letter-link">{{ letterBlock.letter }}</a>
+          </div>
+          <div class="letter-link-block">
+            <a (click)="activateLetter(null)" class="letter-link" title="{{i18n.showAllCollectionsTitle}}">{{ i18n.showAllCollections }}</a>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="collection-list">
-        <div *ngIf="searchValue.length === 0">
-            <div *ngFor="let letterBlock of getVisibleLetterBlocks(); trackBy: trackByLetter" class="letter-block">
-                <div class="letter">{{ letterBlock.letter }}</div>
-                <div class="letter-collections">
-                    <div *ngFor="let collection of letterBlock.collections; trackBy: trackByCollectionId" [attr.data-pw]="collection.id">
-                        <a routerLink="{{collection.link}}" [title]="collection.titleAttribute">{{ collection.name }}</a>
-                    </div>
-                </div>
-            </div>
+  <div class="collection-list">
+    <div *ngIf="searchValue.length === 0">
+      <div *ngFor="let letterBlock of getVisibleLetterBlocks(); trackBy: trackByLetter" class="letter-block">
+        <div class="letter">{{ letterBlock.letter }}</div>
+        <div class="letter-collections">
+          <div *ngFor="let collection of letterBlock.collections; trackBy: trackByCollectionId" [attr.data-pw]="collection.id">
+            <a routerLink="{{collection.link}}" [title]="collection.titleAttribute">{{ collection.name }}</a>
+          </div>
         </div>
-        <div *ngIf="searchValue.length > 0" class="filtered-collections-block" #searchResultsBlock>
-
-            <div class="search-results-message">
-                {{ i18n.searchResultsPrefix }} «<span class="search-text">{{ searchValue }}</span>»:
-            </div>
-
-            <h2>{{ i18n.artistsHeader }}</h2>
-
-            <div *ngIf="filteredCollections.length === 0" class="collection-not-found-message">
-                {{ i18n.noArtistsFound }}
-            </div>
-
-            <div *ngFor="let collection of filteredCollections; trackBy: trackByCollectionId">
-                <a routerLink="{{collection.link}}" [title]="collection.titleAttribute">{{ collection.name }}</a>
-            </div>
-
-            <ng-container *ngIf="useFullTextSearch()" class="filtered-collections-block">
-                <h2>{{ i18n.songsHeader }}</h2>
-                <gt-song-full-text-search-results-panel [searchText]="searchValue"></gt-song-full-text-search-results-panel>
-            </ng-container>
-        </div>
+      </div>
     </div>
+    <div *ngIf="searchValue.length > 0" class="filtered-collections-block" #searchResultsBlock>
+
+      <div class="search-results-message">
+        {{ i18n.searchResultsPrefix }} «<span class="search-text">{{ searchValue }}</span>»:
+      </div>
+
+      <h2>{{ i18n.artistsHeader }}</h2>
+
+      <div *ngIf="filteredCollections.length === 0" class="collection-not-found-message">
+        {{ i18n.noArtistsFound }}
+      </div>
+
+      <div *ngFor="let collection of filteredCollections; trackBy: trackByCollectionId">
+        <a routerLink="{{collection.link}}" [title]="collection.titleAttribute">{{ collection.name }}</a>
+      </div>
+
+      <ng-container *ngIf="useFullTextSearch()" class="filtered-collections-block">
+        <h2>{{ i18n.songsHeader }}</h2>
+        <gt-song-full-text-search-results-panel [searchText]="searchValue"></gt-song-full-text-search-results-panel>
+      </ng-container>
+    </div>
+  </div>
 
 </div>
 
 <div class="add-collection-block" *ngIf="loaded">
-    <div>
-        <button *ngIf="!collectionEditorIsOpen"
-                (click)="toggleCollectionsEditor()"
-                class="btn btn-info"
-                title="{{i18n.addNewArtistTitle}}">{{ i18n.addNewArtist }}
-        </button>
+  <div>
+    <button *ngIf="!collectionEditorIsOpen"
+            (click)="toggleCollectionsEditor()"
+            class="btn btn-info"
+            title="{{i18n.addNewArtistTitle}}">{{ i18n.addNewArtist }}
+    </button>
 
-        <gt-collection-editor *ngIf="collectionEditorIsOpen && canCreateNewPublicCollection"
-                              (closeRequest)="toggleCollectionsEditor()"
-        ></gt-collection-editor>
+    <gt-collection-editor *ngIf="collectionEditorIsOpen && canCreateNewPublicCollection"
+                          (closeRequest)="toggleCollectionsEditor()"
+    ></gt-collection-editor>
 
-        <div *ngIf="collectionEditorIsOpen && !canCreateNewPublicCollection">
-            <gt-user-registration-prompt *ngIf="!user" class="register-prompt"></gt-user-registration-prompt>
-            <gt-moderator-prompt *ngIf="user" class="has-no-rights-prompt"></gt-moderator-prompt>
-        </div>
+    <div *ngIf="collectionEditorIsOpen && !canCreateNewPublicCollection">
+      <gt-user-registration-prompt *ngIf="!user" class="register-prompt"></gt-user-registration-prompt>
+      <gt-moderator-prompt *ngIf="user" class="has-no-rights-prompt"></gt-moderator-prompt>
     </div>
+  </div>
 </div>
 

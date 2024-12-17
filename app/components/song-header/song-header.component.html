@@ -1,16 +1,16 @@
 <h1>{{ title }}</h1>
 
 <ng-container *ngIf="showControls">
-    <div class="icons-block">
-        <div (click)="printSong()" class="icon print-icon" title="{{i18n.printTitle}}">
-            <gt-svg-icon icon="printer"></gt-svg-icon>
-        </div>
-        <div (click)="showKeyboardShortcuts()" class="icon settings-icon" title="{{i18n.showShortcutsTitle}}">
-            <gt-svg-icon icon="command-key"></gt-svg-icon>
-        </div>
+  <div class="icons-block">
+    <div (click)="printSong()" class="icon print-icon" title="{{i18n.printTitle}}">
+      <gt-svg-icon icon="printer"></gt-svg-icon>
     </div>
+    <div (click)="showKeyboardShortcuts()" class="icon settings-icon" title="{{i18n.showShortcutsTitle}}">
+      <gt-svg-icon icon="command-key"></gt-svg-icon>
+    </div>
+  </div>
 </ng-container>
 
 <div *ngIf="showCollectionLink" class="collection-link">
-    <a [routerLink]="collectionLink" class="dark-pill" title="{{i18n.goToCollectionTitle}}">{{ collection.name + ' »' }}</a>
+  <a [routerLink]="collectionLink" class="dark-pill" title="{{i18n.goToCollectionTitle}}">{{ collection.name + ' »' }}</a>
 </div>

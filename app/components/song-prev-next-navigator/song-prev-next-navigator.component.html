@@ -1,31 +1,31 @@
 <div *ngIf="prevLink && nextLink && !isInitializing">
 
-    <div *ngIf="bss.isSmallScreenMode$|async" class="mobile-buttons-row">
-        <!-- Note: in small screen mode random song navigation buttons are located in the app footer. -->
-        <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong }}</a>
-        <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong }}</a>
+  <div *ngIf="bss.isSmallScreenMode$|async" class="mobile-buttons-row">
+    <!-- Note: in small screen mode random song navigation buttons are located in the app footer. -->
+    <a routerLink="{{prevLink}}" class="prev-link btn btn-flat-white">{{ prevLinkIsCollection ? i18n.toCollectionPrev : i18n.prevSong }}</a>
+    <a routerLink="{{nextLink}}" class="next-link btn btn-flat-white">{{ nextLinkIsCollection ? i18n.toCollectionNext : i18n.nextSong }}</a>
+  </div>
+
+  <div *ngIf="bss.isWideScreenMode$|async" class="sticky-sidebar">
+    <div class="left-bar"
+         (click)="onBarNavigationClick($event, prevLink)"
+         title="{{prevLinkIsCollection ? i18n.toCollectionTitle : i18n.prevSongTitle}}"
+    >
+      <gt-svg-icon icon="prev"></gt-svg-icon>
+      <div (click)="gotoRandomSongInCatalog()" class="random-song-link" title="{{i18n.gotoRandomSongInCatalogTitle}}">
+        <gt-svg-icon icon="dice"></gt-svg-icon>
+      </div>
     </div>
 
-    <div *ngIf="bss.isWideScreenMode$|async" class="sticky-sidebar">
-        <div class="left-bar"
-             (click)="onBarNavigationClick($event, prevLink)"
-             title="{{prevLinkIsCollection ? i18n.toCollectionTitle : i18n.prevSongTitle}}"
-        >
-            <gt-svg-icon icon="prev"></gt-svg-icon>
-            <div (click)="gotoRandomSongInCatalog()" class="random-song-link" title="{{i18n.gotoRandomSongInCatalogTitle}}">
-                <gt-svg-icon icon="dice"></gt-svg-icon>
-            </div>
-        </div>
-
-        <div class="right-bar"
-             (click)="onBarNavigationClick($event, nextLink)"
-             title="{{nextLinkIsCollection ? i18n.toCollectionTitle : i18n.nextSongTitle}}"
-        >
-            <gt-svg-icon icon="next"></gt-svg-icon>
-            <div (click)="gotoRandomSongInCollection()" class="random-song-link" title="{{i18n.gotoRandomSongInCollectionTitle}}">
-                <gt-svg-icon icon="dice"></gt-svg-icon>
-            </div>
-        </div>
+    <div class="right-bar"
+         (click)="onBarNavigationClick($event, nextLink)"
+         title="{{nextLinkIsCollection ? i18n.toCollectionTitle : i18n.nextSongTitle}}"
+    >
+      <gt-svg-icon icon="next"></gt-svg-icon>
+      <div (click)="gotoRandomSongInCollection()" class="random-song-link" title="{{i18n.gotoRandomSongInCollectionTitle}}">
+        <gt-svg-icon icon="dice"></gt-svg-icon>
+      </div>
     </div>
+  </div>
 
 </div>

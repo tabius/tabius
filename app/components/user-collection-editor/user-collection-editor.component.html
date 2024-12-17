@@ -1,26 +1,26 @@
 <div class="editor-block">
 
-    <h3>{{ i18n.collectionSettings }}</h3>
+  <h3>{{ i18n.collectionSettings }}</h3>
 
-    <div class="buttons-row">
-        <button class="btn close-button" (click)="close()">{{ i18n.closeButton }}</button>
+  <div class="buttons-row">
+    <button class="btn close-button" (click)="close()">{{ i18n.closeButton }}</button>
 
-        <div class="delete-button-group">
-            <label class="checkbox">
-                <input type="checkbox"
-                       [checked]="deleteConfirmationFlag"
-                       (change)="toggleDeleteConfirmationFlag($event)"
-                       title="{{i18n.collectionRemovalCheckboxTitle}}"
-                >
-                <span>&nbsp;</span>
-            </label>
-            <button class="btn btn-danger delete-button"
-                    [disabled]="!deleteConfirmationFlag"
-                    (click)="delete()"
-                    [title]="deleteConfirmationFlag ? i18n.deleteCollectionButtonTitle : i18n.deleteCollectionButtonNotConfirmedTitle"
-            >
-                {{ i18n.removeButton }}
-            </button>
-        </div>
+    <div class="delete-button-group">
+      <label class="checkbox">
+        <input type="checkbox"
+               [checked]="deleteConfirmationFlag"
+               (change)="toggleDeleteConfirmationFlag($event)"
+               title="{{i18n.collectionRemovalCheckboxTitle}}"
+        >
+        <span>&nbsp;</span>
+      </label>
+      <button class="btn btn-danger delete-button"
+              [disabled]="!deleteConfirmationFlag"
+              (click)="delete()"
+              [title]="deleteConfirmationFlag ? i18n.deleteCollectionButtonTitle : i18n.deleteCollectionButtonNotConfirmedTitle"
+      >
+        {{ i18n.removeButton }}
+      </button>
     </div>
+  </div>
 </div>

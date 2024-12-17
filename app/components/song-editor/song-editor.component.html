@@ -1,68 +1,68 @@
 <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-    <div class="message">{{ i18n.loadingMessage }}</div>
-    <gt-loading-indicator></gt-loading-indicator>
+  <div class="message">{{ i18n.loadingMessage }}</div>
+  <gt-loading-indicator></gt-loading-indicator>
 </div>
 
 <div *ngIf="loaded" class="editor-block">
-    <div>
-        <input #firstFormElement type="text" [(ngModel)]="songTitle"
-               (keydown)="handleKeyboardEvent($event)"
-               (ngModelChange)="onTitleChanged()"
-               class="song-title"
-               placeholder="{{i18n.titlePlaceholder}}">
-    </div>
-    <div>
+  <div>
+    <input #firstFormElement type="text" [(ngModel)]="songTitle"
+           (keydown)="handleKeyboardEvent($event)"
+           (ngModelChange)="onTitleChanged()"
+           class="song-title"
+           placeholder="{{i18n.titlePlaceholder}}">
+  </div>
+  <div>
         <textarea #textArea [(ngModel)]="content"
                   (keydown)="handleKeyboardEvent($event)"
                   class="song-content"
                   rows="{{getContentRowsCount()}}"
                   placeholder="{{i18n.textPlaceholder}}"></textarea>
+  </div>
+  <div class="media-links-block">
+    <input [(ngModel)]="mediaLinks"
+           (keydown)="handleKeyboardEvent($event)"
+           type="text"
+           placeholder="{{i18n.youtubeLinkPlaceholder}}">
+  </div>
+  <div class="song-mount-block">
+    <div class="url-demo">{{ songUrlPrefix }}</div>
+    <input [(ngModel)]="mount"
+           (keydown)="handleKeyboardEvent($event)"
+           class="song-mount"
+           type="text"
+           placeholder="{{i18n.mountPlaceholder}}">
+    <gt-move-song-to-collection *ngIf="song && isBrowser"
+                                [songId]="song.id"
+                                [currentCollectionId]="activeCollectionId"
+                                (moved)="onSongMovedToAnotherCollection()"
+                                mode="add"
+    ></gt-move-song-to-collection>
+    <gt-move-song-to-collection *ngIf="song && isBrowser"
+                                [songId]="song.id"
+                                [currentCollectionId]="activeCollectionId"
+                                (moved)="onSongMovedToAnotherCollection()"
+    ></gt-move-song-to-collection>
+  </div>
+  <div class="buttons-row">
+    <div class="left-side-block">
+      <button *ngIf="isCreateMode" class="btn btn-info create-button" (click)="create()">{{ i18n.create }}</button>
+      <button *ngIf="isUpdateMode" class="btn btn-info update-button" (click)="update()">{{ i18n.update }}</button>
+      <button class="btn cancel-button" (click)="cancel()">{{ i18n.cancel }}</button>
     </div>
-    <div class="media-links-block">
-        <input [(ngModel)]="mediaLinks"
-               (keydown)="handleKeyboardEvent($event)"
-               type="text"
-               placeholder="{{i18n.youtubeLinkPlaceholder}}">
+    <div *ngIf="!isCreateMode" class="right-side-block">
+      <label class="checkbox" title="{{i18n.deleteConfirmationTitle}}">
+        <input type="checkbox"
+               [checked]="deleteConfirmationFlag"
+               (change)="toggleDeleteConfirmationFlag($event)">
+        <span>&nbsp;</span>
+      </label>
+      <button class="btn btn-danger delete-button"
+              [disabled]="!deleteConfirmationFlag"
+              (click)="delete()"
+              [title]="deleteConfirmationFlag ? i18n.deleteTitle : i18n.deleteRequiresConfirmationTitle"
+      >{{ i18n.delete }}
+      </button>
     </div>
-    <div class="song-mount-block">
-        <div class="url-demo">{{ songUrlPrefix }}</div>
-        <input [(ngModel)]="mount"
-               (keydown)="handleKeyboardEvent($event)"
-               class="song-mount"
-               type="text"
-               placeholder="{{i18n.mountPlaceholder}}">
-        <gt-move-song-to-collection *ngIf="song && isBrowser"
-                                    [songId]="song.id"
-                                    [currentCollectionId]="activeCollectionId"
-                                    (moved)="onSongMovedToAnotherCollection()"
-                                    mode="add"
-        ></gt-move-song-to-collection>
-        <gt-move-song-to-collection *ngIf="song && isBrowser"
-                                    [songId]="song.id"
-                                    [currentCollectionId]="activeCollectionId"
-                                    (moved)="onSongMovedToAnotherCollection()"
-        ></gt-move-song-to-collection>
-    </div>
-    <div class="buttons-row">
-        <div class="left-side-block">
-            <button *ngIf="isCreateMode" class="btn btn-info create-button" (click)="create()">{{ i18n.create }}</button>
-            <button *ngIf="isUpdateMode" class="btn btn-info update-button" (click)="update()">{{ i18n.update }}</button>
-            <button class="btn cancel-button" (click)="cancel()">{{ i18n.cancel }}</button>
-        </div>
-        <div *ngIf="!isCreateMode" class="right-side-block">
-            <label class="checkbox" title="{{i18n.deleteConfirmationTitle}}">
-                <input type="checkbox"
-                       [checked]="deleteConfirmationFlag"
-                       (change)="toggleDeleteConfirmationFlag($event)">
-                <span>&nbsp;</span>
-            </label>
-            <button class="btn btn-danger delete-button"
-                    [disabled]="!deleteConfirmationFlag"
-                    (click)="delete()"
-                    [title]="deleteConfirmationFlag ? i18n.deleteTitle : i18n.deleteRequiresConfirmationTitle"
-            >{{ i18n.delete }}
-            </button>
-        </div>
-    </div>
+  </div>
 </div>
 
