@@ -33,6 +33,7 @@ import {
 import { ObservableStore, RefreshMode, skipUpdateCheck } from '@app/store/observable-store';
 import { checkUpdateByReference, checkUpdateByShallowArrayCompare, checkUpdateByVersion } from '@app/store';
 import { I18N } from '@app/app-i18n';
+import { getMessageFromError } from 'assertic';
 
 const COLLECTION_LIST_KEY = 'catalog';
 const COLLECTION_KEY_PREFIX = 'c-';
@@ -216,7 +217,7 @@ export class CatalogService {
       return response.song;
     } catch (httpError) {
       console.error(httpError);
-      throw new Error(I18N.common.serverRequestError);
+      throw new Error(`${I18N.common.serverRequestError}: ${getMessageFromError(httpError)}`);
     }
   }
 
@@ -227,7 +228,7 @@ export class CatalogService {
       await this.processSongUpdateResponse(response);
     } catch (httpError) {
       console.error(httpError);
-      throw new Error(I18N.common.serverRequestError);
+      throw new Error(`${I18N.common.serverRequestError}: ${getMessageFromError(httpError)}`);
     }
   }
 
@@ -238,7 +239,7 @@ export class CatalogService {
       await this.processSongUpdateResponse(response);
     } catch (httpError: unknown) {
       console.error(httpError);
-      throw new Error(I18N.common.serverRequestError);
+      throw new Error(`${I18N.common.serverRequestError}: ${getMessageFromError(httpError)}`);
     }
   }
 
@@ -366,7 +367,7 @@ export class CatalogService {
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
-      throw new Error(I18N.common.serverRequestError);
+      throw new Error(`${I18N.common.serverRequestError}: ${getMessageFromError(httpError)}`);
     }
   }
 
@@ -379,7 +380,7 @@ export class CatalogService {
       await this.store.set<number[]>(getCollectionSongListKey(collectionId), songIds, checkUpdateByShallowArrayCompare);
     } catch (httpError) {
       console.error(httpError);
-      throw new Error(I18N.common.serverRequestError);
+      throw new Error(`${I18N.common.serverRequestError}: ${getMessageFromError(httpError)}`);
     }
   }
 
@@ -420,7 +421,7 @@ export class CatalogService {
       );
     } catch (httpError) {
       console.error(httpError);
-      throw new Error(I18N.common.serverRequestError);
+      throw new Error(`${I18N.common.serverRequestError}: ${getMessageFromError(httpError)}`);
     }
   }
 }
