@@ -158,7 +158,7 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
 
   private updateAvailableWidth(): void {
     if (this.multiColumnMode) {
-      const clientWidth = window.document.body.clientWidth || this.widthFromUserAgent;
+      const clientWidth = (typeof window !== 'undefined' && window.document.body.clientWidth) || this.widthFromUserAgent;
       this.availableWidth = clientWidth;
       this.availableWidth -= 40; // Main block padding left & right.
       if (clientWidth > MIN_DESKTOP_WIDTH) {
