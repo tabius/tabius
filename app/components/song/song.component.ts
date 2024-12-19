@@ -17,7 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class SongComponent extends ComponentWithLoadingIndicator {
   @Input({ required: true }) songId!: number;
-  @Input() showCollectionLink = false;
+  @Input() showCollectionLink: boolean | 'if-not-primary' = false;
   @Input() activeCollectionId?: number;
   @Input() mode: SongComponentMode = 'song-page-mode';
 

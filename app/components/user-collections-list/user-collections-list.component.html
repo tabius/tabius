@@ -1,7 +1,9 @@
 <ul>
-  <li *ngFor="let collectionInfo of collectionInfos" class="collection-list-item" [attr.data-pw]="collectionInfo.id">
-    <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{ collectionInfo.linkText }}</a>
-  </li>
+  @for (collectionInfo of collectionInfos; track collectionInfo.id) {
+    <li class="collection-list-item" [attr.data-pw]="collectionInfo.id">
+      <a [routerLink]="collectionInfo.link" [title]="collectionInfo.titleText">{{ collectionInfo.linkText }}</a>
+    </li>
+  }
 </ul>
 
 <form #createCollectionForm="ngForm" (ngSubmit)="createCollection()" class="new-collection-form">

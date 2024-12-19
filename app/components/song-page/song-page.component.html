@@ -8,20 +8,25 @@
   </div>
 
   <!-- Not found block -->
-  <gt-resource-not-found *ngIf="notFound" message="{{i18n.songNotFound}}"></gt-resource-not-found>
+  @if (notFound) {
+    <gt-resource-not-found message="{{i18n.songNotFound}}"></gt-resource-not-found>
+  }
 
   <!-- Main content -->
-  <div *ngIf="song">
-
+  @if (song) {
     <div class="breadcrumb-block">
       <gt-collection-breadcrumb [collection]="activeCollection"></gt-collection-breadcrumb>
-      <gt-json-ld *ngIf="jsonLdBreadcrumb" [json]="jsonLdBreadcrumb"></gt-json-ld>
+      @if (jsonLdBreadcrumb) {
+        <gt-json-ld [json]="jsonLdBreadcrumb"></gt-json-ld>
+      }
     </div>
 
-    <gt-song [songId]="song.id" [activeCollectionId]="activeCollection?.id"></gt-song>
+    <gt-song [songId]="song.id" [activeCollectionId]="activeCollection?.id" [showCollectionLink]="'if-not-primary'"></gt-song>
 
     <div class="user-controls">
-      <gt-add-song-to-collection *ngIf="isBrowser" [songId]="song.id"></gt-add-song-to-collection>
+      @if (isBrowser) {
+        <gt-add-song-to-collection [songId]="song.id"></gt-add-song-to-collection>
+      }
     </div>
 
     <div *ngIf="editorIsOpen" class="edit-song-block">
@@ -65,6 +70,6 @@
                                  [songId]="song.id"
                                  [activeCollectionId]="activeCollection?.id"
     ></gt-song-prev-next-navigator>
-  </div>
+  }
 
 </div>
