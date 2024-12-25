@@ -1,4 +1,4 @@
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ErrorHandler, Injector, NgModule, Provider } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppComponent } from '@app/components/app.component';
@@ -139,7 +139,6 @@ if (userAgent !== undefined && userAgent.length > 0) {
     BrowserModule,
     FormsModule,
     //TODO: HammerModule,
-    HttpClientModule,
     ReactiveFormsModule,
     RoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
@@ -170,7 +169,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
     { provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore },
     BrowserStateService,
     HelpService,
-    HttpClientModule,
+    provideHttpClient(withInterceptorsFromDi()),
     provideClientHydration(),
     PwaUpdaterService,
   ],
