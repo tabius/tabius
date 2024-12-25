@@ -1,5 +1,5 @@
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ErrorHandler, NgModule, Provider } from '@angular/core';
+import { ErrorHandler, Injector, NgModule, Provider } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppComponent } from '@app/components/app.component';
 import { SiteHomePageComponent } from '@app/components/site-home-page/site-home-page.component';
@@ -177,8 +177,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  // noinspection JSUnusedLocalSymbols
-  constructor(private readonly pwa: PwaUpdaterService) {
-    // TODO: initiate update explicitly.
+  constructor(injector: Injector) {
+    injector.get(PwaUpdaterService); // TODO: initiate update explicitly?
   }
 }
