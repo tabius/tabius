@@ -37,7 +37,8 @@
               "app/manifest.json"
             ],
             "styles": [
-              "app/styles.scss"
+              "app/styles.scss",
+              "node_modules/@angular/cdk/overlay-prebuilt.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": ["app"]
