@@ -8,13 +8,14 @@ import { Router } from '@angular/router';
 import { I18N } from '@app/app-i18n';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { scrollToView } from '@app/utils/misc-utils';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-    selector: 'gt-collection-editor',
-    templateUrl: './collection-editor.component.html',
-    styleUrls: ['./collection-editor.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-collection-editor',
+  templateUrl: './collection-editor.component.html',
+  styleUrls: ['./collection-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CollectionEditorComponent implements OnInit {
   @Input() scrollIntoViewAndFocus = true;
@@ -55,11 +56,14 @@ export class CollectionEditorComponent implements OnInit {
     }
   }
 
-  create(): void {
-    this.createImpl().catch(err => {
-      console.error(err);
-      this.toastService.warning(I18N.common.error(err));
-    });
+  async create(): Promise<void> {
+    try {
+      await this.createImpl();
+    } catch (error) {
+      console.error('Error:', error);
+      const message = (error as HttpErrorResponse).error?.message || I18N.common.failedToCreateCollection;
+      this.toastService.warning(I18N.common.error(message));
+    }
   }
 
   close(): void {
