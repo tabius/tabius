@@ -9,10 +9,11 @@ import { firstValueFrom, Observable } from 'rxjs';
 export type SongHeaderTitleFormat = 'song' | 'song-and-collection';
 
 @Component({
-  selector: 'gt-song-header',
-  templateUrl: './song-header.component.html',
-  styleUrls: ['./song-header.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song-header',
+    templateUrl: './song-header.component.html',
+    styleUrls: ['./song-header.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongHeaderComponent implements OnChanges {
   @Input({ required: true }) song!: Song;

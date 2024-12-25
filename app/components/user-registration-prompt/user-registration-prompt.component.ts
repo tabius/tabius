@@ -14,10 +14,11 @@ import { ClientAuthService } from '@app/services/client-auth.service';
 import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
-  selector: 'gt-user-registration-prompt',
-  templateUrl: './user-registration-prompt.component.html',
-  styleUrls: ['./user-registration-prompt.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-user-registration-prompt',
+    templateUrl: './user-registration-prompt.component.html',
+    styleUrls: ['./user-registration-prompt.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class UserRegistrationPromptComponent implements AfterViewInit {
   readonly i18n = I18N.userRegistrationPromptComponent;

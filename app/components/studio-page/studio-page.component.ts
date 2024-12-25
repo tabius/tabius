@@ -15,9 +15,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { assertTruthy } from 'assertic';
 
 @Component({
-  templateUrl: './studio-page.component.html',
-  styleUrls: ['./studio-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './studio-page.component.html',
+    styleUrls: ['./studio-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class StudioPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.studioPage;

@@ -15,9 +15,10 @@ export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;
 
 @Component({
-  templateUrl: './settings-page.component.html',
-  styleUrls: ['./settings-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './settings-page.component.html',
+    styleUrls: ['./settings-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.settingsPage;

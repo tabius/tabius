@@ -8,8 +8,9 @@ import { BrowserStateService } from '@app/services/browser-state.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  templateUrl: './song-print-page.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './song-print-page.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongPrintPageComponent {
   songId = 0;

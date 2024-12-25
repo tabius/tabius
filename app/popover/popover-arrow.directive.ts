@@ -8,7 +8,8 @@ import { POPOVER_REF } from '@app/popover/popover.service';
  * Internal directive that shows the popover arrow.
  */
 @Directive({
-  selector: '[gt-popoverArrow]',
+    selector: '[gt-popoverArrow]',
+    standalone: false
 })
 export class PopoverArrowDirective implements OnInit {
   @HostBinding('style.width.px')

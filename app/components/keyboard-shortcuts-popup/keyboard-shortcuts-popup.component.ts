@@ -4,10 +4,11 @@ import { HelpPageType } from '@app/services/help.service';
 import { I18N } from '@app/app-i18n';
 
 @Component({
-  selector: 'gt-keyboard-shortcuts-popup',
-  templateUrl: './keyboard-shortcuts-popup.component.html',
-  styleUrls: ['./keyboard-shortcuts-popup.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-keyboard-shortcuts-popup',
+    templateUrl: './keyboard-shortcuts-popup.component.html',
+    styleUrls: ['./keyboard-shortcuts-popup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class KeyboardShortcutsPopupComponent {
   @Input({ required: true }) page!: HelpPageType;

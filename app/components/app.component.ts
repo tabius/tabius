@@ -17,10 +17,11 @@ import { CatalogNavigationHistoryService } from '@app/services/catalog-navigatio
 import type { Request } from 'express';
 
 @Component({
-  selector: 'gt-app',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-app',
+    templateUrl: 'app.component.html',
+    styleUrls: ['app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AppComponent implements AfterViewInit {
   @ViewChild('keyboardShortcuts', { static: true }) keyboardShortcuts!: TemplateRef<void>;

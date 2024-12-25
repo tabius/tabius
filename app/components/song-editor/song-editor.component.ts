@@ -24,10 +24,11 @@ export type SongEditResult = {
 
 /** Embeddable song editor component. */
 @Component({
-  selector: 'gt-song-editor',
-  templateUrl: './song-editor.component.html',
-  styleUrls: ['./song-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song-editor',
+    templateUrl: './song-editor.component.html',
+    styleUrls: ['./song-editor.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongEditorComponent extends ComponentWithLoadingIndicator {
   /** ID of the edited song. Invalid ID (<=0) is used to activate Create mode. */

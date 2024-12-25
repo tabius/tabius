@@ -18,10 +18,11 @@ interface CollectionInfo {
 }
 
 @Component({
-  selector: 'gt-user-collections-list',
-  templateUrl: './user-collections-list.component.html',
-  styleUrls: ['./user-collections-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-user-collections-list',
+    templateUrl: './user-collections-list.component.html',
+    styleUrls: ['./user-collections-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class UserCollectionsListComponent extends AbstractAppComponent {
   readonly i18n = I18N.userCollectionsListComponent;

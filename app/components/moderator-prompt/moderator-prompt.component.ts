@@ -6,10 +6,11 @@ import { LINK_STUDIO } from '@common/mounts';
 import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
-  selector: 'gt-moderator-prompt',
-  templateUrl: './moderator-prompt.component.html',
-  styleUrls: ['./moderator-prompt.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-moderator-prompt',
+    templateUrl: './moderator-prompt.component.html',
+    styleUrls: ['./moderator-prompt.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ModeratorPromptComponent implements AfterViewInit {
   readonly telegramLink = TELEGRAM_CHANNEL_URL;

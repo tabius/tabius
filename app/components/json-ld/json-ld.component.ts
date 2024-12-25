@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input, OnChanges } fro
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
-  selector: 'gt-json-ld',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-json-ld',
+    template: '',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class JsonLdComponent implements OnChanges {
   @Input() json: object = {};

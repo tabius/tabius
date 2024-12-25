@@ -18,9 +18,10 @@ import { getToneWithH4SiFix } from '@common/util/chords-renderer';
 import { getDefaultH4SiFlag } from '@common/user-model';
 
 @Component({
-  selector: 'gt-chord-image',
-  templateUrl: './chord-image.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-chord-image',
+    templateUrl: './chord-image.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ChordImageComponent implements AfterViewInit, OnChanges {
   @Input({ required: true }) layout!: ChordLayout;

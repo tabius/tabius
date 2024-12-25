@@ -15,10 +15,11 @@ interface SongItem {
 }
 
 @Component({
-  selector: 'gt-song-list',
-  templateUrl: './song-list.component.html',
-  styleUrls: ['./song-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song-list',
+    templateUrl: './song-list.component.html',
+    styleUrls: ['./song-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongListComponent implements OnChanges {
   readonly trackById = trackById;

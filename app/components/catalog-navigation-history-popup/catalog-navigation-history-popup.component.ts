@@ -12,10 +12,11 @@ import { trackByUrl } from '@common/util/misc-utils';
 import { MOUNT_COLLECTION_PREFIX } from '@common/mounts';
 
 @Component({
-  selector: 'gt-catalog-navigation-history-popup',
-  templateUrl: './catalog-navigation-history-popup.component.html',
-  styleUrls: ['./catalog-navigation-history-popup.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-catalog-navigation-history-popup',
+    templateUrl: './catalog-navigation-history-popup.component.html',
+    styleUrls: ['./catalog-navigation-history-popup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent {
   @Input({ required: true }) popover!: PopoverRef;

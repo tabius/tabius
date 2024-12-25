@@ -10,10 +10,11 @@ import { ToastService } from '@app/toast/toast.service';
 import { assertTruthy } from 'assertic';
 
 @Component({
-  selector: 'gt-move-song-to-collection',
-  templateUrl: './move-song-to-collection.component.html',
-  styleUrls: ['./move-song-to-collection.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-move-song-to-collection',
+    templateUrl: './move-song-to-collection.component.html',
+    styleUrls: ['./move-song-to-collection.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MoveSongToCollectionComponent implements OnChanges {
   @Input() mode: 'add' | 'move' = 'move';

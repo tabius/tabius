@@ -15,10 +15,11 @@ import { I18N } from '@app/app-i18n';
 // TODO unify listing styles with other components.
 
 @Component({
-  selector: 'gt-song-full-text-search-results-panel',
-  templateUrl: './song-full-text-search-results-panel.component.html',
-  styleUrls: ['./song-full-text-search-results-panel.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song-full-text-search-results-panel',
+    templateUrl: './song-full-text-search-results-panel.component.html',
+    styleUrls: ['./song-full-text-search-results-panel.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   @Input({ required: true }) searchText!: string;

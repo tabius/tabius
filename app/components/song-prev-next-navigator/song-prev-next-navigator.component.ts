@@ -16,10 +16,11 @@ import { findParentOrSelfWithClass, isBrowser, isElementToIgnoreKeyEvent, isTouc
 const Hammer = isBrowser ? require('hammerjs') : ({} as any);
 
 @Component({
-  selector: 'gt-song-prev-next-navigator',
-  templateUrl: './song-prev-next-navigator.component.html',
-  styleUrls: ['./song-prev-next-navigator.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song-prev-next-navigator',
+    templateUrl: './song-prev-next-navigator.component.html',
+    styleUrls: ['./song-prev-next-navigator.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongPrevNextNavigatorComponent extends AbstractAppComponent implements AfterViewInit, OnDestroy {
   readonly i18n = I18N.songPrevNextNavigator;

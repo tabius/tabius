@@ -10,10 +10,11 @@ import { BrowserStateService } from '@app/services/browser-state.service';
 import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
-  selector: 'gt-collection-editor',
-  templateUrl: './collection-editor.component.html',
-  styleUrls: ['./collection-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-collection-editor',
+    templateUrl: './collection-editor.component.html',
+    styleUrls: ['./collection-editor.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CollectionEditorComponent implements OnInit {
   @Input() scrollIntoViewAndFocus = true;

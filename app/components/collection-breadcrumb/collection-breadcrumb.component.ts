@@ -5,10 +5,11 @@ import { getCollectionPageLink, isUserId } from '@common/util/misc-utils';
 import { I18N } from '@app/app-i18n';
 
 @Component({
-  selector: 'gt-collection-breadcrumb',
-  templateUrl: './collection-breadcrumb.component.html',
-  styleUrls: ['./collection-breadcrumb.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-collection-breadcrumb',
+    templateUrl: './collection-breadcrumb.component.html',
+    styleUrls: ['./collection-breadcrumb.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CollectionBreadcrumbComponent implements OnChanges {
   @Input() collection?: Collection;

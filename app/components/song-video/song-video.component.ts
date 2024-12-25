@@ -9,10 +9,11 @@ const defaultVideoWidth = 300;
 const defaultVideoHeight = 169;
 
 @Component({
-  selector: 'gt-song-video',
-  templateUrl: './song-video.component.html',
-  styleUrls: ['./song-video.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song-video',
+    templateUrl: './song-video.component.html',
+    styleUrls: ['./song-video.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongVideoComponent implements OnChanges {
   @Input() title: string | null = null;

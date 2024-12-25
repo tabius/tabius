@@ -42,9 +42,10 @@ import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-
 import { getDefaultUserSongFontSize, isInputEvent, scrollToView, scrollToViewByEndPos } from '@app/utils/misc-utils';
 
 @Component({
-  templateUrl: './song-page.component.html',
-  styleUrls: ['./song-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './song-page.component.html',
+    styleUrls: ['./song-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongPageComponent extends ComponentWithLoadingIndicator implements OnDestroy {
   readonly i18n = I18N.songPage;

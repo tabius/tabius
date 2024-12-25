@@ -50,9 +50,10 @@ export class CollectionViewModel {
 }
 
 @Component({
-  templateUrl: './collection-page.component.html',
-  styleUrls: ['./collection-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './collection-page.component.html',
+    styleUrls: ['./collection-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CollectionPageComponent extends ComponentWithLoadingIndicator {
   readonly getCollectionPageLink = getCollectionPageLink;

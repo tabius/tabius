@@ -7,10 +7,11 @@ import { convertChordToFingerPositions, playChordSound } from '@app/utils/chord-
 import { getChordsDiscussionUrl } from '@app/utils/url-utils';
 
 @Component({
-  selector: 'gt-chord-popover',
-  templateUrl: './chord-popover.component.html',
-  styleUrls: ['./chord-popover.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-chord-popover',
+    templateUrl: './chord-popover.component.html',
+    styleUrls: ['./chord-popover.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ChordPopoverComponent {
   @Input({ required: true }) chordLayout!: ChordLayout;

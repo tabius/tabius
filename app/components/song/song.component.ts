@@ -10,10 +10,11 @@ import { I18N } from '@app/app-i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'gt-song',
-  templateUrl: './song.component.html',
-  styleUrls: ['./song.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song',
+    templateUrl: './song.component.html',
+    styleUrls: ['./song.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongComponent extends ComponentWithLoadingIndicator {
   @Input({ required: true }) songId!: number;

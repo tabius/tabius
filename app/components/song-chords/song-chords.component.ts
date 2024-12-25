@@ -18,10 +18,11 @@ import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { assertTruthy } from 'assertic';
 
 @Component({
-  selector: 'gt-song-chords',
-  templateUrl: './song-chords.component.html',
-  styleUrls: ['./song-chords.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-song-chords',
+    templateUrl: './song-chords.component.html',
+    styleUrls: ['./song-chords.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongChordsComponent extends AbstractAppComponent {
   @Input({ required: true }) songId!: number;

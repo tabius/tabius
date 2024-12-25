@@ -9,7 +9,8 @@ import { POPOVER_REF } from '@app/popover/popover.service';
  * Note: should not be used within templates!
  */
 @Directive({
-  selector: '[gt-popoverClose]',
+    selector: '[gt-popoverClose]',
+    standalone: false
 })
 export class PopoverCloseDirective<T = unknown> {
   @Input('gt-popoverClose') popoverResult!: T;

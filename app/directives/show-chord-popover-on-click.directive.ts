@@ -10,7 +10,8 @@ export type ChordClickInfoProvider = (event: MouseEvent, chord?: Chord) => Chord
 
 /** Shows chord popover on host click. */
 @Directive({
-  selector: '[gtChordPopoverOnClick]',
+    selector: '[gtChordPopoverOnClick]',
+    standalone: false
 })
 export class ShowChordPopoverOnClickDirective implements OnDestroy {
   @Input({ required: true }) gtChordPopoverOnClick_getChordInfo!: ChordClickInfoProvider;

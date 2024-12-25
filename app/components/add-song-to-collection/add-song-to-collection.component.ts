@@ -17,10 +17,11 @@ interface ComponentCollectionData extends Collection {
 }
 
 @Component({
-  selector: 'gt-add-song-to-collection',
-  templateUrl: './add-song-to-collection.component.html',
-  styleUrls: ['./add-song-to-collection.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-add-song-to-collection',
+    templateUrl: './add-song-to-collection.component.html',
+    styleUrls: ['./add-song-to-collection.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AddSongToCollectionComponent extends AbstractAppComponent {
   @Input({ required: true }) songId!: number;

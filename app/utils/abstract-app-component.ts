@@ -7,7 +7,10 @@ import { DeepReadonly } from '@common/typescript-extras';
 import { PageMetadata } from '@common/common-model';
 
 /** Common base class for all components with a common reusable fields. */
-@Component({ template: '' })
+@Component({
+    template: '',
+    standalone: false
+})
 export class AbstractAppComponent implements OnChanges, OnInit {
   readonly isServer: boolean;
   readonly isBrowser: boolean;

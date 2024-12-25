@@ -6,9 +6,10 @@ import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { environment } from '@app/environments/environment';
 
 @Component({
-  templateUrl: 'site-home-page.component.html',
-  styleUrls: ['site-home-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: 'site-home-page.component.html',
+    styleUrls: ['site-home-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SiteHomePageComponent extends AbstractAppComponent {
   readonly forumNewsLink = TELEGRAM_CHANNEL_URL;

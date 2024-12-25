@@ -4,10 +4,11 @@ import { ClientAuthService } from '@app/services/client-auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'gt-signin-signout-button',
-  templateUrl: './signin-signout-button.component.html',
-  styleUrls: ['./signin-signout-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-signin-signout-button',
+    templateUrl: './signin-signout-button.component.html',
+    styleUrls: ['./signin-signout-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SigninSignoutButtonComponent {
   username?: string;

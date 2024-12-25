@@ -12,9 +12,10 @@ export interface HeadElementData {
  *  Note: not using Renderer API to avoid custom attributes like _ngcontent-sc5=""
  */
 @Component({
-  selector: 'gt-head-contributor',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-head-contributor',
+    template: '',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class HeadContributorComponent implements OnChanges, OnDestroy {
   @Input() data?: HeadElementData;
@@ -46,9 +47,10 @@ export class HeadContributorComponent implements OnChanges, OnDestroy {
 }
 
 @Component({
-  selector: 'gt-head-meta',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-head-meta',
+    template: '',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MetaHeadContributorComponent extends HeadContributorComponent {
   @Input() set attrs({ name, content }: { name: string; content: string }) {
@@ -63,9 +65,10 @@ export class MetaHeadContributorComponent extends HeadContributorComponent {
 }
 
 @Component({
-  selector: 'gt-head-link',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-head-link',
+    template: '',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class LinkHeadContributorComponent extends HeadContributorComponent {
   @Input() set attrs({ rel, href }: { rel: string; href: string }) {
@@ -80,9 +83,10 @@ export class LinkHeadContributorComponent extends HeadContributorComponent {
 }
 
 @Component({
-  selector: 'gt-head-canonical-link',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-head-canonical-link',
+    template: '',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CanonicalLinkHeadContributorComponent extends LinkHeadContributorComponent {
   @Input() set href(href: string) {

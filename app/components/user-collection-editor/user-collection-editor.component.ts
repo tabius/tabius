@@ -4,10 +4,11 @@ import { CatalogService } from '@app/services/catalog.service';
 import { I18N } from '@app/app-i18n';
 
 @Component({
-  selector: 'gt-user-collection-editor',
-  templateUrl: './user-collection-editor.component.html',
-  styleUrls: ['./user-collection-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-user-collection-editor',
+    templateUrl: './user-collection-editor.component.html',
+    styleUrls: ['./user-collection-editor.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class UserCollectionEditorComponent {
   @Input({ required: true }) collectionId!: number;

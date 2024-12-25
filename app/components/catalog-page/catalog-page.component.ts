@@ -33,9 +33,10 @@ interface CollectionListItem extends Collection {
 let letterBlockFilters: string[] = [];
 
 @Component({
-  templateUrl: './catalog-page.component.html',
-  styleUrls: ['./catalog-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './catalog-page.component.html',
+    styleUrls: ['./catalog-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CatalogPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.catalogPage;

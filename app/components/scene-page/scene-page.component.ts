@@ -7,9 +7,10 @@ import { environment } from '@app/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  templateUrl: './scene-page.component.html',
-  styleUrls: ['./scene-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './scene-page.component.html',
+    styleUrls: ['./scene-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ScenePageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.scenePage;

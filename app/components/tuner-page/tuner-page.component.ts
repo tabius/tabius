@@ -9,9 +9,10 @@ import { newDefaultUserDeviceSettings } from '@app/utils/misc-utils';
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
 @Component({
-  templateUrl: './tuner-page.component.html',
-  styleUrls: ['./tuner-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './tuner-page.component.html',
+    styleUrls: ['./tuner-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class TunerPageComponent extends AbstractAppComponent implements OnDestroy {
   private destroyed = false;

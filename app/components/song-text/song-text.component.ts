@@ -41,12 +41,13 @@ export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
 
 /** Shows song content (text with chords) with no title and any other meta-info. */
 @Component({
-  // Keep in sync with SONG_TEXT_COMPONENT_NAME
-  // Note: not using a variable because typescript 4.0 + IDEA static analyzers fails to detect the element and report error.
-  selector: 'gt-song-text',
-  templateUrl: './song-text.component.html',
-  styleUrls: ['./song-text.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    // Keep in sync with SONG_TEXT_COMPONENT_NAME
+    // Note: not using a variable because typescript 4.0 + IDEA static analyzers fails to detect the element and report error.
+    selector: 'gt-song-text',
+    templateUrl: './song-text.component.html',
+    styleUrls: ['./song-text.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SongTextComponent extends AbstractAppComponent implements OnChanges {
   @Input({ required: true }) song!: SongDetails;

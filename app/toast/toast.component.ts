@@ -13,11 +13,12 @@ const toastAnimations: { readonly fadeToast: AnimationTriggerMetadata } = {
 };
 
 @Component({
-  selector: 'gt-toast',
-  templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.scss'],
-  animations: [toastAnimations.fadeToast],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'gt-toast',
+    templateUrl: './toast.component.html',
+    styleUrls: ['./toast.component.scss'],
+    animations: [toastAnimations.fadeToast],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ToastComponent implements OnDestroy {
   animationState: ToastAnimationState = 'default';

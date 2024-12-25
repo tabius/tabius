@@ -53,8 +53,6 @@
                 }
               ],
               "aot": true,
-              "buildOptimizer": true,
-              "ngswConfigPath": "ngsw-config.json",
               "optimization": {
                 "scripts": true,
                 "styles": {
@@ -64,7 +62,7 @@
                 "fonts": false
               },
               "outputHashing": "all",
-              "serviceWorker": true,
+              "serviceWorker": "ngsw-config.json",
               "sourceMap": true
             },
             "org": {
@@ -76,8 +74,6 @@
                 }
               ],
               "aot": true,
-              "buildOptimizer": true,
-              "ngswConfigPath": "ngsw-config.json",
               "optimization": {
                 "scripts": true,
                 "styles": {
@@ -87,7 +83,7 @@
                 "fonts": false
               },
               "outputHashing": "all",
-              "serviceWorker": true,
+              "serviceWorker": "ngsw-config.json",
               "sourceMap": true
             },
             "dev-ru": {
