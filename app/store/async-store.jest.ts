@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { AsyncStore } from './async-store';
 import { InMemoryAsyncStore } from './in-memory-async-store';
 import { LocalStorageAsyncStore } from './local-storage-async-store';

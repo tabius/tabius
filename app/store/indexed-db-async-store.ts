@@ -1,4 +1,5 @@
 import { AsyncStore, KV } from './async-store';
+import 'fake-indexeddb/auto';
 
 const MAX_KEY_CHAR = '~';
 
