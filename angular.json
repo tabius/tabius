@@ -42,7 +42,8 @@
             "stylePreprocessorOptions": {
               "includePaths": ["app"]
             },
-            "scripts": []
+            "scripts": [],
+            "sourceMap": true
           },
           "configurations": {
             "ru": {
@@ -62,8 +63,7 @@
                 "fonts": false
               },
               "outputHashing": "all",
-              "serviceWorker": "ngsw-config.json",
-              "sourceMap": true
+              "serviceWorker": "ngsw-config.json"
             },
             "org": {
               "index": "app/index-org.html",
@@ -83,8 +83,7 @@
                 "fonts": false
               },
               "outputHashing": "all",
-              "serviceWorker": "ngsw-config.json",
-              "sourceMap": true
+              "serviceWorker": "ngsw-config.json"
             },
             "dev-ru": {
               "aot": false,
