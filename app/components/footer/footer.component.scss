@@ -189,7 +189,7 @@ $horizontal-gap: 20px;
     flex-wrap: wrap;
     justify-content: space-around;
     padding: 30px 10px;
-    gap: 40px $horizontal-gap;
+    gap: clamp(20px, calc((100vh - 500px) / 2), 150px) $horizontal-gap;
 
     .item {
       width: 140px;
