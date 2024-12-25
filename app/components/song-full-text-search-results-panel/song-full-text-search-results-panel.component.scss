@@ -1,4 +1,4 @@
-@import 'styles/colors';
+@use 'styles/colors';
 
 .no-results-message {
   color: #999;
@@ -15,7 +15,7 @@
 
 .collection-name {
   font-size: 95%;
-  color: $color-golden-link;
+  color: colors.$color-golden-link;
 }
 
 .content-result-item {

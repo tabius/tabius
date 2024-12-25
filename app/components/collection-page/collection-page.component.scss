@@ -1,5 +1,5 @@
-@import 'styles/dimensions';
-@import 'styles/colors';
+@use 'styles/dimensions';
+@use 'styles/colors';
 
 :host {
   display: flex;
@@ -57,7 +57,7 @@
   margin-top: 20px;
 
   a {
-    color: $color-golden-link;
+    color: colors.$color-golden-link;
     width: 109px;
   }
 }

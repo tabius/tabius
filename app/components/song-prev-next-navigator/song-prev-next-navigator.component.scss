@@ -1,5 +1,5 @@
-@import 'styles/colors';
-@import 'styles/dimensions';
+@use 'styles/colors';
+@use 'styles/dimensions';
 
 .mobile-buttons-row {
   min-width: 300px;
@@ -27,7 +27,7 @@ $random-collection-icon-size: 52px;
   .left-bar,
   .right-bar {
     position: fixed;
-    width: $sticky-sidebar-width;
+    width: dimensions.$sticky-sidebar-width;
     top: 40px;
     height: 100vh;
     cursor: pointer;
@@ -40,12 +40,12 @@ $random-collection-icon-size: 52px;
     gt-svg-icon {
       fill: #999;
       opacity: 0.33;
-      width: $sticky-sidebar-width;
-      height: $sticky-sidebar-width;
+      width: dimensions.$sticky-sidebar-width;
+      height: dimensions.$sticky-sidebar-width;
 
       &:hover,
       &:focus {
-        fill: $color-default-link;
+        fill: colors.$color-default-link;
         opacity: 1;
       }
     }
@@ -61,8 +61,8 @@ $random-collection-icon-size: 52px;
 
     .random-song-link {
       position: fixed;
-      bottom: $desktop-footer-height + 5px;
-      width: $sticky-sidebar-width;
+      bottom: dimensions.$desktop-footer-height + 5px;
+      width: dimensions.$sticky-sidebar-width;
       text-align: center;
 
       gt-svg-icon {

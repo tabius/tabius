@@ -1,5 +1,5 @@
-@import 'styles/dimensions';
-@import 'styles/colors';
+@use 'styles/dimensions';
+@use 'styles/colors';
 
 h1 {
   text-align: center;
@@ -105,7 +105,7 @@ h1 {
 
   .letter-block {
     padding-top: 1em;
-    line-height: $mobile-lists-line-height;
+    line-height: dimensions.$mobile-lists-line-height;
 
     .letter {
       color: #333;
@@ -148,7 +148,7 @@ h1 {
   }
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .letters-navigator {
     font-size: 18px;
 
@@ -159,12 +159,12 @@ h1 {
 
   .collection-list {
     .letter-block {
-      line-height: $desktop-lists-line-height;
+      line-height: dimensions.$desktop-lists-line-height;
     }
   }
 }
 
-@media only screen and (min-width: $hires-desktop-width) {
+@media only screen and (min-width: dimensions.$hires-desktop-width) {
   .letters-navigator {
     font-size: 22px;
 
@@ -186,7 +186,7 @@ h1 {
   }
 }
 
-@media only screen and (max-width: $max-mobile-width) {
+@media only screen and (max-width: dimensions.$max-mobile-width) {
   .letters-navigator {
     font-size: 16px;
 

@@ -1,7 +1,7 @@
-@import 'styles/dimensions';
+@use 'styles/dimensions';
 
 .songs-list {
-  line-height: $mobile-lists-line-height;
+  line-height: dimensions.$mobile-lists-line-height;
 }
 
 .empty-songs-list {
@@ -13,8 +13,8 @@
   margin-left: 5px;
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .songs-list {
-    line-height: $desktop-lists-line-height;
+    line-height: dimensions.$desktop-lists-line-height;
   }
 }

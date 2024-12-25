@@ -1,5 +1,5 @@
-@import 'styles/colors';
-@import 'styles/dimensions';
+@use 'styles/colors';
+@use 'styles/dimensions';
 
 .sep {
   padding-right: 5px;
@@ -10,11 +10,11 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  fill: $color-default-link;
+  fill: colors.$color-default-link;
   opacity: 0.9;
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   :host {
     font-size: 20px;
   }

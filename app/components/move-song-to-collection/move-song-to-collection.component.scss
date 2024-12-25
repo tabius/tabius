@@ -1,5 +1,5 @@
-@import 'styles/dimensions';
-@import 'styles/fonts';
+@use 'styles/dimensions';
+@use 'styles/fonts';
 
 select {
   width: 250px;
@@ -8,7 +8,7 @@ select {
   padding: 2px 7px;
   font-size: 16px;
   height: 1.8em;
-  font-family: $font-family-mono;
+  font-family: fonts.$font-family-mono;
 }
 
 .move-button {
@@ -21,7 +21,7 @@ select {
   white-space: nowrap;
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   select {
     font-size: 18px;
   }

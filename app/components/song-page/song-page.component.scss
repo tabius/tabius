@@ -1,6 +1,6 @@
-@import 'styles/dimensions';
-@import 'styles/fonts';
-@import 'styles/colors';
+@use 'styles/dimensions';
+@use 'styles/fonts';
+@use 'styles/colors';
 
 :host {
   display: flex;
@@ -19,7 +19,7 @@
         display: inline-block;
         width: 16px;
         height: 16px;
-        fill: $color-default-link;
+        fill: colors.$color-default-link;
         opacity: 0.9;
       }
     }
@@ -45,7 +45,7 @@
         }
 
         .affiliate-button {
-          color: $color-golden-link;
+          color: colors.$color-golden-link;
         }
       }
     }
@@ -56,10 +56,10 @@
   }
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   :host {
-    padding-left: $sticky-sidebar-width;
-    padding-right: $sticky-sidebar-width;
+    padding-left: dimensions.$sticky-sidebar-width;
+    padding-right: dimensions.$sticky-sidebar-width;
 
     .content {
       .bottom-action-buttons-block {

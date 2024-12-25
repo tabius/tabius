@@ -1,4 +1,4 @@
-@import 'styles/dimensions';
+@use 'styles/dimensions';
 
 a {
   cursor: pointer;
@@ -22,7 +22,7 @@ a {
   }
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .content {
     min-width: 700px;
     max-width: 1000px;

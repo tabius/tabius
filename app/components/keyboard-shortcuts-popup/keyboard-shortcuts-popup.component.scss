@@ -1,4 +1,4 @@
-@import 'styles/fonts';
+@use 'styles/fonts';
 
 :host {
   overflow: auto;
@@ -46,7 +46,7 @@ table.shortcuts-list {
         color: #0d0d0d;
         font-size: 20px;
         margin-left: 30px;
-        font-family: $font-family-mono;
+        font-family: fonts.$font-family-mono;
       }
     }
 

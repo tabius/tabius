@@ -1,8 +1,8 @@
-@import 'styles/dimensions';
-@import 'styles/fonts';
-@import 'styles/colors';
-@import 'styles/buttons';
-@import 'styles/checkboxes';
+@use 'styles/dimensions';
+@use 'styles/fonts';
+@use 'styles/colors';
+@use 'styles/buttons';
+@use 'styles/checkboxes';
 @import '~node_modules/@angular/cdk/overlay-prebuilt.css';
 
 html {
@@ -17,7 +17,7 @@ html {
 }
 
 body {
-  font-family: $font-family-default;
+  font-family: fonts.$font-family-default;
   height: 100%;
 }
 
@@ -45,26 +45,26 @@ a {
   }
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .mobile {
     display: none;
   }
 }
 
-@media only screen and (max-width: $max-mobile-width) {
+@media only screen and (max-width: dimensions.$max-mobile-width) {
   .desktop {
     display: none;
   }
 }
 
-@media only screen and (min-width: $hires-desktop-width) {
+@media only screen and (min-width: dimensions.$hires-desktop-width) {
   body {
     font-size: 18px;
   }
 }
 
 a {
-  color: $color-default-link;
+  color: colors.$color-default-link;
   text-decoration: none;
 
   &.dark-pill,
@@ -130,7 +130,7 @@ c {
   right: 5px;
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .toast-overlay {
     right: 15px;
   }
@@ -152,7 +152,7 @@ input[type='text'] {
   display: none;
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .mobile-only-inline {
     display: none;
   }

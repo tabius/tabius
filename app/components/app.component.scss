@@ -1,5 +1,5 @@
-@import 'styles/dimensions';
-@import 'styles/colors';
+@use 'styles/dimensions';
+@use 'styles/colors';
 
 :host {
   position: relative;
@@ -15,28 +15,28 @@
 
 .desktop {
   &.push {
-    height: $desktop-nav-height;
+    height: dimensions.$desktop-nav-height;
   }
 }
 
-@media only screen and (max-height: $hires-desktop-height) {
+@media only screen and (max-height: dimensions.$hires-desktop-height) {
   .desktop {
     &.push {
-      height: $desktop-low-height-nav-height;
+      height: dimensions.$desktop-low-height-nav-height;
     }
   }
 }
 
 main {
   display: block;
-  padding: 20px 20px $mobile-footer-height;
+  padding: 20px 20px dimensions.$mobile-footer-height;
   margin-bottom: 40px;
 }
 
 header {
   display: block;
   width: 100%;
-  z-index: $header-z-index;
+  z-index: dimensions.$header-z-index;
 }
 
 footer {
@@ -44,19 +44,19 @@ footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: $mobile-footer-height;
-  background-color: $color-dark-bg;
+  height: dimensions.$mobile-footer-height;
+  background-color: colors.$color-dark-bg;
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   header {
     position: fixed;
     top: 0;
   }
   main {
-    padding: 20px 20px $desktop-footer-height;
+    padding: 20px 20px dimensions.$desktop-footer-height;
   }
   footer {
-    height: $desktop-footer-height;
+    height: dimensions.$desktop-footer-height;
   }
 }

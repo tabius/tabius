@@ -1,4 +1,4 @@
-@import 'styles/dimensions';
+@use 'styles/dimensions';
 
 :host {
   display: flex;
@@ -93,7 +93,7 @@
   }
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   :host {
     .content {
       display: flex;

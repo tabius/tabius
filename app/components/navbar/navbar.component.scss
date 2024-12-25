@@ -1,5 +1,5 @@
-@import 'styles/colors';
-@import 'styles/dimensions';
+@use 'styles/colors';
+@use 'styles/dimensions';
 
 :host {
   color: #cecece;
@@ -7,7 +7,7 @@
 
 nav {
   display: flex;
-  background-color: $color-dark-bg;
+  background-color: colors.$color-dark-bg;
 }
 
 a {
@@ -25,13 +25,13 @@ a {
 .desktop {
   nav {
     justify-content: flex-start;
-    height: $desktop-nav-height;
+    height: dimensions.$desktop-nav-height;
 
     .item {
-      height: $desktop-nav-height - (2 * $desktop-nav-item-padding);
+      height: dimensions.$desktop-nav-height - (2 * dimensions.$desktop-nav-item-padding);
 
       width: 100%;
-      padding: $desktop-nav-item-padding;
+      padding: dimensions.$desktop-nav-item-padding;
       border-left: 1px solid #201c29;
       border-right: 1px solid #201c29;
 
@@ -89,60 +89,60 @@ a {
       &.catalog {
         &.active {
           .indicator-block:before {
-            background: $color-nav-catalog;
+            background: colors.$color-nav-catalog;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-catalog;
+          fill: colors.$color-nav-catalog;
         }
       }
 
       &.scene {
         &.active {
           .indicator-block:before {
-            background: $color-nav-scene;
+            background: colors.$color-nav-scene;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-scene;
+          fill: colors.$color-nav-scene;
         }
       }
 
       &.studio {
         &.active {
           .indicator-block:before {
-            background: $color-nav-studio;
+            background: colors.$color-nav-studio;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-studio;
+          fill: colors.$color-nav-studio;
         }
       }
 
       &.tuner {
         &.active {
           .indicator-block:before {
-            background: $color-nav-tuner;
+            background: colors.$color-nav-tuner;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-tuner;
+          fill: colors.$color-nav-tuner;
         }
       }
 
       &.settings {
         &.active {
           .indicator-block:before {
-            background: $color-nav-settings;
+            background: colors.$color-nav-settings;
           }
         }
 
         gt-svg-icon {
-          fill: $color-nav-settings;
+          fill: colors.$color-nav-settings;
         }
 
         .user-icon-desktop, .login-icon-desktop {
@@ -153,7 +153,7 @@ a {
           height: 30px;
           width: 30px;
           border-radius: 30%;
-          background-color: $color-dark-bg;
+          background-color: colors.$color-dark-bg;
           border: 2px solid #58585a;
           color: #999;
           font-size: 20px;
@@ -214,13 +214,13 @@ a {
   }
 }
 
-@media only screen and (max-height: $hires-desktop-height) {
+@media only screen and (max-height: dimensions.$hires-desktop-height) {
   .desktop {
     nav {
-      height: $desktop-low-height-nav-height;
+      height: dimensions.$desktop-low-height-nav-height;
 
       .item {
-        height: $desktop-low-height-nav-height - (2 * $desktop-nav-item-padding);
+        height: dimensions.$desktop-low-height-nav-height - (2 * dimensions.$desktop-nav-item-padding);
 
         a {
           .logo {
@@ -253,12 +253,12 @@ a {
     }
 
     .item {
-      padding: $mobile-nav-item-padding;
-      height: $mobile-nav-height - 2 * ($mobile-nav-item-padding);
+      padding: dimensions.$mobile-nav-item-padding;
+      height: dimensions.$mobile-nav-height - 2 * (dimensions.$mobile-nav-item-padding);
 
       &.logo {
-        padding: 0 $mobile-nav-item-padding;
-        height: $mobile-nav-height;
+        padding: 0 dimensions.$mobile-nav-item-padding;
+        height: dimensions.$mobile-nav-height;
         display: flex;
         flex-direction: column;
         justify-content: center;

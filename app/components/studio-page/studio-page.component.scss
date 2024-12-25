@@ -1,5 +1,5 @@
-@import 'styles/colors';
-@import 'styles/dimensions';
+@use 'styles/colors';
+@use 'styles/dimensions';
 
 .content {
   display: flex;
@@ -38,7 +38,7 @@ h1 {
   margin-top: 15px;
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .register-prompt {
     margin-top: 40px;
   }

@@ -1,9 +1,9 @@
-@import 'styles/colors';
-@import 'styles/fonts';
-@import 'styles/dimensions';
+@use 'styles/colors';
+@use 'styles/fonts';
+@use 'styles/dimensions';
 
 .song-text {
-  font-family: $font-family-mono;
+  font-family: fonts.$font-family-mono;
   max-width: 90vw;
   white-space: pre-wrap;
   margin-top: 15px;
@@ -31,7 +31,7 @@
   @include multi-column-mode-style();
 }
 
-@media only screen and (min-width: $hires-desktop-width) {
+@media only screen and (min-width: dimensions.$hires-desktop-width) {
   .song-text {
     font-size: 20px;
   }

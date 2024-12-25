@@ -1,30 +1,30 @@
-@import 'styles/colors';
-@import 'styles/dimensions';
-@import 'styles/utils';
+@use 'styles/colors';
+@use 'styles/dimensions';
+@use 'styles/utils';
 
 :host {
-  line-height: $footer-info-line-height; /* Vertically center the text there */
+  line-height: dimensions.$footer-info-line-height; /* Vertically center the text. */
   text-align: center;
 }
 
 .c1 {
-  color: $color-nav-scene;
+  color: colors.$color-nav-scene;
 }
 
 .c2 {
-  color: $color-nav-catalog;
+  color: colors.$color-nav-catalog;
 }
 
 .c3 {
-  color: $color-nav-studio;
+  color: colors.$color-nav-studio;
 }
 
 .c4 {
-  color: $color-nav-tuner;
+  color: colors.$color-nav-tuner;
 }
 
 .c5 {
-  color: $color-nav-settings;
+  color: colors.$color-nav-settings;
 }
 
 .support {
@@ -34,7 +34,7 @@
 
   a {
     display: block;
-    height: $footer-info-line-height;
+    height: dimensions.$footer-info-line-height;
     padding-top: 6px;
     padding-left: 10px;
     padding-right: 5px;
@@ -58,7 +58,7 @@
 
   a {
     display: block;
-    height: $footer-info-line-height;
+    height: dimensions.$footer-info-line-height;
     padding-top: 6px;
     padding-right: 8px;
     text-decoration: none;
@@ -82,7 +82,7 @@
 .footer-menu {
   position: fixed;
   bottom: 0;
-  height: $footer-menu-height;
+  height: dimensions.$footer-menu-height;
   width: 100%;
   background-color: white;
   box-shadow: 0 -1px 6px -6px black;
@@ -95,7 +95,7 @@
 
     a {
       width: 100%;
-      @include disable-selection;
+      @include utils.disable-selection;
 
       &.btn-flat-white:focus,
       &.btn-flat-white:hover {
@@ -142,14 +142,14 @@
         white-space: nowrap;
         justify-content: center;
         align-items: center;
-        @include disable-selection;
+        @include utils.disable-selection;
 
         .menu-item-title {
-          @include disable-selection;
+          @include utils.disable-selection;
           line-height: 24px;
 
           span {
-            @include disable-selection;
+            @include utils.disable-selection;
           }
         }
 
@@ -161,7 +161,7 @@
   }
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .footer-menu {
     display: none;
   }
@@ -172,7 +172,7 @@ $horizontal-gap: 20px;
 
 .drawer {
   height: calc(100% - 60px); // -$close-button-line-height
-  background-color: $color-dark-bg;
+  background-color: colors.$color-dark-bg;
   position: fixed;
   top: 0;
   left: 0;
@@ -219,27 +219,27 @@ $horizontal-gap: 20px;
       }
 
       &.scene gt-svg-icon {
-        fill: $color-nav-scene;
+        fill: colors.$color-nav-scene;
       }
 
       &.catalog gt-svg-icon {
-        fill: $color-nav-catalog;
+        fill: colors.$color-nav-catalog;
       }
 
       &.studio gt-svg-icon {
-        fill: $color-nav-studio;
+        fill: colors.$color-nav-studio;
       }
 
       &.tuner gt-svg-icon {
-        fill: $color-nav-tuner;
+        fill: colors.$color-nav-tuner;
       }
 
       &.settings gt-svg-icon {
-        fill: $color-nav-settings;
+        fill: colors.$color-nav-settings;
       }
 
       &.no-sleep gt-svg-icon {
-        fill: $color-no-sleep;
+        fill: colors.$color-no-sleep;
       }
     }
   }
@@ -250,7 +250,7 @@ $horizontal-gap: 20px;
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: $color-dark-bg;
+    background-color: colors.$color-dark-bg;
 
     .close-button {
       border-radius: 4px;

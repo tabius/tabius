@@ -1,4 +1,4 @@
-@import 'styles/dimensions';
+@use 'styles/dimensions';
 
 .collections-list {
   margin-top: 12px;
@@ -7,7 +7,7 @@
   .collection-item {
     margin-top: 2px;
     margin-bottom: 2px;
-    line-height: $mobile-lists-line-height;
+    line-height: dimensions.$mobile-lists-line-height;
 
     &.scene-item {
       color: #7e5100;
@@ -32,10 +32,10 @@
   }
 }
 
-@media only screen and (min-width: $min-desktop-width) {
+@media only screen and (min-width: dimensions.$min-desktop-width) {
   .collections-list {
     .collection-item {
-      line-height: $mobile-lists-line-height;
+      line-height: dimensions.$mobile-lists-line-height;
     }
   }
 }
