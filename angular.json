@@ -64,7 +64,7 @@
                 "fonts": false
               },
               "outputHashing": "all",
-              "serviceWorker": "ngsw-config.json"
+              "serviceWorker": true
             },
             "org": {
               "index": "app/index-org.html",
@@ -84,7 +84,7 @@
                 "fonts": false
               },
               "outputHashing": "all",
-              "serviceWorker": "ngsw-config.json"
+              "serviceWorker": true
             },
             "dev-ru": {
               "aot": false,

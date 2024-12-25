@@ -4,10 +4,12 @@
   "license": "GPL-3.0-only",
   "repository": {},
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "npm run update-version && ng build",
     "build:ssr-dev-ru": "npm run update-version && ng build -c dev-ru --build-optimizer=false && ng run tabius:server",
     "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-site-index && npm run inline-css",
-    "build:ssr-ru": "npm run update-version && ng build -c ru && ng run tabius:server:ru && npm run inline-css",
+    "build:ssr-ru": "npm run clean && npm run update-version && ng build -c ru && ng run tabius:server:ru && npm run inline-css",
+    "deploy:ssr-ru": "npm run build:ssr-ru && rsync -avz -e ssh ./dist/ ram:work/tabius-ru/dist",
     "start-dist": "node dist/server/main.js",
     "start-ng-ssr-ru": "ng run tabius:serve-ssr --port=12101",
     "start-ng-browser-ru": "npm run update-version && ng serve -c dev-ru --port=12102",
