@@ -143,7 +143,6 @@ if (userAgent !== undefined && userAgent.length > 0) {
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     PopoverModule,
     ToastModule,
-    provideAuth0(environment.auth0Config),
     NgOptimizedImage,
   ],
   providers: [
@@ -157,6 +156,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
     provideHttpClient(withInterceptorsFromDi()),
     provideClientHydration(),
     PwaUpdaterService,
+    provideAuth0(environment.auth0Config),
   ],
   bootstrap: [AppComponent],
 })
