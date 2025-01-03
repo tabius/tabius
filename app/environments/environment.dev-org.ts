@@ -2,6 +2,7 @@
 
 import { buildInfo } from '@app/environments/build';
 import { TabiusEnv } from '@app/environments';
+import { AUTH0_COMMON_CONFIG } from '@app/environments/environment.common';
 
 const APP_DOMAIN = 'localhost';
 
@@ -20,7 +21,8 @@ export const environment: TabiusEnv = {
   sentryConfig: {
     dsn: 'not used in dev',
   },
-  authConfig: {
+  auth0Config: {
+    ...AUTH0_COMMON_CONFIG,
     domain: 'tabius-org.us.auth0.com',
     clientId: 'elgYidwkWEROavQBMADZdDUKQCtoVIYC',
     cacheLocation: 'localstorage',

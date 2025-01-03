@@ -26,7 +26,7 @@ export interface TabiusEnv {
   buildInfo: { buildDate: number };
 
   /** Auth0 configuration. */
-  authConfig: AuthConfig;
+  auth0Config: AuthConfig;
 
   sentryConfig: { dsn: string };
 }

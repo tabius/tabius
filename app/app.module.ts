@@ -32,7 +32,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SongComponent } from '@app/components/song/song.component';
 import { SongHeaderComponent } from '@app/components/song-header/song-header.component';
 import { SongVideoComponent } from '@app/components/song-video/song-video.component';
-import { AuthModule } from '@auth0/auth0-angular';
+import { provideAuth0 } from '@auth0/auth0-angular';
 import { SongEditorComponent } from '@app/components/song-editor/song-editor.component';
 import { BatchRequestOptimizerInterceptor } from '@app/interceptors/batch-request-optimizer.interceptor';
 import { CachingAndMultiplexingInterceptor } from '@app/interceptors/caching-and-multiplexing-interceptor.service';
@@ -67,7 +67,6 @@ import * as Sentry from '@sentry/angular';
 import { MoveSongToCollectionComponent } from './components/move-song-to-collection/move-song-to-collection.component';
 import { NgOptimizedImage } from '@angular/common';
 import { TabiusAuthHttpInterceptor } from '@app/interceptors/auth.interceptor';
-import { AUTH0_WEB_CLIENT_AUDIENCE } from '@common/common-constants';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 
 const interceptors: Array<Provider> = [
@@ -144,21 +143,7 @@ if (userAgent !== undefined && userAgent.length > 0) {
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     PopoverModule,
     ToastModule,
-    AuthModule.forRoot({
-      ...environment.authConfig,
-      httpInterceptor: {
-        allowedList: [
-          {
-            uri: `${environment.backendUrl}/api/*`,
-            allowAnonymous: true,
-          },
-        ],
-      },
-      authorizationParams: {
-        audience: AUTH0_WEB_CLIENT_AUDIENCE,
-        redirect_uri: typeof window === 'object' ? window.location.origin : 'TODO',
-      },
-    }),
+    provideAuth0(environment.auth0Config),
     NgOptimizedImage,
   ],
   providers: [

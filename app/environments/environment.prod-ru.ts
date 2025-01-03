@@ -1,5 +1,6 @@
 import { buildInfo } from '@app/environments/build';
 import { TabiusEnv } from '@app/environments';
+import { AUTH0_COMMON_CONFIG } from '@app/environments/environment.common';
 
 const APP_DOMAIN = 'tabius.ru';
 
@@ -17,10 +18,10 @@ export const environment: TabiusEnv = {
   sentryConfig: {
     dsn: 'https://fc6fba35084549b6a9fdf8843dc74887@o1134925.ingest.sentry.io/6755287',
   },
-  authConfig: {
+  auth0Config: {
+    ...AUTH0_COMMON_CONFIG,
     domain: 'tabius.us.auth0.com',
     clientId: 'HsyF6TwzMaKVFhjlLdlBUJf3gs9oihFt',
-    cacheLocation: 'localstorage',
     httpInterceptor: {
       allowedList: [{ uri: `${backendUrl}/api/*`, allowAnonymous: true }],
     },
