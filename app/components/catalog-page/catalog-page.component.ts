@@ -46,7 +46,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
   letterBlocks: LetterBlock[] = [];
   searchValue = '';
 
-  collectionFilterControl = new FormControl();
+  readonly collectionFilterControl = new FormControl();
   filteredCollections: CollectionListItem[] = [];
   collectionEditorIsOpen = false;
   canCreateNewPublicCollection = false;
@@ -64,6 +64,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
       const url = new URL(window.location.href);
       const queryParams = new URLSearchParams(url.search);
       this.searchValue = queryParams.get('q') || '';
+      this.collectionFilterControl.setValue(this.searchValue);
     }
     this.uds
       .getUser$()
