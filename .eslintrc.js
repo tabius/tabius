@@ -14,7 +14,7 @@ module.exports = {
     // '@typescript-eslint/explicit-function-return-type': ['error'],
     '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-non-null-assertion': ['error'],
-    '@angular-eslint/ prefer-standalone': ['none'],
+    '@angular-eslint/prefer-standalone': ['off'],
   },
   overrides: [
     {
