@@ -33,10 +33,10 @@ interface CollectionListItem extends Collection {
 let letterBlockFilters: string[] = [];
 
 @Component({
-    templateUrl: './catalog-page.component.html',
-    styleUrls: ['./catalog-page.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './catalog-page.component.html',
+  styleUrls: ['./catalog-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CatalogPageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.catalogPage;
@@ -44,7 +44,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
   @ViewChild('searchField', { static: false, read: ElementRef }) private searchField!: ElementRef;
   @ViewChild('searchResultsBlock', { static: false, read: ElementRef }) private searchResultsBlock!: ElementRef;
   letterBlocks: LetterBlock[] = [];
-  searchValue: string = '';
+  searchValue = '';
 
   collectionFilterControl = new FormControl();
   filteredCollections: CollectionListItem[] = [];
@@ -60,6 +60,11 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
     private readonly navHelper: RoutingNavigationHelper,
   ) {
     super();
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      const queryParams = new URLSearchParams(url.search);
+      this.searchValue = queryParams.get('q') || '';
+    }
     this.uds
       .getUser$()
       .pipe(takeUntilDestroyed())
