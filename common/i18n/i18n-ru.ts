@@ -205,9 +205,9 @@ export const TRANSLATIONS_MAP_RU: I18n = {
   },
   homePage: {
     titleLevel2: 'табы и аккорды популярных песен для гитары',
-    newsLink: 'НОВОСТИ',
+    sceneLink: 'ПЕСНЯ ДНЯ',
     catalogLink: 'КАТАЛОГ',
-    studioLink: 'СТУДИЯ',
+    studioLink: 'СВОИ ПЕСНИ',
     interestingFacts: 'Интересные факты о Tabius',
     worksWithNoInternetFact: 'Tabius работает без Интернет! Все однажды открытые песни доступны оффлайн.',
     noAdsFact: 'У нас нет рекламы. Только ссылки на официальные диски. Это благодарность авторам.',

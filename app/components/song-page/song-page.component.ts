@@ -42,10 +42,10 @@ import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-
 import { getDefaultUserSongFontSize, isInputEvent, scrollToView, scrollToViewByEndPos } from '@app/utils/misc-utils';
 
 @Component({
-    templateUrl: './song-page.component.html',
-    styleUrls: ['./song-page.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './song-page.component.html',
+  styleUrls: ['./song-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SongPageComponent extends ComponentWithLoadingIndicator implements OnDestroy {
   readonly i18n = I18N.songPage;
@@ -173,12 +173,9 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         },
       );
 
-    this.uds
-      .userDeviceSettings$()
-      .pipe(takeUntilDestroyed())
-      .subscribe(deviceSettings => {
-        this.deviceSettings = deviceSettings;
-      });
+    this.uds.userDeviceSettings$.pipe(takeUntilDestroyed()).subscribe(deviceSettings => {
+      this.deviceSettings = deviceSettings;
+    });
   }
 
   private setupContextMenuActions(): void {
@@ -193,8 +190,8 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         ],
         style: { 'width.px': 18 },
       },
-      { icon: 'minus', target: () => this.decFontSize(), style: { 'width.px': 18 } },
-      { icon: 'plus', target: () => this.incFontSize(), style: { 'width.px': 18 } },
+      { icon: 'minus', target: () => decFontSize(this.uds), style: { 'width.px': 18 } },
+      { icon: 'plus', target: () => incFontSize(this.uds), style: { 'width.px': 18 } },
       {
         icon: 'dice4',
         target: [
@@ -298,11 +295,11 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     switch (event.code) {
       case 'Underscore': // Same button with 'Minus' on laptop keyboard.
       case 'Minus':
-        this.decFontSize();
+        void decFontSize(this.uds);
         return;
       case 'Equal': // Same button with 'Plus' on laptop keyboard.
       case 'Plus':
-        this.incFontSize();
+        void incFontSize(this.uds);
         return;
       case 'Digit0':
         this.updateSongFontSize(getDefaultUserSongFontSize()).then();
@@ -356,18 +353,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   transposeToKey(): void {
     updateUserSongSetting(this.originalSongKey, this.transposeActionKey, this.songSettings, this.uds);
-  }
-
-  incFontSize(): void {
-    if (this.deviceSettings) {
-      this.updateSongFontSize(Math.min(this.deviceSettings.songFontSize + 1, MAX_SONG_FONT_SIZE)).then();
-    }
-  }
-
-  decFontSize(): void {
-    if (this.deviceSettings) {
-      this.updateSongFontSize(Math.max(this.deviceSettings.songFontSize - 1, MIN_SONG_FONT_SIZE)).then();
-    }
   }
 
   private async updateSongFontSize(songFontSize: number): Promise<void> {
@@ -437,4 +422,16 @@ export function getSongTextWithNoChords(text: string, linesCount: number, mergeL
     position = newPosition + 1;
   }
   return result;
+}
+
+export async function incFontSize(userDataService: UserService): Promise<void> {
+  const deviceSettings = await userDataService.userDeviceSettings$$;
+  const songFontSize = Math.min(deviceSettings.songFontSize + 1, MAX_SONG_FONT_SIZE);
+  await userDataService.setUserDeviceSettings({ ...deviceSettings, songFontSize });
+}
+
+export async function decFontSize(userDataService: UserService): Promise<void> {
+  const deviceSettings = await userDataService.userDeviceSettings$$;
+  const songFontSize = Math.max(deviceSettings.songFontSize - 1, MIN_SONG_FONT_SIZE);
+  await userDataService.setUserDeviceSettings({ ...deviceSettings, songFontSize });
 }

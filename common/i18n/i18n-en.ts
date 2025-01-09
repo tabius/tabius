@@ -206,7 +206,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
   },
   homePage: {
     titleLevel2: 'guitar chords and tabs for songs you love',
-    newsLink: 'NEWS',
+    sceneLink: 'SCENE',
     catalogLink: 'CATALOG',
     studioLink: 'STUDIO',
     interestingFacts: 'About Tabius',

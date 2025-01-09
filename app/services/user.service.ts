@@ -103,7 +103,11 @@ export class UserService {
     }
   }
 
-  userDeviceSettings$(): Observable<UserDeviceSettings> {
+  get userDeviceSettings$$(): Promise<UserDeviceSettings> {
+    return firstValueFrom(this.userDeviceSettingsTrieStore.state$);
+  }
+
+  get userDeviceSettings$(): Observable<UserDeviceSettings> {
     return this.userDeviceSettingsTrieStore.state$;
   }
 

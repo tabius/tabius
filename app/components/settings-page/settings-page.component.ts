@@ -43,7 +43,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
 
     combineLatest([
       this.uds.getUser$(),
-      this.uds.userDeviceSettings$(),
+      this.uds.userDeviceSettings$,
       //TODO: optimize these 2 parallel fetches! Fetch user settings only once.
       this.uds.getH4SiFlag(RefreshMode.Refresh),
       this.uds.getFavoriteKey(RefreshMode.Refresh),

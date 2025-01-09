@@ -87,7 +87,7 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
     }
 
     this.uds
-      .userDeviceSettings$()
+      .userDeviceSettings$
       .pipe(takeUntilDestroyed())
       .subscribe(deviceSettings => {
         this.deviceSettings = deviceSettings;

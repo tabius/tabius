@@ -185,7 +185,7 @@ export interface I18n {
   };
   homePage: {
     titleLevel2: string;
-    newsLink: string;
+    sceneLink: string;
     catalogLink: string;
     studioLink: string;
     interestingFacts: string;

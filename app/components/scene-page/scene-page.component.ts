@@ -5,12 +5,15 @@ import { CatalogService } from '@app/services/catalog.service';
 import { HelpService } from '@app/services/help.service';
 import { environment } from '@app/environments/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ContextMenuActionService } from '@app/services/context-menu-action.service';
+import { UserService } from '@app/services/user.service';
+import { decFontSize, incFontSize } from '@app/components/song-page/song-page.component';
 
 @Component({
-    templateUrl: './scene-page.component.html',
-    styleUrls: ['./scene-page.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './scene-page.component.html',
+  styleUrls: ['./scene-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ScenePageComponent extends ComponentWithLoadingIndicator {
   readonly i18n = I18N.scenePage;
@@ -19,6 +22,8 @@ export class ScenePageComponent extends ComponentWithLoadingIndicator {
   constructor(
     private readonly catalogService: CatalogService,
     private readonly helpService: HelpService,
+    private readonly userDataService: UserService,
+    private readonly contextMenuActionService: ContextMenuActionService,
   ) {
     super();
     this.catalogService
@@ -32,5 +37,13 @@ export class ScenePageComponent extends ComponentWithLoadingIndicator {
       });
     this.updatePageMetadata({ ...this.i18n.meta, image: `${environment.url}/assets/site-logo.png` });
     this.helpService.setActiveHelpPage('song');
+    this.setupContextMenuActions();
+  }
+
+  private setupContextMenuActions(): void {
+    this.contextMenuActionService.footerActions$.next([
+      { icon: 'minus', target: () => void decFontSize(this.userDataService), style: { 'width.px': 18 } },
+      { icon: 'plus', target: () => void incFontSize(this.userDataService), style: { 'width.px': 18 } },
+    ]);
   }
 }
