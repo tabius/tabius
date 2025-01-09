@@ -32,11 +32,11 @@ enum NavSection {
 }
 
 @Component({
-    selector: 'gt-navbar',
-    templateUrl: './navbar.component.html',
-    styleUrls: ['./navbar.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class NavbarComponent {
   user?: User;
@@ -87,9 +87,11 @@ export class NavbarComponent {
   }
 
   // TODO: make an utility in the routing module.
-  getActiveSection(): NavSection {
+  get activeSection(): NavSection {
     const url = this.router.url.toLocaleLowerCase();
-    if (url.startsWith(LINK_TUNER)) {
+    if (url.startsWith(LINK_SCENE)) {
+      return NavSection.Scene;
+    } else if (url.startsWith(LINK_TUNER)) {
       return NavSection.Tuner;
     } else if (
       url.startsWith(LINK_CATALOG) ||

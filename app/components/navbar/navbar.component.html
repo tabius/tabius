@@ -7,35 +7,35 @@
         <div class="logo2">{{ i18n.logo2 }}</div>
       </a>
     </div>
-    <div class="item catalog" [class.active]="getActiveSection() === NavSection.Catalog">
+    <div class="item catalog" [class.active]="activeSection === NavSection.Catalog">
       <a routerLink="{{catalogLink}}" (click)="resetCollectionPageScroll()">
         <div class="indicator-block"></div>
         <gt-svg-icon icon="artist"></gt-svg-icon>
         <div class="title">{{ i18n.catalog }}</div>
       </a>
     </div>
-    <div class="item scene" [class.active]="getActiveSection() === NavSection.Scene">
+    <div class="item scene" [class.active]="activeSection === NavSection.Scene">
       <a routerLink="{{sceneLink}}">
         <div class="indicator-block"></div>
         <gt-svg-icon icon="scene"></gt-svg-icon>
         <div class="title">{{ i18n.scene }}</div>
       </a>
     </div>
-    <div class="item studio" [class.active]="getActiveSection()=== NavSection.Studio">
+    <div class="item studio" [class.active]="activeSection=== NavSection.Studio">
       <a routerLink="{{studioLink}}">
         <div class="indicator-block"></div>
         <gt-svg-icon icon="studio"></gt-svg-icon>
         <div class="title">{{ i18n.studio }}</div>
       </a>
     </div>
-    <div class="item tuner" [class.active]="getActiveSection() === NavSection.Tuner">
+    <div class="item tuner" [class.active]="activeSection === NavSection.Tuner">
       <a routerLink="{{tunerLink}}">
         <div class="indicator-block"></div>
         <gt-svg-icon icon="tuner"></gt-svg-icon>
         <div class="title">{{ i18n.tuner }}</div>
       </a>
     </div>
-    <div class="item settings" [class.active]="getActiveSection() === NavSection.Settings">
+    <div class="item settings" [class.active]="activeSection === NavSection.Settings">
       <a routerLink="{{settingsLink}}">
         @if (user) {
           <div class="user-icon-desktop"
