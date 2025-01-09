@@ -35,7 +35,6 @@ import { ChordTone } from '@common/util/chords-lib';
 import { getTransposeActionKey, updateUserSongSetting } from '@app/components/song-chords/song-chords.component';
 import { BreadcrumbList, WithContext } from 'schema-dts';
 import { getSongJsonLdBreadcrumbList } from '@app/utils/json-ld';
-import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
 import { assertTruthy } from 'assertic';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { buildAffiliateLink, HAS_AFFILIATE_SUPPORT } from '@app/utils/affiliate-utils';
@@ -365,11 +364,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   }
 
   get isSearchVideoOnYoutubeLinkVisible(): boolean {
-    const width = typeof window === 'object' && window.innerWidth;
-    if (!width) {
-      return false;
-    }
-    return width >= MIN_DESKTOP_WIDTH && !!this.song && !!this.primaryCollection;
+    return !!this.song && !!this.primaryCollection;
   }
 
   get youtubeSearchSongLink(): string {
