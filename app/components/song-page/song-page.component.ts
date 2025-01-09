@@ -18,7 +18,7 @@ import {
 } from '@common/mounts';
 import { getCollectionImageUrl, getFullLink } from '@app/utils/url-utils';
 import { getToneWithH4SiFix, TONES_COUNT } from '@common/util/chords-renderer';
-import { User, UserDeviceSettings, UserSongSettings } from '@common/user-model';
+import { User, UserSongSettings } from '@common/user-model';
 import { HelpService } from '@app/services/help.service';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
 import {
@@ -57,7 +57,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
   songSettings?: UserSongSettings;
   canonicalPageUrl?: string;
   user?: User;
-  deviceSettings?: UserDeviceSettings;
 
   hasEditRight = false;
   editorIsOpen = false;
@@ -172,10 +171,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
           this.navHelper.restoreScrollPosition();
         },
       );
-
-    this.uds.userDeviceSettings$.pipe(takeUntilDestroyed()).subscribe(deviceSettings => {
-      this.deviceSettings = deviceSettings;
-    });
   }
 
   private setupContextMenuActions(): void {
@@ -302,7 +297,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
         void incFontSize(this.uds);
         return;
       case 'Digit0':
-        this.updateSongFontSize(getDefaultUserSongFontSize()).then();
+        void updateFontSize(this.uds, getDefaultUserSongFontSize());
         return;
     }
 
@@ -353,12 +348,6 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   transposeToKey(): void {
     updateUserSongSetting(this.originalSongKey, this.transposeActionKey, this.songSettings, this.uds);
-  }
-
-  private async updateSongFontSize(songFontSize: number): Promise<void> {
-    if (this.deviceSettings) {
-      await this.uds.setUserDeviceSettings({ ...this.deviceSettings, songFontSize });
-    }
   }
 
   onMountChangeBeforeUpdate(mountBeforeUpdate: string): void {
@@ -433,5 +422,10 @@ export async function incFontSize(userDataService: UserService): Promise<void> {
 export async function decFontSize(userDataService: UserService): Promise<void> {
   const deviceSettings = await userDataService.userDeviceSettings$$;
   const songFontSize = Math.max(deviceSettings.songFontSize - 1, MIN_SONG_FONT_SIZE);
+  await userDataService.setUserDeviceSettings({ ...deviceSettings, songFontSize });
+}
+
+export async function updateFontSize(userDataService: UserService, songFontSize: number): Promise<void> {
+  const deviceSettings = await userDataService.userDeviceSettings$$;
   await userDataService.setUserDeviceSettings({ ...deviceSettings, songFontSize });
 }

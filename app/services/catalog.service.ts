@@ -175,6 +175,10 @@ export class CatalogService {
     return combineLatest0(songIds.map(id => this.observeSong(id)));
   }
 
+  getSongDetailsById$$(songId: number | undefined): Promise<SongDetails | undefined> {
+    return firstValueFrom(this.getSongDetailsById(songId));
+  }
+
   getSongDetailsById(songId: number | undefined, refreshCachedVersion = true): Observable<SongDetails | undefined> {
     return this.store.get<SongDetails>(
       getSongDetailsKey(songId),

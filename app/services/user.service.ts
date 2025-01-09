@@ -115,6 +115,10 @@ export class UserService {
     this.userDeviceSettingsTrieStore.set([], userDeviceSettings);
   }
 
+  getUserSongSettings$$(songId: number | undefined): Promise<UserSongSettings> {
+    return firstValueFrom(this.getUserSongSettings(songId));
+  }
+
   getUserSongSettings(songId: number | undefined): Observable<UserSongSettings> {
     if (!isNumericId(songId)) {
       return of(newDefaultUserSongSettings(0));
@@ -170,6 +174,10 @@ export class UserService {
     }
   }
 
+  get h4SiFlag$$(): Promise<boolean> {
+    return firstValueFrom(this.getH4SiFlag());
+  }
+
   /**
    * Note: using a custom refresh option to allow forced refresh.
    */
@@ -193,6 +201,10 @@ export class UserService {
       const settings = await firstValueFrom(this.httpClient.put<UserSettings>(`/api/user/settings/h4si`, { h4SiFlag: h4SiFlag }));
       await this.updateUserSettings(settings);
     }
+  }
+
+  get favoriteKey$$(): Promise<ChordTone> {
+    return firstValueFrom(this.getFavoriteKey());
   }
 
   getFavoriteKey(refreshMode: RefreshMode = RefreshMode.DoNotRefresh): Observable<ChordTone> {
