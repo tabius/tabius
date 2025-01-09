@@ -1,7 +1,7 @@
 import 'zone.js/node';
 
 import { APP_BASE_HREF } from '@angular/common';
-import { CommonEngine } from '@angular/ssr';
+import { CommonEngine } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
 import { REQUEST, RESPONSE } from '@app/express.tokens';
@@ -62,5 +62,3 @@ function run(): void {
 }
 
 run();
-
-export default bootstrap;
