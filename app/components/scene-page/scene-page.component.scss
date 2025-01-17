@@ -1,3 +1,5 @@
+@use 'styles/colors';
+
 :host {
   display: flex;
   justify-content: center;
@@ -6,10 +8,10 @@
     display: flex;
     flex-direction: column;
 
-    h2 {
-      text-align: center;
-      margin-top: 20px;
-      margin-bottom: 30px;
+    .title {
+      font-size: 18px;
+      color: colors.$color-default-link;
+      margin-bottom: 5px;
     }
   }
 
