@@ -12,7 +12,6 @@ import {
   getNameFirstFormArtistName,
   getSongPageLink,
   isDefined,
-  nothingThen,
   sortSongsAlphabetically,
 } from '@common/util/misc-utils';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
@@ -50,10 +49,10 @@ export class CollectionViewModel {
 }
 
 @Component({
-    templateUrl: './collection-page.component.html',
-    styleUrls: ['./collection-page.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './collection-page.component.html',
+  styleUrls: ['./collection-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CollectionPageComponent extends ComponentWithLoadingIndicator {
   readonly getCollectionPageLink = getCollectionPageLink;
@@ -188,7 +187,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
     }
     const name = this.collectionViewModel.collection.name;
     const url = getCollectionPageLink(this.collectionViewModel.collection.mount);
-    this.uds.addCatalogNavigationHistoryStep({ name, url }).then(nothingThen);
+    void this.uds.addCatalogNavigationHistoryStep({ name, url });
   }
 
   readonly buildAffiliateLink = buildAffiliateLink;

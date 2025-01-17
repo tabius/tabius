@@ -6,7 +6,7 @@ import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { map, switchMap, take, throttleTime } from 'rxjs/operators';
 import { switchToNotFoundMode } from '@app/utils/component-utils';
 import { UserService } from '@app/services/user.service';
-import { canManageCollectionContent, getNameFirstFormArtistName, getSongPageLink, nothingThen } from '@common/util/misc-utils';
+import { canManageCollectionContent, getNameFirstFormArtistName, getSongPageLink } from '@common/util/misc-utils';
 import { parseChordsLine } from '@common/util/chords-parser';
 import { RoutingNavigationHelper } from '@app/services/routing-navigation-helper.service';
 import {
@@ -360,7 +360,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
     const name = this.song.title;
     const artist = getNameFirstFormArtistName(this.activeCollection);
     const url = getSongPageLink(this.activeCollection.mount, this.song.mount, this.primaryCollection?.mount);
-    this.uds.addCatalogNavigationHistoryStep({ name, collection: artist, url }).then(nothingThen);
+    void this.uds.addCatalogNavigationHistoryStep({ name, collection: artist, url });
   }
 
   get isSearchVideoOnYoutubeLinkVisible(): boolean {

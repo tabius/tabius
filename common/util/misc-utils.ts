@@ -212,5 +212,3 @@ export function isBotUserAgent(userAgent: string | undefined): boolean {
 export function getUserAgentFromRequest(request: Request): string | undefined {
   return request && request.headers ? request.headers['user-agent'] : undefined;
 }
-
-export function nothingThen(): void {}
