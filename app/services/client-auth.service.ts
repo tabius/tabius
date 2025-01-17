@@ -25,6 +25,12 @@ export class ClientAuthService {
           setTimeout(async () => await router.navigateByUrl(state.pathname, { replaceUrl: true }), 100);
         }
       });
+      this.auth0Service.error$.subscribe(error => {
+        console.error('Got auth0 error', error);
+        if ((error as { error?: string })?.error?.includes('invalid')) {
+          void this.logout();
+        }
+      });
     }
   }
 
