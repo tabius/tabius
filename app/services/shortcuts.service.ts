@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { switchMap, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
-import { getSongPageLink, nothingThen } from '@common/util/misc-utils';
+import { getSongPageLink } from '@common/util/misc-utils';
 import { Router } from '@angular/router';
 import { HelpService } from '@app/services/help.service';
 import { CatalogNavigationHistoryService } from '@app/services/catalog-navigation-history.service';
@@ -66,16 +66,17 @@ export class ShortcutsService {
     const song$ = this.cds.getRandomSongId(collectionId).pipe(switchMap(songId => this.cds.observeSong(songId)));
     const collection$ = collectionId
       ? this.cds.observeCollection(collectionId)
-      : song$.pipe(switchMap(song => this.cds.observeCollection(song && song.collectionId)));
-    combineLatest([song$, collection$])
+      : song$.pipe(switchMap(song => this.cds.observeCollection(song?.collectionId)));
+    const primaryCollection$ = song$.pipe(switchMap(s => this.cds.observeCollection(s?.collectionId)));
+    combineLatest([song$, collection$, primaryCollection$])
       .pipe(take(1))
-      .subscribe(([song, collection]) => {
-        if (!song || !collection) {
-          //todo: show error
+      .subscribe(([song, collection, primaryCollection]) => {
+        if (!song || !collection || !primaryCollection) {
+          console.error('Song, collection or primaryCollection are not defined', song, collection, primaryCollection);
           return;
         }
-        const link = getSongPageLink(collection.mount, song.mount);
-        this.router.navigate([link]).then(nothingThen);
+        const link = getSongPageLink(collection.mount, song.mount, primaryCollection.mount);
+        void this.router.navigate([link]);
       });
   }
 }
