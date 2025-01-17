@@ -2,11 +2,12 @@
 
 :host {
   display: block;
+}
 
-  .youtube-video {
-    iframe {
-      margin-top: 10px;
-      margin-bottom: 10px;
+@media only screen and (max-width: dimensions.$max-mobile-width) {
+  :host {
+    .youtube-video {
+      text-align: center;
     }
   }
 }

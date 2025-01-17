@@ -8,17 +8,17 @@
 @if (loaded && song && songDetails && collection) {
   <div itemscope itemtype="http://schema.org/MusicRecording">
     <meta itemprop="name" [content]="song.title" />
-    <div itemprop="byArtist" itemscope [attr.itemtype]="schemaItemArtistType" *ngIf="!!schemaItemArtistType">
-      <meta itemprop="name" [content]="schemaItemArtistName" />
-    </div>
+    @if (schemaItemArtistType) {
+      <div itemprop="byArtist" itemscope [attr.itemtype]="schemaItemArtistType">
+        <meta itemprop="name" [content]="schemaItemArtistName" />
+      </div>
+    }
 
     @if (mode === 'print-mode') {
       <gt-song-header [song]="song" [collection]="collection" [showControls]="false"></gt-song-header>
       <gt-song-text [song]="songDetails" [multiColumnMode]="false" [usePrintFontSize]="true"></gt-song-text>
       <gt-song-chords [songId]="song.id"></gt-song-chords>
-    }
-
-    @if (mode !== 'print-mode') {
+    } @else {
       <gt-song-header [song]="song"
                       [collection]="collection"
                       [titleFormat]="mode === 'song-page-mode' ? 'song' : 'song-and-collection'"

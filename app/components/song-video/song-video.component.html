@@ -1,8 +1,11 @@
-<div *ngIf="isFrameVisible" class="youtube-video">
-  <iframe *ngIf="isVideoLoadAllowed"
-          [ngStyle]="videoCssStyle"
-          [src]="'https://www.youtube.com/embed/'+youtubeId | safeResourceUrl"
-          [title]="title"
-          allowfullscreen="allowfullscreen"
-  ></iframe>
-</div>
+@if (isFrameVisible) {
+  <div class="youtube-video">
+    @if (isVideoLoadAllowed) {
+      <iframe [ngStyle]="videoCssStyle"
+              [src]="'https://www.youtube.com/embed/'+youtubeId | safeResourceUrl"
+              [title]="title"
+              allowfullscreen="allowfullscreen"
+      ></iframe>
+    }
+  </div>
+}
