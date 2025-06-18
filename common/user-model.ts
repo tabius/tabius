@@ -1,4 +1,5 @@
 import { ChordTone } from '@common/util/chords-lib';
+import { StateRecord } from 'otrie';
 
 /** The only role we have today. Can add new collections and songs. */
 export type UserRole = 'moderator';
@@ -23,7 +24,7 @@ export type TunerToneType = 'c' | 'e';
  * Settings that stored in the browser and never saved on server.
  * Usually these settings are different per device. Example: font sizes.
  */
-export interface UserDeviceSettings {
+export interface UserDeviceSettings extends StateRecord {
   /** Font size in pixels. */
   songFontSize: number;
   /** If true -> repeat mode is checked by default in tuner. */

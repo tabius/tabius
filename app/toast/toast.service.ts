@@ -1,14 +1,12 @@
 import { Injectable, Injector } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
-import { ComponentPortal, PortalInjector } from '@angular/cdk/portal';
+import { ComponentPortal } from '@angular/cdk/portal';
 
 import { ToastComponent } from './toast.component';
 import { Toast, ToastRef, ToastType } from '@app/toast/toast-model';
 import { I18N } from '@app/app-i18n';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ToastService {
   private lastToast?: ToastRef;
 
@@ -27,24 +25,23 @@ export class ToastService {
   }
 
   show(text: string, type: ToastType): ToastRef {
-    if (this.lastToast) {
-      if (this.lastToast.isVisible()) {
-        this.lastToast.close();
-      }
+    if (this.lastToast?.isVisible()) {
+      this.lastToast.close();
       delete this.lastToast;
     }
     const overlayRef = this.overlay.create({ panelClass: 'toast-overlay' });
     const toastRef = new ToastRef(overlayRef);
-    const injector = getInjector({ text, type }, toastRef, this.parentInjector);
-    overlayRef.attach(new ComponentPortal(ToastComponent, null, injector));
+
+    const injector = Injector.create({
+      parent: this.parentInjector,
+      providers: [
+        { provide: Toast, useValue: { text, type } },
+        { provide: ToastRef, useValue: toastRef },
+      ],
+    });
+
+    overlayRef.attach(new ComponentPortal(ToastComponent, undefined, injector));
     this.lastToast = toastRef;
     return toastRef;
   }
-}
-
-function getInjector(toast: Toast, toastRef: ToastRef, parentInjector: Injector): PortalInjector {
-  const tokens = new WeakMap();
-  tokens.set(Toast, toast);
-  tokens.set(ToastRef, toastRef);
-  return new PortalInjector(parentInjector, tokens);
 }

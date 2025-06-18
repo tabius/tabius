@@ -15,6 +15,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-non-null-assertion': ['error'],
     '@angular-eslint/prefer-standalone': ['off'],
+    "@angular-eslint/prefer-inject": "off"
   },
   overrides: [
     {
