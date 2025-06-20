@@ -12,14 +12,18 @@ const SPHINX_SQL_URL = 'http://localhost:9307/sql';
 
 @Injectable()
 export class FullTextSearchDbi {
-  async searchForSongsByText(text: string): Promise<FullTextSongSearchResult[]> {
+  async searchForSongsByText(
+    text: string,
+    maxTitleResults = MAX_FULL_TEXT_SEARCH_TITLE_RESULTS,
+    maxContentResults = MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS,
+  ): Promise<FullTextSongSearchResult[]> {
     const safeSearchText = toSafeSearchText(text);
     if (safeSearchText.length < MIN_LEN_FOR_FULL_TEXT_SEARCH) {
       return [];
     }
     // Using 'default' mode unless quoted.
     const exact = isQuoted(text.trim());
-    const titleQuery = buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS, exact ? 'exact' : 'default');
+    const titleQuery = buildSphinxQuery('title', safeSearchText, maxTitleResults, exact ? 'exact' : 'default');
     const contentQuery = buildSphinxQuery(
       'content',
       safeSearchText,
@@ -30,10 +34,8 @@ export class FullTextSearchDbi {
     //  'default' can search different word-forms, but can't search by prefix/infix/suffix
     //  'infix' does not know about word-forms, but can search by prefix/infix/suffix.
     // We use 'infix' results only if there are not enough 'default' results.
-    const infixTitleQuery = exact ? '' : buildSphinxQuery('title', safeSearchText, MAX_FULL_TEXT_SEARCH_TITLE_RESULTS, 'infix');
-    const infixContentQuery = exact
-      ? ''
-      : buildSphinxQuery('content', safeSearchText, MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS, 'infix');
+    const infixTitleQuery = exact ? '' : buildSphinxQuery('title', safeSearchText, maxTitleResults, 'infix');
+    const infixContentQuery = exact ? '' : buildSphinxQuery('content', safeSearchText, maxContentResults, 'infix');
     const queries = [this.query(titleQuery), this.query(contentQuery), this.query(infixTitleQuery), this.query(infixContentQuery)];
     const [titleResults, contentResults, infixTitleResults, infixContentResults]: SphinxSearchResult[] = await Promise.all(queries);
     const titles: FullTextSongSearchResult[] = [];
@@ -50,13 +52,13 @@ export class FullTextSearchDbi {
       contents.push(result);
       contentSongIds.add(result.songId);
     }
-    for (let i = 0; i < infixTitleResults.matches.length && titles.length < MAX_FULL_TEXT_SEARCH_TITLE_RESULTS; i++) {
+    for (let i = 0; i < infixTitleResults.matches.length && titles.length < maxTitleResults; i++) {
       const result = createFullTextResultFromMatch(infixTitleResults.matches[i], 'title');
       if (!titleSongIds.has(result.songId)) {
         titles.push(result);
       }
     }
-    for (let i = 0; i < infixContentResults.matches.length && contents.length < MAX_FULL_TEXT_SEARCH_CONTENT_RESULTS; i++) {
+    for (let i = 0; i < infixContentResults.matches.length && contents.length < maxContentResults; i++) {
       const result = createFullTextResultFromMatch(infixContentResults.matches[i], 'content');
       if (!contentSongIds.has(result.songId)) {
         contents.push(result);

@@ -6,13 +6,17 @@ import { SongController } from './controller/song.controller';
 import { CollectionController } from './controller/collection.controller';
 import { BackendAuthService } from './service/backend-auth.service';
 import { truthy } from 'assertic';
+import { TelegramService } from '@backend/service/telegram.service';
 
 @Module({
   imports: [ServerDbModule],
-  providers: [Logger, { provide: APP_INTERCEPTOR, useClass: BackendAuthService }],
+  providers: [Logger, { provide: APP_INTERCEPTOR, useClass: BackendAuthService }, TelegramService],
   controllers: [CollectionController, SongController, UserController],
 })
-export class BackendModule {}
+export class BackendModule {
+  // noinspection JSUnusedGlobalSymbols
+  constructor(readonly telegramService: TelegramService) {}
+}
 
 let nestApp: INestApplication | undefined;
 

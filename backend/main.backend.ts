@@ -14,6 +14,17 @@ async function bootstrap(): Promise<void> {
   const nestAppOptions: NestApplicationOptions = {
     logger: false,
   };
+
+  // Do not stop process on rejected promises & errors.
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error(`Unhandled Rejection at`, promise);
+    console.error(`Reason:`, reason as any);
+  });
+
+  process.on('uncaughtException', (err: Error) => {
+    console.error(`Uncaught Exception thrown:`, err);
+  });
+
   const nestApp = await NestFactory.create(BackendModule, nestAppOptions);
   nestApp.enableCors(buildCorsOptions());
   setApp(nestApp);

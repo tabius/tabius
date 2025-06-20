@@ -212,3 +212,7 @@ export function isBotUserAgent(userAgent: string | undefined): boolean {
 export function getUserAgentFromRequest(request: Request): string | undefined {
   return request && request.headers ? request.headers['user-agent'] : undefined;
 }
+
+export function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}

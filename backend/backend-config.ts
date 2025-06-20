@@ -20,6 +20,7 @@ export interface TabiusBackendConfig {
   sphinxSongIndex: string;
   /** 'en', 'ru'... See I18n interface. */
   lang: string;
+  telegramBotToken: string;
 }
 
 const serverConfigAsString = readFileSync(getConfigFilePath('server-config.json')).toString();
@@ -44,7 +45,7 @@ export const SERVER_CONFIG: Readonly<TabiusBackendConfig> = {
 
 /** Returns active configuration directory. */
 export function getConfigFilePath(fileOrSubdirPath: string): string {
-  const configDir = process.env.TABIUS_CONFIG_DIR || `/home/${process.env[`USER`]}/work/tabius/local/server-config`;
+  const configDir = process.env.TABIUS_CONFIG_DIR || `/home/${process.env[`USER`]}/work/tabius/local`;
   // if (!configDir) {
   //   throw new Error('No TABIUS_CONFIG_DIR environment variable found!');
   // }
