@@ -4,7 +4,8 @@
   "license": "GPL-3.0-only",
   "repository": {},
   "scripts": {
-    "clean": "find . -depth \\( -name \"node_modules\" -o -name \".next\" -o -name \"dist\" -o -name \".angular\" -o -name \"build\" \\) -type d -exec rm -rf {} +",
+    "clean": "rm -rf dist",
+    "full-clean": "find . -depth \\( -name \"node_modules\" -o -name \".next\" -o -name \"dist\" -o -name \".angular\" -o -name \"build\" \\) -type d -exec rm -rf {} +",
     "build": "npm run update-version && ng build",
     "build:ssr-dev-ru": "npm run update-version && ng build -c dev-ru --build-optimizer=false && ng run tabius:server",
     "build:ssr-org": "npm run update-version && ng build -c org && ng run tabius:server:org && npm run fix-site-index && npm run inline-css",
