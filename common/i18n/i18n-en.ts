@@ -100,7 +100,7 @@ export const TRANSLATIONS_MAP_EN: I18n = {
     githubLinkTitle: 'Current version.\nClick to see the latest changes.',
     homePageLinkTitle: 'Home',
     menu: 'menu',
-    supportLinkTitle: 'Contact us',
+    telegramBotLinkTitle: 'Bot in Telegram',
   },
   collectionEditor: {
     header: 'Add collection',

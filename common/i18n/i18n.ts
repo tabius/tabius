@@ -94,7 +94,7 @@ export interface I18n {
     githubLinkTitle: string;
     homePageLinkTitle: string;
     menu: string;
-    supportLinkTitle: string;
+    telegramBotLinkTitle: string;
   };
   collectionEditor: {
     header: string;

@@ -101,7 +101,7 @@ export const TRANSLATIONS_MAP_RU: I18n = {
     githubLinkTitle: 'Текущая версия приложения.\nПосмотреть последние изменения',
     homePageLinkTitle: 'Перейти на главную страницу сайта.',
     menu: 'меню',
-    supportLinkTitle: 'Поддержка сайта.',
+    telegramBotLinkTitle: 'Бот в Telegram',
   },
   collectionEditor: {
     header: 'Добавление коллекции',
