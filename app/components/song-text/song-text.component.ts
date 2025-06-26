@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
-  Inject,
+  inject,
   Input,
   OnChanges,
-  Optional,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -41,15 +40,17 @@ export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
 
 /** Shows song content (text with chords) with no title and any other meta-info. */
 @Component({
-    // Keep in sync with SONG_TEXT_COMPONENT_NAME
-    // Note: not using a variable because typescript 4.0 + IDEA static analyzers fails to detect the element and report error.
-    selector: 'gt-song-text',
-    templateUrl: './song-text.component.html',
-    styleUrls: ['./song-text.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  // Keep in sync with SONG_TEXT_COMPONENT_NAME
+  // Note: not using a variable because typescript 4.0 + IDEA static analyzers fails to detect the element and report error.
+  selector: 'gt-song-text',
+  templateUrl: './song-text.component.html',
+  styleUrls: ['./song-text.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SongTextComponent extends AbstractAppComponent implements OnChanges {
+  private readonly uds = inject(UserService);
+
   @Input({ required: true }) song!: SongDetails;
   @Input() multiColumnMode = true;
   @Input() usePrintFontSize = false;
@@ -74,26 +75,23 @@ export class SongTextComponent extends AbstractAppComponent implements OnChanges
 
   @ViewChild('chordPopover', { static: true }) chordPopoverTemplate!: TemplateRef<void>;
 
-  constructor(
-    private readonly uds: UserService,
-    @Optional() @Inject(REQUEST) request: Request,
-  ) {
+  constructor() {
+    const request: Request | null = inject<Request>(REQUEST, { optional: true });
+
     super();
     if (!this.isBrowser) {
+      assertTruthy(request, 'Request must present in server mode');
       const userAgent = getUserAgentFromRequest(request);
       this.widthFromUserAgent = isSmallScreenDevice(userAgent) ? SSR_MOBILE_WIDTH : SSR_DESKTOP_WIDTH;
     } else {
       this.widthFromUserAgent = 0;
     }
 
-    this.uds
-      .userDeviceSettings$
-      .pipe(takeUntilDestroyed())
-      .subscribe(deviceSettings => {
-        this.deviceSettings = deviceSettings;
-        this.updateSongStyle();
-        this.cdr.markForCheck();
-      });
+    this.uds.userDeviceSettings$.pipe(takeUntilDestroyed()).subscribe(deviceSettings => {
+      this.deviceSettings = deviceSettings;
+      this.updateSongStyle();
+      this.cdr.markForCheck();
+    });
 
     //TODO: replace taps with subscriptions!
     //todo: handle song text update too

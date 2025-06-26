@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, DestroyRef, Directive, HostBinding, Inject, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, DestroyRef, Directive, HostBinding, inject, OnInit } from '@angular/core';
 
 import { PopoverRef } from './popover-ref';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -12,6 +12,9 @@ import { POPOVER_REF } from '@app/popover/popover.service';
     standalone: false
 })
 export class PopoverArrowDirective implements OnInit {
+  private readonly popoverRef = inject<PopoverRef>(POPOVER_REF);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   @HostBinding('style.width.px')
   @HostBinding('style.height.px')
   arrowSize: number | null = null;
@@ -32,11 +35,6 @@ export class PopoverArrowDirective implements OnInit {
   display: string | null = null;
 
   protected readonly destroyRef = inject(DestroyRef);
-
-  constructor(
-    @Inject(POPOVER_REF) private readonly popoverRef: PopoverRef,
-    private readonly cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.arrowSize = this.popoverRef.config.arrowSize;

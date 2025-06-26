@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { I18N } from '@app/app-i18n';
 
@@ -10,9 +10,9 @@ import { I18N } from '@app/app-i18n';
     standalone: false
 })
 export class ResourceNotFoundComponent {
+  readonly bss = inject(BrowserStateService);
+
   @Input({ required: true }) message!: string;
 
   readonly i18n = I18N.resourceNotFoundComponent;
-
-  constructor(readonly bss: BrowserStateService) {}
 }

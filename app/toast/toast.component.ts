@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { Toast, ToastRef } from '@app/toast/toast-model';
 import { animate, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
 
@@ -21,14 +21,14 @@ const toastAnimations: { readonly fadeToast: AnimationTriggerMetadata } = {
     standalone: false
 })
 export class ToastComponent implements OnDestroy {
+  readonly toast = inject(Toast);
+  private readonly ref = inject(ToastRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   animationState: ToastAnimationState = 'default';
   private readonly intervalId: number;
 
-  constructor(
-    readonly toast: Toast,
-    private readonly ref: ToastRef,
-    private readonly cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.intervalId = window.setTimeout(() => {
       this.animationState = 'closing';
       this.cdr.markForCheck();

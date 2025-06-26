@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 export interface HeadElementData {
@@ -18,11 +18,11 @@ export interface HeadElementData {
     standalone: false
 })
 export class HeadContributorComponent implements OnChanges, OnDestroy {
+  private readonly document = inject<Document>(DOCUMENT);
+
   @Input() data?: HeadElementData;
 
   private element?: Element;
-
-  constructor(@Inject(DOCUMENT) private readonly document: Document) {}
 
   ngOnChanges(): void {
     this.removeElement();

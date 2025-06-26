@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { ChordLayout, getChordLayout } from '@common/util/chords-layout-lib';
 import { ChordRenderingOptions, getToneWithH4SiFix, renderChord, TONES_COUNT } from '@common/util/chords-renderer';
 import { UserService } from '@app/services/user.service';
@@ -25,6 +25,9 @@ import { assertTruthy } from 'assertic';
     standalone: false
 })
 export class SongChordsComponent extends AbstractAppComponent {
+  private readonly uds = inject(UserService);
+  private readonly cds = inject(CatalogService);
+
   @Input({ required: true }) songId!: number;
   @Input() showControls = false;
 
@@ -43,10 +46,7 @@ export class SongChordsComponent extends AbstractAppComponent {
   originalSongKey?: ChordTone;
   transposeActionKey?: ChordTone;
 
-  constructor(
-    private readonly uds: UserService,
-    private readonly cds: CatalogService,
-  ) {
+  constructor() {
     super();
 
     this.changes$

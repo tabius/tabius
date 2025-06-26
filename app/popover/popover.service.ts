@@ -6,7 +6,7 @@ import {
   PositionStrategy,
 } from '@angular/cdk/overlay';
 import { ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
-import { Injectable, InjectionToken, Injector, TemplateRef } from '@angular/core';
+import { Injectable, InjectionToken, Injector, TemplateRef, inject } from '@angular/core';
 
 import { PopoverConfig } from './popover-config';
 import { PopoverRef } from './popover-ref';
@@ -28,7 +28,8 @@ export const POPOVER_REF = new InjectionToken<Request>('POPOVER_REF');
   providedIn: 'root',
 })
 export class PopoverService {
-  constructor(private readonly overlay: Overlay) {}
+  private readonly overlay = inject(Overlay);
+
 
   open<D = unknown>(
     componentOrTemplate: ComponentType<unknown> | TemplateRef<unknown>,

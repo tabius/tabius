@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { Collection, Song } from '@common/catalog-model';
 import { getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink } from '@common/util/misc-utils';
 import { HelpService } from '@app/services/help.service';
@@ -16,6 +16,9 @@ export type SongHeaderTitleFormat = 'song' | 'song-and-collection';
     standalone: false
 })
 export class SongHeaderComponent implements OnChanges {
+  private readonly helpService = inject(HelpService);
+  private readonly cds = inject(CatalogService);
+
   @Input({ required: true }) song!: Song;
 
   /** Currently shown collection. May be not the primary song collection. */
@@ -30,11 +33,6 @@ export class SongHeaderComponent implements OnChanges {
   readonly i18n = I18N.songHeaderComponent;
 
   title = '';
-
-  constructor(
-    private readonly helpService: HelpService,
-    private readonly cds: CatalogService,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['collection'] || changes['song']) {

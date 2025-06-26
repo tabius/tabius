@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, Input, OnChanges, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { getFirstYoutubeVideoIdFromLinks } from '@common/util/media-links-utils';
 import { isBotUserAgent } from '@common/util/misc-utils';
@@ -16,6 +16,8 @@ const defaultVideoHeight = 169;
     standalone: false
 })
 export class SongVideoComponent implements OnChanges {
+  private readonly bss = inject(BrowserStateService);
+
   @Input() title: string | null = null;
   @Input() mediaLinks?: string[];
 
@@ -30,10 +32,10 @@ export class SongVideoComponent implements OnChanges {
   readonly videoCssStyle: Record<string, string | number> = {};
   private readonly isBot: boolean;
 
-  constructor(
-    private readonly bss: BrowserStateService,
-    @Optional() @Inject(REQUEST) request: Request,
-  ) {
+  constructor() {
+    const bss = this.bss;
+    const request = inject<Request>(REQUEST, { optional: true });
+
     this.isBot = isBotUserAgent(this.bss.getUserAgentString(request));
     this.updateVisibleFlag();
 

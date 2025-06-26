@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { getTranslitLowerCase } from '@common/util/seo-translit';
 import { CollectionType } from '@common/catalog-model';
 import { CatalogService } from '@app/services/catalog.service';
@@ -18,6 +18,11 @@ import { HttpErrorResponse } from '@angular/common/http';
   standalone: false,
 })
 export class CollectionEditorComponent implements OnInit {
+  private readonly cds = inject(CatalogService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly bss = inject(BrowserStateService);
+
   @Input() scrollIntoViewAndFocus = true;
 
   /** Emitted when a panel wants to be closed. */
@@ -35,13 +40,6 @@ export class CollectionEditorComponent implements OnInit {
   collectionType: CollectionType = CollectionType.Person;
 
   readonly CollectionType = CollectionType;
-
-  constructor(
-    private readonly cds: CatalogService,
-    private readonly toastService: ToastService,
-    private readonly router: Router,
-    private readonly bss: BrowserStateService,
-  ) {}
 
   ngOnInit(): void {
     if (this.scrollIntoViewAndFocus && this.bss.isBrowser) {

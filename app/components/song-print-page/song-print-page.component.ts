@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { CatalogService } from '@app/services/catalog.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,15 +13,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     standalone: false
 })
 export class SongPrintPageComponent {
+  private readonly cds = inject(CatalogService);
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly bss = inject(BrowserStateService);
+
   songId = 0;
 
-  constructor(
-    private readonly cds: CatalogService,
-    cdr: ChangeDetectorRef,
-    private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly bss: BrowserStateService,
-  ) {
+  constructor() {
+    const cdr = inject(ChangeDetectorRef);
+
     const params = this.activatedRoute.snapshot.params;
     const collectionMount = params[PARAM_COLLECTION_MOUNT];
     const primaryCollectionMount = params[PARAM_PRIMARY_COLLECTION_MOUNT] || collectionMount;

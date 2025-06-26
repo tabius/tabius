@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 
@@ -8,12 +8,10 @@ import { I18N } from '@app/app-i18n';
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-  private lastToast?: ToastRef;
+  private overlay = inject(Overlay);
+  private parentInjector = inject(Injector);
 
-  constructor(
-    private overlay: Overlay,
-    private parentInjector: Injector,
-  ) {}
+  private lastToast?: ToastRef;
 
   warning(err: unknown, fallback = I18N.common.unexpectedError): ToastRef {
     const message = typeof err === 'string' ? err : fallback;

@@ -1,5 +1,5 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { tap } from 'rxjs/operators';
@@ -13,11 +13,11 @@ import { tap } from 'rxjs/operators';
  */
 @Injectable()
 export class CachingAndMultiplexingInterceptor implements HttpInterceptor {
+  private readonly bss = inject(BrowserStateService);
+
   private readonly inFlightResponseByRequestGetUrl = new Map<string, Observable<HttpEvent<any>>>();
 
   private readonly serverSideResponseCache = new Map<string, any>();
-
-  constructor(private readonly bss: BrowserStateService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const requestGetUrl = req.method === 'GET' ? req.urlWithParams : undefined;

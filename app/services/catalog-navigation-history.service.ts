@@ -1,13 +1,13 @@
-import { ElementRef, Injectable, TemplateRef } from '@angular/core';
+import { ElementRef, Injectable, TemplateRef, inject } from '@angular/core';
 import { PopoverRef } from '@app/popover/popover-ref';
 import { PopoverService } from '@app/popover/popover.service';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogNavigationHistoryService {
+  private readonly popover = inject(PopoverService);
+
   navigationHistoryTemplate?: TemplateRef<void>;
   private popoverRef?: PopoverRef;
-
-  constructor(private readonly popover: PopoverService) {}
 
   showCatalogNavigationHistory(showHistoryButtonRef?: ElementRef): void {
     if (!this.navigationHistoryTemplate || this.popoverRef) {

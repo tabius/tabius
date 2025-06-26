@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output, inject } from '@angular/core';
 import { TELEGRAM_CHANNEL_URL } from '@app/app-constants';
 import { I18N } from '@app/app-i18n';
 import { BrowserStateService } from '@app/services/browser-state.service';
@@ -13,17 +13,15 @@ import { scrollToView } from '@app/utils/misc-utils';
     standalone: false
 })
 export class ModeratorPromptComponent implements AfterViewInit {
+  private readonly el = inject(ElementRef);
+  private readonly bss = inject(BrowserStateService);
+
   readonly telegramLink = TELEGRAM_CHANNEL_URL;
   readonly studioLink = LINK_STUDIO;
   readonly i18n = I18N.moderatorPrompt;
 
   /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
-
-  constructor(
-    private readonly el: ElementRef,
-    private readonly bss: BrowserStateService,
-  ) {}
 
   close(): void {
     this.closeRequest.next({});

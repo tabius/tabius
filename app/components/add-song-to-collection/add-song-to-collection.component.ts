@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { UserService } from '@app/services/user.service';
 import { map, tap } from 'rxjs/operators';
@@ -24,6 +24,10 @@ interface ComponentCollectionData extends Collection {
     standalone: false
 })
 export class AddSongToCollectionComponent extends AbstractAppComponent {
+  private readonly userService = inject(UserService);
+  private readonly catalogService = inject(CatalogService);
+  private readonly toastService = inject(ToastService);
+
   @Input({ required: true }) songId!: number;
 
   user?: User;
@@ -36,11 +40,7 @@ export class AddSongToCollectionComponent extends AbstractAppComponent {
   readonly isModerator = isModerator;
   readonly i18n = I18N.addSongToCollection;
 
-  constructor(
-    private readonly userService: UserService,
-    private readonly catalogService: CatalogService,
-    private readonly toastService: ToastService,
-  ) {
+  constructor() {
     super();
     this.changes$
       .pipe(

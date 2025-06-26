@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { User } from '@common/user-model';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -39,6 +39,15 @@ enum NavSection {
   standalone: false,
 })
 export class NavbarComponent {
+  readonly authService = inject(ClientAuthService);
+  private readonly userService = inject(UserService);
+  private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
+  private readonly navHelper = inject(RoutingNavigationHelper);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly bss = inject(BrowserStateService);
+  private readonly navigationHistoryService = inject(CatalogNavigationHistoryService);
+
   user?: User;
 
   readonly sceneLink = LINK_SCENE;
@@ -58,17 +67,10 @@ export class NavbarComponent {
 
   @ViewChild('showHistoryButton', { static: true, read: ElementRef }) private showHistoryButton?: ElementRef;
 
-  constructor(
-    readonly authService: ClientAuthService,
-    private readonly userService: UserService,
-    private readonly router: Router,
-    private readonly toast: ToastService,
-    private readonly navHelper: RoutingNavigationHelper,
-    private readonly cdr: ChangeDetectorRef,
-    private readonly bss: BrowserStateService,
-    private readonly navigationHistoryService: CatalogNavigationHistoryService,
-    contextMenuActionService: ContextMenuActionService,
-  ) {
+  constructor() {
+    const bss = this.bss;
+    const contextMenuActionService = inject(ContextMenuActionService);
+
     this.noSleepMode$ = bss.getNoSleepMode$();
     contextMenuActionService.navbarAction$.pipe(takeUntilDestroyed()).subscribe(action => {
       this.contextMenuAction = action;

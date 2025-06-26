@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  HostListener,
-  Inject,
-  Optional,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, TemplateRef, ViewChild, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { Observable } from 'rxjs';
 import { HelpService } from '@app/services/help.service';
@@ -24,18 +15,20 @@ import type { Request } from 'express';
     standalone: false
 })
 export class AppComponent implements AfterViewInit {
+  private readonly bss = inject(BrowserStateService);
+  private readonly shortcutsService = inject(ShortcutsService);
+  private readonly helpService = inject(HelpService);
+  private readonly navigationHistoryService = inject(CatalogNavigationHistoryService);
+
   @ViewChild('keyboardShortcuts', { static: true }) keyboardShortcuts!: TemplateRef<void>;
   @ViewChild('navigationHistory', { static: true }) navigationHistory!: TemplateRef<void>;
 
   readonly printMode$: Observable<boolean>;
 
-  constructor(
-    private readonly bss: BrowserStateService,
-    private readonly shortcutsService: ShortcutsService,
-    private readonly helpService: HelpService,
-    private readonly navigationHistoryService: CatalogNavigationHistoryService,
-    @Optional() @Inject(REQUEST) request: Request,
-  ) {
+  constructor() {
+    const bss = this.bss;
+    const request = inject<Request>(REQUEST, { optional: true });
+
     bss.initWideScreenModeState(request);
     this.printMode$ = bss.getPrintMode();
   }

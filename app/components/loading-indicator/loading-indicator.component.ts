@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { I18N } from '@app/app-i18n';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,10 +11,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     standalone: false
 })
 export class LoadingIndicatorComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   readonly i18n = I18N.loadingIndicatorWarning;
   isReloadWarningVisible = false;
 
-  constructor(private readonly cdr: ChangeDetectorRef) {
+  constructor() {
     timer(15_000)
       .pipe(takeUntilDestroyed())
       .subscribe(() => {

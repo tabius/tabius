@@ -208,7 +208,7 @@ export class ObservableStoreImpl implements ObservableStore {
           if (isSameSetOp(value, checkUpdateFn, prevSetOp.value, prevSetOp.checkUpdateFn)) {
             return;
           }
-        } catch (e) {
+        } catch {
           // ignore prev-op result.
         }
       }

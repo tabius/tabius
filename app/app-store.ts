@@ -1,4 +1,4 @@
-import { Inject, Injectable, makeStateKey, PLATFORM_ID, TransferState } from '@angular/core';
+import { Injectable, makeStateKey, PLATFORM_ID, TransferState, inject } from '@angular/core';
 import { APP_STORE_NAME, CATALOG_STORE_NAME, USER_STORE_NAME } from '@app/app-constants';
 import { isPlatformBrowser } from '@angular/common';
 import { AsyncStore, IndexedDbAsyncStore, InMemoryAsyncStore, LocalStorageAsyncStore, TransferStateAdapter } from '@app/store';
@@ -78,7 +78,10 @@ class TabiusObservableStoreImpl extends ObservableStoreImpl {
 
 @Injectable()
 export class UserBrowserStore extends TabiusObservableStoreImpl {
-  constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
+  constructor() {
+    const platformId = inject(PLATFORM_ID);
+    const serverState = inject(TransferState);
+
     super(
       newUserOrCatalogAsyncStoreFactory(USER_STORE_NAME, isPlatformBrowser(platformId)),
       new AngularTransferStateAdapter(serverState, USER_STORE_NAME, isPlatformBrowser(platformId)),
@@ -91,7 +94,10 @@ export class UserBrowserStore extends TabiusObservableStoreImpl {
 /** Store with collections & songs. */
 @Injectable()
 export class CatalogBrowserStore extends TabiusObservableStoreImpl {
-  constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
+  constructor() {
+    const platformId = inject(PLATFORM_ID);
+    const serverState = inject(TransferState);
+
     super(
       newUserOrCatalogAsyncStoreFactory(CATALOG_STORE_NAME, isPlatformBrowser(platformId)),
       new AngularTransferStateAdapter(serverState, CATALOG_STORE_NAME, isPlatformBrowser(platformId)),
@@ -104,7 +110,10 @@ export class CatalogBrowserStore extends TabiusObservableStoreImpl {
 /** Technical application-specific data that must persist in the current browser between sessions. */
 @Injectable()
 export class AppBrowserStore extends TabiusObservableStoreImpl {
-  constructor(@Inject(PLATFORM_ID) platformId: string, serverState: TransferState) {
+  constructor() {
+    const platformId = inject(PLATFORM_ID);
+    const serverState = inject(TransferState);
+
     super(
       () => (isPlatformBrowser(platformId) ? new LocalStorageAsyncStore(APP_STORE_NAME) : new InMemoryAsyncStore()),
       new AngularTransferStateAdapter(serverState, APP_STORE_NAME, isPlatformBrowser(platformId)),

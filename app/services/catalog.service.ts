@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, from, Observable, of } from 'rxjs';
 import { Collection, CollectionDetails, Song, SongDetails } from '@common/catalog-model';
@@ -49,10 +49,9 @@ const USER_COLLECTIONS_KEY = 'u-collections-';
   providedIn: 'root',
 })
 export class CatalogService {
-  constructor(
-    private readonly httpClient: HttpClient,
-    @Inject(TABIUS_CATALOG_BROWSER_STORE_TOKEN) private readonly store: ObservableStore,
-  ) {}
+  private readonly httpClient = inject(HttpClient);
+  private readonly store = inject<ObservableStore>(TABIUS_CATALOG_BROWSER_STORE_TOKEN);
+
 
   getListedCollections(): Observable<Collection[]> {
     return (

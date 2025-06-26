@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { BrowserStateService } from '@app/services/browser-state.service';
@@ -11,16 +11,18 @@ import { I18N } from '@app/app-i18n';
   providedIn: 'root',
 })
 export class RoutingNavigationHelper {
+  private readonly bss = inject(BrowserStateService);
+  private readonly router = inject(Router);
+  private readonly helpService = inject(HelpService);
+  readonly title = inject(Title);
+  readonly meta = inject(Meta);
+
   private readonly pageOffsetYPerRoute = new Map<string, number>();
   private readonly i18n = I18N.common;
 
-  constructor(
-    private readonly bss: BrowserStateService,
-    private readonly router: Router,
-    private readonly helpService: HelpService,
-    readonly title: Title,
-    readonly meta: Meta,
-  ) {
+  constructor() {
+    const bss = this.bss;
+
     if (bss.isBrowser) {
       this.router.events.pipe(filter(event => event instanceof NavigationStart)).subscribe(event => {
         if (event instanceof NavigationStart) {

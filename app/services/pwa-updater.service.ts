@@ -1,4 +1,4 @@
-import { ApplicationRef, Inject, Injectable } from '@angular/core';
+import { ApplicationRef, Injectable, inject } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { first } from 'rxjs/operators';
 import { APP_BROWSER_STORE_TOKEN } from '@app/app-constants';
@@ -11,7 +11,11 @@ const LAST_FORCED_UPDATE_TIME_KEY = 'last-forced-update-time';
   providedIn: 'root',
 })
 export class PwaUpdaterService {
-  constructor(appRef: ApplicationRef, updates: SwUpdate, @Inject(APP_BROWSER_STORE_TOKEN) appStore: ObservableStore) {
+  constructor() {
+    const appRef = inject(ApplicationRef);
+    const updates = inject(SwUpdate);
+    const appStore = inject<ObservableStore>(APP_BROWSER_STORE_TOKEN);
+
     if (!updates.isEnabled) {
       return;
     }

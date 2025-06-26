@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { TunerToneType } from '@common/user-model';
 import { I18N } from '@app/app-i18n';
@@ -15,6 +15,8 @@ const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
     standalone: false
 })
 export class TunerPageComponent extends AbstractAppComponent implements OnDestroy {
+  private readonly uds = inject(UserService);
+
   private destroyed = false;
 
   readonly i18n = I18N.tunerPage;
@@ -33,7 +35,7 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
   private forceStop = false;
   private focusedString = '';
 
-  constructor(private readonly uds: UserService) {
+  constructor() {
     super();
     this.uds
       .userDeviceSettings$

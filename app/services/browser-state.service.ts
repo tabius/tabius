@@ -1,4 +1,4 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ToastService } from '@app/toast/toast.service';
@@ -14,6 +14,8 @@ import { MIN_DESKTOP_WIDTH } from '@common/common-constants';
   providedIn: 'root',
 })
 export class BrowserStateService {
+  readonly platformId = inject<Object>(PLATFORM_ID);
+
   readonly isBrowser: boolean;
   readonly isServer: boolean;
 
@@ -43,12 +45,11 @@ export class BrowserStateService {
 
   private noSleep?: NoSleep;
 
-  constructor(
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    @Inject(PLATFORM_ID) readonly platformId: Object,
-    router: Router,
-    toaster: ToastService,
-  ) {
+  constructor() {
+    const platformId = this.platformId;
+    const router = inject(Router);
+    const toaster = inject(ToastService);
+
     this.isBrowser = isPlatformBrowser(platformId);
     this.isServer = !this.isBrowser;
     this.noSleepMode$.pipe(skip(1)).subscribe(mode => {

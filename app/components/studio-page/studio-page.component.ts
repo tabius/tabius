@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { User } from '@common/user-model';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -21,6 +21,10 @@ import { assertTruthy } from 'assertic';
     standalone: false
 })
 export class StudioPageComponent extends ComponentWithLoadingIndicator {
+  private readonly uds = inject(UserService);
+  private readonly cds = inject(CatalogService);
+  private readonly router = inject(Router);
+
   readonly i18n = I18N.studioPage;
 
   user?: User;
@@ -33,11 +37,7 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
 
   private primaryUserCollectionMount: string = '';
 
-  constructor(
-    private readonly uds: UserService,
-    private readonly cds: CatalogService,
-    private readonly router: Router,
-  ) {
+  constructor() {
     super();
     const user$ = this.uds.getUser$();
     const allUserCollectionIds$ = user$.pipe(switchMap(user => this.cds.getUserCollectionIds(user && user.id)));

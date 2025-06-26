@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { Collection, CollectionType, Song, SongDetails } from '@common/catalog-model';
 import { CatalogService } from '@app/services/catalog.service';
@@ -17,6 +17,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     standalone: false
 })
 export class SongComponent extends ComponentWithLoadingIndicator {
+  private readonly catalogService = inject(CatalogService);
+  private readonly userService = inject(UserService);
+
   @Input({ required: true }) songId!: number;
   @Input() showCollectionLink: boolean | 'if-not-primary' = false;
   @Input() activeCollectionId?: number;
@@ -34,10 +37,7 @@ export class SongComponent extends ComponentWithLoadingIndicator {
   schemaItemArtistType?: string;
   schemaItemArtistName?: string;
 
-  constructor(
-    private readonly catalogService: CatalogService,
-    private readonly userService: UserService,
-  ) {
+  constructor() {
     super();
 
     this.changes$

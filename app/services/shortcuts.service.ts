@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { switchMap, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
@@ -12,18 +12,16 @@ const DOUBLE_PRESS_TIMEOUT_MILLIS = 500;
 
 @Injectable({ providedIn: 'root' })
 export class ShortcutsService {
+  private readonly cds = inject(CatalogService);
+  private readonly router = inject(Router);
+  private readonly helpService = inject(HelpService);
+  private readonly catalogNavigationHistoryService = inject(CatalogNavigationHistoryService);
+
   private lastEvent: CachedKeyboardEvent = { time: 0, code: '' };
 
   isDoubleShiftLeftPressEvent = false;
   isDoubleShiftRightPressEvent = false;
   isDoubleControlRightPressEvent = false;
-
-  constructor(
-    private readonly cds: CatalogService,
-    private readonly router: Router,
-    private readonly helpService: HelpService,
-    private readonly catalogNavigationHistoryService: CatalogNavigationHistoryService,
-  ) {}
 
   handleKeyboardEvent(event: KeyboardEvent): void {
     if (isInputEvent(event)) {

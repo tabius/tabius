@@ -1,4 +1,4 @@
-import { Injectable, TemplateRef } from '@angular/core';
+import { Injectable, TemplateRef, inject } from '@angular/core';
 import { PopoverRef } from '@app/popover/popover-ref';
 import { PopoverService } from '@app/popover/popover.service';
 
@@ -6,12 +6,12 @@ export type HelpPageType = 'song' | 'collection';
 
 @Injectable({ providedIn: 'root' })
 export class HelpService {
+  private readonly popover = inject(PopoverService);
+
   keyboardShortcutsTemplate?: TemplateRef<void>;
 
   private activeHelpPage?: HelpPageType;
   private helpPopoverRef?: PopoverRef;
-
-  constructor(private readonly popover: PopoverService) {}
 
   showKeyboardShortcuts(): void {
     if (!this.keyboardShortcutsTemplate || this.helpPopoverRef) {

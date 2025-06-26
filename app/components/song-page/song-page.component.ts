@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Collection, Song, SongDetails } from '@common/catalog-model';
@@ -47,6 +47,16 @@ import { getDefaultUserSongFontSize, isInputEvent, scrollToView, scrollToViewByE
   standalone: false,
 })
 export class SongPageComponent extends ComponentWithLoadingIndicator implements OnDestroy {
+  private readonly catalogService = inject(CatalogService);
+  private readonly uds = inject(UserService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly navHelper = inject(RoutingNavigationHelper);
+  private readonly helpService = inject(HelpService);
+  private readonly shortcutsService = inject(ShortcutsService);
+  private readonly elementRef = inject(ElementRef);
+  private readonly contextMenuActionService = inject(ContextMenuActionService);
+
   readonly i18n = I18N.songPage;
 
   song?: Song;
@@ -74,17 +84,7 @@ export class SongPageComponent extends ComponentWithLoadingIndicator implements 
 
   affiliateSongLink?: string;
 
-  constructor(
-    private readonly catalogService: CatalogService,
-    private readonly uds: UserService,
-    private readonly router: Router,
-    private readonly route: ActivatedRoute,
-    private readonly navHelper: RoutingNavigationHelper,
-    private readonly helpService: HelpService,
-    private readonly shortcutsService: ShortcutsService,
-    private readonly elementRef: ElementRef,
-    private readonly contextMenuActionService: ContextMenuActionService,
-  ) {
+  constructor() {
     super();
     this.helpService.setActiveHelpPage('song');
     const params = this.route.snapshot.params;

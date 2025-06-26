@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { Collection } from '@common/catalog-model';
 import { CatalogService } from '@app/services/catalog.service';
 import { FormControl } from '@angular/forms';
@@ -39,6 +39,10 @@ let letterBlockFilters: string[] = [];
   standalone: false,
 })
 export class CatalogPageComponent extends ComponentWithLoadingIndicator {
+  private readonly catalogService = inject(CatalogService);
+  private readonly uds = inject(UserService);
+  private readonly navHelper = inject(RoutingNavigationHelper);
+
   readonly i18n = I18N.catalogPage;
 
   @ViewChild('searchField', { static: false, read: ElementRef }) private searchField!: ElementRef;
@@ -54,11 +58,7 @@ export class CatalogPageComponent extends ComponentWithLoadingIndicator {
 
   readonly isVirtualKeyboardShownOnInput = isTouchDevice();
 
-  constructor(
-    private readonly catalogService: CatalogService,
-    private readonly uds: UserService,
-    private readonly navHelper: RoutingNavigationHelper,
-  ) {
+  constructor() {
     super();
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);

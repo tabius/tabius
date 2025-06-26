@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { environment } from '@app/environments/environment';
 import { Router } from '@angular/router';
 import { I18N } from '@app/app-i18n';
@@ -23,6 +23,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     standalone: false
 })
 export class FooterComponent implements OnDestroy {
+  readonly router = inject(Router);
+  private readonly location = inject(LocationStrategy);
+  private readonly bss = inject(BrowserStateService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly contextMenuActionService = inject(ContextMenuActionService);
+  private readonly popoverService = inject(PopoverService);
+
   readonly month = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(4, 6);
   readonly day = new Date(environment.buildInfo.buildDate).toISOString().split('T')[0].replace(/-/g, '').substring(6, 8);
 
@@ -50,14 +57,7 @@ export class FooterComponent implements OnDestroy {
 
   private actionMenuPopoverRef?: PopoverRef;
 
-  constructor(
-    readonly router: Router,
-    private readonly location: LocationStrategy,
-    private readonly bss: BrowserStateService,
-    private readonly cdr: ChangeDetectorRef,
-    private readonly contextMenuActionService: ContextMenuActionService,
-    private readonly popoverService: PopoverService,
-  ) {
+  constructor() {
     this.contextMenuActionService.footerActions$.pipe(takeUntilDestroyed()).subscribe(actions => {
       this.actions = actions;
       this.menuStack = [];

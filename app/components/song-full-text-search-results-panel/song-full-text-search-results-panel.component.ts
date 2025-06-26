@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   FullTextSongSearchRequest,
@@ -22,6 +22,9 @@ import { I18N } from '@app/app-i18n';
     standalone: false
 })
 export class SongFullTextSearchResultsPanelComponent implements OnChanges {
+  private readonly httpClient = inject(HttpClient);
+  private readonly cd = inject(ChangeDetectorRef);
+
   @Input({ required: true }) searchText!: string;
 
   readonly i18n = I18N.fullTextSearchResultsComponent;
@@ -31,11 +34,6 @@ export class SongFullTextSearchResultsPanelComponent implements OnChanges {
   titleResults: FullTextSongSearchResult[] = [];
   contentResults: FullTextSongSearchResult[] = [];
   loading = false;
-
-  constructor(
-    private readonly httpClient: HttpClient,
-    private readonly cd: ChangeDetectorRef,
-  ) {}
 
   ngOnChanges(): void {
     this.clearResults();

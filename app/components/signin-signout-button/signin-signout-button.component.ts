@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { I18N } from '@app/app-i18n';
 import { ClientAuthService } from '@app/services/client-auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,14 +11,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     standalone: false
 })
 export class SigninSignoutButtonComponent {
+  private readonly cd = inject(ChangeDetectorRef);
+  authService = inject(ClientAuthService);
+
   username?: string;
 
   readonly i18n = I18N.signinSignoutButton;
 
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-    public authService: ClientAuthService,
-  ) {
+  constructor() {
     this.authService.user$.pipe(takeUntilDestroyed()).subscribe(user => {
       this.username = user?.name || user?.email;
       this.cd.markForCheck();

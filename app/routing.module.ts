@@ -9,7 +9,7 @@ import {
   RouterModule,
   Routes,
 } from '@angular/router';
-import { Inject, Injectable, NgModule } from '@angular/core';
+import { Injectable, NgModule, inject } from '@angular/core';
 import { TunerPageComponent } from '@app/components/tuner-page/tuner-page.component';
 import { CatalogPageComponent } from '@app/components/catalog-page/catalog-page.component';
 import { CollectionPageComponent } from '@app/components/collection-page/collection-page.component';
@@ -36,10 +36,9 @@ import { ScenePageComponent } from '@app/components/scene-page/scene-page.compon
 //TODO: move to a separate file. Use for the most routes?
 @Injectable({ providedIn: 'root' })
 export class BrowserStoreStateResolver implements Resolve<any> {
-  constructor(
-    @Inject(TABIUS_CATALOG_BROWSER_STORE_TOKEN) private readonly catalogStore: ObservableStore,
-    @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly userStore: ObservableStore,
-  ) {}
+  private readonly catalogStore = inject<ObservableStore>(TABIUS_CATALOG_BROWSER_STORE_TOKEN);
+  private readonly userStore = inject<ObservableStore>(TABIUS_USER_BROWSER_STORE_TOKEN);
+
 
   resolve(): Promise<any> {
     return Promise.all([this.catalogStore.initialized$$, this.userStore.initialized$$]);

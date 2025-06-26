@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, TemplateRef } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, TemplateRef, inject } from '@angular/core';
 import { ChordLayout, getChordLayout } from '@common/util/chords-layout-lib';
 import { PopoverRef } from '@app/popover/popover-ref';
 import { PopoverService } from '@app/popover/popover.service';
@@ -14,6 +14,9 @@ export type ChordClickInfoProvider = (event: MouseEvent, chord?: Chord) => Chord
     standalone: false
 })
 export class ShowChordPopoverOnClickDirective implements OnDestroy {
+  private readonly el = inject(ElementRef);
+  private readonly popoverService = inject(PopoverService);
+
   @Input({ required: true }) gtChordPopoverOnClick_getChordInfo!: ChordClickInfoProvider;
 
   @Input({ required: true }) gtChordPopoverOnClick_popoverTemplate!: TemplateRef<void>;
@@ -25,11 +28,6 @@ export class ShowChordPopoverOnClickDirective implements OnDestroy {
   private chordPopoverRef?: PopoverRef;
   private lastClickedChordElement?: Element;
   private popoverChordLayout?: ChordLayout;
-
-  constructor(
-    private readonly el: ElementRef,
-    private readonly popoverService: PopoverService,
-  ) {}
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent): void {

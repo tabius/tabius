@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { Collection, CollectionDetails, Song } from '@common/catalog-model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -55,6 +55,14 @@ export class CollectionViewModel {
   standalone: false,
 })
 export class CollectionPageComponent extends ComponentWithLoadingIndicator {
+  private readonly cds = inject(CatalogService);
+  private readonly uds = inject(UserService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly navHelper = inject(RoutingNavigationHelper);
+  private readonly helpService = inject(HelpService);
+  private readonly ss = inject(ShortcutsService);
+
   readonly getCollectionPageLink = getCollectionPageLink;
   readonly i18n = I18N.collectionPage;
   readonly isAffiliateBlockVisible = HAS_AFFILIATE_SUPPORT;
@@ -70,15 +78,7 @@ export class CollectionPageComponent extends ComponentWithLoadingIndicator {
 
   hasImageLoadingError = false;
 
-  constructor(
-    private readonly cds: CatalogService,
-    private readonly uds: UserService,
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly navHelper: RoutingNavigationHelper,
-    private readonly helpService: HelpService,
-    private readonly ss: ShortcutsService,
-  ) {
+  constructor() {
     super();
     this.helpService.setActiveHelpPage('collection');
 

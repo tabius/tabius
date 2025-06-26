@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { combineLatest } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -24,13 +34,16 @@ export type SongEditResult = {
 
 /** Embeddable song editor component. */
 @Component({
-    selector: 'gt-song-editor',
-    templateUrl: './song-editor.component.html',
-    styleUrls: ['./song-editor.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-song-editor',
+  templateUrl: './song-editor.component.html',
+  styleUrls: ['./song-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SongEditorComponent extends ComponentWithLoadingIndicator {
+  private readonly cds = inject(CatalogService);
+  private readonly toastService = inject(ToastService);
+
   /** ID of the edited song. Invalid ID (<=0) is used to activate Create mode. */
   @Input({ required: true }) songId!: number;
 
@@ -66,10 +79,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
   @ViewChild('textArea', { static: false, read: ElementRef }) private contentRef!: ElementRef;
   @ViewChild('firstFormElement', { static: false, read: ElementRef }) private titleElementRef!: ElementRef;
 
-  constructor(
-    private readonly cds: CatalogService,
-    private readonly toastService: ToastService,
-  ) {
+  constructor() {
     super();
     this.changes$
       .pipe(
@@ -299,6 +309,7 @@ export class SongEditorComponent extends ComponentWithLoadingIndicator {
     try {
       await this.cds.deleteSong(this.songId, this.activeCollectionId);
     } catch (err) {
+      console.error('Failed to delete song', err);
       this.toastService.warning(this.i18n.toasts.failedToDeleteSong);
       return;
     }

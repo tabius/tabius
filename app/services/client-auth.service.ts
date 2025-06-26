@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { AuthService, User } from '@auth0/auth0-angular';
 import { firstValueFrom, Observable, of } from 'rxjs';
@@ -16,7 +16,11 @@ interface AppStateOnLogin {
 export class ClientAuthService {
   private readonly auth0Service?: AuthService<AppStateOnLogin>;
 
-  constructor(injector: Injector, browserStateService: BrowserStateService, router: Router) {
+  constructor() {
+    const injector = inject(Injector);
+    const browserStateService = inject(BrowserStateService);
+    const router = inject(Router);
+
     if (browserStateService.isBrowser) {
       this.auth0Service = injector.get(AuthService);
       this.auth0Service.appState$.subscribe(state => {

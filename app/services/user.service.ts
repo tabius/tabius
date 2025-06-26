@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, from, Observable, of } from 'rxjs';
 import {
@@ -50,15 +50,16 @@ export const UPDATE_SIGN_IN_STATE_URL = '/api/user/login';
   providedIn: 'root',
 })
 export class UserService {
+  private readonly httpClient = inject(HttpClient);
+  private readonly store = inject<ObservableStore>(TABIUS_USER_BROWSER_STORE_TOKEN);
+
   private readonly userDeviceSettingsTrieStore = new TrieStore<UserDeviceSettings>(newDefaultUserDeviceSettings());
   private readonly userDeviceSettingsPersistentStore =
     typeof window === 'undefined' ? undefined : new LocalStorageAsyncStore(DEVICE_SETTINGS_KEY);
 
-  constructor(
-    private readonly httpClient: HttpClient,
-    authService: ClientAuthService,
-    @Inject(TABIUS_USER_BROWSER_STORE_TOKEN) private readonly store: ObservableStore,
-  ) {
+  constructor() {
+    const authService = inject(ClientAuthService);
+
     authService.user$.subscribe(async user => {
       if (user) {
         try {

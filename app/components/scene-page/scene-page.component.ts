@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { I18N } from '@app/app-i18n';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
 import { CatalogService } from '@app/services/catalog.service';
@@ -22,19 +22,22 @@ import { UserSongSettings } from '@common/user-model';
   standalone: false,
 })
 export class ScenePageComponent extends ComponentWithLoadingIndicator {
+  private readonly catalogService = inject(CatalogService);
+  private readonly helpService = inject(HelpService);
+  private readonly userDataService = inject(UserService);
+  private readonly contextMenuActionService = inject(ContextMenuActionService);
+
   readonly i18n = I18N.scenePage;
   songId = -1;
 
   private readonly songSettings$: Observable<UserSongSettings>;
   transposeMenuActionText$ = new BehaviorSubject<string | undefined>(undefined);
 
-  constructor(
-    private readonly catalogService: CatalogService,
-    private readonly helpService: HelpService,
-    private readonly userDataService: UserService,
-    private readonly contextMenuActionService: ContextMenuActionService,
-  ) {
+  constructor() {
     super();
+    const catalogService = this.catalogService;
+    const userDataService = this.userDataService;
+
     const songId$ = this.catalogService.getSceneSongId().pipe();
     songId$.pipe(takeUntilDestroyed()).subscribe(songId => {
       this.songId = songId;

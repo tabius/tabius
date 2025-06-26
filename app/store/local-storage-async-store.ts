@@ -51,7 +51,7 @@ export class LocalStorageAsyncStore implements AsyncStore {
     try {
       window.localStorage.setItem(storeKey, jsonValue);
     } catch (e) {
-      console.warn(`Local storage is full, failed to set key: ${storeKey}, length: ${jsonValue.length}`);
+      console.error(`Local storage is full, failed to set key: ${storeKey}, length: ${jsonValue.length}`, e);
       // resolve anyway.
     }
   }

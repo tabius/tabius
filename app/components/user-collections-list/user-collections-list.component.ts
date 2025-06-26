@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { ToastService } from '@app/toast/toast.service';
 import { CreateUserCollectionRequest } from '@common/api-model';
@@ -25,6 +25,9 @@ interface CollectionInfo {
     standalone: false
 })
 export class UserCollectionsListComponent extends AbstractAppComponent {
+  private readonly cds = inject(CatalogService);
+  private readonly toastService = inject(ToastService);
+
   readonly i18n = I18N.userCollectionsListComponent;
 
   @Input({ required: true }) userId!: string;
@@ -33,10 +36,7 @@ export class UserCollectionsListComponent extends AbstractAppComponent {
 
   newCollectionName = '';
 
-  constructor(
-    private readonly cds: CatalogService,
-    private readonly toastService: ToastService,
-  ) {
+  constructor() {
     super();
     this.changes$
       .pipe(

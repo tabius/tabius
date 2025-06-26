@@ -1,14 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  Inject,
-  Input,
-  OnChanges,
-  PLATFORM_ID,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, PLATFORM_ID, ViewChild, inject } from '@angular/core';
 import { ChordImagePainter } from '@app/utils/chord-image-painter';
 import { ChordLayout } from '@common/util/chords-layout-lib';
 import { isPlatformBrowser } from '@angular/common';
@@ -38,7 +28,9 @@ export class ChordImageComponent implements AfterViewInit, OnChanges {
 
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
 
-  constructor(@Inject(PLATFORM_ID) platformId: string) {
+  constructor() {
+    const platformId = inject(PLATFORM_ID);
+
     this.isBrowser = isPlatformBrowser(platformId);
   }
 

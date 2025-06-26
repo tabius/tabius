@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { UserService } from '@app/services/user.service';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
@@ -17,6 +17,10 @@ import { assertTruthy } from 'assertic';
     standalone: false
 })
 export class MoveSongToCollectionComponent implements OnChanges {
+  private readonly cds = inject(CatalogService);
+  private readonly uds = inject(UserService);
+  private readonly toastService = inject(ToastService);
+
   @Input() mode: 'add' | 'move' = 'move';
 
   @Input({ required: true }) songId!: number;
@@ -34,11 +38,7 @@ export class MoveSongToCollectionComponent implements OnChanges {
   private readonly currentCollectionId$ = new BehaviorSubject<number | undefined>(undefined);
   readonly trackById = trackById;
 
-  constructor(
-    private readonly cds: CatalogService,
-    private readonly uds: UserService,
-    private readonly toastService: ToastService,
-  ) {
+  constructor() {
     this.collections$ = combineLatest([this.uds.getUser$(), this.currentCollectionId$]).pipe(
       map(([user]) => user),
       filter(isDefined),

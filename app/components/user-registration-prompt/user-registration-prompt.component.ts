@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  Output,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { I18N } from '@app/app-i18n';
 import { ClientAuthService } from '@app/services/client-auth.service';
@@ -21,18 +12,16 @@ import { scrollToView } from '@app/utils/misc-utils';
     standalone: false
 })
 export class UserRegistrationPromptComponent implements AfterViewInit {
+  private readonly el = inject(ElementRef);
+  private readonly bss = inject(BrowserStateService);
+  authService = inject(ClientAuthService);
+
   readonly i18n = I18N.userRegistrationPromptComponent;
 
   @Input() showCloseButton = true;
 
   /** Emitted when a panel wants to be closed. */
   @Output() closeRequest = new EventEmitter();
-
-  constructor(
-    private readonly el: ElementRef,
-    private readonly bss: BrowserStateService,
-    public authService: ClientAuthService,
-  ) {}
 
   close(): void {
     this.closeRequest.next({});

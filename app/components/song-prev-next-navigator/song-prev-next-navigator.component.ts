@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Input, OnDestroy, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { combineLatest, Observable, of } from 'rxjs';
 import { combineLatest0, getCollectionPageLink, getSongPageLink, isDefined, sortSongsAlphabetically } from '@common/util/misc-utils';
@@ -23,6 +23,11 @@ const Hammer = isBrowser ? require('hammerjs') : ({} as any);
     standalone: false
 })
 export class SongPrevNextNavigatorComponent extends AbstractAppComponent implements AfterViewInit, OnDestroy {
+  private readonly catalogDataService = inject(CatalogService);
+  readonly bss = inject(BrowserStateService);
+  private readonly router = inject(Router);
+  private readonly shortcutsService = inject(ShortcutsService);
+
   readonly i18n = I18N.songPrevNextNavigator;
 
   /**
@@ -43,12 +48,7 @@ export class SongPrevNextNavigatorComponent extends AbstractAppComponent impleme
 
   private hammer?: HammerManager;
 
-  constructor(
-    private readonly catalogDataService: CatalogService,
-    readonly bss: BrowserStateService,
-    private readonly router: Router,
-    private readonly shortcutsService: ShortcutsService,
-  ) {
+  constructor() {
     super();
     this.changes$
       .pipe(

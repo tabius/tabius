@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { filter } from 'rxjs/operators';
 import { CatalogNavigationHistoryStep } from '@common/user-model';
@@ -19,6 +19,10 @@ import { MOUNT_COLLECTION_PREFIX } from '@common/mounts';
     standalone: false
 })
 export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent {
+  private readonly uds = inject(UserService);
+  private readonly cd = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+
   @Input({ required: true }) popover!: PopoverRef;
 
   private allSteps: CatalogNavigationHistoryStep[] = [];
@@ -29,11 +33,7 @@ export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent
 
   readonly i18n = I18N.navigationHistoryPopup;
 
-  constructor(
-    private readonly uds: UserService,
-    private readonly cd: ChangeDetectorRef,
-    private readonly router: Router,
-  ) {
+  constructor() {
     super();
     this.currentUrl = this.router.url;
     this.uds

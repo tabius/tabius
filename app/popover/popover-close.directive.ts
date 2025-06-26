@@ -1,4 +1,4 @@
-import { Directive, HostListener, Inject, Input, Optional } from '@angular/core';
+import { Directive, HostListener, Input, inject } from '@angular/core';
 
 import { PopoverRef } from './popover-ref';
 import { POPOVER_REF } from '@app/popover/popover.service';
@@ -13,9 +13,9 @@ import { POPOVER_REF } from '@app/popover/popover.service';
     standalone: false
 })
 export class PopoverCloseDirective<T = unknown> {
-  @Input('gt-popoverClose') popoverResult!: T;
+  private popoverRef = inject<PopoverRef<T>>(POPOVER_REF, { optional: true });
 
-  constructor(@Inject(POPOVER_REF) @Optional() private popoverRef: PopoverRef<T>) {}
+  @Input('gt-popoverClose') popoverResult!: T;
 
   @HostListener('click') onClick(): void {
     if (!this.popoverRef) {

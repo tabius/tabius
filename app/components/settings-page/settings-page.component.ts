@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { DEFAULT_FAVORITE_KEY, User, UserDeviceSettings } from '@common/user-model';
 import { combineLatest } from 'rxjs';
@@ -21,6 +21,9 @@ export const MIN_SONG_FONT_SIZE = 8;
     standalone: false
 })
 export class SettingsPageComponent extends ComponentWithLoadingIndicator {
+  private readonly uds = inject(UserService);
+  private readonly authService = inject(ClientAuthService);
+
   readonly i18n = I18N.settingsPage;
 
   deviceSettings!: UserDeviceSettings;
@@ -33,10 +36,7 @@ export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   visualAllMinorToneKeys: ReadonlyArray<string> = MINOR_KEY_TONES;
   visualFavoriteSongKey: string = DEFAULT_FAVORITE_KEY;
 
-  constructor(
-    private readonly uds: UserService,
-    private readonly authService: ClientAuthService,
-  ) {
+  constructor() {
     super();
 
     this.updatePageMetadata(this.i18n.meta);

@@ -1,5 +1,5 @@
 import { HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '@app/environments/environment';
 import { BrowserStateService } from '@app/services/browser-state.service';
 
@@ -8,7 +8,9 @@ import { BrowserStateService } from '@app/services/browser-state.service';
 export class ApiUrlInterceptor implements HttpInterceptor {
   private readonly backendUrl!: string;
 
-  constructor(bss: BrowserStateService) {
+  constructor() {
+    const bss = inject(BrowserStateService);
+
     // Use direct (not proxied) API url during SSR rendering.
     this.backendUrl = bss.isServer ? environment.ssrBackendUrl : environment.backendUrl;
   }
