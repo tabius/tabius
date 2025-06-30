@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnChanges } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { getFirstYoutubeVideoIdFromLinks } from '@common/util/media-links-utils';
 import { isBotUserAgent } from '@common/util/misc-utils';
@@ -9,11 +9,11 @@ const defaultVideoWidth = 300;
 const defaultVideoHeight = 169;
 
 @Component({
-    selector: 'gt-song-video',
-    templateUrl: './song-video.component.html',
-    styleUrls: ['./song-video.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-song-video',
+  templateUrl: './song-video.component.html',
+  styleUrls: ['./song-video.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SongVideoComponent implements OnChanges {
   private readonly bss = inject(BrowserStateService);
@@ -62,5 +62,6 @@ export class SongVideoComponent implements OnChanges {
 }
 
 export function getSmallScreenYoutubeVideoWidthInBrowser(): number {
-  return Math.min(480, Math.max(defaultVideoWidth, window.document.body.clientWidth - 20));
+  const availableWidth = typeof window !== 'undefined' ? window.document.body.clientWidth - 20 : defaultVideoWidth;
+  return Math.min(480, Math.max(defaultVideoWidth, availableWidth));
 }
