@@ -1,14 +1,14 @@
-/**
- * Local storage backed store adapter.
- * Note: has memory limits: 2-5Mb.
- */
 import { truthy } from 'assertic';
 import { AsyncStore, KV } from './async-store';
 import { fromEvent, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
+/**
+ * Local storage backed store adapter.
+ * Note: has memory limits: 2-5Mb.
+ */
 export class LocalStorageAsyncStore implements AsyncStore {
-  constructor(private readonly storeKeyPrefix) {}
+  constructor(private readonly storeKeyPrefix: string) {}
 
   get<T = unknown>(key: string): Promise<T | undefined> {
     return Promise.resolve(LocalStorageAsyncStore._get(this.convertUserKeyToStoreKey(key)));
@@ -22,18 +22,26 @@ export class LocalStorageAsyncStore implements AsyncStore {
   }
 
   set<T = unknown>(key: string, value: T | undefined): Promise<void> {
-    return new Promise<void>(resolve => {
-      LocalStorageAsyncStore._set(this.convertUserKeyToStoreKey(key), value);
-      resolve();
+    return new Promise<void>((resolve, reject) => {
+      try {
+        LocalStorageAsyncStore._set(this.convertUserKeyToStoreKey(key), value);
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
   setAll<T = unknown>(map: { [p: string]: T }): Promise<void> {
-    return new Promise<void>(resolve => {
-      for (const [key, value] of Object.entries(map)) {
-        LocalStorageAsyncStore._set(this.convertUserKeyToStoreKey(key), value);
+    return new Promise<void>((resolve, reject) => {
+      try {
+        for (const [key, value] of Object.entries(map)) {
+          LocalStorageAsyncStore._set(this.convertUserKeyToStoreKey(key), value);
+        }
+        resolve();
+      } catch (e) {
+        reject(e);
       }
-      resolve();
     });
   }
 
@@ -52,7 +60,7 @@ export class LocalStorageAsyncStore implements AsyncStore {
       window.localStorage.setItem(storeKey, jsonValue);
     } catch (e) {
       console.error(`Local storage is full, failed to set key: ${storeKey}, length: ${jsonValue.length}`, e);
-      // resolve anyway.
+      throw e;
     }
   }
 
@@ -74,21 +82,19 @@ export class LocalStorageAsyncStore implements AsyncStore {
   }
 
   async clear(): Promise<void> {
-    return new Promise<void>(resolve => {
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < window.localStorage.length; i++) {
-        const storeKey = window.localStorage.key(i);
-        if (storeKey && storeKey.startsWith(this.storeKeyPrefix)) {
-          keysToRemove.push(storeKey);
-        }
+    const prefixWithSeparator = `${this.storeKeyPrefix}-`;
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const storeKey = window.localStorage.key(i);
+      if (storeKey && storeKey.startsWith(prefixWithSeparator)) {
+        keysToRemove.push(storeKey);
       }
-      keysToRemove.forEach(key => window.localStorage.removeItem(key));
-      return resolve();
-    });
+    }
+    keysToRemove.forEach(key => window.localStorage.removeItem(key));
   }
 
   private convertUserKeyToStoreKey(userKey: string): string {
-    return this.storeKeyPrefix + '-' + userKey;
+    return `${this.storeKeyPrefix}-${userKey}`;
   }
 
   private convertStoreKeyToUserKey(storeKey: string): string {
@@ -100,9 +106,13 @@ export class LocalStorageAsyncStore implements AsyncStore {
   }
 
   observe<T = unknown>(): Observable<{ key: string; value: T | null }> {
+    const prefixWithSeparator = `${this.storeKeyPrefix}-`;
     return fromEvent<StorageEvent>(window, 'storage').pipe(
-      filter(e => (e.key || '').startsWith(this.storeKeyPrefix)),
-      map(e => ({ key: truthy(e.key), value: e.newValue === null ? null : (JSON.parse(e.newValue) as T) })),
+      filter(e => (e.key || '').startsWith(prefixWithSeparator)),
+      map(e => ({
+        key: this.convertStoreKeyToUserKey(truthy(e.key)),
+        value: e.newValue === null ? null : (JSON.parse(e.newValue) as T),
+      })),
     );
   }
 }
