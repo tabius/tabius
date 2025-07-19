@@ -240,7 +240,6 @@ class BaseAsyncStoreForTest extends InMemoryAsyncStore {
   }
 }
 
-/** Creates new ObservableStoreImpl with NoOpAsyncStore. */
 function newObservableStoreForTest(asyncStore = new BaseAsyncStoreForTest()): ObservableStore {
   return new ObservableStoreImpl(() => asyncStore);
 }
