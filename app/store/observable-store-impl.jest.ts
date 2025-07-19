@@ -1,87 +1,167 @@
-import { ObservableStoreImpl } from './observable-store-impl';
-import { AsyncStore, KV } from './async-store';
-import { ObservableStore, RefreshMode, skipUpdateCheck } from './observable-store';
+import { firstValueFrom, Observable, of, ReplaySubject } from 'rxjs';
 import { delay, switchMap } from 'rxjs/operators';
-import { firstValueFrom, of, ReplaySubject } from 'rxjs';
-import { checkUpdateByStringify } from './update-functions';
+import { ObservableStore, RefreshMode, skipUpdateCheck } from './observable-store';
+import { ObservableStoreImpl } from './observable-store-impl';
+import { InMemoryAsyncStore } from '@app/store/in-memory-async-store';
 
-/** No-Op impl used in tests. */
-class NoOpAsyncStore implements AsyncStore {
-  calls: string[] = [];
-
-  clear(): Promise<void> {
-    this.calls.push('clear');
-    return Promise.resolve();
-  }
-
-  // eslint-disable-next-line
-  get<T = unknown>(_key: string): Promise<T | undefined> {
-    this.calls.push('get');
-    return Promise.resolve(undefined);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getAll<T = unknown>(_keys: ReadonlyArray<string>): Promise<(T | undefined)[]> {
-    this.calls.push('getAll');
-    return Promise.resolve([]);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  list<T = unknown>(_keyPrefix?: string): Promise<KV<T>[]> {
-    this.calls.push('list');
-    return Promise.resolve([]);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  set<T = unknown>(_key: string, _value: T | undefined): Promise<void> {
-    this.calls.push('set');
-    return Promise.resolve();
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setAll<T = unknown>(_map: { [p: string]: T }): Promise<void> {
-    this.calls.push('setAll');
-    return Promise.resolve();
-  }
-
-  snapshot(): KV<unknown>[] {
-    this.calls.push('snapshot');
-    return [];
-  }
-}
-
-/** Creates new ObservableStoreImpl with NoOpAsyncStore. */
-function newObservableStoreForTest(asyncStore = new NoOpAsyncStore()): ObservableStore {
-  return new ObservableStoreImpl(() => asyncStore);
-}
-
-describe('ObservableStore', () => {
+describe('ObservableStoreImpl', () => {
   it('fetches and sets value to adapter if it was missed', async () => {
     let setKey = '';
     let setValue: any = undefined;
 
-    class AsyncStoreForTest extends NoOpAsyncStore {
+    class AsyncStoreForTest extends BaseAsyncStoreForTest {
       set<T>(key: string, value: T | undefined): Promise<void> {
-        setKey += key; // the way to check in this test that 'set' was called only once.
+        setKey += key; // A way to check that 'set' was called only once.
         setValue = value;
-        return Promise.resolve();
+        return super.set(key, value);
       }
     }
 
     const store = new ObservableStoreImpl(() => new AsyncStoreForTest());
+    const fetchedValue = await firstValueFrom(store.get('key', () => of('fetched'), RefreshMode.DoNotRefresh, skipUpdateCheck));
 
-    const getKey = 'key';
-    const fetchedValue = 'fetched';
-    const returnValue = await firstValueFrom(
-      store.get<string>(getKey, () => of(fetchedValue), RefreshMode.DoNotRefresh, skipUpdateCheck),
-    );
-
-    expect(returnValue).toBe(fetchedValue);
-    expect(setKey).toBe(getKey);
-    expect(setValue).toBe(fetchedValue);
+    expect(fetchedValue).toBe('fetched');
+    expect(setKey).toBe('key');
+    expect(setValue).toBe('fetched');
   });
 
-  it('should respect RefreshMode.RefreshOncePerSession', async () => {
+  it('should not call fetchFn for RefreshMode.RefreshOnce if there was a set before', async () => {
+    let nFetchesCalled = 0;
+    const store = newObservableStoreForTest();
+
+    await store.set('Key', 'Value', skipUpdateCheck);
+    await firstValueFrom(store.get('Key', () => of(nFetchesCalled++), RefreshMode.RefreshOnce, checkUpdateByStringify));
+
+    expect(nFetchesCalled).toBe(0);
+  });
+
+  it('should not call fetchFn for RefreshMode.DoNotRefresh', async () => {
+    let nFetchesCalled = 0;
+    const store = newObservableStoreForTest();
+
+    await store.set('Key', 'Value', skipUpdateCheck);
+    const result = await firstValueFrom(
+      store.get('Key', () => of(nFetchesCalled++), RefreshMode.DoNotRefresh, checkUpdateByStringify),
+    );
+
+    expect(nFetchesCalled).toBe(0);
+    expect(result).toBe('Value');
+  });
+
+  it('should call fetchFn for RefreshMode.Refresh for all gets', async () => {
+    let nFetchesCalled = 0;
+    const store = newObservableStoreForTest();
+    const fetchFn = () => of(nFetchesCalled++);
+
+    await firstValueFrom(store.get('Key', fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
+    await firstValueFrom(store.get('Key', fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
+    await firstValueFrom(store.get('Key', fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
+    // These next two should not fetch.
+    await firstValueFrom(store.get('Key', fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    await firstValueFrom(store.get('Key', fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify));
+
+    expect(nFetchesCalled).toBe(3);
+  });
+
+  it('should return undefined when RefreshMode.DoNotRefresh and no fetchFn provided', async () => {
+    const store = newObservableStoreForTest();
+    const result = await firstValueFrom(store.get('some key', undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
+    expect(result).toBeUndefined();
+  });
+
+  it('should not be blocked by gets with no subscription', async () => {
+    const store = newObservableStoreForTest();
+    store.get('Key', () => of('Value'), RefreshMode.RefreshOnce, skipUpdateCheck); // Fire and forget
+    const res = await firstValueFrom(store.get('Key', () => of('Value'), RefreshMode.RefreshOnce, skipUpdateCheck));
+    expect(res).toBe('Value');
+  });
+
+  it('should serialize concurrent set() calls for the same key', async () => {
+    const callOrder: string[] = [];
+    const resolver = new ReplaySubject<void>(1);
+
+    class TestStore extends BaseAsyncStoreForTest {
+      async set<T>(_key: string, value: T | undefined): Promise<void> {
+        callOrder.push(`start set ${value}`);
+        await firstValueFrom(resolver);
+        callOrder.push(`end set ${value}`);
+      }
+    }
+
+    const store = new ObservableStoreImpl(() => new TestStore());
+
+    const set1_Promise = store.set('key', 'value1', skipUpdateCheck);
+    const set2_Promise = store.set('key', 'value2', skipUpdateCheck);
+
+    resolver.next(); // Unblock the first set operation
+    await Promise.all([set1_Promise, set2_Promise]);
+
+    expect(callOrder).toEqual(['start set value1', 'end set value1', 'start set value2', 'end set value2']);
+  });
+
+  it('should clear all internal state and allow RefreshOnce to work again', async () => {
+    let fetchCount = 0;
+    const store = newObservableStoreForTest();
+
+    await firstValueFrom(store.get('my-key', () => of(fetchCount++), RefreshMode.RefreshOnce, skipUpdateCheck));
+    expect(fetchCount).toBe(1);
+    await firstValueFrom(store.get('my-key', () => of(fetchCount++), RefreshMode.RefreshOnce, skipUpdateCheck));
+    expect(fetchCount).toBe(1);
+
+    await store.clear();
+
+    await firstValueFrom(store.get('my-key', () => of(fetchCount++), RefreshMode.RefreshOnce, skipUpdateCheck));
+    expect(fetchCount).toBe(2);
+  });
+
+  it('should handle fetch errors gracefully and return undefined', async () => {
+    const fetchFn = () => new Observable(s => s.error(new Error('Network Failed')));
+    const store = newObservableStoreForTest();
+
+    const result = await firstValueFrom(store.get('error-key', fetchFn, RefreshMode.Refresh, skipUpdateCheck));
+    expect(result).toBeUndefined();
+
+    const result2 = await firstValueFrom(store.get('error-key', () => of('success'), RefreshMode.Refresh, skipUpdateCheck));
+    expect(result2).toBe('success');
+  });
+
+  it('should not call the underlying store.set() if checkUpdateFn returns false', async () => {
+    const asyncStore = new BaseAsyncStoreForTest();
+    const store = newObservableStoreForTest(asyncStore);
+    const updateIsNeverNeeded = () => false;
+
+    await store.set('key', 'initial value', updateIsNeverNeeded);
+    // The store first GETS the old value (finds undefined), then SETS the new one.
+    expect(asyncStore.calls).toEqual(['get', 'set']);
+
+    await store.set('key', 'new value', updateIsNeverNeeded);
+    // The store GETS the old value, the check returns false, and it stops. No new SET.
+    expect(asyncStore.calls).toEqual(['get', 'set', 'get']);
+  });
+
+  it('should remove a value from the store', async () => {
+    const map = new Map<string, any>();
+
+    class TestStore extends BaseAsyncStoreForTest {
+      get = <T>(key: string): Promise<T | undefined> => Promise.resolve(map.get(key));
+      set = <T>(key: string, value: T | undefined): Promise<void> => {
+        value === undefined ? map.delete(key) : map.set(key, value);
+        return Promise.resolve();
+      };
+    }
+
+    const store = new ObservableStoreImpl(() => new TestStore());
+
+    await store.set('key-to-remove', 'hello', skipUpdateCheck);
+    let value = await firstValueFrom(store.get('key-to-remove', undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
+    expect(value).toBe('hello');
+
+    await store.remove('key-to-remove');
+    value = await firstValueFrom(store.get('key-to-remove', undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
+    expect(value).toBeUndefined();
+  });
+
+  it('should respect RefreshMode.RefreshOnce', async () => {
     let nFetchesCalled = 0;
     const fetchFn = () => {
       nFetchesCalled++;
@@ -95,7 +175,7 @@ describe('ObservableStore', () => {
     expect(nFetchesCalled).toBe(1);
   });
 
-  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel', async () => {
+  it('should not call fetchFn twice for RefreshMode.RefreshOnce in parallel', async () => {
     let nFetchesCalled = 0;
     const key = 'Key';
     const value = 'Value';
@@ -113,7 +193,7 @@ describe('ObservableStore', () => {
     expect(res).toEqual([value, value]);
   });
 
-  it('should not call fetchFn twice for RefreshMode.RefreshOncePerSession in parallel with delay', async () => {
+  it('should not call fetchFn twice for RefreshMode.RefreshOnce in parallel with delay', async () => {
     let nFetchesCalled = 0;
     const key = 'Key';
     const value = 'Value';
@@ -133,99 +213,34 @@ describe('ObservableStore', () => {
     expect(nFetchesCalled).toBe(1);
     expect(res).toEqual([value, value]);
   });
-
-  it('should not call fetchFn for RefreshMode.RefreshOncePerSession if there was set before', async () => {
-    const key = 'Key';
-    const value = 'Value';
-
-    class TestStoreAdapter extends NoOpAsyncStore {
-      get = <T>(k: string): Promise<T | undefined> =>
-        Promise.resolve(k === key ? value : undefined) as unknown as Promise<T | undefined>;
-    }
-
-    let nFetchesCalled = 0;
-    const fetchFn = () => {
-      nFetchesCalled++;
-      return of(value);
-    };
-
-    const store = new ObservableStoreImpl(() => new TestStoreAdapter());
-    await store.set<string>(key, value, skipUpdateCheck);
-    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
-    expect(nFetchesCalled).toBe(0);
-  });
-
-  it('should not call fetchFn for RefreshMode.DoNotRefresh', async () => {
-    let nFetchesCalled = 0;
-    const key = 'Key';
-    const value = 'Value';
-
-    class TestStoreAdapter extends NoOpAsyncStore {
-      get = <T>(k: string): Promise<T | undefined> =>
-        Promise.resolve(k === key ? value : undefined) as unknown as Promise<T | undefined>;
-    }
-
-    const fetchFn = () => {
-      nFetchesCalled++;
-      return of('?');
-    };
-    const store = new ObservableStoreImpl(() => new TestStoreAdapter());
-    await store.set<string>(key, value, skipUpdateCheck);
-    const result = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify));
-    expect(nFetchesCalled).toBe(0);
-    expect(result).toBe(value);
-  });
-
-  it('should call fetchFn for RefreshMode.Refresh for all gets', async () => {
-    let nFetchesCalled = 0;
-    const key = 'Key';
-    const value = 'Value';
-    const fetchFn = () => {
-      nFetchesCalled++;
-      return of(value);
-    };
-    const store = newObservableStoreForTest();
-    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
-    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
-    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.Refresh, checkUpdateByStringify));
-    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
-    await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.DoNotRefresh, checkUpdateByStringify));
-    expect(nFetchesCalled).toBe(3);
-  });
-
-  it('should return store value when RefreshMode.DoNotRefresh and no fetchFn provided', async () => {
-    const store = newObservableStoreForTest();
-    const result = await firstValueFrom(store.get<string>('some key', undefined, RefreshMode.DoNotRefresh, skipUpdateCheck));
-    expect(result).toBeUndefined();
-  });
-
-  it('should not be blocked by gets with no subscription', async () => {
-    const key = 'Key';
-    const value = 'Value';
-    const fetchFn = () => {
-      return of(value);
-    };
-    const store = newObservableStoreForTest();
-    store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck);
-    const res = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck));
-    expect(res).toBe(value);
-  });
-
-  it('should not fetch twice with RefreshMode.RefreshOncePerSession when init is delayed', async () => {
-    const key = 'Key';
-    const value = 'Value';
-    let nFetchesCalled = 0;
-    const fetchFn = () => {
-      nFetchesCalled++;
-      return of(value);
-    };
-    const store = newObservableStoreForTest();
-    const res1 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck));
-    const res2 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, skipUpdateCheck));
-    expect(res1).toBe(value);
-    expect(res2).toBe(value);
-    expect(nFetchesCalled).toBe(1);
-  });
-
-  // TODO: add tests for error handling!
 });
+
+// A mock update function for tests that need one.
+function checkUpdateByStringify(a?: unknown, b?: unknown): boolean {
+  return JSON.stringify(a) !== JSON.stringify(b);
+}
+
+/** A tracking impl used in tests. */
+class BaseAsyncStoreForTest extends InMemoryAsyncStore {
+  calls: string[] = [];
+
+  override get<T = unknown>(key: string): Promise<T | undefined> {
+    this.calls.push('get');
+    return super.get(key);
+  }
+
+  set<T = unknown>(key: string, value: T | undefined): Promise<void> {
+    this.calls.push('set');
+    return super.set(key, value);
+  }
+
+  clear(): Promise<void> {
+    this.calls.push('clear');
+    return super.clear();
+  }
+}
+
+/** Creates new ObservableStoreImpl with NoOpAsyncStore. */
+function newObservableStoreForTest(asyncStore = new BaseAsyncStoreForTest()): ObservableStore {
+  return new ObservableStoreImpl(() => asyncStore);
+}
