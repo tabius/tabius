@@ -1,5 +1,7 @@
 <div class="message">{{ message }}</div>
 
-<div *ngIf="bss.isBrowser && !bss.isOnline()" class="offline-notice">
-  {{ i18n.tryToReloadPagePrompt }}
-</div>
+@if (bss.isBrowser && !bss.isOnline()) {
+  <div class="offline-notice">
+    {{ i18n.tryToReloadPagePrompt }}
+  </div>
+}

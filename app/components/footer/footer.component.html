@@ -7,22 +7,22 @@
   </div>
 
   <span (click)="router.navigate(['/'])" style="cursor:pointer;" title="{{i18n.homePageLinkTitle}}">
-        {{ domain }}
-    </span>
+    {{ domain }}
+  </span>
 
   <div class="version" title="">
     <a href="{{githubLink}}" target="_blank" rel="noopener" title="{{i18n.githubLinkTitle}}">
       <table>
         <tbody>
-        <tr>
-          <td>
-            <div>{{ day }}</div>
-            <div>{{ month }}</div>
-          </td>
-          <td>
-            <gt-svg-icon icon="github"></gt-svg-icon>
-          </td>
-        </tr>
+          <tr>
+            <td>
+              <div>{{ day }}</div>
+              <div>{{ month }}</div>
+            </td>
+            <td>
+              <gt-svg-icon icon="github"></gt-svg-icon>
+            </td>
+          </tr>
         </tbody>
       </table>
     </a>
@@ -30,71 +30,87 @@
 </div>
 
 <div class="footer-menu">
-  <div class="footer-menu-line" *ngIf="!isMainMenuDrawerOpen">
-    <a *ngIf="menuStack.length === 0 && actions.length > 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white">
-      <gt-svg-icon icon="menu"></gt-svg-icon>
-    </a>
-    <a *ngIf="menuStack.length === 0 && actions.length === 0" (click)="openMainMenuDrawer()" class="btn btn-flat-white main-menu-button">
-      <gt-svg-icon icon="menu"></gt-svg-icon>
-      <div class="menu-button-text">{{ i18n.menu }}</div>
-    </a>
-    <a *ngFor="let action of actions" (click)="activateAction(action, $event)" class="btn btn-flat-white">
-      <div class="menu-item-content">
-        <gt-svg-icon *ngIf="action.icon" [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
-        <div *ngIf="action.text || (action.text$|async)"
-             class="menu-item-title"
-             [ngClass]="{'menu-item-title-with-icon' : !!action.icon}"
-             [ngStyle]="action.textStyle">
-          <span>{{ action.text }}{{ action.text$|async }}</span>
+  @if (!isMainMenuDrawerOpen) {
+    <div class="footer-menu-line">
+      @if (menuStack.length === 0 && actions.length > 0) {
+        <a (click)="openMainMenuDrawer()" class="btn btn-flat-white">
+          <gt-svg-icon icon="menu"></gt-svg-icon>
+        </a>
+      }
+      @if (menuStack.length === 0 && actions.length === 0) {
+        <a (click)="openMainMenuDrawer()" class="btn btn-flat-white main-menu-button">
+          <gt-svg-icon icon="menu"></gt-svg-icon>
+          <div class="menu-button-text">{{ i18n.menu }}</div>
+        </a>
+      }
+      @for (action of actions; track action) {
+        <a (click)="activateAction(action, $event)" class="btn btn-flat-white">
+          <div class="menu-item-content">
+            @if (action.icon) {
+              <gt-svg-icon [icon]="action.icon" [ngStyle]="action.style"></gt-svg-icon>
+            }
+            @if (action.text || (action.text$|async)) {
+              <div
+                class="menu-item-title"
+                [ngClass]="{'menu-item-title-with-icon' : !!action.icon}"
+                [ngStyle]="action.textStyle">
+                <span>{{ action.text }}{{ action.text$|async }}</span>
+              </div>
+            }
+          </div>
+        </a>
+      }
+      @if (menuStack.length > 0) {
+        <a (click)="popMenuState()" class="btn btn-flat-white btn-level-up">
+          <gt-svg-icon icon="level-up"></gt-svg-icon>
+        </a>
+      }
+    </div>
+  }
+
+  @if (isMainMenuDrawerOpen) {
+    <div class="drawer">
+      <div class="drawer-items">
+        <div class="item catalog">
+          <a routerLink="{{catalogLink}}" (click)="closeMainMenuDrawer()">
+            <gt-svg-icon icon="artist"></gt-svg-icon>
+            <div class="title">{{ i18nNav.catalog }}</div>
+          </a>
+        </div>
+        <div class="item scene">
+          <a routerLink="{{sceneLink}}" (click)="closeMainMenuDrawer()">
+            <gt-svg-icon icon="scene"></gt-svg-icon>
+            <div class="title">{{ i18nNav.scene }}</div>
+          </a>
+        </div>
+        <div class="item studio">
+          <a routerLink="{{studioLink}}" (click)="closeMainMenuDrawer()">
+            <gt-svg-icon icon="studio"></gt-svg-icon>
+            <div class="title">{{ i18nNav.studio }}</div>
+          </a>
+        </div>
+        <div class="item tuner">
+          <a routerLink="{{tunerLink}}" (click)="closeMainMenuDrawer()">
+            <gt-svg-icon icon="tuner"></gt-svg-icon>
+            <div class="title">{{ i18nNav.tuner }}</div>
+          </a>
+        </div>
+        <div class="item settings">
+          <a routerLink="{{settingsLink}}" (click)="closeMainMenuDrawer()">
+            <gt-svg-icon icon="settings"></gt-svg-icon>
+            <div class="title">{{ i18nNav.settings }}</div>
+          </a>
+        </div>
+        <div class="item no-sleep" title="{{i18nNav.noSleepTitle}}">
+          <a (click)="toggleNoSleep(); closeMainMenuDrawer()">
+            <gt-svg-icon icon="no-sleep"></gt-svg-icon>
+            <div class="title">{{ i18nNav.noSleep }}</div>
+          </a>
         </div>
       </div>
-    </a>
-    <a *ngIf="menuStack.length > 0" (click)="popMenuState()" class="btn btn-flat-white btn-level-up">
-      <gt-svg-icon icon="level-up"></gt-svg-icon>
-    </a>
-  </div>
-
-  <div *ngIf="isMainMenuDrawerOpen" class="drawer">
-    <div class="drawer-items">
-      <div class="item catalog">
-        <a routerLink="{{catalogLink}}" (click)="closeMainMenuDrawer()">
-          <gt-svg-icon icon="artist"></gt-svg-icon>
-          <div class="title">{{ i18nNav.catalog }}</div>
-        </a>
-      </div>
-      <div class="item scene">
-        <a routerLink="{{sceneLink}}" (click)="closeMainMenuDrawer()">
-          <gt-svg-icon icon="scene"></gt-svg-icon>
-          <div class="title">{{ i18nNav.scene }}</div>
-        </a>
-      </div>
-      <div class="item studio">
-        <a routerLink="{{studioLink}}" (click)="closeMainMenuDrawer()">
-          <gt-svg-icon icon="studio"></gt-svg-icon>
-          <div class="title">{{ i18nNav.studio }}</div>
-        </a>
-      </div>
-      <div class="item tuner">
-        <a routerLink="{{tunerLink}}" (click)="closeMainMenuDrawer()">
-          <gt-svg-icon icon="tuner"></gt-svg-icon>
-          <div class="title">{{ i18nNav.tuner }}</div>
-        </a>
-      </div>
-      <div class="item settings">
-        <a routerLink="{{settingsLink}}" (click)="closeMainMenuDrawer()">
-          <gt-svg-icon icon="settings"></gt-svg-icon>
-          <div class="title">{{ i18nNav.settings }}</div>
-        </a>
-      </div>
-      <div class="item no-sleep" title="{{i18nNav.noSleepTitle}}">
-        <a (click)="toggleNoSleep(); closeMainMenuDrawer()">
-          <gt-svg-icon icon="no-sleep"></gt-svg-icon>
-          <div class="title">{{ i18nNav.noSleep }}</div>
-        </a>
+      <div class="close-button-line">
+        <a (click)="closeMainMenuDrawer()" class="close-button">{{ i18n.closeMenu }}</a>
       </div>
     </div>
-    <div class="close-button-line">
-      <a (click)="closeMainMenuDrawer()" class="close-button">{{ i18n.closeMenu }}</a>
-    </div>
-  </div>
+  }
 </div>

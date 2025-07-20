@@ -1,50 +1,67 @@
-<div *ngIf="loading">
-  {{ i18n.searchingInSongText }}
-</div>
+@if (loading) {
+  <div>
+    {{ i18n.searchingInSongText }}
+  </div>
+}
 
-<div *ngIf="!loading">
-
-  <div class="title-result-block">
-    <h3>
-      {{ i18n.titleResults }}
-      <span class="top-results-message">
-                <ng-container *ngIf="titleResults.length === maxTitleResults">/ первые {{ maxTitleResults }}</ng-container>
-                <ng-container *ngIf="titleResults.length !== maxTitleResults">/ всего {{ titleResults.length }}</ng-container>
-            </span>
-    </h3>
-    <div *ngIf="titleResults.length === 0" class="no-results-message">
-      {{ i18n.noResults }}
+@if (!loading) {
+  <div>
+    <div class="title-result-block">
+      <h3>
+        {{ i18n.titleResults }}
+        <span class="top-results-message">
+          @if (titleResults.length === maxTitleResults) {
+            / первые {{ maxTitleResults }}
+          }
+          @if (titleResults.length !== maxTitleResults) {
+            / всего {{ titleResults.length }}
+          }
+        </span>
+      </h3>
+      @if (titleResults.length === 0) {
+        <div class="no-results-message">
+          {{ i18n.noResults }}
+        </div>
+      }
+      @for (searchResult of titleResults; track searchResult) {
+        <div>
+          <a routerLink="{{getSongLink(searchResult)}}">{{ searchResult.songTitle }}
+            <span class="collection-name">({{ searchResult.collectionName }})</span>
+          </a>
+        </div>
+      }
     </div>
-    <div *ngFor="let searchResult of titleResults">
-      <a routerLink="{{getSongLink(searchResult)}}">{{ searchResult.songTitle }}
-        <span class="collection-name">({{ searchResult.collectionName }})</span>
-      </a>
+    <div class="content-result-block">
+      <h3>
+        {{ i18n.textResults }}
+        <span class="top-results-message">
+          @if (contentResults.length === maxContentResults) {
+            / {{ i18n.first }} {{ maxContentResults }}
+          }
+          @if (contentResults.length !== maxContentResults) {
+            / {{ i18n.total }} {{ contentResults.length }}
+          }
+        </span>
+      </h3>
+      @if (contentResults.length === 0) {
+        <div class="no-results-message">
+          {{ i18n.noResults }}
+        </div>
+      }
+      @for (searchResult of contentResults; track searchResult) {
+        <div class="content-result-item">
+          <div>
+            <a routerLink="{{getSongLink(searchResult)}}">{{ searchResult.songTitle }}
+              <span class="collection-name">({{ searchResult.collectionName }})</span>
+            </a>
+          </div>
+          <div class="content-result-text-block">
+            <a routerLink="{{getSongLink(searchResult)}}">
+              <div [innerHTML]="formatResultSnippet(searchResult.snippet) | safeHtml" class="content-result-text"></div>
+            </a>
+          </div>
+        </div>
+      }
     </div>
   </div>
-
-  <div class="content-result-block">
-    <h3>
-      {{ i18n.textResults }}
-      <span class="top-results-message">
-                <ng-container *ngIf="contentResults.length === maxContentResults">/ {{ i18n.first }} {{ maxContentResults }}</ng-container>
-                <ng-container *ngIf="contentResults.length !== maxContentResults">/ {{ i18n.total }} {{ contentResults.length }}</ng-container>
-            </span>
-    </h3>
-
-    <div *ngIf="contentResults.length === 0" class="no-results-message">
-      {{ i18n.noResults }}
-    </div>
-    <div *ngFor="let searchResult of contentResults" class="content-result-item">
-      <div>
-        <a routerLink="{{getSongLink(searchResult)}}">{{ searchResult.songTitle }}
-          <span class="collection-name">({{ searchResult.collectionName }})</span>
-        </a>
-      </div>
-      <div class="content-result-text-block">
-        <a routerLink="{{getSongLink(searchResult)}}">
-          <div [innerHTML]="formatResultSnippet(searchResult.snippet) | safeHtml" class="content-result-text"></div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+}

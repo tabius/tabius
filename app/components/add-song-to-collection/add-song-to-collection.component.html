@@ -1,33 +1,39 @@
-<div *ngIf="!user || collections.length > 0">
-  <h3>{{ i18n.title }}</h3>
-
-  <div class="collections-list">
-    <div *ngFor="let collection of collections; trackBy: trackById" class="collection-item">
-      <label class="checkbox" [title]="i18n.addToCollectionCheckboxTitle(collection.name)">
-        <input type="checkbox" [checked]="collection.isSongInCollection" (change)="toggleCollection(collection, $event.target)">
-        <span>{{ collection.name }} <a [routerLink]="collection.routerLink"
-                                       class='goto-collection-link btn btn-flat-white'
-                                       title="{{i18n.gotoCollectionTitle}}"
-        >{{ i18n.gotoCollection }}</a></span>
-      </label>
+@if (!user || collections.length > 0) {
+  <div>
+    <h3>{{ i18n.title }}</h3>
+    <div class="collections-list">
+      @for (collection of collections; track trackById($index, collection)) {
+        <div class="collection-item">
+          <label class="checkbox" [title]="i18n.addToCollectionCheckboxTitle(collection.name)">
+            <input type="checkbox" [checked]="collection.isSongInCollection" (change)="toggleCollection(collection, $event.target)">
+            <span>{{ collection.name }} <a [routerLink]="collection.routerLink"
+              class='goto-collection-link btn btn-flat-white'
+              title="{{i18n.gotoCollectionTitle}}"
+            >{{ i18n.gotoCollection }}</a></span>
+          </label>
+        </div>
+      }
+      @if (isModerator(user) && songDetails) {
+        <div class="collection-item scene-item">
+          <label class="checkbox">
+            <input type="checkbox" [checked]="!!songDetails.scene" (change)="toggleSceneFlag($event.target)">
+            <span>{{ i18n.sceneFlagCheckboxName }}</span>
+          </label>
+        </div>
+      }
+      @if (!user) {
+        <div class="collection-item">
+          <label class="checkbox" title="{{i18n.addToFavoritesCheckboxTitle}}">
+            <input type="checkbox" (change)="toggleRegistrationPrompt($event.target)">
+            <span>{{ i18n.favorites }}</span>
+          </label>
+          @if (showRegistrationPrompt) {
+            <div class="register-prompt">
+              <gt-user-registration-prompt></gt-user-registration-prompt>
+            </div>
+          }
+        </div>
+      }
     </div>
-
-    <div class="collection-item scene-item" *ngIf="isModerator(user) && songDetails">
-      <label class="checkbox">
-        <input type="checkbox" [checked]="!!songDetails.scene" (change)="toggleSceneFlag($event.target)">
-        <span>{{ i18n.sceneFlagCheckboxName }}</span>
-      </label>
-    </div>
-
-    <div *ngIf="!user" class="collection-item">
-      <label class="checkbox" title="{{i18n.addToFavoritesCheckboxTitle}}">
-        <input type="checkbox" (change)="toggleRegistrationPrompt($event.target)">
-        <span>{{ i18n.favorites }}</span>
-      </label>
-      <div *ngIf="showRegistrationPrompt" class="register-prompt">
-        <gt-user-registration-prompt></gt-user-registration-prompt>
-      </div>
-    </div>
-
   </div>
-</div>
+}

@@ -1,9 +1,11 @@
 <div class="content">
 
-  <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-    <div class="message">{{ i18n.loadingMessage }}</div>
-    <gt-loading-indicator></gt-loading-indicator>
-  </div>
+  @if (!loaded && (isLoadingIndicatorVisible$|async)) {
+    <div class="indicator">
+      <div class="message">{{ i18n.loadingMessage }}</div>
+      <gt-loading-indicator></gt-loading-indicator>
+    </div>
+  }
 
   @if (loaded) {
     <div class="title">
@@ -11,7 +13,9 @@
     </div>
     <gt-song [songId]="songId" [showCollectionLink]="true"></gt-song>
     <div class="user-controls">
-      <gt-add-song-to-collection *ngIf="isBrowser" [songId]="songId"></gt-add-song-to-collection>
+      @if (isBrowser) {
+        <gt-add-song-to-collection [songId]="songId"></gt-add-song-to-collection>
+      }
     </div>
   }
 </div>

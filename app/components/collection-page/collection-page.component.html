@@ -1,91 +1,115 @@
 <div class="content">
 
   <!-- Loading indicator -->
-  <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-    <div class="message">{{ i18n.loadingSongList }}</div>
-    <gt-loading-indicator></gt-loading-indicator>
-  </div>
+  @if (!loaded && (isLoadingIndicatorVisible$|async)) {
+    <div class="indicator">
+      <div class="message">{{ i18n.loadingSongList }}</div>
+      <gt-loading-indicator></gt-loading-indicator>
+    </div>
+  }
 
   <!-- Not found block -->
-  <gt-resource-not-found *ngIf="notFound" message="{{i18n.collectionNotFound}}"></gt-resource-not-found>
+  @if (notFound) {
+    <gt-resource-not-found message="{{i18n.collectionNotFound}}"></gt-resource-not-found>
+  }
 
   <!-- Do not index user collections   -->
-  <gt-head-meta *ngIf='!!collectionViewModel?.collection.userId' [attrs]="{name: 'robots', content: 'noindex'}"></gt-head-meta>
+  @if (!!collectionViewModel?.collection.userId) {
+    <gt-head-meta [attrs]="{name: 'robots', content: 'noindex'}"></gt-head-meta>
+  }
 
   <!-- Main content block -->
-  <div *ngIf="loaded && collectionViewModel">
-    <gt-collection-breadcrumb [collection]="collectionViewModel?.collection"
-                              [showCollectionLink]="false"></gt-collection-breadcrumb>
-
-    <div class="collection-root">
-      <div>
-        <h1>{{ collectionViewModel.displayName }}</h1>
-
-        <img *ngIf="!!collectionViewModel.imgSrc && !hasImageLoadingError"
-             [src]="collectionViewModel.imgSrc"
-             [alt]="collectionViewModel.collection.name"
-             [title]="collectionViewModel.displayName"
-             (error)="hasImageLoadingError = true"
-             class="collection-image"
-        />
-
-        <div *ngIf="collectionViewModel.bands.length > 0" class="bands-info">
-          <div *ngIf="collectionViewModel.bands.length === 1">
-            Группа <a routerLink="{{getCollectionPageLink(collectionViewModel.bands[0])}}">{{ collectionViewModel.bands[0].name }}</a>
-          </div>
-          <div *ngIf="collectionViewModel.bands.length > 1">
-            Группы <span *ngFor="let band of collectionViewModel.bands; let last = last">
-                            <a routerLink="{{getCollectionPageLink(band)}}">{{ band.name }}</a><span *ngIf="!last">, </span>
-                        </span>
-          </div>
+  @if (loaded && collectionViewModel) {
+    <div>
+      <gt-collection-breadcrumb [collection]="collectionViewModel?.collection"
+      [showCollectionLink]="false"></gt-collection-breadcrumb>
+      <div class="collection-root">
+        <div>
+          <h1>{{ collectionViewModel.displayName }}</h1>
+          @if (!!collectionViewModel.imgSrc && !hasImageLoadingError) {
+            <img
+              [src]="collectionViewModel.imgSrc"
+              [alt]="collectionViewModel.collection.name"
+              [title]="collectionViewModel.displayName"
+              (error)="hasImageLoadingError = true"
+              class="collection-image"
+              />
+          }
+          @if (collectionViewModel.bands.length > 0) {
+            <div class="bands-info">
+              @if (collectionViewModel.bands.length === 1) {
+                <div>
+                  Группа <a routerLink="{{getCollectionPageLink(collectionViewModel.bands[0])}}">{{ collectionViewModel.bands[0].name }}</a>
+                </div>
+              }
+              @if (collectionViewModel.bands.length > 1) {
+                <div>
+                  Группы @for (band of collectionViewModel.bands; track band; let last = $last) {
+                  <span>
+                    <a routerLink="{{getCollectionPageLink(band)}}">{{ band.name }}</a>@if (!last) {
+                    <span>, </span>
+                  }
+                </span>
+              }
+            </div>
+          }
         </div>
-
-        <gt-song-list [collectionMount]="collectionViewModel.collection.mount"
-                      [songs]="collectionViewModel.songs"
-                      [primarySongCollections]="collectionViewModel.primarySongCollections"
-                      [showPrimaryCollectionLinks]="!collectionViewModel.listed"
-        ></gt-song-list>
-      </div>
+      }
+      <gt-song-list [collectionMount]="collectionViewModel.collection.mount"
+        [songs]="collectionViewModel.songs"
+        [primarySongCollections]="collectionViewModel.primarySongCollections"
+        [showPrimaryCollectionLinks]="!collectionViewModel.listed"
+      ></gt-song-list>
     </div>
-
-    <div class="editors-block">
-      <div *ngIf="!songEditorIsOpen && !collectionEditorIsOpen" class="buttons-line">
+  </div>
+  <div class="editors-block">
+    @if (!songEditorIsOpen && !collectionEditorIsOpen) {
+      <div class="buttons-line">
         <button class="btn btn-info" (click)="openSongEditor()">{{ i18n.addSong }}</button>
-        <button *ngIf="canEditCollection" class="btn" (click)="toggleCollectionEditor()">{{ i18n.collectionSettings }}</button>
+        @if (canEditCollection) {
+          <button class="btn" (click)="toggleCollectionEditor()">{{ i18n.collectionSettings }}</button>
+        }
       </div>
-
-      <!-- Song editor -->
-      <gt-user-registration-prompt *ngIf="songEditorIsOpen && !user"
-                                   (closeRequest)="closeSongEditor()"
-                                   class="register-prompt">
+    }
+    <!-- Song editor -->
+    @if (songEditorIsOpen && !user) {
+      <gt-user-registration-prompt
+        (closeRequest)="closeSongEditor()"
+        class="register-prompt">
       </gt-user-registration-prompt>
-      <gt-moderator-prompt *ngIf="songEditorIsOpen && !!user && !canAddSongs"
-                           (closeRequest)="closeSongEditor()"
-                           class="has-no-rights-prompt">
+    }
+    @if (songEditorIsOpen && !!user && !canAddSongs) {
+      <gt-moderator-prompt
+        (closeRequest)="closeSongEditor()"
+        class="has-no-rights-prompt">
       </gt-moderator-prompt>
-      <gt-song-editor *ngIf="songEditorIsOpen && canAddSongs"
-                      (closeRequest)="closeSongEditor($event)"
-                      [songId]="-1"
-                      [activeCollectionId]="collectionViewModel.collection.id"
-                      [initialFocusMode]="'title'"
+    }
+    @if (songEditorIsOpen && canAddSongs) {
+      <gt-song-editor
+        (closeRequest)="closeSongEditor($event)"
+        [songId]="-1"
+        [activeCollectionId]="collectionViewModel.collection.id"
+        [initialFocusMode]="'title'"
       ></gt-song-editor>
-
-      <!-- Collection editor -->
-      <gt-user-collection-editor *ngIf="collectionEditorIsOpen"
-                                 [collectionId]="collectionViewModel.collection.id"
-                                 (closeRequest)="toggleCollectionEditor()"
+    }
+    <!-- Collection editor -->
+    @if (collectionEditorIsOpen) {
+      <gt-user-collection-editor
+        [collectionId]="collectionViewModel.collection.id"
+        (closeRequest)="toggleCollectionEditor()"
       ></gt-user-collection-editor>
-    </div>
-
-    <div *ngIf="collectionViewModel.listed && isAffiliateBlockVisible" class="affiliate-block">
+    }
+  </div>
+  @if (collectionViewModel.listed && isAffiliateBlockVisible) {
+    <div class="affiliate-block">
       <a [href]="buildAffiliateLink(collectionViewModel.displayName)"
-         title="{{i18n.affiliateLinkTitle}}"
-         class="btn"
-         target="_blank"
+        title="{{i18n.affiliateLinkTitle}}"
+        class="btn"
+        target="_blank"
       >{{ i18n.affiliateLinkText }}</a>
     </div>
-
-    <gt-song-prev-next-navigator [activeCollectionId]="collectionViewModel.collection.id"></gt-song-prev-next-navigator>
-
-  </div>
+  }
+  <gt-song-prev-next-navigator [activeCollectionId]="collectionViewModel.collection.id"></gt-song-prev-next-navigator>
+</div>
+}
 </div>

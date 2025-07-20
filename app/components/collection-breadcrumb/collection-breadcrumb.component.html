@@ -1,14 +1,22 @@
-<a *ngIf="showCatalogLink" routerLink="{{catalogLink}}" title="{{i18n.catalogLinkTitle}}">
-  {{ i18n.catalogLink }}
-  <gt-svg-icon *ngIf="!showCollectionLink" icon="level-up"></gt-svg-icon>
-</a>
+@if (showCatalogLink) {
+  <a routerLink="{{catalogLink}}" title="{{i18n.catalogLinkTitle}}">
+    {{ i18n.catalogLink }}
+    @if (!showCollectionLink) {
+      <gt-svg-icon icon="level-up"></gt-svg-icon>
+    }
+  </a>
+}
 
-<a *ngIf="showStudioLink" routerLink="{{studioLink}}" title="{{i18n.studioLinkTitle}}">
-  {{ i18n.studioLink }}
-  <gt-svg-icon *ngIf="!showCollectionLink" icon="level-up"></gt-svg-icon>
-</a>
+@if (showStudioLink) {
+  <a routerLink="{{studioLink}}" title="{{i18n.studioLinkTitle}}">
+    {{ i18n.studioLink }}
+    @if (!showCollectionLink) {
+      <gt-svg-icon icon="level-up"></gt-svg-icon>
+    }
+  </a>
+}
 
-<ng-container *ngIf="collection && showCollectionLink">
+@if (collection && showCollectionLink) {
   <span class="sep">»</span>
   <a [routerLink]="collectionPageLink">{{ collection.name }} </a>
-</ng-container>
+}

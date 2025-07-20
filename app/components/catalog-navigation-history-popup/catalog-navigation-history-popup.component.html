@@ -2,15 +2,19 @@
 
   <div class="title">{{ i18n.title }}</div>
 
-  <div *ngFor="let step of visibleSteps; trackBy: trackByUrl" class="list-item">
-    <a routerLink="{{step.url}}" (click)="popover.close()">
-      @if (isCollectionMount(step.url)) {
-        »<span class="dark-pill collection">{{ step.name }}</span>
-      } @else {
-        {{ step.name }}
-        <span *ngIf="step.collection" class="dark-pill collection">{{ step.collection }}</span>
-      }
-    </a>
-  </div>
+  @for (step of visibleSteps; track trackByUrl($index, step)) {
+    <div class="list-item">
+      <a routerLink="{{step.url}}" (click)="popover.close()">
+        @if (isCollectionMount(step.url)) {
+          »<span class="dark-pill collection">{{ step.name }}</span>
+        } @else {
+          {{ step.name }}
+          @if (step.collection) {
+            <span class="dark-pill collection">{{ step.collection }}</span>
+          }
+        }
+      </a>
+    </div>
+  }
 
 </div>

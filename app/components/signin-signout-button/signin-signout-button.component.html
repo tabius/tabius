@@ -1,2 +1,6 @@
-<button (click)="signIn()" *ngIf="!username" class="btn">{{ i18n.signIn }}</button>
-<button (click)="signOut()" *ngIf="username" class="btn">{{ i18n.signOut }} / {{ username }}</button>
+@if (!username) {
+  <button (click)="signIn()" class="btn">{{ i18n.signIn }}</button>
+}
+@if (username) {
+  <button (click)="signOut()" class="btn">{{ i18n.signOut }} / {{ username }}</button>
+}

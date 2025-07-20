@@ -1,67 +1,75 @@
 <div>
   <h1>{{ i18n.pageHeader }}</h1>
 
-  <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-    <div class="message">{{ i18n.loadingText }}</div>
-    <gt-loading-indicator></gt-loading-indicator>
-  </div>
+  @if (!loaded && (isLoadingIndicatorVisible$|async)) {
+    <div class="indicator">
+      <div class="message">{{ i18n.loadingText }}</div>
+      <gt-loading-indicator></gt-loading-indicator>
+    </div>
+  }
 
-  <div *ngIf="loaded">
-    <div *ngIf="deviceSettings" class="song-settings-block">
-      <h2>{{ i18n.songRenderingSettingsHeader }}</h2>
-      <div class="song-settings-controls-block">
-        <table>
-          <tbody>
-          <tr>
-            <td>
-              {{ i18n.fontSize }}
-              <span class="font-size"
-                    (click)="resetFontSize()"
-                    [class.default-font-size]="defaultFontSize === deviceSettings.songFontSize">{{ deviceSettings.songFontSize }}
-                        </span>
-            </td>
-            <td>
-              <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
-              <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
-            </td>
-          </tr>
-          <tr>
-            <td>{{ i18n.h4Si }}</td>
-            <td>
-              <button (click)="useH4Si(true)" class="btn mono f16px" [class.btn-info]='h4Si'>H</button>
-              <button (click)="useH4Si(false)" class="btn mono f16px" [class.btn-info]='!h4Si'>B</button>
-            </td>
-          </tr>
-          <tr>
-            <td>{{ i18n.favoriteKey }}</td>
-            <td>
-              <select [(ngModel)]="visualFavoriteSongKey" (ngModelChange)="setFavoriteSongKey($event)">
-                <option *ngFor="let key of visualAllMinorToneKeys" [ngValue]="key">{{ key }}m</option>
-              </select>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-
-        <div class="song-preview-title">{{ i18n.example }}</div>
-        <div class="song-preview-block">
-          <gt-song-text [song]="settingsDemoSong" multiColumnMode="false"></gt-song-text>
+  @if (loaded) {
+    <div>
+      @if (deviceSettings) {
+        <div class="song-settings-block">
+          <h2>{{ i18n.songRenderingSettingsHeader }}</h2>
+          <div class="song-settings-controls-block">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    {{ i18n.fontSize }}
+                    <span class="font-size"
+                      (click)="resetFontSize()"
+                      [class.default-font-size]="defaultFontSize === deviceSettings.songFontSize">{{ deviceSettings.songFontSize }}
+                    </span>
+                  </td>
+                  <td>
+                    <button (click)="decFontSize()" class="btn dec mono f16px">-</button>
+                    <button (click)="incFontSize()" class="btn inc mono f16px">+</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ i18n.h4Si }}</td>
+                  <td>
+                    <button (click)="useH4Si(true)" class="btn mono f16px" [class.btn-info]='h4Si'>H</button>
+                    <button (click)="useH4Si(false)" class="btn mono f16px" [class.btn-info]='!h4Si'>B</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ i18n.favoriteKey }}</td>
+                  <td>
+                    <select [(ngModel)]="visualFavoriteSongKey" (ngModelChange)="setFavoriteSongKey($event)">
+                      @for (key of visualAllMinorToneKeys; track key) {
+                        <option [ngValue]="key">{{ key }}m</option>
+                      }
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="song-preview-title">{{ i18n.example }}</div>
+            <div class="song-preview-block">
+              <gt-song-text [song]="settingsDemoSong" multiColumnMode="false"></gt-song-text>
+            </div>
+          </div>
         </div>
+      }
+      <div class="signin-sign-out-block">
+        @if (!user) {
+          <div class="register-prompt">
+            <a (click)="openRegistrationDialog()">{{ i18n.notSignedInPrompt.register }}</a>
+            {{ i18n.notSignedInPrompt.or }}
+            <a (click)="openSignInDialog()">{{ i18n.notSignedInPrompt.signIn }}</a>
+            {{ i18n.notSignedInPrompt.toGetAccess }}
+          </div>
+        }
+        @if (user) {
+          <div>
+            <gt-signin-signout-button></gt-signin-signout-button>
+          </div>
+        }
       </div>
     </div>
-
-    <div class="signin-sign-out-block">
-      <div *ngIf="!user" class="register-prompt">
-        <a (click)="openRegistrationDialog()">{{ i18n.notSignedInPrompt.register }}</a>
-        {{ i18n.notSignedInPrompt.or }}
-        <a (click)="openSignInDialog()">{{ i18n.notSignedInPrompt.signIn }}</a>
-        {{ i18n.notSignedInPrompt.toGetAccess }}
-      </div>
-
-      <div *ngIf="user">
-        <gt-signin-signout-button></gt-signin-signout-button>
-      </div>
-    </div>
-
-  </div>
+  }
 </div>

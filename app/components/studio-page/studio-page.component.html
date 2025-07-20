@@ -1,52 +1,60 @@
 <div class="content">
-  <div *ngIf="!loaded && (isLoadingIndicatorVisible$|async)" class="indicator">
-    <div class="message">{{ i18n.loading }}</div>
-    <gt-loading-indicator></gt-loading-indicator>
-  </div>
+  @if (!loaded && (isLoadingIndicatorVisible$|async)) {
+    <div class="indicator">
+      <div class="message">{{ i18n.loading }}</div>
+      <gt-loading-indicator></gt-loading-indicator>
+    </div>
+  }
 
-  <div *ngIf="loaded">
-
-    <gt-user-registration-prompt *ngIf="!user"
-                                 [showCloseButton]="false"
-                                 class="register-prompt"
-    ></gt-user-registration-prompt>
-
-    <div *ngIf="user" class="collection-block">
-      <div>
-        <div>
-          <h1>{{ i18n.collections }}</h1>
-          <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
-        </div>
-        <div class="song-list-block">
-          <h1>{{ i18n.songs }}</h1>
-
-          <gt-song-list *ngIf="!editorIsOpen"
-                        [songs]="songs"
-                        [primarySongCollections]="primarySongCollections"
-                        [showEmptyNotice]="true"
-                        [emptyListMessage]="i18n.songsListIsEmpty"
-          ></gt-song-list>
-
-          <div class="add-song-block">
-            <button *ngIf="!editorIsOpen"
+  @if (loaded) {
+    <div>
+      @if (!user) {
+        <gt-user-registration-prompt
+          [showCloseButton]="false"
+          class="register-prompt"
+        ></gt-user-registration-prompt>
+      }
+      @if (user) {
+        <div class="collection-block">
+          <div>
+            <div>
+              <h1>{{ i18n.collections }}</h1>
+              <gt-user-collections-list [userId]="user.id"></gt-user-collections-list>
+            </div>
+            <div class="song-list-block">
+              <h1>{{ i18n.songs }}</h1>
+              @if (!editorIsOpen) {
+                <gt-song-list
+                  [songs]="songs"
+                  [primarySongCollections]="primarySongCollections"
+                  [showEmptyNotice]="true"
+                  [emptyListMessage]="i18n.songsListIsEmpty"
+                ></gt-song-list>
+              }
+              <div class="add-song-block">
+                @if (!editorIsOpen) {
+                  <button
                     (click)="openEditor()"
                     class="btn btn-info"
                     title="{{i18n.addNewSongIntoPersonalCollection}}"
-            >
-              {{ i18n.addSong }}
-            </button>
-            <gt-song-editor *ngIf="editorIsOpen"
-                            (closeRequest)="closeEditor($event)"
-                            [songId]="-1"
-                            [activeCollectionId]="user.collectionId"
-                            [initialFocusMode]="'title'"
-            ></gt-song-editor>
+                    >
+                    {{ i18n.addSong }}
+                  </button>
+                }
+                @if (editorIsOpen) {
+                  <gt-song-editor
+                    (closeRequest)="closeEditor($event)"
+                    [songId]="-1"
+                    [activeCollectionId]="user.collectionId"
+                    [initialFocusMode]="'title'"
+                  ></gt-song-editor>
+                }
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      }
+      <!-- TODO? navigate own pick-ups?  <gt-song-prev-next-navigator [activeCollectionId]="collectionData.collection.id"></gt-song-prev-next-navigator>-->
     </div>
-
-    <!-- TODO? navigate own pick-ups?  <gt-song-prev-next-navigator [activeCollectionId]="collectionData.collection.id"></gt-song-prev-next-navigator>-->
-
-  </div>
+  }
 </div>

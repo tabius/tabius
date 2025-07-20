@@ -1,2 +1,4 @@
-<gt-song *ngIf="songId > 0" [songId]="songId" [mode]="'print-mode'"></gt-song>
+@if (songId > 0) {
+  <gt-song [songId]="songId" [mode]="'print-mode'"></gt-song>
+}
 

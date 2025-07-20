@@ -1,17 +1,21 @@
 <!--Note: recheck SSR on any update. Or rework songHtml to be observable -->
 <div class="song-text"
-     [attr.data-pw]="song.id"
-     [ngStyle]="userSongStyle"
-     [class.two-column-mode]="is2ColumnMode()"
-     [class.three-column-mode]="is3ColumnMode()"
-     [class.four-column-mode]="is4ColumnMode()"
-     gtChordPopoverOnClick
-     [gtChordPopoverOnClick_popoverTemplate]="chordPopover"
-     [gtChordPopoverOnClick_getChordInfo]="getChordInfo"
-     (gtChordPopoverOnClick_onChordLayoutChanged)="this.popoverChordLayout = $event"
->
-  <div *ngIf="isBrowser" [innerHTML]="getSongHtml() | safeHtml"></div>
-  <div *ngIf="!isBrowser">{{ song.content }}</div>
+  [attr.data-pw]="song.id"
+  [ngStyle]="userSongStyle"
+  [class.two-column-mode]="is2ColumnMode()"
+  [class.three-column-mode]="is3ColumnMode()"
+  [class.four-column-mode]="is4ColumnMode()"
+  gtChordPopoverOnClick
+  [gtChordPopoverOnClick_popoverTemplate]="chordPopover"
+  [gtChordPopoverOnClick_getChordInfo]="getChordInfo"
+  (gtChordPopoverOnClick_onChordLayoutChanged)="this.popoverChordLayout = $event"
+  >
+  @if (isBrowser) {
+    <div [innerHTML]="getSongHtml() | safeHtml"></div>
+  }
+  @if (!isBrowser) {
+    <div>{{ song.content }}</div>
+  }
 </div>
 
 <ng-template #chordPopover let-popover="popover">

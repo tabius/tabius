@@ -1,12 +1,14 @@
-<ng-container *ngIf="collections$ | async as collections">
-  <ng-container *ngIf="collections.length > 0">
+@if (collections$ | async; as collections) {
+  @if (collections.length > 0) {
     <div class="move-block">
       <select [(ngModel)]="selectedCollection">
-        <option *ngFor="let collection of collections; trackBy: trackById" [ngValue]="collection">{{ collection.name }}</option>
+        @for (collection of collections; track trackById($index, collection)) {
+          <option [ngValue]="collection">{{ collection.name }}</option>
+        }
       </select>
       <button class="btn move-button" [disabled]="!selectedCollection" (click)="onMoveButtonClicked()">
         {{ mode === 'add' ? i18n.addButtonText : i18n.moveButtonText }}
       </button>
     </div>
-  </ng-container>
-</ng-container>
+  }
+}
