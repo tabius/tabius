@@ -12,7 +12,7 @@ export class ObservableStoreImpl implements ObservableStore {
   private readonly streamMap = new Map<string, ReplaySubject<any>>();
 
   /** Set of refreshed during current session ids. */
-  private readonly refreshSet = new Set<string>();
+  private readonly refreshedKeySet = new Set<string>();
 
   private readonly asyncStore$$: Promise<AsyncStore>;
 
@@ -44,7 +44,7 @@ export class ObservableStoreImpl implements ObservableStore {
     // Instantiate reactive streams as initialized and refreshed.
     for (const [key, value] of Object.entries(updatedEntries || {})) {
       this.registerNewRxStreamForKey(key, value);
-      this.refreshSet.add(key);
+      this.markKeyAsFresh(key);
     }
   }
 
@@ -74,9 +74,9 @@ export class ObservableStoreImpl implements ObservableStore {
     checkUpdateFn: CheckUpdateFn<T>,
   ): Promise<void> {
     // First get op. First, create a blocking promise for concurrent first gets.
-    let firstGetResolveFn: () => void = () => fail('A stub for firstGetResolveFn should never be called');
+    let resolveFirstGetOpFn: () => void = () => fail('A stub for firstGetResolveFn should never be called');
     const firstGetOp: InitOp = {
-      promise: new Promise<void>(resolve => (firstGetResolveFn = resolve)),
+      promise: new Promise<void>(resolve => (resolveFirstGetOpFn = resolve)),
     };
     try {
       this.inFlightInitRxOps.set(key, firstGetOp);
@@ -89,11 +89,13 @@ export class ObservableStoreImpl implements ObservableStore {
         this.runAsyncRefresh(key, fetchFn, refreshMode, checkUpdateFn);
       } else {
         // There is no value in the store -> fetch initial value.
-        const valueFromFetch = fetchFn ? await this.doFetch(fetchFn, key) : undefined;
-        await this.set(key, valueFromFetch, checkUpdateFn);
+        const fetchResult = fetchFn ? await this.doFetch(fetchFn, key) : { value: undefined, isFailed: false };
+        await this._set(key, fetchResult.value, checkUpdateFn, !fetchResult.isFailed);
       }
+    } catch (error) {
+      console.error(`Failed to initialize key: ${key}`, error);
     } finally {
-      firstGetResolveFn();
+      resolveFirstGetOpFn();
       this.inFlightInitRxOps.delete(key);
     }
   }
@@ -110,9 +112,9 @@ export class ObservableStoreImpl implements ObservableStore {
 
     // Wait until the first get is completed and call refresh next.
     return initOp$.pipe(
-      tap(() => this.runAsyncRefresh(key, fetchFn, refreshMode, checkUpdateFn)), // do refresh
+      tap(() => this.runAsyncRefresh(key, fetchFn, refreshMode, checkUpdateFn)),
       take(1),
-      switchMap(() => rs$), // return the rs$
+      switchMap(() => rs$),
     );
   }
 
@@ -123,7 +125,9 @@ export class ObservableStoreImpl implements ObservableStore {
     refreshMode: RefreshMode,
     checkUpdateFn: CheckUpdateFn<T>,
   ): void {
-    from(this._refresh(key, fetchFn, refreshMode, checkUpdateFn)).pipe(take(1));
+    this._refresh(key, fetchFn, refreshMode, checkUpdateFn).catch(e => {
+      console.error(`Failed to refresh key: ${key}`, e);
+    });
   }
 
   private async _refresh<T>(
@@ -136,32 +140,34 @@ export class ObservableStoreImpl implements ObservableStore {
       return;
     }
 
-    if (refreshMode === RefreshMode.RefreshOnce && this.refreshSet.has(key)) {
+    if (refreshMode === RefreshMode.RefreshOnce && this.refreshedKeySet.has(key)) {
       return;
     }
 
-    const value = await this.doFetch(fetchFn, key);
-    if (value !== undefined) {
-      await this.set(key, value, checkUpdateFn);
+    const fetchResult = await this.doFetch(fetchFn, key);
+    if (!fetchResult.isFailed) {
+      this.markKeyAsFresh(key);
+      await this.set(key, fetchResult.value, checkUpdateFn);
     }
   }
 
-  private async doFetch<T>(fetchFn: FetchFn<T>, key: string): Promise<T | undefined> {
+  private async doFetch<T>(fetchFn: FetchFn<T>, key: string): Promise<{ value: T | undefined; isFailed: boolean }> {
     try {
       let fetchOp = this.inFlightFetchOps.get(key) as FetchOp<T>;
-      if (!fetchOp) {
-        const fetch$ = fetchFn().pipe(
-          catchError(() => of(undefined)), // fallback to undefined.
-          shareReplay(1),
-        );
-        fetchOp = { fetch$ };
+      if (!fetchOp || fetchOp.isFailed) {
+        fetchOp = {
+          fetch$: fetchFn().pipe(
+            catchError(() => {
+              fetchOp.isFailed = true;
+              return of(undefined); // Fallback to undefined in case of failure.
+            }),
+            shareReplay(1),
+          ),
+        };
         this.inFlightFetchOps.set(key, fetchOp);
       }
       const result = await firstValueFrom(fetchOp.fetch$);
-      if (result !== undefined) {
-        this.refreshSet.add(key);
-      }
-      return result;
+      return { value: result, isFailed: !!fetchOp.isFailed };
     } finally {
       this.inFlightFetchOps.delete(key);
     }
@@ -177,6 +183,10 @@ export class ObservableStoreImpl implements ObservableStore {
   }
 
   async set<T>(key: string | undefined, value: T | undefined, checkUpdateFn: CheckUpdateFn<T>): Promise<void> {
+    await this._set(key, value, checkUpdateFn, true);
+  }
+
+  async _set<T>(key: string | undefined, value: T | undefined, checkUpdateFn: CheckUpdateFn<T>, isFreshValue: boolean): Promise<void> {
     if (!key) {
       return;
     }
@@ -195,7 +205,7 @@ export class ObservableStoreImpl implements ObservableStore {
       }
     }
     try {
-      const setImplPromise$$ = this.setImpl(key, value, checkUpdateFn);
+      const setImplPromise$$ = this.setImpl(key, value, checkUpdateFn, isFreshValue);
       const queue = this.setOpsQueue.get(key) || [];
       queue.push({ promise: setImplPromise$$, value, checkUpdateFn });
       if (queue.length === 1) {
@@ -213,21 +223,21 @@ export class ObservableStoreImpl implements ObservableStore {
     }
   }
 
-  private async setImpl<T>(key: string, value: T | undefined, checkUpdateFn: CheckUpdateFn<T>): Promise<void> {
-    const inRefreshSet = this.refreshSet.has(key);
+  private async setImpl<T>(key: string, value: T | undefined, checkUpdateFn: CheckUpdateFn<T>, isFreshValue: boolean): Promise<void> {
+    const inRefreshSet = this.refreshedKeySet.has(key);
     const store = await this.asyncStore$$;
     if (checkUpdateFn !== skipUpdateCheck) {
       const oldValue = await store.get<T>(key);
       if (!checkUpdateFn(oldValue, value)) {
-        const firstUpdate = !inRefreshSet;
-        const forceUpdate = firstUpdate && value === undefined && oldValue === undefined;
+        const isFirstUpdate = !inRefreshSet;
+        const forceUpdate = isFirstUpdate && value === undefined && oldValue === undefined;
         if (!forceUpdate) {
           return;
         }
       }
     }
-    if (!inRefreshSet) {
-      this.refreshSet.add(key);
+    if (!inRefreshSet && isFreshValue) {
+      this.markKeyAsFresh(key)
     }
     await store.set(key, value);
     const rs$ = this.streamMap.get(key);
@@ -247,8 +257,12 @@ export class ObservableStoreImpl implements ObservableStore {
 
   async clear(): Promise<void> {
     const store = await this.asyncStore$$;
-    this.streamMap.forEach(subj$ => subj$.next(undefined));
+    this.streamMap.forEach(rs$ => rs$.next(undefined));
     return store.clear();
+  }
+
+  private markKeyAsFresh(key: string): void {
+    this.refreshedKeySet.add(key);
   }
 }
 
@@ -287,6 +301,7 @@ interface SetOp<T> {
 
 interface FetchOp<T> {
   fetch$: Observable<T | undefined>;
+  isFailed?: boolean;
 }
 
 interface InitOp {
