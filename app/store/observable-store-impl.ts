@@ -8,7 +8,7 @@ export class ObservableStoreImpl implements ObservableStore {
   private markAsInitialized!: () => void;
   readonly initialized$$ = new Promise<void>(resolve => (this.markAsInitialized = resolve));
 
-  private readonly dataMap = new Map<string, ReplaySubject<any>>();
+  private readonly streamByKey = new Map<string, ReplaySubject<any>>();
   private readonly refreshSet = new Set<string>();
   private readonly asyncStore$$: Promise<AsyncStore>;
   private readonly setOpsQueue = new Map<string, Promise<unknown>>();
@@ -45,43 +45,60 @@ export class ObservableStoreImpl implements ObservableStore {
       return of(undefined);
     }
 
-    const existingStream$ = this.dataMap.get(key) as ReplaySubject<T | undefined> | undefined;
+    const isNewStream = !this.streamByKey.has(key);
+    const stream$ = (isNewStream ? this.registerNewRxStreamForKey(key) : this.streamByKey.get(key)) as ReplaySubject<T | undefined>;
+    const completionPromise = isNewStream
+      ? this.loadKey(key, fetchFn, refreshMode)
+      : this.refreshKeyIfNeeded(key, fetchFn, refreshMode, checkUpdateFn);
 
-    if (existingStream$) {
-      // --- Path for an existing stream ---
-      const refreshPromise = this.refreshKeyIfNeeded(key, fetchFn, refreshMode, checkUpdateFn);
-      if (refreshMode === RefreshMode.Refresh) {
-        return new Observable(subscriber => {
-          refreshPromise.then(() => existingStream$.subscribe(subscriber)).catch(e => subscriber.error(e));
-        });
-      } else {
-        return existingStream$;
-      }
+    // If a refresh is requested, return a new Observable that waits for the
+    // operation to complete before emitting values from the underlying stream.
+    if (refreshMode === RefreshMode.Refresh || refreshMode === RefreshMode.RefreshOnce) {
+      return new Observable(subscriber => {
+        completionPromise.then(() => stream$.subscribe(subscriber)).catch(e => subscriber.error(e));
+      });
     }
-    // --- Path for a new stream ---
-    const newStream$ = this.registerNewRxStreamForKey(key);
-    this.loadKey(key, fetchFn);
-    return newStream$ as Observable<T | undefined>;
+
+    // For DoNotRefresh, return the stream directly.
+    // It will emit a value once the asynchronous loadKey operation populates it.
+    return stream$;
   }
 
-  private loadKey<T>(key: string, fetchFn: FetchFn<T> | undefined): void {
-    if (this.inFlightLoads.has(key)) return;
+  private loadKey<T>(key: string, fetchFn: FetchFn<T> | undefined, refreshMode: RefreshMode): Promise<void> {
+    const inFlight = this.inFlightLoads.get(key);
+    if (inFlight) {
+      return inFlight;
+    }
 
     const loadPromise = (async () => {
       const store = await this.asyncStore$$;
       const valueFromStore = await store.get<T>(key);
       if (valueFromStore !== undefined) {
-        await this.set(key, valueFromStore, skipUpdateCheck);
-      } else if (fetchFn) {
-        const valueFromFetch = await this.doFetch(key, fetchFn);
-        await this.set(key, valueFromFetch, skipUpdateCheck);
+        // There is a value in the store.
+        if (refreshMode === RefreshMode.DoNotRefresh || !fetchFn) {
+          const rs$ = this.streamByKey.get(key);
+          if (rs$) {
+            rs$.next(this.freezeFn(valueFromStore));
+          }
+        } else {
+          const valueFromFetch = await this.doFetch(key, fetchFn);
+          await this.set(key, valueFromFetch, skipUpdateCheck);
+        }
       } else {
-        await this.set(key, undefined, skipUpdateCheck);
+        // There is no value in the store.
+        if (fetchFn) {
+          const valueFromFetch = await this.doFetch(key, fetchFn);
+          await this.set(key, valueFromFetch, skipUpdateCheck);
+        } else {
+          await this.set(key, undefined, skipUpdateCheck);
+        }
       }
     })().finally(() => {
       this.inFlightLoads.delete(key);
     });
+
     this.inFlightLoads.set(key, loadPromise);
+    return loadPromise;
   }
 
   private async refreshKeyIfNeeded<T>(
@@ -107,7 +124,7 @@ export class ObservableStoreImpl implements ObservableStore {
     // Schedule the refresh.
     const refreshPromise = (async () => {
       const fetchedValue = await this.doFetch(key, fetchFn);
-      const stream$ = truthy(this.dataMap.get(key));
+      const stream$ = truthy(this.streamByKey.get(key));
       const currentValue = await firstValueFrom(stream$.pipe(take(1)));
       if (checkUpdateFn === skipUpdateCheck || checkUpdateFn(currentValue, fetchedValue)) {
         await this.set(key, fetchedValue, skipUpdateCheck);
@@ -138,7 +155,7 @@ export class ObservableStoreImpl implements ObservableStore {
 
   private registerNewRxStreamForKey<T>(key: string, initValue?: T): ReplaySubject<T | undefined> {
     const rs$ = new ReplaySubject<T | undefined>(1);
-    this.dataMap.set(key, rs$);
+    this.streamByKey.set(key, rs$);
     if (initValue !== undefined) {
       rs$.next(this.freezeFn(initValue));
     }
@@ -153,15 +170,17 @@ export class ObservableStoreImpl implements ObservableStore {
     const priorOp$$ = this.setOpsQueue.get(key) ?? Promise.resolve();
     const newOp$$ = (async () => {
       await priorOp$$;
-      if (!this.dataMap.has(key)) {
-        this.registerNewRxStreamForKey(key);
-      }
-      const store = await this.asyncStore$$;
+      const asyncStore = await this.asyncStore$$;
       if (checkUpdateFn !== skipUpdateCheck) {
-        const oldValue = await store.get<T>(key);
+        const oldValue = await asyncStore.get<T>(key);
         if (oldValue !== undefined && !checkUpdateFn(oldValue, value)) {
           return;
         }
+      }
+
+      const isNewStream = !this.streamByKey.has(key);
+      if (isNewStream) {
+        this.registerNewRxStreamForKey(key);
       }
 
       // Only add to refreshSet for defined values.
@@ -172,9 +191,8 @@ export class ObservableStoreImpl implements ObservableStore {
         this.refreshSet.delete(key);
       }
 
-      await store.set(key, value);
-
-      const rs$ = this.dataMap.get(key);
+      await asyncStore.set(key, value);
+      const rs$ = this.streamByKey.get(key);
       if (rs$) {
         rs$.next(this.freezeFn(value));
       }
@@ -196,8 +214,8 @@ export class ObservableStoreImpl implements ObservableStore {
   async clear(): Promise<void> {
     const store = await this.asyncStore$$;
     await store.clear();
-    this.dataMap.forEach(subj$ => subj$.next(undefined));
-    this.dataMap.clear();
+    this.streamByKey.forEach(subj$ => subj$.next(undefined));
+    this.streamByKey.clear();
     this.refreshSet.clear();
     this.setOpsQueue.clear();
     this.inFlightFetches.clear();

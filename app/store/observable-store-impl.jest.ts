@@ -139,6 +139,19 @@ describe('ObservableStoreImpl', () => {
     expect(asyncStore.calls).toEqual(['get', 'set', 'get']);
   });
 
+  it('set of exising value', async () => {
+    const key = 'Key';
+    const value = 'value';
+    const asyncStore = new BaseAsyncStoreForTest();
+    await asyncStore.set(key, value);
+    const store = newObservableStoreForTest(asyncStore);
+    await store.set(key, value, checkUpdateByStringify);
+
+    const v1 = await firstValueFrom(store.get<string>(key, undefined, RefreshMode.DoNotRefresh, checkUpdateByStringify));
+    expect(v1).toBe(value);
+  });
+
+
   it('should remove a value from the store', async () => {
     const map = new Map<string, any>();
 
@@ -172,6 +185,47 @@ describe('ObservableStoreImpl', () => {
     const v1 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
     const v2 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
     expect(v1).toBe(v2);
+    expect(nFetchesCalled).toBe(1);
+  });
+
+  it('should respect RefreshMode.RefreshOnce for a stored value', async () => {
+    let nFetchesCalled = 0;
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return of('value');
+    };
+
+    const key = 'Key';
+    const asyncStore = new BaseAsyncStoreForTest();
+    await asyncStore.set(key, 'value');
+    const store = newObservableStoreForTest(asyncStore);
+
+    const v1 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    const v2 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    expect(v1).toBe(v2);
+    expect(nFetchesCalled).toBe(1);
+  });
+
+  it('should respect RefreshMode.RefreshOnce after DoNotRefresh for a stored value', async () => {
+    let nFetchesCalled = 0;
+    const fetchFn = () => {
+      nFetchesCalled++;
+      return of('value');
+    };
+
+    const key = 'Key';
+    const asyncStore = new BaseAsyncStoreForTest();
+    await asyncStore.set(key, 'value');
+    const store = newObservableStoreForTest(asyncStore);
+
+    const v1 = await firstValueFrom(store.get<string>(key, undefined, RefreshMode.DoNotRefresh, checkUpdateByStringify));
+    expect(nFetchesCalled).toBe(0);
+    const v2 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    expect(nFetchesCalled).toBe(1);
+    const v3 = await firstValueFrom(store.get<string>(key, fetchFn, RefreshMode.RefreshOnce, checkUpdateByStringify));
+    expect(nFetchesCalled).toBe(1);
+    expect(v1).toBe(v2);
+    expect(v1).toBe(v3);
     expect(nFetchesCalled).toBe(1);
   });
 
