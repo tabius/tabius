@@ -17,7 +17,7 @@
     "fix-site-index": "mv dist/browser/index-org.html dist/browser/index.html",
     "inline-css": "ts-node scripts/inline-css.ts && npm run ngsw-json",
     "ngsw-json": "node_modules/.bin/ngsw-config dist/browser ngsw-config.json",
-    "sitemap": "ts-node scripts/generate-sitemap.ts",
+    "sitemap": "node -r tsconfig-paths/register -r ts-node/register scripts/generate-sitemap.ts",
     "update-deps": "rm package-lock.json && rm -rf node_modules && npm install",
     "update-version": "node scripts/update-build-version.js",
     "pw-tests-dev-ru": "TEST_ENV=dev-ru playwright test",
