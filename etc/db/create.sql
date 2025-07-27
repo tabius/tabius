@@ -37,7 +37,7 @@ CREATE TABLE song (
     # Set of media links for the song. One link per line.
     media_links VARCHAR(1024) NOT NULL DEFAULT '',
     version INT NOT NULL DEFAULT 0,
-    song SMALLINT DEFAULT 0
+    scene SMALLINT DEFAULT 0
 ) ENGINE InnoDB
   ROW_FORMAT = COMPRESSED
   DEFAULT CHARSET = utf8mb4
