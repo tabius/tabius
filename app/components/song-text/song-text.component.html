@@ -19,5 +19,7 @@
 </div>
 
 <ng-template #chordPopover let-popover="popover">
-  <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si" [popover]="popover"></gt-chord-popover>
+  @if (popoverChordLayout) {
+    <gt-chord-popover [chordLayout]="popoverChordLayout" [h4Si]="h4Si ?? false" [popover]="popover"></gt-chord-popover>
+  }
 </ng-template>

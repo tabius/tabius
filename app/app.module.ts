@@ -1,6 +1,6 @@
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ErrorHandler, Injector, NgModule, Provider, inject } from '@angular/core';
-import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration, withNoIncrementalHydration } from '@angular/platform-browser';
 import { AppComponent } from '@app/components/app.component';
 import { SiteHomePageComponent } from '@app/components/site-home-page/site-home-page.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -82,6 +82,12 @@ if (userAgent !== undefined && userAgent.length > 0) {
   console.log('Running in SSR mode');
 }
 
+// Enable client hydration only when the page was server-rendered: on the server (SSR build) always,
+// and in the browser only when SSR markup is present. Prevents the NG0505 warning in the
+// browser-only (CSR) build, where there is no serialized server state to hydrate.
+const enableHydration = typeof document === 'undefined' || document.querySelector('[ng-server-context]') !== null;
+const hydrationProviders = enableHydration ? [provideClientHydration(withNoIncrementalHydration())] : [];
+
 @NgModule({
   declarations: [
     AbstractAppComponent,
@@ -153,8 +159,8 @@ if (userAgent !== undefined && userAgent.length > 0) {
     { provide: APP_BROWSER_STORE_TOKEN, useClass: AppBrowserStore },
     BrowserStateService,
     HelpService,
-    provideHttpClient(withInterceptorsFromDi()),
-    provideClientHydration(),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    ...hydrationProviders,
     PwaUpdaterService,
     provideAuth0(environment.auth0Config),
   ],

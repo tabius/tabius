@@ -18,6 +18,10 @@ interface TabiusRequestData {
   user: User | undefined;
 }
 
+interface RequestWithTabiusData extends Express.Request {
+  _tabius?: TabiusRequestData;
+}
+
 interface Auth0JwtPayload {
   sub: string;
   exp: number;
@@ -104,7 +108,7 @@ export class BackendAuthService implements NestInterceptor {
   }
 
   static getUserOrUndefined(request: Express.Request): User | undefined {
-    const { user } = (request[TABIUS_REQUEST_DATA_FIELD_NAME] || {}) as TabiusRequestData;
+    const { user } = (request as RequestWithTabiusData)[TABIUS_REQUEST_DATA_FIELD_NAME] || {};
     return user;
   }
 

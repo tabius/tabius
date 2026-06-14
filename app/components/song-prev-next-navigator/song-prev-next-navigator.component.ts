@@ -10,10 +10,7 @@ import { ShortcutsService } from '@app/services/shortcuts.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map, switchMap } from 'rxjs/operators';
 import { AbstractAppComponent } from '@app/utils/abstract-app-component';
-import { findParentOrSelfWithClass, isBrowser, isElementToIgnoreKeyEvent, isTouchDevice } from '@app/utils/misc-utils';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Hammer = isBrowser ? require('hammerjs') : ({} as any);
+import { findParentOrSelfWithClass, isElementToIgnoreKeyEvent, isTouchDevice } from '@app/utils/misc-utils';
 
 @Component({
     selector: 'gt-song-prev-next-navigator',
@@ -100,16 +97,20 @@ export class SongPrevNextNavigatorComponent extends AbstractAppComponent impleme
   }
 
   ngAfterViewInit(): void {
-    this.installHammer();
+    void this.installHammer();
   }
 
   ngOnDestroy(): void {
     this.uninstallHammer();
   }
 
-  private installHammer(): void {
+  private async installHammer(): Promise<void> {
     this.uninstallHammer();
     if (this.bss.isBrowser && isTouchDevice()) {
+      // Lazy ESM import: hammerjs is a CommonJS, browser-only module. esbuild (the new @angular/build
+      // builder) does not support dynamic require(), and it must never load during SSR.
+      const hammerModule = await import('hammerjs');
+      const Hammer: any = (hammerModule as any).default ?? hammerModule;
       Hammer.defaults.cssProps.userSelect = 'auto';
       const hammer = new Hammer(window.document.body, {
         // touchAction: 'auto',

@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'tabius-ru',
       script: '/home/ram/tools/node/bin/node',
-      args: './dist/server/main.js',
+      args: './dist/server/server.mjs',
       cwd: '/home/ram/work/tabius-ru',
       instances: 1,
       autorestart: true,

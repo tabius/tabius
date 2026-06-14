@@ -65,7 +65,7 @@ export class BatchRequestOptimizerInterceptor implements HttpInterceptor {
           const results = event.body as { id: string | number }[];
           const filteredResults: any[] = [];
           if (results.length > 0) {
-            const unifyTypes = typeof results[0].id === 'number' ? v => Number(v) : v => v;
+            const unifyTypes = typeof results[0].id === 'number' ? (v: string) => Number(v) : (v: string) => v;
             for (const id of ids) {
               const typeSafeId = unifyTypes(id);
               for (const result of results) {

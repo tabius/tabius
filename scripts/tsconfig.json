@@ -4,8 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "types": [
-      "node"
-    ]
-  }
+    "types": ["node"]
+  },
+  "files": ["inline-css.ts", "generate-sitemap.ts"]
 }

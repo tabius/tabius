@@ -30,6 +30,7 @@ import { canManageCollectionContent, isModerator, isNumericId } from '@common/ut
 import { FullTextSearchDbi } from '../db/full-text-search-dbi.service';
 import { CollectionDbi } from '../db/collection-dbi.service';
 import { assertTruthy, isBoolean, validateObject } from 'assertic';
+import type { Request } from 'express';
 
 @Controller('/api/song')
 export class SongController {
@@ -75,7 +76,7 @@ export class SongController {
 
   /** Creates song and returns updated song & details. */
   @Post()
-  async create(@Req() req, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
+  async create(@Req() req: Request, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     console.log('SongController.create', request);
     const user = BackendAuthService.getUserOrFail(req);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
@@ -102,7 +103,7 @@ export class SongController {
 
   /** Updates song and returns updated song & details. */
   @Put()
-  async update(@Req() req, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
+  async update(@Req() req: Request, @Body() request: UpdateSongRequest): Promise<UpdateSongResponse> {
     console.log('SongController.update', request);
     const user: User = BackendAuthService.getUserOrFail(req);
     const collection = await this.collectionDbi.getCollectionById(request.song.collectionId);
@@ -126,7 +127,7 @@ export class SongController {
 
   /** Updates song's 'scene' flag and returns updated song & details. */
   @Put('scene')
-  async updateSceneFlag(@Req() req, @Body() request: UpdateSongSceneFlagRequest): Promise<UpdateSongResponse> {
+  async updateSceneFlag(@Req() req: Request, @Body() request: UpdateSongSceneFlagRequest): Promise<UpdateSongResponse> {
     console.log('SongController.updateSceneFlag', request);
     const user: User = BackendAuthService.getUserOrFail(req);
     if (!isModerator(user)) {
@@ -157,7 +158,7 @@ export class SongController {
   /** Deletes the song and returns updated collection details. */
   @Delete(':songId/:collectionId')
   async delete(
-    @Req() req,
+    @Req() req: Request,
     @Param('songId') idParam: string,
     @Param('collectionId') collectionIdParam: string,
   ): Promise<DeleteSongResponse> {
@@ -199,7 +200,7 @@ export class SongController {
   /** Adds song to secondary collection. */
   @Put('add-to-secondary-collection')
   async addSongToSecondaryCollection(
-    @Req() req,
+    @Req() req: Request,
     @Body() request: AddSongToSecondaryCollectionRequest,
   ): Promise<AddSongToSecondaryCollectionResponse> {
     console.log('SongController.addSongToCollection', request);
@@ -225,7 +226,7 @@ export class SongController {
   /** Removes song to secondary collection. */
   @Put('remove-from-secondary-collection')
   async removeSongFromSecondaryCollection(
-    @Req() req,
+    @Req() req: Request,
     @Body() request: RemoveSongFromSecondaryCollectionRequest,
   ): Promise<RemoveSongFromSecondaryCollectionResponse> {
     console.log('SongController.removeSongFromSecondaryCollection', request);
@@ -246,7 +247,7 @@ export class SongController {
   /** Removes song from the source collection and adds it to the target collection. */
   @Put('move-to-another-collection')
   async moveSongToAnotherCollection(
-    @Req() req,
+    @Req() req: Request,
     @Body() request: MoveSongToAnotherCollectionRequest,
   ): Promise<MoveSongToAnotherCollectionResponse> {
     console.log('moveSongToAnotherCollection', request);

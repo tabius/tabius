@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig.json",
-  "files": [
-    "app/main.ts",
-    "app/polyfills.ts"
-  ],
+  "files": ["app/main.ts", "app/polyfills.ts", "app/main.server.ts", "app/server.ts"],
+  "compilerOptions": {
+    "types": ["hammerjs", "node"]
+  },
   "angularCompilerOptions": {
     "strictInputAccessModifiers": true
     //    "strictTemplates": true

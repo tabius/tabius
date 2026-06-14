@@ -76,8 +76,8 @@ export class SongChordsComponent extends AbstractAppComponent {
       });
   }
 
-  getChordInfo(event: MouseEvent, chord: Chord): ChordClickInfo {
-    return { element: event.target as HTMLElement, chord };
+  getChordInfo(event: MouseEvent, chord?: Chord): ChordClickInfo {
+    return chord ? { element: event.target as HTMLElement, chord } : undefined;
   }
 
   private updateChordList(): void {

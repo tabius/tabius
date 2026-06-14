@@ -14,14 +14,14 @@
   }
 
   <!-- Do not index user collections   -->
-  @if (!!collectionViewModel?.collection.userId) {
+  @if (!!collectionViewModel?.collection?.userId) {
     <gt-head-meta [attrs]="{name: 'robots', content: 'noindex'}"></gt-head-meta>
   }
 
   <!-- Main content block -->
   @if (loaded && collectionViewModel) {
     <div>
-      <gt-collection-breadcrumb [collection]="collectionViewModel?.collection"
+      <gt-collection-breadcrumb [collection]="collectionViewModel.collection"
       [showCollectionLink]="false"></gt-collection-breadcrumb>
       <div class="collection-root">
         <div>

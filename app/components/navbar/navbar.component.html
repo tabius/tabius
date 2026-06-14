@@ -90,9 +90,9 @@
       </div>
     }
 
-    @if (contextMenuAction) {
+    @if (contextMenuAction?.icon; as contextMenuActionIcon) {
       <div (click)="activateContextMenuAction()" class="item">
-        <gt-svg-icon [icon]="contextMenuAction.icon"></gt-svg-icon>
+        <gt-svg-icon [icon]="contextMenuActionIcon"></gt-svg-icon>
       </div>
     }
 

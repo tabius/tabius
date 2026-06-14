@@ -3,16 +3,17 @@
   "compilerOptions": {
     "module": "ESNext",
     "outDir": "./out-tsc/spec",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "files": [
-    "./app/test.ts",
-    "./app/polyfills.ts"
-  ],
-  "include": [
-    "./app/**/*.spec.ts",
-    "./app/**/*.d.ts"
-  ]
+  "files": ["./app/test.ts", "./app/polyfills.ts"],
+  "include": ["./app/**/*.spec.ts", "./app/**/*.d.ts"],
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    },
+    "strictTemplates": false
+  }
 }

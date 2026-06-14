@@ -43,7 +43,7 @@
           <div class="menu-button-text">{{ i18n.menu }}</div>
         </a>
       }
-      @for (action of actions; track action) {
+      @for (action of actions; track $index) {
         <a (click)="activateAction(action, $event)" class="btn btn-flat-white">
           <div class="menu-item-content">
             @if (action.icon) {

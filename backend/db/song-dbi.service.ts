@@ -121,13 +121,13 @@ export class SongDbi {
 
   async getSongIdByMountFromTheSameCollection(songId: number, mount: string): Promise<number | undefined> {
     const collectionId: number | undefined = await this.query('SELECT collection_id FROM song WHERE id = ?', [songId]).then(
-      ([rows]) => (rows.length > 0 ? rows[0].collection_id : undefined),
+      ([rows]: any[]) => (rows.length > 0 ? rows[0].collection_id : undefined),
     );
     if (!collectionId) {
       return INVALID_ID;
     }
-    return await this.query('SELECT id FROM song WHERE collection_id = ? AND mount = ?', [collectionId, mount]).then(([rows]) =>
-      rows.length > 0 ? rows[0].id : undefined,
+    return await this.query('SELECT id FROM song WHERE collection_id = ? AND mount = ?', [collectionId, mount]).then(
+      ([rows]: any[]) => (rows.length > 0 ? rows[0].id : undefined),
     );
   }
 

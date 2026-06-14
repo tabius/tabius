@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
     "sourceMap": true,
+    "skipLibCheck": true,
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
@@ -21,9 +23,6 @@
       "@common/*": ["./common/*"],
       "@backend/*": ["./backend/*"]
     },
-    "lib": [
-      "ES2022",
-      "DOM"
-    ]
+    "lib": ["ES2022", "DOM"]
   }
 }

@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ToastService } from '@app/toast/toast.service';
 import { map, skip } from 'rxjs/operators';
-import * as NoSleep from 'nosleep.js/dist/NoSleep';
+import NoSleep from 'nosleep.js';
 import { Router } from '@angular/router';
 import { MOUNT_PRINT_SUFFIX } from '@common/mounts';
 import { I18N } from '@app/app-i18n';

@@ -6,7 +6,7 @@ const config: Config.InitialOptions = {
   rootDir: '.',
   testRegex: '.*\\.jest\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.(t|j)s$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
   },
   setupFiles: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {

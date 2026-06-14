@@ -16,6 +16,7 @@ import { canManageCollectionContent, isModerator } from '@common/util/misc-utils
 import { SongDbi } from '../db/song-dbi.service';
 import { validateObject } from 'assertic';
 import { allListedCollections } from '@backend/handlers/collection.handler';
+import type { Request } from 'express';
 
 @Controller('/api/collection')
 export class CollectionController {
@@ -25,7 +26,7 @@ export class CollectionController {
   ) {}
 
   @Post()
-  async createListedCollection(@Req() req, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
+  async createListedCollection(@Req() req: Request, @Body() request: CreateListedCollectionRequest): Promise<CreateListedCollectionResponse> {
     console.log('CollectionController.createListedCollection', request);
     const user: User = BackendAuthService.getUserOrFail(req);
     if (!isModerator(user)) {
@@ -52,7 +53,7 @@ export class CollectionController {
   }
 
   @Post('/user')
-  async createUserCollection(@Req() req, @Body() request: CreateUserCollectionRequest): Promise<CreateUserCollectionResponse> {
+  async createUserCollection(@Req() req: Request, @Body() request: CreateUserCollectionRequest): Promise<CreateUserCollectionResponse> {
     console.log('CollectionController.createUserCollection', request);
     const user = BackendAuthService.getUserOrFail(req);
     const error = validateObject(request, createUserCollectionRequestAssertion);
@@ -80,7 +81,7 @@ export class CollectionController {
 
   /** Updates collection and returns updated song & details. */
   @Put('/user')
-  async updateUserCollection(@Req() req, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
+  async updateUserCollection(@Req() req: Request, @Body() request: UpdateCollectionRequest): Promise<UpdateCollectionResponse> {
     console.log('CollectionController.updateUserCollection', request);
     const user: User = BackendAuthService.getUserOrFail(req);
     const collection = await this.collectionDbi.getCollectionById(request.id);
@@ -98,7 +99,7 @@ export class CollectionController {
 
   /** Deletes collection and returns list of all user collection. */
   @Delete('/user/:collectionId')
-  async deleteUserCollection(@Req() req, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
+  async deleteUserCollection(@Req() req: Request, @Param('collectionId') idParam: string): Promise<DeleteUserCollectionResponse> {
     console.log('CollectionController.deleteUserCollection', idParam);
     const user: User = BackendAuthService.getUserOrFail(req);
     const collectionId = +idParam;

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { Toast, ToastRef } from '@app/toast/toast-model';
-import { animate, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
+import { animate, AnimationEvent, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
 
 type ToastAnimationState = 'default' | 'closing';
 

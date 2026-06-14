@@ -30,8 +30,14 @@ export class ClientAuthService {
         }
       });
       this.auth0Service.error$.subscribe(error => {
+        const errorCode = (error as { error?: string })?.error;
+        // 'missing_refresh_token' / 'login_required' are expected while browsing anonymously
+        // (no Auth0 session). They are not real errors, so don't spam the console with them.
+        if (errorCode === 'missing_refresh_token' || errorCode === 'login_required') {
+          return;
+        }
         console.error('Got auth0 error', error);
-        if ((error as { error?: string })?.error?.includes('invalid')) {
+        if (errorCode?.includes('invalid')) {
           void this.logout();
         }
       });

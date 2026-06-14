@@ -6,6 +6,7 @@ import { updateFavoriteSongKeyRequestAssertion, UserSongSettingsValidator } from
 import { BackendAuthService } from '../service/backend-auth.service';
 import { isEqualByStringify } from '@common/util/equality-functions';
 import { validateObject } from 'assertic';
+import type { Request } from 'express';
 
 @Controller('/api/user')
 export class UserController {
@@ -13,7 +14,7 @@ export class UserController {
 
   /** Login callback. Called on successful user login. */
   @Get('/login')
-  async login(@Req() req): Promise<LoginResponse> {
+  async login(@Req() req: Request): Promise<LoginResponse> {
     const user = BackendAuthService.getUserOrUndefined(req);
     if (!user) {
       return {
@@ -31,14 +32,14 @@ export class UserController {
   }
 
   @Get('/settings')
-  async getSettings(@Req() req): Promise<UserSettings> {
+  async getSettings(@Req() req: Request): Promise<UserSettings> {
     const user: User = BackendAuthService.getUserOrFail(req);
     console.log('UserController.getSettings', user.email);
     return await this.getUserSettings(user);
   }
 
   @Put('/settings/song')
-  async setSongSettings(@Req() req, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
+  async setSongSettings(@Req() req: Request, @Body() songSettings: UserSongSettings): Promise<UserSettings> {
     const error = validateObject(songSettings, UserSongSettingsValidator);
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -59,7 +60,7 @@ export class UserController {
   }
 
   @Put('/settings/h4Si')
-  async setH4Si(@Req() req, @Body() { h4SiFlag }: { h4SiFlag: boolean | undefined }): Promise<UserSettings> {
+  async setH4Si(@Req() req: Request, @Body() { h4SiFlag }: { h4SiFlag: boolean | undefined }): Promise<UserSettings> {
     const user: User = BackendAuthService.getUserOrFail(req);
     console.log('UserController.setH4Si', user.email, h4SiFlag);
     const settings = await this.getUserSettings(user);
@@ -69,7 +70,7 @@ export class UserController {
   }
 
   @Put('/settings/favKey')
-  async setFavKey(@Req() req, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
+  async setFavKey(@Req() req: Request, @Body() request: UpdateFavoriteSongKeyRequest): Promise<UserSettings> {
     const error = validateObject(request, updateFavoriteSongKeyRequestAssertion);
     if (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

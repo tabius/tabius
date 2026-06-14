@@ -1,0 +1,50 @@
+# Dedicated project name so volumes/network don't collide with other compose stacks.
+name: tabius-mysql
+
+services:
+  mariadb:
+    # MariaDB to match the production dump (backup/tabius-ru.sql is a MariaDB 10.6 dump).
+    image: mariadb:10.6
+    container_name: tabius-mariadb
+    restart: unless-stopped
+    # Host port matches dbConfig.port in local/server-config.json (23306 -> container 3306).
+    ports:
+      - '23306:3306'
+    environment:
+      # Root password is only used for administration. The application user/db/schema
+      # are created on first start by the mounted init script (../etc/db/create.sql),
+      # which already defines: database `tabius`, user `tabius`/`12345` and all tables.
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      # Persistent storage: the database lives here across container restarts/recreates.
+      - tabius-data:/var/lib/mysql
+      # Runs ONLY on first init (when the data volume is empty): creates db, user and schema.
+      - ../etc/db/create.sql:/docker-entrypoint-initdb.d/01-create.sql:ro
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  sphinx:
+    # Sphinx 3.x full-text search; indexes the `tabius` database from the MariaDB container.
+    build: ./sphinx
+    image: tabius-sphinx:3.3.1
+    container_name: tabius-sphinx
+    restart: unless-stopped
+    depends_on:
+      # Wait until MariaDB is healthy so the indexer can connect on first start.
+      mariadb:
+        condition: service_healthy
+    # Host port matches SPHINX_SQL_URL in backend (http://localhost:9307/sql).
+    ports:
+      - '9307:9307'
+    volumes:
+      # Easy edits to the index/source config without rebuilding the image.
+      - ./sphinx/sphinx.conf:/etc/sphinxsearch/sphinx.conf:ro
+      # Persist the built index across restarts.
+      - tabius-sphinx-data:/opt/tabius-common/sphinx/data
+
+volumes:
+  tabius-data:
+  tabius-sphinx-data:

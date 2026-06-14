@@ -6,7 +6,9 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 import { SERVER_CONFIG } from './backend-config';
 import { NestApplicationOptions } from '@nestjs/common';
 import { registerRoutes } from '@backend/handlers/routes';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { Application } from 'express';
+import { join } from 'node:path';
 
 installLogFunctions();
 
@@ -25,8 +27,11 @@ async function bootstrap(): Promise<void> {
     console.error(`Uncaught Exception thrown:`, err);
   });
 
-  const nestApp = await NestFactory.create(BackendModule, nestAppOptions);
+  const nestApp = await NestFactory.create<NestExpressApplication>(BackendModule, nestAppOptions);
   nestApp.enableCors(buildCorsOptions());
+  // Serve collection/song images from resourcesDir. In production nginx serves /images before
+  // requests reach Node, so this is only used for local dev (and as a harmless fallback).
+  nestApp.useStaticAssets(join(SERVER_CONFIG.resourcesDir, 'images'), { prefix: '/images' });
   setApp(nestApp);
 
   registerRoutes(nestApp.getHttpAdapter() as unknown as Application);

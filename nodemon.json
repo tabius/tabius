@@ -8,5 +8,5 @@
     "common/**/*.spec.ts",
     "backend/**/*.spec.ts"
   ],
-  "exec": "ts-node -r tsconfig-paths/register backend/main.backend.ts"
+  "exec": "ts-node --project backend/tsconfig.json -r tsconfig-paths/register backend/main.backend.ts"
 }

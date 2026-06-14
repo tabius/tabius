@@ -213,7 +213,7 @@ export class ChordImagePainter {
   }
 
   private drawBars(graphics: ChordImageGraphics): void {
-    const bars = {};
+    const bars: Record<string, { Str: number; Pos: number; Length: number; Finger: string }> = {};
     for (let i = 0; i < 5; i++) {
       if (
         this.chordPositions[i] !== MUTED &&

@@ -84,10 +84,10 @@
       </div>
     }
 
-    @if (isBrowser && !editorIsOpen) {
+    @if (isBrowser && !editorIsOpen && activeCollection) {
       <gt-song-prev-next-navigator
         [songId]="song.id"
-        [activeCollectionId]="activeCollection?.id"
+        [activeCollectionId]="activeCollection.id"
       ></gt-song-prev-next-navigator>
     }
   }

@@ -1,5 +1,15 @@
 import { ReplaySubject } from 'rxjs';
-import { ChangeDetectorRef, Component, DestroyRef, inject, Injector, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  Injector,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { Meta, Title } from '@angular/platform-browser';
 import { updatePageMetadata } from '@app/utils/seo-utils';
@@ -8,8 +18,9 @@ import { PageMetadata } from '@common/common-model';
 
 /** Common base class for all components with a common reusable fields. */
 @Component({
-    template: '',
-    standalone: false
+  template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class AbstractAppComponent implements OnChanges, OnInit {
   readonly isServer: boolean;
