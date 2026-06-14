@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { Collection } from '@common/catalog-model';
 import { CatalogService } from '@app/services/catalog.service';
 import { FormControl } from '@angular/forms';
@@ -35,7 +35,6 @@ let letterBlockFilters: string[] = [];
 @Component({
   templateUrl: './catalog-page.component.html',
   styleUrls: ['./catalog-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class CatalogPageComponent extends ComponentWithLoadingIndicator {

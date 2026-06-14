@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  HostListener,
-  inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, HostListener, inject, Input, OnChanges, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { SongDetails } from '@common/catalog-model';
 import { switchMap } from 'rxjs';
 import { UserService } from '@app/services/user.service';
@@ -45,7 +35,6 @@ export const SONG_TEXT_COMPONENT_NAME = 'gt-song-text';
   selector: 'gt-song-text',
   templateUrl: './song-text.component.html',
   styleUrls: ['./song-text.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class SongTextComponent extends AbstractAppComponent implements OnChanges {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { Collection, CollectionType, Song, SongDetails } from '@common/catalog-model';
 import { CatalogService } from '@app/services/catalog.service';
@@ -10,11 +10,10 @@ import { I18N } from '@app/app-i18n';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'gt-song',
-    templateUrl: './song.component.html',
-    styleUrls: ['./song.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-song',
+  templateUrl: './song.component.html',
+  styleUrls: ['./song.component.scss'],
+  standalone: false,
 })
 export class SongComponent extends ComponentWithLoadingIndicator {
   private readonly catalogService = inject(CatalogService);

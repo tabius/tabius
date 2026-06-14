@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  inject,
-  Input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, inject, Input, Output, ViewChild } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { combineLatest } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -37,7 +27,6 @@ export type SongEditResult = {
   selector: 'gt-song-editor',
   templateUrl: './song-editor.component.html',
   styleUrls: ['./song-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class SongEditorComponent extends ComponentWithLoadingIndicator {

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, Input, OnDestroy, inject } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Input, OnDestroy, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { combineLatest, Observable, of } from 'rxjs';
 import { combineLatest0, getCollectionPageLink, getSongPageLink, isDefined, sortSongsAlphabetically } from '@common/util/misc-utils';
@@ -13,11 +13,10 @@ import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { findParentOrSelfWithClass, isElementToIgnoreKeyEvent, isTouchDevice } from '@app/utils/misc-utils';
 
 @Component({
-    selector: 'gt-song-prev-next-navigator',
-    templateUrl: './song-prev-next-navigator.component.html',
-    styleUrls: ['./song-prev-next-navigator.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-song-prev-next-navigator',
+  templateUrl: './song-prev-next-navigator.component.html',
+  styleUrls: ['./song-prev-next-navigator.component.scss'],
+  standalone: false,
 })
 export class SongPrevNextNavigatorComponent extends AbstractAppComponent implements AfterViewInit, OnDestroy {
   private readonly catalogDataService = inject(CatalogService);

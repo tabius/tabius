@@ -1,15 +1,14 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, Output, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { I18N } from '@app/app-i18n';
 import { ClientAuthService } from '@app/services/client-auth.service';
 import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
-    selector: 'gt-user-registration-prompt',
-    templateUrl: './user-registration-prompt.component.html',
-    styleUrls: ['./user-registration-prompt.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-user-registration-prompt',
+  templateUrl: './user-registration-prompt.component.html',
+  styleUrls: ['./user-registration-prompt.component.scss'],
+  standalone: false,
 })
 export class UserRegistrationPromptComponent implements AfterViewInit {
   private readonly el = inject(ElementRef);

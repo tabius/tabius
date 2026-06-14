@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { TunerToneType } from '@common/user-model';
 import { I18N } from '@app/app-i18n';
@@ -9,10 +9,9 @@ import { newDefaultUserDeviceSettings } from '@app/utils/misc-utils';
 const GUITAR_STRINGS = ['e', 'B', 'G', 'D', 'A', 'E'];
 
 @Component({
-    templateUrl: './tuner-page.component.html',
-    styleUrls: ['./tuner-page.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './tuner-page.component.html',
+  styleUrls: ['./tuner-page.component.scss'],
+  standalone: false,
 })
 export class TunerPageComponent extends AbstractAppComponent implements OnDestroy {
   private readonly uds = inject(UserService);
@@ -37,13 +36,10 @@ export class TunerPageComponent extends AbstractAppComponent implements OnDestro
 
   constructor() {
     super();
-    this.uds
-      .userDeviceSettings$
-      .pipe(takeUntilDestroyed())
-      .subscribe(deviceSettings => {
-        this.deviceSettings = deviceSettings;
-        this.cdr.markForCheck();
-      });
+    this.uds.userDeviceSettings$.pipe(takeUntilDestroyed()).subscribe(deviceSettings => {
+      this.deviceSettings = deviceSettings;
+      this.cdr.markForCheck();
+    });
     this.updatePageMetadata(this.i18n.meta);
   }
 

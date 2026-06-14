@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Output, inject } from '@angular/core';
 import { TELEGRAM_CHANNEL_URL } from '@app/app-constants';
 import { I18N } from '@app/app-i18n';
 import { BrowserStateService } from '@app/services/browser-state.service';
@@ -6,11 +6,10 @@ import { LINK_STUDIO } from '@common/mounts';
 import { scrollToView } from '@app/utils/misc-utils';
 
 @Component({
-    selector: 'gt-moderator-prompt',
-    templateUrl: './moderator-prompt.component.html',
-    styleUrls: ['./moderator-prompt.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-moderator-prompt',
+  templateUrl: './moderator-prompt.component.html',
+  styleUrls: ['./moderator-prompt.component.scss'],
+  standalone: false,
 })
 export class ModeratorPromptComponent implements AfterViewInit {
   private readonly el = inject(ElementRef);

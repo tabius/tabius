@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { DEFAULT_FAVORITE_KEY, User, UserDeviceSettings } from '@common/user-model';
 import { combineLatest } from 'rxjs';
@@ -15,10 +15,9 @@ export const MAX_SONG_FONT_SIZE = 42;
 export const MIN_SONG_FONT_SIZE = 8;
 
 @Component({
-    templateUrl: './settings-page.component.html',
-    styleUrls: ['./settings-page.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './settings-page.component.html',
+  styleUrls: ['./settings-page.component.scss'],
+  standalone: false,
 })
 export class SettingsPageComponent extends ComponentWithLoadingIndicator {
   private readonly uds = inject(UserService);

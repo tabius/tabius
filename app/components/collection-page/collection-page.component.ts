@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { Collection, CollectionDetails, Song } from '@common/catalog-model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -51,7 +51,6 @@ export class CollectionViewModel {
 @Component({
   templateUrl: './collection-page.component.html',
   styleUrls: ['./collection-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class CollectionPageComponent extends ComponentWithLoadingIndicator {

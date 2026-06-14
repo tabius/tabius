@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { UserService } from '@app/services/user.service';
 import { map, tap } from 'rxjs/operators';
@@ -17,11 +17,10 @@ interface ComponentCollectionData extends Collection {
 }
 
 @Component({
-    selector: 'gt-add-song-to-collection',
-    templateUrl: './add-song-to-collection.component.html',
-    styleUrls: ['./add-song-to-collection.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-add-song-to-collection',
+  templateUrl: './add-song-to-collection.component.html',
+  styleUrls: ['./add-song-to-collection.component.scss'],
+  standalone: false,
 })
 export class AddSongToCollectionComponent extends AbstractAppComponent {
   private readonly userService = inject(UserService);

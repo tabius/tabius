@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { getTranslitLowerCase } from '@common/util/seo-translit';
 import { CollectionType } from '@common/catalog-model';
 import { CatalogService } from '@app/services/catalog.service';
@@ -14,7 +14,6 @@ import { HttpErrorResponse } from '@angular/common/http';
   selector: 'gt-collection-editor',
   templateUrl: './collection-editor.component.html',
   styleUrls: ['./collection-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class CollectionEditorComponent implements OnInit {

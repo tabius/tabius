@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { User } from '@common/user-model';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -35,7 +35,6 @@ enum NavSection {
   selector: 'gt-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class NavbarComponent {

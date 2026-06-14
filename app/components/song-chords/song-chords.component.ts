@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { ChordLayout, getChordLayout } from '@common/util/chords-layout-lib';
 import { ChordRenderingOptions, getToneWithH4SiFix, renderChord, TONES_COUNT } from '@common/util/chords-renderer';
 import { UserService } from '@app/services/user.service';
@@ -18,11 +18,10 @@ import { AbstractAppComponent } from '@app/utils/abstract-app-component';
 import { assertTruthy } from 'assertic';
 
 @Component({
-    selector: 'gt-song-chords',
-    templateUrl: './song-chords.component.html',
-    styleUrls: ['./song-chords.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-song-chords',
+  templateUrl: './song-chords.component.html',
+  styleUrls: ['./song-chords.component.scss'],
+  standalone: false,
 })
 export class SongChordsComponent extends AbstractAppComponent {
   private readonly uds = inject(UserService);

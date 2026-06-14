@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { I18N } from '@app/app-i18n';
 import { ClientAuthService } from '@app/services/client-auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'gt-signin-signout-button',
-    templateUrl: './signin-signout-button.component.html',
-    styleUrls: ['./signin-signout-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-signin-signout-button',
+  templateUrl: './signin-signout-button.component.html',
+  styleUrls: ['./signin-signout-button.component.scss'],
+  standalone: false,
 })
 export class SigninSignoutButtonComponent {
   private readonly cd = inject(ChangeDetectorRef);

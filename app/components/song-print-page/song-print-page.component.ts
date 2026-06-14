@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { CatalogService } from '@app/services/catalog.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,9 +8,8 @@ import { BrowserStateService } from '@app/services/browser-state.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    templateUrl: './song-print-page.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './song-print-page.component.html',
+  standalone: false,
 })
 export class SongPrintPageComponent {
   private readonly cds = inject(CatalogService);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ChordLayout } from '@common/util/chords-layout-lib';
 import { PopoverRef } from '@app/popover/popover-ref';
 import { I18N } from '@app/app-i18n';
@@ -7,11 +7,10 @@ import { convertChordToFingerPositions, playChordSound } from '@app/utils/chord-
 import { getChordsDiscussionUrl } from '@app/utils/url-utils';
 
 @Component({
-    selector: 'gt-chord-popover',
-    templateUrl: './chord-popover.component.html',
-    styleUrls: ['./chord-popover.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-chord-popover',
+  templateUrl: './chord-popover.component.html',
+  styleUrls: ['./chord-popover.component.scss'],
+  standalone: false,
 })
 export class ChordPopoverComponent {
   @Input({ required: true }) chordLayout!: ChordLayout;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { ToastService } from '@app/toast/toast.service';
 import { CatalogService } from '@app/services/catalog.service';
 import { I18N } from '@app/app-i18n';
@@ -7,7 +7,6 @@ import { I18N } from '@app/app-i18n';
   selector: 'gt-user-collection-editor',
   templateUrl: './user-collection-editor.component.html',
   styleUrls: ['./user-collection-editor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class UserCollectionEditorComponent {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Collection, Song } from '@common/catalog-model';
 import { getCollectionPageLink, getSongPageLink, trackById } from '@common/util/misc-utils';
 import { I18N } from '@app/app-i18n';
@@ -15,11 +15,10 @@ interface SongItem {
 }
 
 @Component({
-    selector: 'gt-song-list',
-    templateUrl: './song-list.component.html',
-    styleUrls: ['./song-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-song-list',
+  templateUrl: './song-list.component.html',
+  styleUrls: ['./song-list.component.scss'],
+  standalone: false,
 })
 export class SongListComponent implements OnChanges {
   readonly trackById = trackById;

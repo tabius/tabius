@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, PLATFORM_ID, ViewChild, inject } from '@angular/core';
 import { ChordImagePainter } from '@app/utils/chord-image-painter';
 import { ChordLayout } from '@common/util/chords-layout-lib';
 import { isPlatformBrowser } from '@angular/common';
@@ -8,10 +8,9 @@ import { getToneWithH4SiFix } from '@common/util/chords-renderer';
 import { getDefaultH4SiFlag } from '@common/user-model';
 
 @Component({
-    selector: 'gt-chord-image',
-    templateUrl: './chord-image.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-chord-image',
+  templateUrl: './chord-image.component.html',
+  standalone: false,
 })
 export class ChordImageComponent implements AfterViewInit, OnChanges {
   @Input({ required: true }) layout!: ChordLayout;

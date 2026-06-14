@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { environment } from '@app/environments/environment';
 import { Router } from '@angular/router';
 import { I18N } from '@app/app-i18n';
@@ -16,11 +16,10 @@ import { PopoverRef } from '@app/popover/popover-ref';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'gt-footer',
-    templateUrl: './footer.component.html',
-    styleUrls: ['./footer.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-footer',
+  templateUrl: './footer.component.html',
+  styleUrls: ['./footer.component.scss'],
+  standalone: false,
 })
 export class FooterComponent implements OnDestroy {
   readonly router = inject(Router);

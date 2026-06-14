@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { Toast, ToastRef } from '@app/toast/toast-model';
 import { animate, AnimationEvent, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
 
@@ -13,12 +13,11 @@ const toastAnimations: { readonly fadeToast: AnimationTriggerMetadata } = {
 };
 
 @Component({
-    selector: 'gt-toast',
-    templateUrl: './toast.component.html',
-    styleUrls: ['./toast.component.scss'],
-    animations: [toastAnimations.fadeToast],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-toast',
+  templateUrl: './toast.component.html',
+  styleUrls: ['./toast.component.scss'],
+  animations: [toastAnimations.fadeToast],
+  standalone: false,
 })
 export class ToastComponent implements OnDestroy {
   readonly toast = inject(Toast);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Collection, Song, SongDetails } from '@common/catalog-model';
@@ -43,7 +43,6 @@ import { getDefaultUserSongFontSize, isInputEvent, scrollToView, scrollToViewByE
 @Component({
   templateUrl: './song-page.component.html',
   styleUrls: ['./song-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class SongPageComponent extends ComponentWithLoadingIndicator implements OnDestroy {

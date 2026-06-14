@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { User } from '@common/user-model';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -15,10 +15,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { assertTruthy } from 'assertic';
 
 @Component({
-    templateUrl: './studio-page.component.html',
-    styleUrls: ['./studio-page.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  templateUrl: './studio-page.component.html',
+  styleUrls: ['./studio-page.component.scss'],
+  standalone: false,
 })
 export class StudioPageComponent extends ComponentWithLoadingIndicator {
   private readonly uds = inject(UserService);

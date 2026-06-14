@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { I18N } from '@app/app-i18n';
 
 @Component({
-    selector: 'gt-resource-not-found',
-    templateUrl: './resource-not-found.component.html',
-    styleUrls: ['./resource-not-found.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-resource-not-found',
+  templateUrl: './resource-not-found.component.html',
+  styleUrls: ['./resource-not-found.component.scss'],
+  standalone: false,
 })
 export class ResourceNotFoundComponent {
   readonly bss = inject(BrowserStateService);

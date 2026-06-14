@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { I18N } from '@app/app-i18n';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
 import { CatalogService } from '@app/services/catalog.service';
@@ -18,7 +18,6 @@ import { UserSongSettings } from '@common/user-model';
 @Component({
   templateUrl: './scene-page.component.html',
   styleUrls: ['./scene-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class ScenePageComponent extends ComponentWithLoadingIndicator {

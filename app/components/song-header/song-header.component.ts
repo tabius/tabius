@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { Collection, Song } from '@common/catalog-model';
 import { getCollectionPageLink, getNameFirstFormArtistName, getSongPrintPageLink } from '@common/util/misc-utils';
 import { HelpService } from '@app/services/help.service';
@@ -9,11 +9,10 @@ import { firstValueFrom, Observable } from 'rxjs';
 export type SongHeaderTitleFormat = 'song' | 'song-and-collection';
 
 @Component({
-    selector: 'gt-song-header',
-    templateUrl: './song-header.component.html',
-    styleUrls: ['./song-header.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-song-header',
+  templateUrl: './song-header.component.html',
+  styleUrls: ['./song-header.component.scss'],
+  standalone: false,
 })
 export class SongHeaderComponent implements OnChanges {
   private readonly helpService = inject(HelpService);

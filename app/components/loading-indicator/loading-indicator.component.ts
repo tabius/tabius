@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { I18N } from '@app/app-i18n';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'gt-loading-indicator',
-    templateUrl: './loading-indicator.component.html',
-    styleUrls: ['./loading-indicator.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-loading-indicator',
+  templateUrl: './loading-indicator.component.html',
+  styleUrls: ['./loading-indicator.component.scss'],
+  standalone: false,
 })
 export class LoadingIndicatorComponent {
   private readonly cdr = inject(ChangeDetectorRef);

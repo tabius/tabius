@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, inject } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { filter } from 'rxjs/operators';
 import { CatalogNavigationHistoryStep } from '@common/user-model';
@@ -12,11 +12,10 @@ import { trackByUrl } from '@common/util/misc-utils';
 import { MOUNT_COLLECTION_PREFIX } from '@common/mounts';
 
 @Component({
-    selector: 'gt-catalog-navigation-history-popup',
-    templateUrl: './catalog-navigation-history-popup.component.html',
-    styleUrls: ['./catalog-navigation-history-popup.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-catalog-navigation-history-popup',
+  templateUrl: './catalog-navigation-history-popup.component.html',
+  styleUrls: ['./catalog-navigation-history-popup.component.scss'],
+  standalone: false,
 })
 export class CatalogNavigationHistoryPopupComponent extends AbstractAppComponent {
   private readonly uds = inject(UserService);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import { CatalogService } from '@app/services/catalog.service';
 import { UserService } from '@app/services/user.service';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
@@ -10,11 +10,10 @@ import { ToastService } from '@app/toast/toast.service';
 import { assertTruthy } from 'assertic';
 
 @Component({
-    selector: 'gt-move-song-to-collection',
-    templateUrl: './move-song-to-collection.component.html',
-    styleUrls: ['./move-song-to-collection.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-move-song-to-collection',
+  templateUrl: './move-song-to-collection.component.html',
+  styleUrls: ['./move-song-to-collection.component.scss'],
+  standalone: false,
 })
 export class MoveSongToCollectionComponent implements OnChanges {
   private readonly cds = inject(CatalogService);

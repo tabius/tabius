@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { ToastService } from '@app/toast/toast.service';
 import { CreateUserCollectionRequest } from '@common/api-model';
@@ -18,11 +18,10 @@ interface CollectionInfo {
 }
 
 @Component({
-    selector: 'gt-user-collections-list',
-    templateUrl: './user-collections-list.component.html',
-    styleUrls: ['./user-collections-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-user-collections-list',
+  templateUrl: './user-collections-list.component.html',
+  styleUrls: ['./user-collections-list.component.scss'],
+  standalone: false,
 })
 export class UserCollectionsListComponent extends AbstractAppComponent {
   private readonly cds = inject(CatalogService);

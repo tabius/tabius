@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, TemplateRef, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, HostListener, TemplateRef, ViewChild, inject } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { Observable } from 'rxjs';
 import { HelpService } from '@app/services/help.service';
@@ -8,11 +8,10 @@ import { CatalogNavigationHistoryService } from '@app/services/catalog-navigatio
 import type { Request } from 'express';
 
 @Component({
-    selector: 'gt-app',
-    templateUrl: 'app.component.html',
-    styleUrls: ['app.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'gt-app',
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.scss'],
+  standalone: false,
 })
 export class AppComponent implements AfterViewInit {
   private readonly bss = inject(BrowserStateService);

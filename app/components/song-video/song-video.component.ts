@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges } from '@angular/core';
 import { BrowserStateService } from '@app/services/browser-state.service';
 import { getFirstYoutubeVideoIdFromLinks } from '@common/util/media-links-utils';
 import { isBotUserAgent } from '@common/util/misc-utils';
@@ -12,7 +12,6 @@ const defaultVideoHeight = 169;
   selector: 'gt-song-video',
   templateUrl: './song-video.component.html',
   styleUrls: ['./song-video.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class SongVideoComponent implements OnChanges {
