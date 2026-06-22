@@ -16,7 +16,6 @@
               "base": "dist"
             },
             "index": "app/index.html",
-            "polyfills": ["app/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": ["assertic", "hammerjs", "nosleep.js", "pure-md5"],
             "assets": [
@@ -141,7 +140,6 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "app/test.ts",
-            "polyfills": "app/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "app/karma.conf.js",
             "scripts": []

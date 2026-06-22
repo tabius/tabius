@@ -5,7 +5,7 @@
     "outDir": "./out-tsc/spec",
     "types": ["node"]
   },
-  "files": ["./app/test.ts", "./app/polyfills.ts"],
+  "files": ["./app/test.ts"],
   "include": ["./app/**/*.spec.ts", "./app/**/*.d.ts"],
   "angularCompilerOptions": {
     "extendedDiagnostics": {
