@@ -9,7 +9,7 @@
     "build": "npm run update-version && ng build",
     "build:ssr-dev-ru": "npm run update-version && ng build -c dev-ru",
     "build:ssr-ru": "npm run clean && npm run update-version && ng build -c ru && npm run inline-css",
-    "deploy:ssr-ru": "ssh ram 'bash -lc \"export PATH=/home/ram/tools/node/bin:$PATH && cd work/tabius-ru && git pull && npm install\"' && npm run build:ssr-ru && rsync -avz -e ssh ./dist/ ram:work/tabius-ru/dist && ssh ram 'bash -lc \"export PATH=/home/ram/tools/node/bin:$PATH && pm2 restart tabius-ru nest-ru\"'",
+    "deploy:ssr-ru": "ssh ram 'bash -lc \"cd work/tabius-ru && git pull && npm install\"' && npm run build:ssr-ru && rsync -avz -e ssh ./dist/ ram:work/tabius-ru/dist && ssh ram 'bash -lc \"pm2 restart tabius-ru nest-ru\"'",
     "start-dist": "node dist/server/server.mjs",
     "start-ng-ssr-ru": "ng serve -c dev-ru --port=12101",
     "start-ng-browser-ru": "npm run update-version && ng serve -c dev-ru-csr --port=12102",
