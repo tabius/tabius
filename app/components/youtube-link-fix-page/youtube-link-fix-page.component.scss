@@ -68,8 +68,8 @@
   align-items: flex-start;
 
   .candidates {
-    flex: 1 1 420px;
-    min-width: 320px;
+    flex: 1 1 560px;
+    min-width: 360px;
   }
 
   .song-text {
@@ -100,13 +100,13 @@
   }
 
   .player {
-    flex: 0 0 160px;
-    width: 160px;
-    height: 90px;
+    flex: 0 0 320px;
+    width: 320px;
+    height: 180px;
 
     iframe {
-      width: 160px;
-      height: 90px;
+      width: 320px;
+      height: 180px;
       border: 0;
       border-radius: 4px;
     }
@@ -121,6 +121,8 @@
 
       img {
         display: block;
+        width: 320px;
+        height: 180px;
         border-radius: 4px;
         object-fit: cover;
       }
@@ -130,7 +132,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 1.6em;
+        font-size: 2.6em;
         color: #fff;
         text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
         pointer-events: none;
