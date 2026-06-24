@@ -20,6 +20,7 @@
 import { SERVER_CONFIG } from '../backend/backend-config';
 import { getYoutubeVideoIdFromLink } from '@common/util/media-links-utils';
 import { getSongPageLink } from '@common/util/misc-utils';
+import { getTranslitLowerCase } from '@common/util/seo-translit';
 
 const fs = require('fs');
 const mysql = require('mysql2/promise');
@@ -36,11 +37,16 @@ const REQUEST_TIMEOUT_MS = 10_000;
 /** Output file for the queue report. */
 const REPORT_CSV_PATH = 'youtube-replacements.csv';
 
-/** Noise words stripped before comparing titles (both EN and RU). */
-const NOISE_WORDS = new Set([
-  'official', 'video', 'audio', 'lyric', 'lyrics', 'hd', 'hq', 'clip', 'mv', 'remastered', 'feat', 'ft',
-  'клип', 'официальный', 'официальное', 'текст', 'минус', 'караоке', 'премьера',
-]);
+/**
+ * Noise words stripped before comparing titles (both EN and RU). Transliterated to Latin so they
+ * match after tokenize() also transliterates (e.g. "клип" -> "klip").
+ */
+const NOISE_WORDS = new Set(
+  [
+    'official', 'video', 'audio', 'lyric', 'lyrics', 'hd', 'hq', 'clip', 'mv', 'remastered', 'feat', 'ft',
+    'клип', 'официальный', 'официальное', 'текст', 'минус', 'караоке', 'премьера',
+  ].map(w => getTranslitLowerCase(w)),
+);
 
 interface Args {
   reportOnly: boolean;
@@ -353,11 +359,11 @@ async function printQueueReport(connection: any): Promise<void> {
 }
 
 function tokenize(s: string): string[] {
-  return s
-    .toLowerCase()
-    .replace(/ё/g, 'е')
-    .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .split(' ')
+  // Normalize ё->е first (the transliterator maps them differently: уйдёшь->ujdyosh vs уйдешь->ujdesh),
+  // then transliterate Cyrillic -> Latin so the same name in either script matches
+  // (e.g. "Ундервуд" and "Undervud", "Ноль" and "Nol - Topic").
+  return getTranslitLowerCase(s.replace(/ё/gi, 'е'))
+    .split(/[^a-z0-9]+/)
     .filter(t => t.length > 1 && !NOISE_WORDS.has(t));
 }
 
