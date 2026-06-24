@@ -25,3 +25,7 @@ webpack.records.json
 
 playwright-report
 test-results
+
+# Generated reports from YouTube link tools (scripts/check-youtube-links.ts, find-youtube-replacements.ts)
+broken-youtube.csv
+youtube-replacements.csv
