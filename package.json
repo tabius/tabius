@@ -19,6 +19,7 @@
     "ngsw-json": "node_modules/.bin/ngsw-config dist/browser ngsw-config.json",
     "sitemap": "TS_NODE_PROJECT=scripts/tsconfig.json node -r tsconfig-paths/register -r ts-node/register scripts/generate-sitemap.ts",
     "check-youtube": "TS_NODE_PROJECT=scripts/tsconfig.json node -r tsconfig-paths/register -r ts-node/register scripts/check-youtube-links.ts",
+    "find-youtube-replacements": "TS_NODE_PROJECT=scripts/tsconfig.json node -r tsconfig-paths/register -r ts-node/register scripts/find-youtube-replacements.ts",
     "update-deps": "rm package-lock.json && rm -rf node_modules && npm install",
     "update-version": "node scripts/update-build-version.js",
     "pw-tests-dev-ru": "TEST_ENV=dev-ru playwright test",

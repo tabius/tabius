@@ -21,6 +21,8 @@ export interface TabiusBackendConfig {
   /** 'en', 'ru'... See I18n interface. */
   lang: string;
   telegramBotToken: string;
+  /** YouTube Data API v3 key. Used by scripts/find-youtube-replacements.ts to search for replacements. */
+  youtubeApiKey?: string;
 }
 
 const serverConfigAsString = readFileSync(getConfigFilePath('server-config.json')).toString();
