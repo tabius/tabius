@@ -15,9 +15,13 @@ interface QueueRow extends RowDataPacket {
   last_search_at: Date | null;
   song_title: string;
   song_mount: string;
+  song_content: string;
   collection_name: string;
   collection_mount: string;
 }
+
+/** Number of song text lines included with each queue item for side-by-side comparison. */
+const SONG_TEXT_LINES = 12;
 
 interface FixRow extends RowDataPacket {
   id: number;
@@ -37,7 +41,8 @@ export class YoutubeLinkFixDbi {
   async getQueue(limit: number): Promise<GetYoutubeLinkFixQueueResponse> {
     const [rows] = await this.db.pool.promise().query<QueueRow[]>(
       `SELECT f.id, f.song_id, f.old_video_id, f.status, f.best_score, f.candidates, f.search_count, f.last_search_at,
-              s.title AS song_title, s.mount AS song_mount, c.name AS collection_name, c.mount AS collection_mount
+              s.title AS song_title, s.mount AS song_mount, s.content AS song_content,
+              c.name AS collection_name, c.mount AS collection_mount
        FROM youtube_link_fix f
        JOIN song s ON s.id = f.song_id
        JOIN collection c ON c.id = s.collection_id
@@ -134,5 +139,15 @@ function toItem(row: QueueRow): YoutubeLinkFixItem {
     candidates,
     searchCount: row.search_count,
     lastSearchAt: row.last_search_at ? new Date(row.last_search_at).toISOString() : null,
+    songText: firstLines(row.song_content, SONG_TEXT_LINES),
   };
+}
+
+/** Returns the first `count` non-trailing lines of the text. */
+function firstLines(text: string, count: number): string {
+  return String(text || '')
+    .split('\n')
+    .slice(0, count)
+    .join('\n')
+    .trimEnd();
 }

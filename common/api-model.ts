@@ -174,6 +174,8 @@ export interface YoutubeLinkFixItem {
   searchCount: number;
   /** ISO timestamp of the last search, or null. */
   lastSearchAt: string | null;
+  /** First lines of the song text (with chords), for comparing against the video without leaving the page. */
+  songText: string;
 }
 
 export interface GetYoutubeLinkFixQueueResponse {

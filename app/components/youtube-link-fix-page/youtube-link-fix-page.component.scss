@@ -1,6 +1,6 @@
 :host {
   display: block;
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 16px;
 }
@@ -11,9 +11,29 @@
   text-align: center;
 }
 
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
 .page-title {
   font-size: 1.3em;
-  margin: 8px 0 16px;
+  margin: 0;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &.bottom {
+    justify-content: center;
+    margin: 16px 0 8px;
+  }
 }
 
 .fix-card {
@@ -40,6 +60,34 @@
   }
 }
 
+// Candidates on the left, song text on the right for side-by-side comparison.
+.card-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+
+  .candidates {
+    flex: 1 1 420px;
+    min-width: 320px;
+  }
+
+  .song-text {
+    flex: 1 1 280px;
+    min-width: 240px;
+    max-height: 360px;
+    overflow: auto;
+    margin: 0;
+    padding: 10px;
+    border-radius: 6px;
+    background: rgba(128, 128, 128, 0.1);
+    font-family: monospace;
+    font-size: 0.85em;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
 .candidate {
   display: flex;
   gap: 10px;
@@ -51,10 +99,43 @@
     background: rgba(0, 160, 0, 0.1);
   }
 
-  .thumb img {
-    display: block;
-    border-radius: 4px;
-    object-fit: cover;
+  .player {
+    flex: 0 0 160px;
+    width: 160px;
+    height: 90px;
+
+    iframe {
+      width: 160px;
+      height: 90px;
+      border: 0;
+      border-radius: 4px;
+    }
+
+    .thumb {
+      position: relative;
+      display: block;
+      padding: 0;
+      border: 0;
+      cursor: pointer;
+      background: none;
+
+      img {
+        display: block;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+
+      .play-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.6em;
+        color: #fff;
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+        pointer-events: none;
+      }
+    }
   }
 
   .meta {
@@ -109,14 +190,8 @@
     padding: 4px 6px;
   }
 
-  .reject,
-  .dismiss {
+  .reject {
     margin-left: auto;
-  }
-
-  .dismiss {
-    margin-left: 0;
-    opacity: 0.8;
   }
 }
 
