@@ -7,11 +7,12 @@ import { CollectionController } from './controller/collection.controller';
 import { BackendAuthService } from './service/backend-auth.service';
 import { truthy } from 'assertic';
 import { TelegramService } from '@backend/service/telegram.service';
+import { YoutubeLinkFixController } from './controller/youtube-link-fix.controller';
 
 @Module({
   imports: [ServerDbModule],
   providers: [Logger, { provide: APP_INTERCEPTOR, useClass: BackendAuthService }, TelegramService],
-  controllers: [CollectionController, SongController, UserController],
+  controllers: [CollectionController, SongController, UserController, YoutubeLinkFixController],
 })
 export class BackendModule {
   // noinspection JSUnusedGlobalSymbols

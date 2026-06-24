@@ -142,3 +142,55 @@ export interface GetUserCollectionsResponse {
 export interface UpdateFavoriteSongKeyRequest {
   key: ChordTone;
 }
+
+// === Broken YouTube link review queue (youtube_link_fix) ===
+
+export type YoutubeLinkFixStatus = 'needs_review' | 'approved' | 'rejected' | 'no_match' | 'dismissed';
+
+export type YoutubeCandidateChannelKind = 'topic' | 'vevo' | 'artist' | 'other';
+
+/** A YouTube search result proposed as a replacement for a broken video. */
+export interface YoutubeCandidate {
+  videoId: string;
+  title: string;
+  channel: string;
+  channelKind: YoutubeCandidateChannelKind;
+  /** 0..1: title similarity x channel trust. */
+  score: number;
+}
+
+/** One review-queue item: a song that references a broken video, with proposed replacements. */
+export interface YoutubeLinkFixItem {
+  id: number;
+  songId: number;
+  songTitle: string;
+  collectionName: string;
+  collectionMount: string;
+  songMount: string;
+  oldVideoId: string;
+  status: YoutubeLinkFixStatus;
+  bestScore: number | null;
+  candidates: YoutubeCandidate[];
+  searchCount: number;
+  /** ISO timestamp of the last search, or null. */
+  lastSearchAt: string | null;
+}
+
+export interface GetYoutubeLinkFixQueueResponse {
+  items: YoutubeLinkFixItem[];
+}
+
+/** `videoId` may be a bare video id or a full YouTube URL (the backend extracts the id). */
+export interface ApproveYoutubeLinkFixRequest {
+  id: number;
+  videoId: string;
+}
+
+export interface YoutubeLinkFixIdRequest {
+  id: number;
+}
+
+export interface YoutubeLinkFixActionResponse {
+  id: number;
+  status: YoutubeLinkFixStatus;
+}
