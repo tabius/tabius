@@ -18,6 +18,7 @@ import { SettingsPageComponent } from '@app/components/settings-page/settings-pa
 import {
   MOUNT_CATALOG,
   MOUNT_COLLECTION,
+  MOUNT_MODERATOR_YOUTUBE_LINKS,
   MOUNT_PAGE_NOT_FOUND,
   MOUNT_SCENE,
   MOUNT_SETTINGS,
@@ -30,6 +31,7 @@ import {
 import { TABIUS_CATALOG_BROWSER_STORE_TOKEN, TABIUS_USER_BROWSER_STORE_TOKEN } from '@app/app-constants';
 import { ObservableStore } from '@app/store/observable-store';
 import { StudioPageComponent } from '@app/components/studio-page/studio-page.component';
+import { YoutubeLinkFixPageComponent } from '@app/components/youtube-link-fix-page/youtube-link-fix-page.component';
 import { SongPrintPageComponent } from '@app/components/song-print-page/song-print-page.component';
 import { ScenePageComponent } from '@app/components/scene-page/scene-page.component';
 
@@ -56,6 +58,7 @@ const routes: Routes = [
   { path: MOUNT_SONG_IN_SECONDARY_COLLECTION, component: SongPageComponent },
   { path: MOUNT_SETTINGS, component: SettingsPageComponent },
   { path: MOUNT_STUDIO, component: StudioPageComponent },
+  { path: MOUNT_MODERATOR_YOUTUBE_LINKS, component: YoutubeLinkFixPageComponent },
   { path: MOUNT_PAGE_NOT_FOUND, component: Page404Component },
   { path: '**', redirectTo: `/${MOUNT_PAGE_NOT_FOUND}` },
 ];

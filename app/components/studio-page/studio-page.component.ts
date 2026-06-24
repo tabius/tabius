@@ -6,7 +6,8 @@ import { map, switchMap, throttleTime } from 'rxjs/operators';
 import { CatalogService } from '@app/services/catalog.service';
 import { Collection, Song } from '@common/catalog-model';
 import { sortSongsAndRelatedItems } from '@app/components/collection-page/collection-page.component';
-import { combineLatest0, getSongPageLink, isDefined } from '@common/util/misc-utils';
+import { combineLatest0, getSongPageLink, isDefined, isModerator } from '@common/util/misc-utils';
+import { LINK_MODERATOR_YOUTUBE_LINKS } from '@common/mounts';
 import { SongEditResult } from '@app/components/song-editor/song-editor.component';
 import { Router } from '@angular/router';
 import { ComponentWithLoadingIndicator } from '@app/utils/component-with-loading-indicator';
@@ -25,6 +26,8 @@ export class StudioPageComponent extends ComponentWithLoadingIndicator {
   private readonly router = inject(Router);
 
   readonly i18n = I18N.studioPage;
+  readonly isModerator = isModerator;
+  readonly moderatorYoutubeLinksLink = LINK_MODERATOR_YOUTUBE_LINKS;
 
   user?: User;
 

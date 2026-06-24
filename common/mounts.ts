@@ -23,6 +23,10 @@ export const LINK_TUNER = `/${MOUNT_TUNER}`;
 export const MOUNT_STUDIO = 'studio';
 export const LINK_STUDIO = `/${MOUNT_STUDIO}`;
 
+/** Moderator-only page: review queue for replacing broken YouTube links. */
+export const MOUNT_MODERATOR_YOUTUBE_LINKS = 'moderator/youtube-links';
+export const LINK_MODERATOR_YOUTUBE_LINKS = `/${MOUNT_MODERATOR_YOUTUBE_LINKS}`;
+
 export const MOUNT_SETTINGS = 'settings';
 export const LINK_SETTINGS = `/${MOUNT_SETTINGS}`;
 

@@ -1,0 +1,57 @@
+@if (!loaded()) {
+  <div class="status">Загрузка очереди…</div>
+} @else if (items().length === 0) {
+  <div class="status">Очередь пуста — нет видео на ревью. 🎉</div>
+} @else {
+  <h1 class="page-title">Битые YouTube-ссылки — ревью ({{ items().length }})</h1>
+
+  @for (item of items(); track item.id) {
+    <div class="fix-card">
+      <div class="song-head">
+        <a class="song-link" [routerLink]="getSongPageLink(item.collectionMount, item.songMount)" target="_blank">
+          {{ item.collectionName }} — {{ item.songTitle }}
+        </a>
+        <span class="broken">
+          битое:
+          <a [href]="youtubeUrl(item.oldVideoId)" target="_blank" rel="noopener">{{ item.oldVideoId }}</a>
+        </span>
+      </div>
+
+      <div class="candidates">
+        @for (c of item.candidates; track c.videoId) {
+          <div class="candidate" [class.likely]="isLikely(c)">
+            <a class="thumb" [href]="youtubeUrl(c.videoId)" target="_blank" rel="noopener">
+              <img [src]="thumbnailUrl(c.videoId)" alt="" loading="lazy" width="160" height="90" />
+            </a>
+            <div class="meta">
+              <div class="title">{{ c.title }}</div>
+              <div class="channel">
+                {{ c.channel }}
+                @if (isLikely(c)) {
+                  <span class="badge">✓ скорее всего то</span>
+                }
+                <span class="score">score {{ c.score }}</span>
+              </div>
+              <button class="approve" (click)="approve(item, c.videoId)" [disabled]="busyId() === item.id">Поставить</button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="actions">
+        <input
+          class="custom-url"
+          type="text"
+          [(ngModel)]="customUrl[item.id]"
+          [disabled]="busyId() === item.id"
+          placeholder="свой URL или id видео"
+        />
+        <button (click)="approve(item, customUrl[item.id])" [disabled]="busyId() === item.id || !customUrl[item.id]">
+          Поставить свой
+        </button>
+        <button class="reject" (click)="reject(item)" [disabled]="busyId() === item.id">Нет подходящего</button>
+        <button class="dismiss" (click)="dismiss(item)" [disabled]="busyId() === item.id">Убрать из очереди</button>
+      </div>
+    </div>
+  }
+}

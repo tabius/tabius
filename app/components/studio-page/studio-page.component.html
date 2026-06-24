@@ -15,6 +15,11 @@
         ></gt-user-registration-prompt>
       }
       @if (user) {
+        @if (isModerator(user)) {
+          <div class="moderator-tools">
+            <a [routerLink]="moderatorYoutubeLinksLink">🔧 Битые YouTube-ссылки — ревью</a>
+          </div>
+        }
         <div class="collection-block">
           <div>
             <div>

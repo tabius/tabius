@@ -39,6 +39,7 @@ import { CachingAndMultiplexingInterceptor } from '@app/interceptors/caching-and
 import { ResourceNotFoundComponent } from '@app/components/resource-not-found/resource-not-found.component';
 import { SongFullTextSearchResultsPanelComponent } from '@app/components/song-full-text-search-results-panel/song-full-text-search-results-panel.component';
 import { StudioPageComponent } from '@app/components/studio-page/studio-page.component';
+import { YoutubeLinkFixPageComponent } from '@app/components/youtube-link-fix-page/youtube-link-fix-page.component';
 import { SongPrevNextNavigatorComponent } from '@app/components/song-prev-next-navigator/song-prev-next-navigator.component';
 import { AppBrowserStore, CatalogBrowserStore, UserBrowserStore } from '@app/app-store';
 import { SongPrintPageComponent } from '@app/components/song-print-page/song-print-page.component';
@@ -133,6 +134,7 @@ const hydrationProviders = enableHydration ? [provideClientHydration(withNoIncre
     SongTextComponent,
     SongVideoComponent,
     StudioPageComponent,
+    YoutubeLinkFixPageComponent,
     SvgIconComponent,
     TunerPageComponent,
     UserCollectionEditorComponent,
