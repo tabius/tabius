@@ -6,5 +6,5 @@
     "noImplicitAny": true,
     "types": ["node"]
   },
-  "files": ["inline-css.ts", "generate-sitemap.ts"]
+  "files": ["inline-css.ts", "generate-sitemap.ts", "check-youtube-links.ts"]
 }
