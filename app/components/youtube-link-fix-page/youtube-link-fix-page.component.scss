@@ -73,9 +73,9 @@
   }
 
   .song-text {
-    flex: 1 1 280px;
-    min-width: 240px;
-    max-height: 360px;
+    flex: 1 1 320px;
+    min-width: 260px;
+    max-height: 640px;
     overflow: auto;
     margin: 0;
     padding: 10px;
@@ -192,7 +192,7 @@
     padding: 4px 6px;
   }
 
-  .reject {
+  .skip {
     margin-left: auto;
   }
 }

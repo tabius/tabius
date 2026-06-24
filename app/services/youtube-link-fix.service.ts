@@ -8,8 +8,8 @@ import { GetYoutubeLinkFixQueueResponse, YoutubeLinkFixActionResponse } from '@c
 export class YoutubeLinkFixService {
   private readonly httpClient = inject(HttpClient);
 
-  getQueue(): Promise<GetYoutubeLinkFixQueueResponse> {
-    return firstValueFrom(this.httpClient.get<GetYoutubeLinkFixQueueResponse>('/api/youtube-fix/queue'));
+  getQueue(page: number): Promise<GetYoutubeLinkFixQueueResponse> {
+    return firstValueFrom(this.httpClient.get<GetYoutubeLinkFixQueueResponse>(`/api/youtube-fix/queue?page=${page}`));
   }
 
   /** Approves a candidate: replaces the broken link in the song. `videoId` may be an id or a URL. */
@@ -17,13 +17,8 @@ export class YoutubeLinkFixService {
     return firstValueFrom(this.httpClient.post<YoutubeLinkFixActionResponse>('/api/youtube-fix/approve', { id, videoId }));
   }
 
-  /** Rejects all candidates: the item is searched again after the cool-down. */
-  reject(id: number): Promise<YoutubeLinkFixActionResponse> {
-    return firstValueFrom(this.httpClient.post<YoutubeLinkFixActionResponse>('/api/youtube-fix/reject', { id }));
-  }
-
-  /** Dismisses the item permanently. */
-  dismiss(id: number): Promise<YoutubeLinkFixActionResponse> {
-    return firstValueFrom(this.httpClient.post<YoutubeLinkFixActionResponse>('/api/youtube-fix/dismiss', { id }));
+  /** Removes the item from the queue until the next sweep (re-searched after the cool-down). */
+  skip(id: number): Promise<YoutubeLinkFixActionResponse> {
+    return firstValueFrom(this.httpClient.post<YoutubeLinkFixActionResponse>('/api/youtube-fix/skip', { id }));
   }
 }

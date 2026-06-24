@@ -21,7 +21,7 @@ interface QueueRow extends RowDataPacket {
 }
 
 /** Number of song text lines included with each queue item for side-by-side comparison. */
-const SONG_TEXT_LINES = 12;
+const SONG_TEXT_LINES = 60;
 
 interface FixRow extends RowDataPacket {
   id: number;
@@ -37,8 +37,12 @@ interface SongLinksRow extends RowDataPacket {
 export class YoutubeLinkFixDbi {
   constructor(private readonly db: DbService) {}
 
-  /** Returns the items awaiting moderator review, best candidates first. */
-  async getQueue(limit: number): Promise<GetYoutubeLinkFixQueueResponse> {
+  /** Returns one page of items awaiting moderator review (best candidates first) plus the total count. */
+  async getQueue(limit: number, offset: number): Promise<GetYoutubeLinkFixQueueResponse> {
+    const [countRows] = await this.db.pool
+      .promise()
+      .query<RowDataPacket[]>(`SELECT COUNT(*) AS total FROM youtube_link_fix WHERE status = 'needs_review'`);
+    const total = Number(countRows[0]?.total ?? 0);
     const [rows] = await this.db.pool.promise().query<QueueRow[]>(
       `SELECT f.id, f.song_id, f.old_video_id, f.status, f.best_score, f.candidates, f.search_count, f.last_search_at,
               s.title AS song_title, s.mount AS song_mount, s.content AS song_content,
@@ -48,10 +52,10 @@ export class YoutubeLinkFixDbi {
        JOIN collection c ON c.id = s.collection_id
        WHERE f.status = 'needs_review'
        ORDER BY f.best_score DESC, f.id ASC
-       LIMIT ?`,
-      [limit],
+       LIMIT ? OFFSET ?`,
+      [limit, offset],
     );
-    return { items: rows.map(toItem) };
+    return { items: rows.map(toItem), total };
   }
 
   /**
@@ -86,18 +90,14 @@ export class YoutubeLinkFixDbi {
     return 'approved';
   }
 
-  /** Rejects all candidates: the worker will search again after the cool-down. */
-  async reject(id: number): Promise<YoutubeLinkFixStatus> {
+  /**
+   * Removes the item from the queue until the next sweep: marks it 'rejected', which the search
+   * worker picks up again only after the cool-down (see COOLDOWN_DAYS in find-youtube-replacements.ts).
+   */
+  async skip(id: number): Promise<YoutubeLinkFixStatus> {
     await this.getFixRow(id); // Ensure it exists.
     await this.setStatus(id, 'rejected');
     return 'rejected';
-  }
-
-  /** Dismisses the item permanently: the worker will never search for it again. */
-  async dismiss(id: number): Promise<YoutubeLinkFixStatus> {
-    await this.getFixRow(id); // Ensure it exists.
-    await this.setStatus(id, 'dismissed');
-    return 'dismissed';
   }
 
   private async getFixRow(id: number): Promise<FixRow> {

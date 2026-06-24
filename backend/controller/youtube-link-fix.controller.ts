@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { User } from '@common/user-model';
 import { BackendAuthService } from '../service/backend-auth.service';
@@ -12,8 +12,8 @@ import {
   YoutubeLinkFixIdRequest,
 } from '@common/api-model';
 
-/** Max queue items returned to the admin UI in one call. */
-const QUEUE_LIMIT = 300;
+/** Queue page size (items per page). Kept small so a large queue never slows the page down. */
+const PAGE_SIZE = 10;
 
 /** Moderator-only review queue for replacing broken YouTube links (see scripts/find-youtube-replacements.ts). */
 @Controller('/api/youtube-fix')
@@ -21,9 +21,10 @@ export class YoutubeLinkFixController {
   constructor(private readonly dbi: YoutubeLinkFixDbi) {}
 
   @Get('/queue')
-  async getQueue(@Req() req: Request): Promise<GetYoutubeLinkFixQueueResponse> {
+  async getQueue(@Req() req: Request, @Query('page') pageParam?: string): Promise<GetYoutubeLinkFixQueueResponse> {
     assertModerator(req);
-    return await this.dbi.getQueue(QUEUE_LIMIT);
+    const page = Math.max(0, Math.floor(Number(pageParam)) || 0);
+    return await this.dbi.getQueue(PAGE_SIZE, page * PAGE_SIZE);
   }
 
   @Post('/approve')
@@ -38,18 +39,12 @@ export class YoutubeLinkFixController {
     return await this.runAction(id, () => this.dbi.approve(id, videoId));
   }
 
-  @Post('/reject')
-  async reject(@Req() req: Request, @Body() request: YoutubeLinkFixIdRequest): Promise<YoutubeLinkFixActionResponse> {
+  /** Removes the item from the queue until the next sweep (re-searched after the cool-down). */
+  @Post('/skip')
+  async skip(@Req() req: Request, @Body() request: YoutubeLinkFixIdRequest): Promise<YoutubeLinkFixActionResponse> {
     assertModerator(req);
     const id = assertFixId(request.id);
-    return await this.runAction(id, () => this.dbi.reject(id));
-  }
-
-  @Post('/dismiss')
-  async dismiss(@Req() req: Request, @Body() request: YoutubeLinkFixIdRequest): Promise<YoutubeLinkFixActionResponse> {
-    assertModerator(req);
-    const id = assertFixId(request.id);
-    return await this.runAction(id, () => this.dbi.dismiss(id));
+    return await this.runAction(id, () => this.dbi.skip(id));
   }
 
   private async runAction(id: number, action: () => Promise<YoutubeLinkFixActionResponse['status']>): Promise<YoutubeLinkFixActionResponse> {

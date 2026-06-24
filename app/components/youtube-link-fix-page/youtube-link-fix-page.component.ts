@@ -6,17 +6,18 @@ import { YoutubeLinkFixService } from '@app/services/youtube-link-fix.service';
 import { YoutubeCandidate, YoutubeLinkFixItem } from '@common/api-model';
 import { getSongPageLink, isModerator } from '@common/util/misc-utils';
 
-/** Items shown per page. */
-const PAGE_SIZE = 20;
+/** Items per page. Must match PAGE_SIZE on the backend (youtube-link-fix.controller.ts). */
+const PAGE_SIZE = 10;
 
 /**
  * Moderator-only review queue for broken YouTube links. Lists songs whose video is broken together
  * with the replacement candidates found by scripts/find-youtube-replacements.ts. For each item the
  * moderator can play any candidate embedded inline, compare it against the song text shown on the
- * page, and then approve a replacement (writes it to the song), reject the candidates, or dismiss it.
+ * page, and then approve a replacement (writes it to the song) or skip it (re-searched next sweep).
  *
- * Access is enforced on the backend (every /api/youtube-fix endpoint is moderator-only); this client
- * guard only avoids rendering the page to non-moderators.
+ * Pagination is server-side (one page fetched at a time) so the page stays fast no matter how large
+ * the queue grows. Access is enforced on the backend (every /api/youtube-fix endpoint is
+ * moderator-only); this client guard only avoids rendering the page to non-moderators.
  */
 @Component({
   templateUrl: './youtube-link-fix-page.component.html',
@@ -28,21 +29,20 @@ export class YoutubeLinkFixPageComponent {
   private readonly service = inject(YoutubeLinkFixService);
   private readonly router = inject(Router);
 
+  /** Items of the current page only. */
   readonly items = signal<YoutubeLinkFixItem[]>([]);
+  /** Total items across all pages. */
+  readonly total = signal(0);
+  readonly page = signal(0);
   readonly loaded = signal(false);
   /** Id of the item with an action in flight (disables its buttons). */
   readonly busyId = signal<number | undefined>(undefined);
   /** Per-item custom URL/id typed by the moderator. */
   readonly customUrl: Record<number, string> = {};
 
-  readonly page = signal(0);
-  readonly totalPages = computed(() => Math.max(1, Math.ceil(this.items().length / PAGE_SIZE)));
-  readonly pageItems = computed(() => {
-    const start = this.page() * PAGE_SIZE;
-    return this.items().slice(start, start + PAGE_SIZE);
-  });
-  /** Candidate video ids currently embedded (play was clicked). */
-  private readonly playing = signal<Set<string>>(new Set());
+  readonly totalPages = computed(() => Math.max(1, Math.ceil(this.total() / PAGE_SIZE)));
+  /** The single candidate currently embedded/playing (only one at a time). */
+  private readonly playingVideoId = signal<string | undefined>(undefined);
 
   readonly getSongPageLink = getSongPageLink;
 
@@ -62,15 +62,26 @@ export class YoutubeLinkFixPageComponent {
         }
         if (!this.loadStarted) {
           this.loadStarted = true;
-          void this.reload();
+          void this.loadPage(0);
         }
       });
   }
 
-  async reload(): Promise<void> {
-    const response = await this.service.getQueue();
+  async loadPage(page: number): Promise<void> {
+    const response = await this.service.getQueue(page);
     this.items.set(response.items);
+    this.total.set(response.total);
+    this.page.set(page);
+    this.playingVideoId.set(undefined); // Stop the embedded player from the previous page.
     this.loaded.set(true);
+  }
+
+  goToPage(page: number): void {
+    const clamped = Math.min(Math.max(0, page), this.totalPages() - 1);
+    if (clamped !== this.page()) {
+      void this.loadPage(clamped);
+      window.scrollTo({ top: 0 });
+    }
   }
 
   thumbnailUrl(videoId: string): string {
@@ -86,11 +97,12 @@ export class YoutubeLinkFixPageComponent {
   }
 
   isPlaying(videoId: string): boolean {
-    return this.playing().has(videoId);
+    return this.playingVideoId() === videoId;
   }
 
+  /** Plays this candidate, stopping whichever one was playing before. */
   play(videoId: string): void {
-    this.playing.update(set => new Set(set).add(videoId));
+    this.playingVideoId.set(videoId);
   }
 
   /** Whether to show the "almost certainly the right one" badge. */
@@ -103,15 +115,6 @@ export class YoutubeLinkFixPageComponent {
     );
   }
 
-  goToPage(page: number): void {
-    const clamped = Math.min(Math.max(0, page), this.totalPages() - 1);
-    if (clamped !== this.page()) {
-      this.playing.set(new Set()); // Stop embedded players when leaving the page.
-      this.page.set(clamped);
-      window.scrollTo({ top: 0 });
-    }
-  }
-
   async approve(item: YoutubeLinkFixItem, videoId: string | undefined): Promise<void> {
     const value = (videoId || '').trim();
     if (!value) {
@@ -120,12 +123,9 @@ export class YoutubeLinkFixPageComponent {
     await this.runAction(item, () => this.service.approve(item.id, value));
   }
 
-  async reject(item: YoutubeLinkFixItem): Promise<void> {
-    await this.runAction(item, () => this.service.reject(item.id));
-  }
-
-  async dismiss(item: YoutubeLinkFixItem): Promise<void> {
-    await this.runAction(item, () => this.service.dismiss(item.id));
+  /** Removes the item from the queue until the next sweep. */
+  async skip(item: YoutubeLinkFixItem): Promise<void> {
+    await this.runAction(item, () => this.service.skip(item.id));
   }
 
   private async runAction(item: YoutubeLinkFixItem, action: () => Promise<unknown>): Promise<void> {
@@ -136,9 +136,10 @@ export class YoutubeLinkFixPageComponent {
     try {
       await action();
       this.items.update(list => list.filter(i => i.id !== item.id));
-      // Keep the current page valid after the list shrinks.
-      if (this.page() > this.totalPages() - 1) {
-        this.page.set(this.totalPages() - 1);
+      this.total.update(t => Math.max(0, t - 1));
+      if (this.items().length === 0 && this.total() > 0) {
+        // Page emptied — refill it (the same offset now returns the next items).
+        await this.loadPage(Math.min(this.page(), this.totalPages() - 1));
       }
     } catch (e) {
       console.error('YouTube link fix action failed', e);

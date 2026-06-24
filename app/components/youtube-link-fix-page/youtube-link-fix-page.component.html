@@ -4,7 +4,7 @@
   <div class="status">Очередь пуста — нет видео на ревью. 🎉</div>
 } @else {
   <div class="page-head">
-    <h1 class="page-title">Битые YouTube-ссылки — ревью ({{ items().length }})</h1>
+    <h1 class="page-title">Битые YouTube-ссылки — ревью ({{ total() }})</h1>
     @if (totalPages() > 1) {
       <div class="pager">
         <button (click)="goToPage(page() - 1)" [disabled]="page() === 0">←</button>
@@ -14,7 +14,7 @@
     }
   </div>
 
-  @for (item of pageItems(); track item.id) {
+  @for (item of items(); track item.id) {
     <div class="fix-card">
       <div class="song-head">
         <a class="song-link" [routerLink]="getSongPageLink(item.collectionMount, item.songMount)" target="_blank">
@@ -76,8 +76,14 @@
         <button (click)="approve(item, customUrl[item.id])" [disabled]="busyId() === item.id || !customUrl[item.id]">
           Поставить свой
         </button>
-        <button class="reject" (click)="reject(item)" [disabled]="busyId() === item.id">Нет подходящего</button>
-        <button class="dismiss" (click)="dismiss(item)" [disabled]="busyId() === item.id">Убрать из очереди</button>
+        <button
+          class="skip"
+          (click)="skip(item)"
+          [disabled]="busyId() === item.id"
+          title="Скрыть до следующего обхода (вернётся через ~3 недели)"
+        >
+          Убрать из очереди
+        </button>
       </div>
     </div>
   }

@@ -180,6 +180,8 @@ export interface YoutubeLinkFixItem {
 
 export interface GetYoutubeLinkFixQueueResponse {
   items: YoutubeLinkFixItem[];
+  /** Total number of items in the queue (across all pages), for pagination. */
+  total: number;
 }
 
 /** `videoId` may be a bare video id or a full YouTube URL (the backend extracts the id). */
